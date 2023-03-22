@@ -1,20 +1,17 @@
+dialog::backdrop{
+  background-color: #00000096;
+}
+
 .App {
   text-align: center;
 }
 
 .App-logo {
-  height: 40vmin;
   pointer-events: none;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
 .App-header {
-  background-color: #282c34;
+  background-color: #8db68c;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
@@ -26,6 +23,12 @@
 
 .App-link {
   color: #61dafb;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .App-logo {
+    animation: App-logo-spin infinite 20s linear;
+  }
 }
 
 @keyframes App-logo-spin {
