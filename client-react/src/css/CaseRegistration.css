@@ -1,0 +1,8 @@
+label{
+    color: red;
+    font-size: medium;
+}
+
+input[type=text]{
+    padding: 5px;
+}

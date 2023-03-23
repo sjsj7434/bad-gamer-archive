@@ -1,0 +1,38 @@
+.topMenu {
+	display: flex;
+	flex-direction: row;
+	justify-content: flex-start;
+	align-items: center;
+
+	top: 0px;
+	border-bottom: 2px solid rgb(218, 245, 212);
+}
+
+.topMenu a {
+	color: rgb(0, 0, 0);
+	text-decoration: none;
+}
+
+.menu:hover a {
+	color: rgb(0, 60, 255);
+	text-decoration: underline;
+}
+
+.menuLogo{
+	margin: 12px;
+}
+
+.menuDeco{
+	width: 13px;
+	height: 13px;
+	background-color: rgb(89, 246, 196);
+	border: 2px solid rgb(135, 135, 135);
+	border-radius: 50%;
+	margin-left: 20px;
+	margin-right: 10px;
+}
+
+.menu{
+	display: flex;
+	align-items: center;
+}
