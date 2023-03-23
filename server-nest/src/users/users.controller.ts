@@ -1,12 +1,13 @@
-import { Body, Controller, Get, Post, Param } from '@nestjs/common';
+import { Body, Controller, Get, Post, Param, Res } from '@nestjs/common';
 import { CreateUserDTO } from 'src/dto/create-user.dto';
 import { VerifyEmailDto } from 'src/dto/verify-email.dto';
 
-@Controller('users')
+@Controller('api/users')
 export class UsersController {
 	@Get()
 	root() {
-		return { message: 'Hello here is API home!' };
+		console.log('API HOME')
+		return { message: 'Hello here is API home!', data: new Date() };
 	}
 
 	@Post()
@@ -27,11 +28,9 @@ export class UsersController {
 		return;
 	}
 
-	@Get('/:id')
+	@Get('/get/:id')
 	async getUserInfo(@Param('id') userId: string): Promise<any> {
 		console.log(userId);
 		return { "message": 'getUserInfo API!', "userId": userId };
 	}
 }
-
-
