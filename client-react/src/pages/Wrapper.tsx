@@ -1,11 +1,13 @@
 type SettingsMenuType = {
-	ren: React.ReactNode;
+	innerNode: React.ReactNode;
 }
 
-const Wrapper: React.FC<SettingsMenuType> = ({ ren }) => {
+const Wrapper = (props: SettingsMenuType) => {
 	return(
 		<>
-			{ren}
+			<div>
+				{props.innerNode}
+			</div>
 		</>
 	);
 }
