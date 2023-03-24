@@ -1,9 +1,10 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import Error404 from './pc/errors/Error404';
-import Main from './pc/Main';
-import CaseRegistration from './pc/CaseRegistration';
-import TopMenu from './pc/TopMenu';
-import Wrapper from './pc/Wrapper';
+import Error404 from './errors/Error404';
+import Main from './Main';
+import CaseRegistration from './CaseRegistration';
+import TopMenu from './TopMenu';
+import Wrapper from './Wrapper';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 const App = () => {
 	return (
