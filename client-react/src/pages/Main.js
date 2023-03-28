@@ -1,5 +1,5 @@
 const Main = () => {
-	async function call(): Promise<void> {
+	async function call(){
 		// const test: HTMLDialogElement = document.querySelector("#dialog")!; //the value is never null by adding the [!] operator
 
 		const result = await fetch("http://localhost:3000/api/users/");
