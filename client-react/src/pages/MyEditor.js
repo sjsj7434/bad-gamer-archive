@@ -1,11 +1,15 @@
 import { CKEditor } from '@ckeditor/ckeditor5-react';
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
+import '@ckeditor/ckeditor5-build-classic/build/translations/ko';
 
 const MyEditor = () => {
 	return (
 		<>
 			<h2>Using CKEditor 5 build in React</h2>
 			<CKEditor
+				config={ {
+					language: 'ko',
+				} }
 				editor={ ClassicEditor }
 				data="<p>Hello from CKEditor 5!</p>"
 				onReady={ editor => {

@@ -7,7 +7,7 @@ export class UsersController {
 	@Get()
 	root() {
 		console.log('API HOME')
-		return { message: 'Hello here is API home!', data: new Date() };
+		return { message: `Hello here is API home!\n${new Date()}`, data: new Date() };
 	}
 
 	@Post()
