@@ -18,7 +18,7 @@ const TopMenu = () => {
 							height="30"
 							className="d-inline-block align-top"
 						/>{' '}
-						Template
+						TOP-MENU
 					</Navbar.Brand>
 					<Navbar.Toggle aria-controls="navbarScroll" />
 					<Navbar.Collapse id="navbarScroll">

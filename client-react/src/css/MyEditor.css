@@ -1,0 +1,4 @@
+.ck.ck-content:not(.ck-comment__input *) {
+    height: 600px;
+    overflow-y: auto;
+}
