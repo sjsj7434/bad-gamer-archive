@@ -2,7 +2,7 @@ const Main = () => {
 	async function call(){
 		// const test: HTMLDialogElement = document.querySelector("#dialog")!; //the value is never null by adding the [!] operator
 
-		const result = await fetch("http://localhost:3000/hello");
+		const result = await fetch(`${process.env.REACT_APP_SERVER}/hello`);
 		console.log(result);
 		const jsonResult = await result.json();
 

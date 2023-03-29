@@ -166,7 +166,7 @@ const editorConfiguration = {
 		// https://ckeditor.com/docs/ckeditor5/latest/framework/deep-dive/upload-adapter.html
 		
 		// The URL that the images are uploaded to.
-		uploadUrl: 'http://localhost:3000/image',
+		uploadUrl: `${process.env.REACT_APP_SERVER}/image`,
 
 		// Enable the XMLHttpRequest.withCredentials property.
 		withCredentials: true,
