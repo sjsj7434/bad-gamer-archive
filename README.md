@@ -1,5 +1,5 @@
 # bad-gamer-archive
-Nest.js + React
+Nest.js + React(V18)
 <br>
 refer : <a href="https://github.com/sjsj7434/nestjs-react-boilerplate">nestjs-react-boilerplate</a>
 
