@@ -1,3 +1,8 @@
+/*
+	* 2023-03-29 확인해야할 것 메모
+	1. react에서 innerHTML을 쓰는 것이 옳은가?
+	2. nest에서 API키, DB PWD 같은 것은 어떻게 보호하는가?
+*/
 const Main = () => {
 	async function callMine(){
 		const result = await fetch(`${process.env.REACT_APP_SERVER}/hello`);
