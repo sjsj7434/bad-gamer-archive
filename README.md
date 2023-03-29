@@ -1,9 +1,9 @@
 # bad-gamer-archive
-Nest.js + React(V18)
+Nest.js + React(v 18)
 <br>
-refer : <a href="https://github.com/sjsj7434/nestjs-react-boilerplate">nestjs-react-boilerplate</a>
+참조한 Repo : <a href="https://github.com/sjsj7434/nestjs-react-boilerplate">nestjs-react-boilerplate</a>
 
-## 구분
+## 폴더 구분
 Front-End : client-react
 <br>
 Back-End : server-nest
@@ -19,6 +19,20 @@ Back-End : server-nest
 	<li>server-nest : npm install</li>
 	<li>server-nest : npm run start:dev</li>
 </ol>
-react를 build하였으면 서버의 포트번호로 접속 시 build된 react가 나옴
-<br>
-계속하여 바뀔 때마다 build할 필요없이 개발할 때에는 client-react 서버로 확인
+<div>
+	<p>
+		react를 build하였으면 서버의 포트번호로 접속 시 build된 react가 나옴
+	</p>
+	<p>
+		계속하여 바뀔 때마다 build할 필요없이 개발할 때에는 client-react 서버로 확인
+	</p>
+	<p>
+		React .env파일에 서버 주소를 적어서 관리(REACT_APP_SERVER)
+	</p>
+	<p>
+		Nest.js의 main.ts에 CORS를 활성화하는 코드가 있어 다른 도메인에서 API를 호출할 수 있음
+	</p>
+	<p>
+		WYSIWYG 에디터의 이미지 업로드는 기본 simple upload adapter를 사용하여 서버로 전송
+	</p>
+</div>
