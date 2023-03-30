@@ -21,17 +21,44 @@ export class AppController {
 		return result;
 	}
 
+	@Get('character/:characterNickName')
+	async getCharacterInfo(@Param('characterNickName') characterNickName: string): Promise<object> {
+		console.log('[Controller-get] character => ' + decodeURIComponent(characterNickName));
+		const profile: object = await this.appService.getCharacterInfoProfile(characterNickName);
+		
+		if (profile["data"] !== null){
+			const equipment: object = await this.appService.getCharacterInfoEquipment(characterNickName);
+			const avatars: object = await this.appService.getCharacterInfoAvatars(characterNickName);
+			const combatSkills: object = await this.appService.getCharacterInfoCombatSkills(characterNickName);
+			const engravings: object = await this.appService.getCharacterInfoEngravings(characterNickName);
+			const cards: object = await this.appService.getCharacterInfoCards(characterNickName);
+			const gems: object = await this.appService.getCharacterInfoGems(characterNickName);
+			const colosseums: object = await this.appService.getCharacterInfoColosseums(characterNickName);
+			const collectibles: object = await this.appService.getCharacterInfoCollectibles(characterNickName);
+
+			return {
+				data: {
+					profile: profile,
+					equipment: equipment,
+					avatars: avatars,
+					combatSkills: combatSkills,
+					engravings: engravings,
+					cards: cards,
+					gems: gems,
+					colosseums: colosseums,
+					collectibles: collectibles
+				}
+			};
+		}
+		else{
+			return profile;
+		}
+	}
+
 	@Get('characters/:characterNickName')
 	async getCharacterList(@Param('characterNickName') characterNickName: string): Promise<object> {
 		console.log('[Controller-get] characters => ' + decodeURIComponent(characterNickName));
 		const result = await this.appService.getCharacterList(characterNickName);
-		return result;
-	}
-
-	@Get('character/:characterNickName')
-	async getCharacterInfo(@Param('characterNickName') characterNickName: string): Promise<object> {
-		console.log('[Controller-get] character => ' + decodeURIComponent(characterNickName));
-		const result = await this.appService.getCharacterInfo(characterNickName);
 		return result;
 	}
 
