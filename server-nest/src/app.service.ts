@@ -52,8 +52,56 @@ export class AppService {
 		return result;
 	}
 
-	async getCharacterInfo(characterNickName: string): Promise<object> {
+	async getCharacterInfoProfile(characterNickName: string): Promise<object> {
 		const result = await this.getLostArkAPI(`https://developer-lostark.game.onstove.com/armories/characters/${characterNickName}/profiles`);
+
+		return result;
+	}
+
+	async getCharacterInfoEquipment(characterNickName: string): Promise<object> {
+		const result = await this.getLostArkAPI(`https://developer-lostark.game.onstove.com/armories/characters/${characterNickName}/equipment`);
+
+		return result;
+	}
+
+	async getCharacterInfoAvatars(characterNickName: string): Promise<object> {
+		const result = await this.getLostArkAPI(`https://developer-lostark.game.onstove.com/armories/characters/${characterNickName}/avatars`);
+
+		return result;
+	}
+
+	async getCharacterInfoCombatSkills(characterNickName: string): Promise<object> {
+		const result = await this.getLostArkAPI(`https://developer-lostark.game.onstove.com/armories/characters/${characterNickName}/combat-skills`);
+
+		return result;
+	}
+
+	async getCharacterInfoEngravings(characterNickName: string): Promise<object> {
+		const result = await this.getLostArkAPI(`https://developer-lostark.game.onstove.com/armories/characters/${characterNickName}/engravings`);
+
+		return result;
+	}
+
+	async getCharacterInfoCards(characterNickName: string): Promise<object> {
+		const result = await this.getLostArkAPI(`https://developer-lostark.game.onstove.com/armories/characters/${characterNickName}/cards`);
+
+		return result;
+	}
+
+	async getCharacterInfoGems(characterNickName: string): Promise<object> {
+		const result = await this.getLostArkAPI(`https://developer-lostark.game.onstove.com/armories/characters/${characterNickName}/gems`);
+
+		return result;
+	}
+
+	async getCharacterInfoColosseums(characterNickName: string): Promise<object> {
+		const result = await this.getLostArkAPI(`https://developer-lostark.game.onstove.com/armories/characters/${characterNickName}/colosseums`);
+
+		return result;
+	}
+
+	async getCharacterInfoCollectibles(characterNickName: string): Promise<object> {
+		const result = await this.getLostArkAPI(`https://developer-lostark.game.onstove.com/armories/characters/${characterNickName}/collectibles`);
 
 		return result;
 	}
