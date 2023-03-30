@@ -28,8 +28,8 @@ const TopMenu = () => {
 							navbarScroll
 						>
 							<Nav.Link as={Link} to="/">Main</Nav.Link>
-							<Nav.Link as={Link} to="/CaseRegistration">CaseRegistration</Nav.Link>
-							<Nav.Link as={Link} to="/Pricing">Pricing</Nav.Link>
+							<Nav.Link as={Link} to="/registration">CaseRegistration</Nav.Link>
+							<Nav.Link as={Link} to="/pricing">Pricing</Nav.Link>
 						</Nav>
 					</Navbar.Collapse>
 				</Container>

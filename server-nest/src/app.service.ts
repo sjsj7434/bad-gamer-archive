@@ -8,20 +8,15 @@ const lostarkAPIToken = "write_your_lostark_api_key_here"; //keep it secret, do 
 @Injectable()
 export class AppService {
 	constructor(private readonly httpService: HttpService) { }
-	
-	getHello(): string {
-		return 'Hello World! Finally you called me~';
-	}
 
-	async getGuildList(serverName: string): Promise<any> {
-		const apiUrl = `https://developer-lostark.game.onstove.com/guilds/rankings?serverName=${serverName}`;
+	getLostArkAPI = async (destination: string) => {
 		const headersRequest = {
 			'Content-Type': 'application/json', // As Far As I Know, this one is not needed
 			'Authorization': `bearer ${lostarkAPIToken}`,
 		};
 
 		const { data } = await firstValueFrom(
-			this.httpService.get<any>(apiUrl, { headers: headersRequest }).pipe(
+			this.httpService.get<object>(destination, { headers: headersRequest }).pipe(
 				catchError((error: AxiosError) => {
 					console.error(error.response.data);
 					throw 'An error happened!';
@@ -29,44 +24,37 @@ export class AppService {
 			),
 		);
 
-		return data;
+		return { "data": data };
 	}
 
-	async getCharacterList(characterNickName: string): Promise<any> {
-		const apiUrl = `https://developer-lostark.game.onstove.com/characters/${characterNickName}/siblings`;
-		const headersRequest = {
-			'Content-Type': 'application/json', // As Far As I Know, this one is not needed
-			'Authorization': `bearer ${lostarkAPIToken}`,
+	async getTestJson(characterNickName: string): Promise<object> {
+		characterNickName = "welcome to service";
+
+		return {
+			characterNickName: characterNickName,
+			CharacterClassName: "배틀마스터",
+			CharacterImage: "https://img.lostark.co.kr/armory/1/3D0FE3746B32F9D56FE5541819EA79047555E513F84EDE40D9A8A827218FC330.png?v=20230329115151",
+			ExpeditionLevel: 216,
+			ItemAvgLevel: "1,655.00",
+			CharacterLevel: 60
 		};
-
-		const { data } = await firstValueFrom(
-			this.httpService.get<any>(apiUrl, { headers: headersRequest }).pipe(
-				catchError((error: AxiosError) => {
-					console.error(error.response.data);
-					throw 'An error happened!';
-				}),
-			),
-		);
-
-		return data;
 	}
 
-	async getCharacterInfo(characterNickName: string): Promise<any> {
-		const apiUrl = `https://developer-lostark.game.onstove.com/armories/characters/${characterNickName}/profiles`;
-		const headersRequest = {
-			'Content-Type': 'application/json', // As Far As I Know, this one is not needed
-			'Authorization': `bearer ${lostarkAPIToken}`,
-		};
+	async getGuildList(serverName: string): Promise<object> {
+		const result = await this.getLostArkAPI(`https://developer-lostark.game.onstove.com/guilds/rankings?serverName=${serverName}`);
 
-		const { data } = await firstValueFrom(
-			this.httpService.get<any>(apiUrl, { headers: headersRequest }).pipe(
-				catchError((error: AxiosError) => {
-					console.error(error.response.data);
-					throw 'An error happened!';
-				}),
-			),
-		);
+		return result;
+	}
 
-		return data;
+	async getCharacterList(characterNickName: string): Promise<object> {
+		const result = await this.getLostArkAPI(`https://developer-lostark.game.onstove.com/characters/${characterNickName}/siblings`);
+
+		return result;
+	}
+
+	async getCharacterInfo(characterNickName: string): Promise<object> {
+		const result = await this.getLostArkAPI(`https://developer-lostark.game.onstove.com/armories/characters/${characterNickName}/profiles`);
+
+		return result;
 	}
 }
