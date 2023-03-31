@@ -1,11 +1,15 @@
-import React from 'react';
-import ListGroup from 'react-bootstrap/ListGroup';
+import Container from 'react-bootstrap/Container';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
 import Card from 'react-bootstrap/Card';
-import CardGroup from 'react-bootstrap/CardGroup';
+import Image from 'react-bootstrap/Image';
+
 import { useParams } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import * as lostarkAPI from '../../js/lostarkAPI.js'
+import * as ImageCDN from '../../js/ImageCDN.js'
 import EmptyResult from '../EmptyResult';
+import testImage from '../../images/logo192.png'
 
 const Profile = () => {
 	// "searchResult"라는 새 상태 변수를 선언합니다
@@ -33,87 +37,161 @@ const Profile = () => {
 				const gems = result.gems.data;
 				const colosseums = result.colosseums.data;
 				const collectibles = result.collectibles.data;
+				//한번 검색에 API 10번 호출???
+
+				const equipmentDetailArray = [];
+				for(const element of equipment){
+					const equipmentDetail = JSON.parse(element.Tooltip);
+					equipmentDetailArray.push(equipmentDetail);
+				}
+
+				const engravingsDetailArray = [];
+				for(const element of engravings.Engravings){
+					const engravingsDetail = JSON.parse(element.Tooltip);
+					engravingsDetailArray.push(engravingsDetail);
+				}
+				console.log('engravingsDetailArray', engravingsDetailArray[0]);
+				document.getElementById("engraving_0").title = engravingsDetailArray[0].Element_002.value;
+				// document.getElementById("engraving_1").title = engravingsDetailArray[0].Element_002.value;
 				
 				setSearchResult(
 					<>
-						<CardGroup>
-							<Card>
-								{/* <Card.Img variant="top" src={profile.CharacterImage} /> */}
-								<Card.Body>
-									{/* <Card.Img variant="top" src={profile.CharacterImage} style={{borderRadius: "8px"}} /> */}
-									<img src={profile.CharacterImage} style={{width: "100%", borderRadius: "5px"}} />
-									
-									<Card.Title>{characterName}</Card.Title>
-									<Card.Text>
-										{profile.CharacterClassName}<br/>
+						<Container style={{backgroundColor: "#15181d", backgroundImage: `url("${testImage}")`, backgroundRepeat: "no-repeat", backgroundPosition: "top -50px right -90px"}}>
+							<Row>
+								<Col xs={12} md={8}>
+									<div style={{display: "flex", alignItems: "flex-end", textAlign: "left", color: "#ffffcc", height: "250px"}}>
+										{characterName} ({profile.CharacterClassName})<br/>
+										{profile.ExpeditionLevel}<br/>
 										{profile.CharacterLevel}<br/>
 										{profile.ItemAvgLevel}<br/>
-										{profile.ExpeditionLevel}<br/>
-									</Card.Text>
-								</Card.Body>
-							</Card>
-							<Card>
-								<Card.Body>
-									<Card.Title>equipment</Card.Title>
-									<Card.Text>
-										<div style={{display: "flex", flexWrap: "wrap"}}>
-											<div title={equipment[1].Type} style={{width: "fit-content", margin: "5px", backgroundColor: "#dddfdc", borderRadius: "4px"}}>
-												<img src={equipment[1].Icon} />
-											</div>
+									</div>
+								</Col>
+							</Row>
 
-											<div title={equipment[5].Type} style={{width: "fit-content", margin: "5px", backgroundColor: "#dddfdc", borderRadius: "4px"}}>
-												<img src={equipment[5].Icon} />
-											</div>
-											<div title={equipment[2].Type} style={{width: "fit-content", margin: "5px", backgroundColor: "#dddfdc", borderRadius: "4px"}}>
-												<img src={equipment[2].Icon} />
-											</div>
-											<div title={equipment[3].Type} style={{width: "fit-content", margin: "5px", backgroundColor: "#dddfdc", borderRadius: "4px"}}>
-												<img src={equipment[3].Icon} />
-											</div>
-											<div title={equipment[4].Type} style={{width: "fit-content", margin: "5px", backgroundColor: "#dddfdc", borderRadius: "4px"}}>
-												<img src={equipment[4].Icon} />
-											</div>
-											<div title={equipment[0].Type} style={{width: "fit-content", margin: "5px", backgroundColor: "#dddfdc", borderRadius: "4px"}}>
-												<img src={equipment[0].Icon} />
-											</div>
-										</div>
+							<Row>
+								<Col style={{textAlign: "center"}}>
+									<div style={{display: "flex"}}>
+										<Card style={{width: "42px", margin: "5px"}}>
+											<Card.Img variant="top" src={equipment[1].Icon} style={{backgroundColor: "#ffc062"}}/>
+											<Card.Footer style={{padding: "0px", backgroundColor: "#8700cd"}}>
+												<small style={{color: "#d9d9d9"}}><b>{equipmentDetailArray[1].Element_001.value.qualityValue}</b></small>
+											</Card.Footer>
+										</Card>
+										<Card style={{width: "42px", margin: "5px"}}>
+											<Card.Img variant="top" src={equipment[5].Icon} style={{backgroundColor: "#ffc062"}}/>
+											<Card.Footer style={{padding: "0px", backgroundColor: "#8700cd"}}>
+												<small style={{color: "#d9d9d9"}}><b>{equipmentDetailArray[5].Element_001.value.qualityValue}</b></small>
+											</Card.Footer>
+										</Card>
+										<Card style={{width: "42px", margin: "5px"}}>
+											<Card.Img variant="top" src={equipment[2].Icon} style={{backgroundColor: "#ffc062"}}/>
+											<Card.Footer style={{padding: "0px", backgroundColor: "#8700cd"}}>
+												<small style={{color: "#d9d9d9"}}><b>{equipmentDetailArray[2].Element_001.value.qualityValue}</b></small>
+											</Card.Footer>
+										</Card>
+										<Card style={{width: "42px", margin: "5px"}}>
+											<Card.Img variant="top" src={equipment[3].Icon} style={{backgroundColor: "#ffc062"}}/>
+											<Card.Footer style={{padding: "0px", backgroundColor: "#8700cd"}}>
+												<small style={{color: "#d9d9d9"}}><b>{equipmentDetailArray[3].Element_001.value.qualityValue}</b></small>
+											</Card.Footer>
+										</Card>
+										<Card style={{width: "42px", margin: "5px"}}>
+											<Card.Img variant="top" src={equipment[4].Icon} style={{backgroundColor: "#ffc062"}}/>
+											<Card.Footer style={{padding: "0px", backgroundColor: "#8700cd"}}>
+												<small style={{color: "#d9d9d9"}}><b>{equipmentDetailArray[4].Element_001.value.qualityValue}</b></small>
+											</Card.Footer>
+										</Card>
+										<Card style={{width: "42px", margin: "5px"}}>
+											<Card.Img variant="top" src={equipment[0].Icon} style={{backgroundColor: "#ffc062"}}/>
+											<Card.Footer style={{padding: "0px", backgroundColor: "#8700cd"}}>
+												<small style={{color: "#d9d9d9"}}><b>{equipmentDetailArray[0].Element_001.value.qualityValue}</b></small>
+											</Card.Footer>
+										</Card>
+									</div>
+								</Col>
+							</Row>
+
+							<Row>
+								<Col style={{textAlign: "center"}}>
+									<div style={{display: "flex"}}>
+										<Image roundedCircle={true} src={ImageCDN.findImageCDN(engravings.Effects[0].Name.split(" Lv.")[0], "")} style={{width: "34px", border: "1px solid gold"}} />
+										<small style={{color: "#d9d9d9"}}><b>{engravings.Effects[0].Name}</b></small>
+
+										<Image roundedCircle={true} src={ImageCDN.findImageCDN(engravings.Effects[1].Name.split(" Lv.")[0], "")} style={{width: "34px", border: "1px solid gold"}} />
+										<small style={{color: "#d9d9d9"}}><b>{engravings.Effects[1].Name}</b></small>
+									</div>
+								</Col>
+							</Row>
+
+							<Row>
+								<Col style={{textAlign: "center"}}>
+									<div style={{display: "flex"}}>
+										<Card style={{width: "42px", margin: "5px"}}>
+											<Card.Img id="engraving_0" variant="top" src={engravings.Engravings[0].Icon} style={{backgroundColor: "#ffc062"}}/>
+											<Card.Footer style={{padding: "0px", backgroundColor: "#8700cd"}}>
+												<small id="engraving_0_plus"></small>
+											</Card.Footer>
+										</Card>
+										<Card style={{width: "42px", margin: "5px"}}>
+											<Card.Img id="engraving_1" variant="top" src={engravings.Engravings[1].Icon} style={{backgroundColor: "#ffc062"}}/>
+											<Card.Footer style={{padding: "0px", backgroundColor: "#8700cd"}}>
+												<small id="engraving_1_plus"></small>
+											</Card.Footer>
+										</Card>
+									</div>
+								</Col>
+							</Row>
+
+							<Row>
+								<Col style={{textAlign: "center"}}>
+									<div style={{display: "flex"}}>
+										<Card style={{width: "42px", margin: "5px"}}>
+											<Card.Img variant="top" src={equipment[6].Icon} style={{backgroundColor: "#ffc062"}}/>
+											<Card.Footer style={{padding: "0px", backgroundColor: "#8700cd"}}>
+												<small style={{color: "#d9d9d9"}}><b>{equipmentDetailArray[6].Element_001.value.qualityValue}</b></small>
+											</Card.Footer>
+										</Card>
+										<Card style={{width: "42px", margin: "5px"}}>
+											<Card.Img variant="top" src={equipment[7].Icon} style={{backgroundColor: "#ffc062"}}/>
+											<Card.Footer style={{padding: "0px", backgroundColor: "#8700cd"}}>
+												<small style={{color: "#d9d9d9"}}><b>{equipmentDetailArray[7].Element_001.value.qualityValue}</b></small>
+											</Card.Footer>
+										</Card>
+										<Card style={{width: "42px", margin: "5px"}}>
+											<Card.Img variant="top" src={equipment[8].Icon} style={{backgroundColor: "#ffc062"}}/>
+											<Card.Footer style={{padding: "0px", backgroundColor: "#8700cd"}}>
+												<small style={{color: "#d9d9d9"}}><b>{equipmentDetailArray[8].Element_001.value.qualityValue}</b></small>
+											</Card.Footer>
+										</Card>
+										<Card style={{width: "42px", margin: "5px"}}>
+											<Card.Img variant="top" src={equipment[9].Icon} style={{backgroundColor: "#ffc062"}}/>
+											<Card.Footer style={{padding: "0px", backgroundColor: "#8700cd"}}>
+												<small style={{color: "#d9d9d9"}}><b>{equipmentDetailArray[9].Element_001.value.qualityValue}</b></small>
+											</Card.Footer>
+										</Card>
+										<Card style={{width: "42px", margin: "5px"}}>
+											<Card.Img variant="top" src={equipment[10].Icon} style={{backgroundColor: "#ffc062"}}/>
+											<Card.Footer style={{padding: "0px", backgroundColor: "#8700cd"}}>
+												<small style={{color: "#d9d9d9"}}><b>{equipmentDetailArray[10].Element_001.value.qualityValue}</b></small>
+											</Card.Footer>
+										</Card>
 										
-										<div style={{display: "flex", flexWrap: "wrap"}}>
-											<div title={"착용 각인"} style={{width: "fit-content", margin: "5px", backgroundColor: "#dddfdc", borderRadius: "4px"}}>
-												<img src={engravings.Engravings[0].Icon} />
-											</div>
-											<div title={"착용 각인"} style={{width: "fit-content", margin: "5px", backgroundColor: "#dddfdc", borderRadius: "4px"}}>
-												<img src={engravings.Engravings[1].Icon} />
-											</div>
-										</div>
-
-										<div style={{display: "flex", flexWrap: "wrap"}}>
-											<div title={equipment[6].Type} style={{width: "fit-content", margin: "5px", backgroundColor: "#dddfdc", borderRadius: "4px"}}>
-												<img src={equipment[6].Icon} />
-											</div>
-											<div title={equipment[7].Type} style={{width: "fit-content", margin: "5px", backgroundColor: "#dddfdc", borderRadius: "4px"}}>
-												<img src={equipment[7].Icon} />
-											</div>
-											<div title={equipment[8].Type} style={{width: "fit-content", margin: "5px", backgroundColor: "#dddfdc", borderRadius: "4px"}}>
-												<img src={equipment[8].Icon} />
-											</div>
-											<div title={equipment[9].Type} style={{width: "fit-content", margin: "5px", backgroundColor: "#dddfdc", borderRadius: "4px"}}>
-												<img src={equipment[9].Icon} />
-											</div>
-											<div title={equipment[10].Type} style={{width: "fit-content", margin: "5px", backgroundColor: "#dddfdc", borderRadius: "4px"}}>
-												<img src={equipment[10].Icon} />
-											</div>
-											<div title={equipment[12].Type} style={{width: "fit-content", margin: "5px", backgroundColor: "#dddfdc", borderRadius: "4px"}}>
-												<img src={equipment[12].Icon} />
-											</div>
-											<div title={equipment[11].Type} style={{width: "fit-content", margin: "5px", backgroundColor: "#dddfdc", borderRadius: "4px"}}>
-												<img src={equipment[11].Icon} />
-											</div>
-										</div>
-									</Card.Text>
-								</Card.Body>
-							</Card>
-						</CardGroup>
+										<Card style={{width: "42px", margin: "5px"}}>
+											<Card.Img variant="top" src={equipment[12] !== undefined ? equipment[12].Icon : ""} style={{backgroundColor: "#ffc062"}}/>
+											<Card.Footer style={{padding: "0px", backgroundColor: "#8700cd"}}>
+												<small style={{color: "#d9d9d9"}}><b>{equipmentDetailArray[12] !== undefined ? equipmentDetailArray[12].Element_001.value.qualityValue : ""}</b></small>
+											</Card.Footer>
+										</Card>
+										<Card style={{width: "42px", margin: "5px"}}>
+											<Card.Img variant="top" src={equipment[11] !== undefined ? equipment[11].Icon : ""} style={{backgroundColor: "#ffc062"}}/>
+											<Card.Footer style={{padding: "0px", backgroundColor: "#8700cd"}}>
+												<small style={{color: "#d9d9d9"}}><b>{equipmentDetailArray[11] !== undefined ? equipmentDetailArray[11].Element_001.value.qualityValue : ""}</b></small>
+											</Card.Footer>
+										</Card>
+									</div>
+								</Col>
+							</Row>
+						</Container>
 					</>
 				);
 			}
@@ -123,7 +201,7 @@ const Profile = () => {
 	}, [params]); //처음 페이지 로딩 될때만
 
 	return (
-		<div style={{ margin: '20px' }}>
+		<div style={{marginTop: "10px"}}>
 			{searchResult}
 		</div>
 	);
