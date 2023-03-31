@@ -3,6 +3,7 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Card from 'react-bootstrap/Card';
 import Image from 'react-bootstrap/Image';
+import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 
 import { useParams } from 'react-router-dom';
 import { useState, useEffect } from 'react';
@@ -51,8 +52,18 @@ const Profile = () => {
 					engravingsDetailArray.push(engravingsDetail);
 				}
 				console.log('engravingsDetailArray', engravingsDetailArray[0]);
-				document.getElementById("engraving_0").title = engravingsDetailArray[0].Element_002.value;
-				// document.getElementById("engraving_1").title = engravingsDetailArray[0].Element_002.value;
+
+				const engravingsAreOn = [];
+				for(const element of engravings.Effects){
+					engravingsAreOn.push(
+						<>
+							<div style={{display: "flex", alignItems: "center", marginBottom: "5px"}}>
+								<Image roundedCircle={true} src={ImageCDN.findImageCDN(element.Name.split(" Lv.")[0], "")} style={{width: "34px", border: "1px solid gold"}} />
+								<small style={{marginLeft: "5px", color: "#d9d9d9"}}><b>{element.Name}</b></small>
+							</div>
+						</>
+					);
+				}
 				
 				setSearchResult(
 					<>
@@ -114,37 +125,6 @@ const Profile = () => {
 							<Row>
 								<Col style={{textAlign: "center"}}>
 									<div style={{display: "flex"}}>
-										<Image roundedCircle={true} src={ImageCDN.findImageCDN(engravings.Effects[0].Name.split(" Lv.")[0], "")} style={{width: "34px", border: "1px solid gold"}} />
-										<small style={{color: "#d9d9d9"}}><b>{engravings.Effects[0].Name}</b></small>
-
-										<Image roundedCircle={true} src={ImageCDN.findImageCDN(engravings.Effects[1].Name.split(" Lv.")[0], "")} style={{width: "34px", border: "1px solid gold"}} />
-										<small style={{color: "#d9d9d9"}}><b>{engravings.Effects[1].Name}</b></small>
-									</div>
-								</Col>
-							</Row>
-
-							<Row>
-								<Col style={{textAlign: "center"}}>
-									<div style={{display: "flex"}}>
-										<Card style={{width: "42px", margin: "5px"}}>
-											<Card.Img id="engraving_0" variant="top" src={engravings.Engravings[0].Icon} style={{backgroundColor: "#ffc062"}}/>
-											<Card.Footer style={{padding: "0px", backgroundColor: "#8700cd"}}>
-												<small id="engraving_0_plus"></small>
-											</Card.Footer>
-										</Card>
-										<Card style={{width: "42px", margin: "5px"}}>
-											<Card.Img id="engraving_1" variant="top" src={engravings.Engravings[1].Icon} style={{backgroundColor: "#ffc062"}}/>
-											<Card.Footer style={{padding: "0px", backgroundColor: "#8700cd"}}>
-												<small id="engraving_1_plus"></small>
-											</Card.Footer>
-										</Card>
-									</div>
-								</Col>
-							</Row>
-
-							<Row>
-								<Col style={{textAlign: "center"}}>
-									<div style={{display: "flex"}}>
 										<Card style={{width: "42px", margin: "5px"}}>
 											<Card.Img variant="top" src={equipment[6].Icon} style={{backgroundColor: "#ffc062"}}/>
 											<Card.Footer style={{padding: "0px", backgroundColor: "#8700cd"}}>
@@ -188,6 +168,23 @@ const Profile = () => {
 												<small style={{color: "#d9d9d9"}}><b>{equipmentDetailArray[11] !== undefined ? equipmentDetailArray[11].Element_001.value.qualityValue : ""}</b></small>
 											</Card.Footer>
 										</Card>
+									</div>
+								</Col>
+							</Row>
+
+							<Row>
+								<Col style={{textAlign: "center"}}>
+									<div style={{display: "flex"}}>
+										<Image rounded={true} src={engravings.Engravings[0].Icon} style={{width: "34px", border: "1px solid gold"}} />
+										<Image rounded={true} src={engravings.Engravings[1].Icon} style={{width: "34px", border: "1px solid gold"}} />
+									</div>
+								</Col>
+							</Row>
+
+							<Row>
+								<Col style={{textAlign: "center"}}>
+									<div style={{display: "flex", flexDirection: "column"}}>
+										{engravingsAreOn}
 									</div>
 								</Col>
 							</Row>
