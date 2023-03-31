@@ -3,7 +3,7 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Card from 'react-bootstrap/Card';
 import Image from 'react-bootstrap/Image';
-import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
+import Badge from 'react-bootstrap/Badge';
 
 import { useParams } from 'react-router-dom';
 import { useState, useEffect } from 'react';
@@ -70,11 +70,11 @@ const Profile = () => {
 						<Container style={{backgroundColor: "#15181d", backgroundImage: `url("${testImage}")`, backgroundRepeat: "no-repeat", backgroundPosition: "top -50px right -90px"}}>
 							<Row>
 								<Col xs={12} md={8}>
-									<div style={{display: "flex", alignItems: "flex-end", textAlign: "left", color: "#ffffcc", height: "250px"}}>
-										{characterName} ({profile.CharacterClassName})<br/>
-										{profile.ExpeditionLevel}<br/>
-										{profile.CharacterLevel}<br/>
-										{profile.ItemAvgLevel}<br/>
+									<div style={{display: "flex", flexDirection: "column", alignItems: "flex-start", justifyContent: "flex-end", textAlign: "left", color: "#ffffcc", height: "250px"}}>
+										<Badge bg="primary" style={{margin: "2px"}}>{characterName} ({profile.CharacterClassName})</Badge>
+										<Badge bg="primary" style={{margin: "2px"}}>{profile.ExpeditionLevel}</Badge>
+										<Badge bg="primary" style={{margin: "2px"}}>{profile.CharacterLevel}</Badge>
+										<Badge bg="primary" style={{margin: "2px"}}>{profile.ItemAvgLevel}</Badge>
 									</div>
 								</Col>
 							</Row>
@@ -168,15 +168,6 @@ const Profile = () => {
 												<small style={{color: "#d9d9d9"}}><b>{equipmentDetailArray[11] !== undefined ? equipmentDetailArray[11].Element_001.value.qualityValue : ""}</b></small>
 											</Card.Footer>
 										</Card>
-									</div>
-								</Col>
-							</Row>
-
-							<Row>
-								<Col style={{textAlign: "center"}}>
-									<div style={{display: "flex"}}>
-										<Image rounded={true} src={engravings.Engravings[0].Icon} style={{width: "34px", border: "1px solid gold"}} />
-										<Image rounded={true} src={engravings.Engravings[1].Icon} style={{width: "34px", border: "1px solid gold"}} />
 									</div>
 								</Col>
 							</Row>
