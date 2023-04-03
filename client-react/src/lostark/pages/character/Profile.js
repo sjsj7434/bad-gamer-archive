@@ -3,7 +3,6 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Card from 'react-bootstrap/Card';
 import Image from 'react-bootstrap/Image';
-import Badge from 'react-bootstrap/Badge';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Tooltip from 'react-bootstrap/Tooltip';
 
@@ -13,7 +12,6 @@ import * as lostarkAPI from '../../js/lostarkAPI.js'
 import * as ImageCDN from '../../js/ImageCDN.js'
 import EmptyResult from '../EmptyResult';
 import testImage from '../../images/logo192.png'
-import CardHeader from 'react-bootstrap/esm/CardHeader.js';
 
 const Profile = () => {
 	// "searchResult"라는 새 상태 변수를 선언합니다
@@ -34,13 +32,13 @@ const Profile = () => {
 			else{
 				const profile = result.profile.data;
 				const equipment = result.equipment.data;
-				const avatars = result.avatars.data;
-				const combatSkills = result.combatSkills.data;
+				// const avatars = result.avatars.data;
+				// const combatSkills = result.combatSkills.data;
 				const engravings = result.engravings.data;
 				const cards = result.cards.data;
-				const gems = result.gems.data;
-				const colosseums = result.colosseums.data;
-				const collectibles = result.collectibles.data;
+				// const gems = result.gems.data;
+				// const colosseums = result.colosseums.data;
+				// const collectibles = result.collectibles.data;
 				//한번 검색에 API 10번 호출???
 
 				const equipmentDetailArray = [];
@@ -105,19 +103,139 @@ const Profile = () => {
 					}
 				}
 
+				const renderCardGroup = (cardList) => {
+					const cardListElement = [];
+
+					for(const card of cardList){
+						cardListElement.push(
+							<Col>
+								<div style={{display: "flex", flexDirection: "column", justifyContent: "flex-end"}}>
+									<div>
+										<div style={{position: "relative", overflow: "hidden"}}>
+											<img src={card.Icon} style={{width: "100%"}} />
+											<img src={"https://cdn-lostark.game.onstove.com/2018/obt/assets/images/pc/profile/img_card_grade.png"} style={{}} />
+										</div>
+
+										<div style={{width: "100%", aspectRatio: 1/3, overflow: "hidden"}}>
+											<div style={{aspectRatio: 3/1, overflow: "hidden", backgroundSize: "cover", backgroundImage: `url('https://cdn-lostark.game.onstove.com/2018/obt/assets/images/pc/profile/img_profile_awake.png')`}}>
+												<img src={"https://cdn-lostark.game.onstove.com/2018/obt/assets/images/pc/profile/img_profile_awake.png"} style={{position: "relative", left: "-40%", top: "-97%", width: "100%"}} />
+											</div>
+										</div>
+									</div>
+								</div>
+							</Col>
+						);
+					}
+
+					return cardListElement;
+				}
+
 				setSearchResult(
 					<>
-						<Container style={{backgroundColor: "#15181d", backgroundImage: `url("${profile.CharacterImage}")`, backgroundRepeat: "no-repeat", backgroundPosition: "top -50px right -90px"}}>
+						<Container style={{backgroundColor: "#15181d", backgroundImage: `url("${true ? testImage : profile.CharacterImage}")`, backgroundRepeat: "no-repeat", backgroundPosition: "top -50px right -90px"}}>
 							<Row>
 								<Col xs={12} md={8}>
-									<div style={{display: "flex", flexDirection: "column", alignItems: "flex-start", justifyContent: "flex-end", textAlign: "left", color: "#ffffcc", height: "250px"}}>
-										<Badge bg="primary" style={{margin: "2px"}}>{characterName} ({profile.CharacterClassName})</Badge>
-										<Badge bg="primary" style={{margin: "2px"}}>{profile.ExpeditionLevel}</Badge>
-										<Badge bg="primary" style={{margin: "2px"}}>{profile.CharacterLevel}</Badge>
-										<Badge bg="primary" style={{margin: "2px"}}>{profile.ItemAvgLevel}</Badge>
-									</div>
+									<Container style={{display: "flex", marginTop: "15px", flexDirection: "row", alignItems: "flex-start", justifyContent: "flex-start", textAlign: "left"}}>
+										<div style={{display: "flex", backgroundColor: "#303030", width: "fit-content", borderRadius: "8px", padding: "2px 5px 2px 5px", marginRight: "5px"}}>
+											<span style={{color: "#ffffcc", fontSize: "12px"}}>
+												{profile.ServerName}
+											</span>
+										</div>
+										<div style={{display: "flex", backgroundColor: "#303030", width: "fit-content", borderRadius: "8px", padding: "2px 5px 2px 5px", marginRight: "5px"}}>
+											<span style={{color: "#ffffcc", fontSize: "12px"}}>
+												{profile.CharacterClassName}
+											</span>
+										</div>
+									</Container>
+
+									<Container style={{marginTop: "15px"}}>
+										<h2 style={{color: "#ffffdd", fontWeight: "600"}}>
+											{characterName}
+										</h2>
+									</Container>
+									
+									<Container style={{display: "flex", flexDirection: "column", alignItems: "flex-start", justifyContent: "flex-end", textAlign: "left", height: "170px"}}>
+										<table>
+											<colgroup>
+												<col width={"100px"}></col>
+												<col width={"170px"}></col>
+											</colgroup>
+											<tbody>
+												<tr>
+													<td style={{color: "#ffffcc"}}>
+														길드
+													</td>
+													<td style={{color: "#ffffff"}}>
+														{profile.GuildName}
+													</td>
+												</tr>
+												<tr>
+													<td style={{color: "#ffffcc"}}>
+														영지
+													</td>
+													<td style={{color: "#ffffff"}}>
+														{profile.TownName} (Lvl. {profile.TownLevel})
+													</td>
+												</tr>
+												<tr>
+													<td style={{color: "#ffffcc"}}>
+														PVP
+													</td>
+													<td style={{color: "#ffffff"}}>
+														{profile.PvpGradeName}
+													</td>
+												</tr>
+											</tbody>
+										</table>
+
+										<table style={{marginTop: "10px"}}>
+											<colgroup>
+												<col width={"100px"}></col>
+												<col width={"85px"}></col>
+												<col width={"85px"}></col>
+											</colgroup>
+											<tbody>
+												<tr>
+													<td>
+														<div style={{display: "flex", backgroundColor: "#303030", width: "fit-content", borderRadius: "8px", padding: "2px 5px 2px 5px"}}>
+															<span style={{color: "#ffffcc", fontSize: "12px"}}>
+																아이템 레벨
+															</span>
+														</div>
+													</td>
+													<td>
+														<div style={{display: "flex", backgroundColor: "#303030", width: "fit-content", borderRadius: "8px", padding: "2px 5px 2px 5px"}}>
+															<span style={{color: "#ffffcc", fontSize: "12px"}}>
+																전투 레벨
+															</span>
+														</div>
+													</td>
+													<td>
+														<div style={{display: "flex", backgroundColor: "#303030", width: "fit-content", borderRadius: "8px", padding: "2px 5px 2px 5px"}}>
+															<span style={{color: "#ffffcc", fontSize: "12px"}}>
+																원정대 레벨
+															</span>
+														</div>
+													</td>
+												</tr>
+												<tr style={{color: "#ffffff"}}>
+													<td>
+														{profile.ItemAvgLevel.replace(".00", "")}
+													</td>
+													<td>
+														{profile.CharacterLevel}
+													</td>
+													<td>
+														{profile.ExpeditionLevel}
+													</td>
+												</tr>
+											</tbody>
+										</table>
+									</Container>
 								</Col>
 							</Row>
+
+							<hr></hr>
 
 							<Row>
 								<Col style={{textAlign: "center"}}>
@@ -313,11 +431,148 @@ const Profile = () => {
 							</Row>
 
 							<Row>
+								<Col style={{textAlign: "left"}}>
+									<table style={{marginTop: "10px"}}>
+										<colgroup>
+											<col width={"80px"}></col>
+											<col width={"80px"}></col>
+											<col width={"80px"}></col>
+										</colgroup>
+										<tbody>
+											<tr>
+												<td>
+													<div style={{display: "flex", backgroundColor: "#303030", width: "fit-content", borderRadius: "8px", padding: "2px 5px 2px 5px"}}>
+														<span style={{color: "#ffffcc", fontSize: "12px"}}>
+															{profile.Stats[0].Type}
+														</span>
+													</div>
+												</td>
+												<td>
+													<div style={{display: "flex", backgroundColor: "#303030", width: "fit-content", borderRadius: "8px", padding: "2px 5px 2px 5px"}}>
+														<span style={{color: "#ffffcc", fontSize: "12px"}}>
+															{profile.Stats[1].Type}
+														</span>
+													</div>
+												</td>
+												<td>
+													<div style={{display: "flex", backgroundColor: "#303030", width: "fit-content", borderRadius: "8px", padding: "2px 5px 2px 5px"}}>
+														<span style={{color: "#ffffcc", fontSize: "12px"}}>
+															{profile.Stats[3].Type}
+														</span>
+													</div>
+												</td>
+											</tr>
+											<tr style={{color: "#ffffff"}}>
+												<td>
+													{profile.Stats[0].Value}
+												</td>
+												<td>
+													{profile.Stats[1].Value}
+												</td>
+												<td>
+													{profile.Stats[3].Value}
+												</td>
+											</tr>
+											<tr>
+												<td>
+													<div style={{display: "flex", backgroundColor: "#303030", width: "fit-content", borderRadius: "8px", padding: "2px 5px 2px 5px"}}>
+														<span style={{color: "#ffffcc", fontSize: "12px"}}>
+															{profile.Stats[2].Type}
+														</span>
+													</div>
+												</td>
+												<td>
+													<div style={{display: "flex", backgroundColor: "#303030", width: "fit-content", borderRadius: "8px", padding: "2px 5px 2px 5px"}}>
+														<span style={{color: "#ffffcc", fontSize: "12px"}}>
+															{profile.Stats[4].Type}
+														</span>
+													</div>
+												</td>
+												<td>
+													<div style={{display: "flex", backgroundColor: "#303030", width: "fit-content", borderRadius: "8px", padding: "2px 5px 2px 5px"}}>
+														<span style={{color: "#ffffcc", fontSize: "12px"}}>
+															{profile.Stats[5].Type}
+														</span>
+													</div>
+												</td>
+											</tr>
+											<tr style={{color: "#ffffff"}}>
+												<td>
+													{profile.Stats[2].Value}
+												</td>
+												<td>
+													{profile.Stats[4].Value}
+												</td>
+												<td>
+													{profile.Stats[5].Value}
+												</td>
+											</tr>
+										</tbody>
+									</table>
+									
+									<table style={{marginTop: "10px"}}>
+										<colgroup>
+											<col width={"60px"}></col>
+											<col width={"60px"}></col>
+											<col width={"60px"}></col>
+											<col width={"60px"}></col>
+										</colgroup>
+										<tbody>
+											<tr>
+												<td>
+													<div style={{display: "flex", backgroundColor: "#303030", width: "fit-content", borderRadius: "8px", padding: "2px 5px 2px 5px"}}>
+														<span style={{color: "#ffffcc", fontSize: "12px"}}>
+															{profile.Tendencies[0].Type}
+														</span>
+													</div>
+												</td>
+												<td>
+													<div style={{display: "flex", backgroundColor: "#303030", width: "fit-content", borderRadius: "8px", padding: "2px 5px 2px 5px"}}>
+														<span style={{color: "#ffffcc", fontSize: "12px"}}>
+															{profile.Tendencies[1].Type}
+														</span>
+													</div>
+												</td>
+												<td>
+													<div style={{display: "flex", backgroundColor: "#303030", width: "fit-content", borderRadius: "8px", padding: "2px 5px 2px 5px"}}>
+														<span style={{color: "#ffffcc", fontSize: "12px"}}>
+															{profile.Tendencies[2].Type}
+														</span>
+													</div>
+												</td>
+												<td>
+													<div style={{display: "flex", backgroundColor: "#303030", width: "fit-content", borderRadius: "8px", padding: "2px 5px 2px 5px"}}>
+														<span style={{color: "#ffffcc", fontSize: "12px"}}>
+															{profile.Tendencies[3].Type}
+														</span>
+													</div>
+												</td>
+											</tr>
+											<tr style={{color: "#ffffff"}}>
+												<td>
+													{profile.Tendencies[0].Point}
+												</td>
+												<td>
+													{profile.Tendencies[1].Point}
+												</td>
+												<td>
+													{profile.Tendencies[2].Point}
+												</td>
+												<td>
+													{profile.Tendencies[3].Point}
+												</td>
+											</tr>
+										</tbody>
+									</table>
+								</Col>
 								<Col style={{textAlign: "center"}}>
-									<div style={{display: "flex", flexDirection: "column"}}>
+									<div style={{display: "flex", marginTop: "15px", flexDirection: "column"}}>
 										{engravingsAreOn}
 									</div>
 								</Col>
+							</Row>
+							<Row xs={6} md={6} className="g-2">
+								{renderCardGroup(cards.Cards)}
 							</Row>
 						</Container>
 					</>
