@@ -14,7 +14,7 @@ imageIconMap.set("절실한 구원", `${imagePathCDN}/Buff/Buff_135.png`);
 imageIconMap.set("진실된 용맹", `${imagePathCDN}/Buff/Buff_220.png`);
 imageIconMap.set("광전사의 비기", `${imagePathCDN}/Buff/Buff_138.png`);
 imageIconMap.set("광기", `${imagePathCDN}/Buff/Buff_173.png`);
-imageIconMap.set("강화무기", `${imagePathCDN}/Buff/Buff_33.png`);
+imageIconMap.set("강화 무기", `${imagePathCDN}/Buff/Buff_33.png`);
 imageIconMap.set("핸드거너", `${imagePathCDN}/Buff/Buff_124.png`);
 imageIconMap.set("두 번째 동료", `${imagePathCDN}/Buff/Buff_77.png`);
 imageIconMap.set("죽음의 습격", `${imagePathCDN}/Buff/Buff_245.png`);

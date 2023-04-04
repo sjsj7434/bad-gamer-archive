@@ -26,33 +26,39 @@ export class AppController {
 		console.log('[Controller-get] character => ' + decodeURIComponent(characterNickName));
 		const profile: object = await this.appService.getCharacterInfoProfile(characterNickName);
 		
-		if (profile["data"] !== null){
-			const equipment: object = await this.appService.getCharacterInfoEquipment(characterNickName);
-			const avatars: object = await this.appService.getCharacterInfoAvatars(characterNickName);
-			const combatSkills: object = await this.appService.getCharacterInfoCombatSkills(characterNickName);
-			const engravings: object = await this.appService.getCharacterInfoEngravings(characterNickName);
-			const cards: object = await this.appService.getCharacterInfoCards(characterNickName);
-			const gems: object = await this.appService.getCharacterInfoGems(characterNickName);
-			const colosseums: object = await this.appService.getCharacterInfoColosseums(characterNickName);
-			const collectibles: object = await this.appService.getCharacterInfoCollectibles(characterNickName);
+		return profile;
+	}
 
-			return {
-				data: {
-					profile: profile,
-					equipment: equipment,
-					avatars: avatars,
-					combatSkills: combatSkills,
-					engravings: engravings,
-					cards: cards,
-					gems: gems,
-					colosseums: colosseums,
-					collectibles: collectibles
-				}
-			};
-		}
-		else{
-			return profile;
-		}
+	@Get('equipment/:characterNickName')
+	async getEquipmentInfo(@Param('characterNickName') characterNickName: string): Promise<object> {
+		console.log('[Controller-get] Equipment => ' + decodeURIComponent(characterNickName));
+		const equipment: object = await this.appService.getCharacterInfoEquipment(characterNickName);
+
+		return equipment;
+	}
+
+	@Get('engravings/:characterNickName')
+	async getEngravingsInfo(@Param('characterNickName') characterNickName: string): Promise<object> {
+		console.log('[Controller-get] Engravings => ' + decodeURIComponent(characterNickName));
+		const engravings: object = await this.appService.getCharacterInfoEngravings(characterNickName);
+
+		return engravings;
+	}
+
+	@Get('cards/:characterNickName')
+	async getCardsInfo(@Param('characterNickName') characterNickName: string): Promise<object> {
+		console.log('[Controller-get] Cards => ' + decodeURIComponent(characterNickName));
+		const cards: object = await this.appService.getCharacterInfoCards(characterNickName);
+
+		return cards;
+	}
+
+	@Get('gems/:characterNickName')
+	async getGemsInfo(@Param('characterNickName') characterNickName: string): Promise<object> {
+		console.log('[Controller-get] Gems => ' + decodeURIComponent(characterNickName));
+		const gems: object = await this.appService.getCharacterInfoGems(characterNickName);
+
+		return gems;
 	}
 
 	@Get('characters/:characterNickName')

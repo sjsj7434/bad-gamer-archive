@@ -72,6 +72,54 @@ export const getCharacterInfo = async (characterNickName) => {
 }
 
 /**
+ * 입력한 캐릭터 이름의 장비 정보를 가져온다
+ * @param {string} characterNickName 캐릭터 이름
+ * @returns {object} 가져온 캐릭터 정보 JSON
+ */
+export const getEquipmentInfo = async (characterNickName) => {
+	const result = await fatchTemplate('GET', `${process.env.REACT_APP_SERVER}/equipment/${encodeURIComponent(characterNickName)}`);
+	console.log('getEquipmentInfo', result);
+
+	return result;
+}
+
+/**
+ * 입력한 캐릭터 이름의 각인 정보를 가져온다
+ * @param {string} characterNickName 캐릭터 이름
+ * @returns {object} 가져온 캐릭터 정보 JSON
+ */
+export const getEngravingsInfo = async (characterNickName) => {
+	const result = await fatchTemplate('GET', `${process.env.REACT_APP_SERVER}/engravings/${encodeURIComponent(characterNickName)}`);
+	console.log('getEngravingsInfo', result);
+
+	return result;
+}
+
+/**
+ * 입력한 캐릭터 이름의 카드 정보를 가져온다
+ * @param {string} characterNickName 캐릭터 이름
+ * @returns {object} 가져온 캐릭터 정보 JSON
+ */
+export const getCardsInfo = async (characterNickName) => {
+	const result = await fatchTemplate('GET', `${process.env.REACT_APP_SERVER}/cards/${encodeURIComponent(characterNickName)}`);
+	console.log('getCardsInfo', result);
+
+	return result;
+}
+
+/**
+ * 입력한 캐릭터 이름의 보석 정보를 가져온다
+ * @param {string} characterNickName 캐릭터 이름
+ * @returns {object} 가져온 캐릭터 정보 JSON
+ */
+export const getGemsInfo = async (characterNickName) => {
+	const result = await fatchTemplate('GET', `${process.env.REACT_APP_SERVER}/gems/${encodeURIComponent(characterNickName)}`);
+	console.log('getGemsInfo', result);
+
+	return result;
+}
+
+/**
  * 입력한 캐릭터 이름이 속한 원정대의 모든 캐릭터를 가져온다
  * @param {string} characterNickName 캐릭터 이름
  * @returns {object} 가져온 캐릭터들 정보 JSON

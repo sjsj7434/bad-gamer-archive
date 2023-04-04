@@ -5,7 +5,6 @@
 import { useNavigate } from "react-router-dom";
 import { useState } from 'react';
 import MainTable from './MainTable';
-import MainAccordion from './MainAccordion';
 import EmptyResult from './EmptyResult';
 import * as lostarkAPI from '../js/lostarkAPI.js'
 
@@ -28,23 +27,9 @@ const Main = () => {
 		}
 	}
 
-	const getCharacterList = async () => {
-		const characterNickName = document.querySelector("#characterNickName").value;
-		const result = await lostarkAPI.getCharacterList(characterNickName);
-		
-		setSearchResult(<>Loading</>);
-
-		if(result === null){
-			setSearchResult(<EmptyResult />);
-		}
-		else{
-			setSearchResult(<MainAccordion characters={result} />);
-		}
-	}
-
 	const getCharacterInfo = async () => {
 		const characterNickName = document.querySelector("#characterNickName").value;
-		navigate('profile/' + characterNickName);
+		navigate('character/' + characterNickName);
 	}
 
 	return(
@@ -57,7 +42,6 @@ const Main = () => {
 
 			<br/><br/>
 			<input type='text' id='characterNickName' defaultValue={'노돌리'} />{' '}
-			<button onClick={() => { getCharacterList() }}>Call External API(Characters)</button>{' '}
 			<button onClick={() => { getCharacterInfo() }}>Call External API(Character)</button>
 
 			<br/><br/>

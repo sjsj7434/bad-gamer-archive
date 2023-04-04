@@ -4,7 +4,7 @@ import Main from './Main';
 import CaseRegistration from './CaseRegistration';
 import TopMenu from './TopMenu';
 import Wrapper from './Wrapper';
-import Profile from './character/Profile';
+import CharacterInfo from './character/CharacterInfo';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 // index.js에서 StrictMode 존재하면 두번 랜더링, 개발 모드에서만 적용됩니다. 생명주기 메서드들은 프로덕션 모드에서 이중으로 호출되지 않습니다.
@@ -19,8 +19,8 @@ const App = () => {
 					<Wrapper innerNode={<><TopMenu /><Main /></>} />
 				}></Route>
 
-				<Route path="/profile/:characterName" element={
-					<Wrapper innerNode={<><TopMenu /><Profile /></>} />
+				<Route path="/character/:characterName" element={
+					<Wrapper innerNode={<><TopMenu /><CharacterInfo /></>} />
 				}></Route>
 
 				<Route path="/registration" element={
