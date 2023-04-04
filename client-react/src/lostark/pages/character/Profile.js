@@ -66,18 +66,29 @@ const Profile = () => {
 					);
 				}
 				
-				const renderTooltip = (props) => (
-					<Tooltip id="button-tooltip" {...props}>
-						<small>
-							<font size='2'>
-								<font color='#ffffff'>
-									마나 소모량이 <font color='#99FF99'>50%</font> 감소하고,
-									마나를 소모하는 스킬의 피해가 <font color='#99FF99'>12%</font> 증가한다.
-								</font>
-							</font>
-						</small>
-					</Tooltip>
-				);
+				const getGearGradeColor = (gearGrade) => {
+					let backColor = "";
+
+					switch (gearGrade) {
+						case "에스더":
+							backColor = "#75ffec";
+							break;
+						case "고대":
+							backColor = "#d3d3d3";
+							break;
+						case "유물":
+							backColor = "#ffa638";
+							break;
+						case "전설":
+							backColor = "#ffd26d";
+							break;
+						default:
+							backColor = "white";
+							break;
+					}
+
+					return backColor;
+				}
 
 				const getBackgroundColor = (score) => {
 					if (0 <= score && score <= 9){
@@ -111,14 +122,15 @@ const Profile = () => {
 							<Col>
 								<div style={{display: "flex", flexDirection: "column", justifyContent: "flex-end"}}>
 									<div>
-										<div style={{position: "relative", overflow: "hidden"}}>
-											<img src={card.Icon} style={{width: "100%"}} />
-											<img src={"https://cdn-lostark.game.onstove.com/2018/obt/assets/images/pc/profile/img_card_grade.png"} style={{}} />
+										<div>
+											<div style={{aspectRatio: 24 / 35, overflow: "hidden", backgroundSize: "cover", backgroundImage: `url('${card.Icon}')`}}>
+												<img src={'https://cdn-lostark.game.onstove.com/2018/obt/assets/images/pc/profile/img_card_grade.png'}  style={{position: "relative", left: `-${cardGradeLeft(card.Grade)}%`, top: "-2%", width: "656%"}} />
+											</div>
 										</div>
 
-										<div style={{width: "100%", aspectRatio: 1/3, overflow: "hidden"}}>
-											<div style={{aspectRatio: 3/1, overflow: "hidden", backgroundSize: "cover", backgroundImage: `url('https://cdn-lostark.game.onstove.com/2018/obt/assets/images/pc/profile/img_profile_awake.png')`}}>
-												<img src={"https://cdn-lostark.game.onstove.com/2018/obt/assets/images/pc/profile/img_profile_awake.png"} style={{position: "relative", left: "-40%", top: "-97%", width: "100%"}} />
+										<div>
+											<div style={{aspectRatio: 3 / 1, overflow: "hidden", backgroundSize: "cover", backgroundImage: `url('https://cdn-lostark.game.onstove.com/2018/obt/assets/images/pc/profile/img_profile_awake.png')`}}>
+												<img src={"https://cdn-lostark.game.onstove.com/2018/obt/assets/images/pc/profile/img_profile_awake.png"} style={{position: "relative", left: `-${cardAwakeCountLeft(card.AwakeCount)}%`, top: "-97%", width: "100%"}} />
 											</div>
 										</div>
 									</div>
@@ -130,9 +142,65 @@ const Profile = () => {
 					return cardListElement;
 				}
 
+				const cardAwakeCountLeft = (AwakeCount) => {
+					let leftValue = 20 * AwakeCount;
+					if(AwakeCount === 0){
+						leftValue = 100;
+					}
+					else if(AwakeCount === 5){
+						leftValue = 0;
+					}
+
+					return leftValue;
+				}
+
+				const cardGradeLeft = (grade) => {
+					let leftValue = 0;
+
+					switch (grade) {
+						case "일반":
+							leftValue = 0;
+							break;
+						case "희귀":
+							leftValue = 111.5;
+							break;
+						case "고급":
+							leftValue = 222.5;
+							break;
+						case "영웅":
+							leftValue = 333.5;
+							break;
+						case "전설":
+							leftValue = 444.5;
+							break;
+						default:
+							break;
+					}
+
+					return leftValue;
+				}
+
+				const renderCardGroupEffect = (cardEffects) => {
+					const cardEffectElement = [];
+
+					for(const effect of cardEffects){
+						cardEffectElement.push(
+							<li>
+								<div>
+									<span style={{}}>{effect.Name}</span>
+									<br/>
+									<span style={{}}>{effect.Description}</span>
+								</div>
+							</li>
+						);
+					}
+
+					return cardEffectElement;
+				}
+
 				setSearchResult(
 					<>
-						<Container style={{backgroundColor: "#15181d", backgroundImage: `url("${true ? testImage : profile.CharacterImage}")`, backgroundRepeat: "no-repeat", backgroundPosition: "top -50px right -90px"}}>
+						<Container style={{backgroundColor: "#15181d", width: "100%", backgroundImage: `url("${true ? testImage : profile.CharacterImage}")`, backgroundRepeat: "no-repeat", backgroundPosition: "top -50px right -90px"}}>
 							<Row>
 								<Col xs={12} md={8}>
 									<Container style={{display: "flex", marginTop: "15px", flexDirection: "row", alignItems: "flex-start", justifyContent: "flex-start", textAlign: "left"}}>
@@ -235,100 +303,62 @@ const Profile = () => {
 								</Col>
 							</Row>
 
-							<hr></hr>
-
 							<Row>
 								<Col style={{textAlign: "center"}}>
 									<div style={{display: "flex"}}>
-										<OverlayTrigger
-											placement="top"
-											delay={{ show: 10, hide: 10 }}
-											overlay={renderTooltip}
-										>
-											<Card style={{width: "48px", margin: "5px"}}>
-												<Card.Img variant="top" src={equipment[1].Icon} style={{backgroundColor: "#ffc062"}}/>
-												<Card.Footer style={{padding: "0px", backgroundColor: getBackgroundColor(equipmentDetailArray[1].Element_001.value.qualityValue)}}>
-													<small style={{color: "#ff5d5d"}}><b>{equipment[1].Name.split(" ")[0]}</b></small>
-													<br/>
-													<small style={{color: "#ffffff"}}><b>{equipmentDetailArray[1].Element_001.value.qualityValue}</b></small>
-												</Card.Footer>
-											</Card>
-										</OverlayTrigger>
+										<Card style={{width: "48px", margin: "5px"}}>
+											<Card.Img variant="top" src={equipment[1].Icon} style={{backgroundColor: `${getGearGradeColor(equipment[1].Grade)}`}}/>
+											<Card.Footer style={{padding: "0px", backgroundColor: getBackgroundColor(equipmentDetailArray[1].Element_001.value.qualityValue)}}>
+												<small style={{color: "#ff5d5d"}}><b>{equipment[1].Name.split(" ")[0]}</b></small>
+												<br/>
+												<small style={{color: "#ffffff"}}><b>{equipmentDetailArray[1].Element_001.value.qualityValue}</b></small>
+											</Card.Footer>
+										</Card>
 										
-										<OverlayTrigger
-											placement="top"
-											delay={{ show: 10, hide: 10 }}
-											overlay={renderTooltip}
-										>
-											<Card style={{width: "48px", margin: "5px"}}>
-												<Card.Img variant="top" src={equipment[5].Icon} style={{backgroundColor: "#ffc062"}}/>
-												<Card.Footer style={{padding: "0px", backgroundColor: getBackgroundColor(equipmentDetailArray[5].Element_001.value.qualityValue)}}>
-													<small style={{color: "#ff5d5d"}}><b>{equipment[5].Name.split(" ")[0]}</b></small>
-													<br/>
-													<small style={{color: "#ffffff"}}><b>{equipmentDetailArray[5].Element_001.value.qualityValue}</b></small>
-												</Card.Footer>
-											</Card>
-										</OverlayTrigger>
+										<Card style={{width: "48px", margin: "5px"}}>
+											<Card.Img variant="top" src={equipment[5].Icon} style={{backgroundColor: `${getGearGradeColor(equipment[5].Grade)}`}}/>
+											<Card.Footer style={{padding: "0px", backgroundColor: getBackgroundColor(equipmentDetailArray[5].Element_001.value.qualityValue)}}>
+												<small style={{color: "#ff5d5d"}}><b>{equipment[5].Name.split(" ")[0]}</b></small>
+												<br/>
+												<small style={{color: "#ffffff"}}><b>{equipmentDetailArray[5].Element_001.value.qualityValue}</b></small>
+											</Card.Footer>
+										</Card>
 										
-										<OverlayTrigger
-											placement="top"
-											delay={{ show: 10, hide: 10 }}
-											overlay={renderTooltip}
-										>
-											<Card style={{width: "48px", margin: "5px"}}>
-												<Card.Img variant="top" src={equipment[2].Icon} style={{backgroundColor: "#ffc062"}}/>
-												<Card.Footer style={{padding: "0px", backgroundColor: getBackgroundColor(equipmentDetailArray[2].Element_001.value.qualityValue)}}>
-													<small style={{color: "#ff5d5d"}}><b>{equipment[2].Name.split(" ")[0]}</b></small>
-													<br/>
-													<small style={{color: "#ffffff"}}><b>{equipmentDetailArray[2].Element_001.value.qualityValue}</b></small>
-												</Card.Footer>
-											</Card>
-										</OverlayTrigger>
+										<Card style={{width: "48px", margin: "5px"}}>
+											<Card.Img variant="top" src={equipment[2].Icon} style={{backgroundColor: `${getGearGradeColor(equipment[2].Grade)}`}}/>
+											<Card.Footer style={{padding: "0px", backgroundColor: getBackgroundColor(equipmentDetailArray[2].Element_001.value.qualityValue)}}>
+												<small style={{color: "#ff5d5d"}}><b>{equipment[2].Name.split(" ")[0]}</b></small>
+												<br/>
+												<small style={{color: "#ffffff"}}><b>{equipmentDetailArray[2].Element_001.value.qualityValue}</b></small>
+											</Card.Footer>
+										</Card>
 										
-										<OverlayTrigger
-											placement="top"
-											delay={{ show: 10, hide: 10 }}
-											overlay={renderTooltip}
-										>
-											<Card style={{width: "48px", margin: "5px"}}>
-												<Card.Img variant="top" src={equipment[3].Icon} style={{backgroundColor: "#ffc062"}}/>
-												<Card.Footer style={{padding: "0px", backgroundColor: getBackgroundColor(equipmentDetailArray[3].Element_001.value.qualityValue)}}>
-													<small style={{color: "#ff5d5d"}}><b>{equipment[3].Name.split(" ")[0]}</b></small>
-													<br/>
-													<small style={{color: "#ffffff"}}><b>{equipmentDetailArray[3].Element_001.value.qualityValue}</b></small>
-												</Card.Footer>
-											</Card>
-										</OverlayTrigger>
+										<Card style={{width: "48px", margin: "5px"}}>
+											<Card.Img variant="top" src={equipment[3].Icon} style={{backgroundColor: `${getGearGradeColor(equipment[3].Grade)}`}}/>
+											<Card.Footer style={{padding: "0px", backgroundColor: getBackgroundColor(equipmentDetailArray[3].Element_001.value.qualityValue)}}>
+												<small style={{color: "#ff5d5d"}}><b>{equipment[3].Name.split(" ")[0]}</b></small>
+												<br/>
+												<small style={{color: "#ffffff"}}><b>{equipmentDetailArray[3].Element_001.value.qualityValue}</b></small>
+											</Card.Footer>
+										</Card>
 										
-										<OverlayTrigger
-											placement="top"
-											delay={{ show: 10, hide: 10 }}
-											overlay={renderTooltip}
-										>
-											<Card style={{width: "48px", margin: "5px"}}>
-												<Card.Img variant="top" src={equipment[4].Icon} style={{backgroundColor: "#ffc062"}}/>
-												<Card.Footer style={{padding: "0px", backgroundColor: getBackgroundColor(equipmentDetailArray[4].Element_001.value.qualityValue)}}>
-													<small style={{color: "#ff5d5d"}}><b>{equipment[4].Name.split(" ")[0]}</b></small>
-													<br/>
-													<small style={{color: "#ffffff"}}><b>{equipmentDetailArray[4].Element_001.value.qualityValue}</b></small>
-												</Card.Footer>
-											</Card>
-										</OverlayTrigger>
+										<Card style={{width: "48px", margin: "5px"}}>
+											<Card.Img variant="top" src={equipment[4].Icon} style={{backgroundColor: `${getGearGradeColor(equipment[4].Grade)}`}}/>
+											<Card.Footer style={{padding: "0px", backgroundColor: getBackgroundColor(equipmentDetailArray[4].Element_001.value.qualityValue)}}>
+												<small style={{color: "#ff5d5d"}}><b>{equipment[4].Name.split(" ")[0]}</b></small>
+												<br/>
+												<small style={{color: "#ffffff"}}><b>{equipmentDetailArray[4].Element_001.value.qualityValue}</b></small>
+											</Card.Footer>
+										</Card>
 										
-										<OverlayTrigger
-											placement="top"
-											delay={{ show: 10, hide: 10 }}
-											overlay={renderTooltip}
-										>
-											<Card style={{width: "48px", margin: "5px"}}>
-												<Card.Img variant="top" src={equipment[0].Icon} style={{backgroundColor: "#ffc062"}}/>
-												<Card.Footer style={{padding: "0px", backgroundColor: getBackgroundColor(equipmentDetailArray[0].Element_001.value.qualityValue)}}>
-													<small style={{color: "#ff5d5d"}}><b>{equipment[0].Name.split(" ")[0]}</b></small>
-													<br/>
-													<small style={{color: "#ffffff"}}><b>{equipmentDetailArray[0].Element_001.value.qualityValue}</b></small>
-												</Card.Footer>
-											</Card>
-										</OverlayTrigger>
+										<Card style={{width: "48px", margin: "5px"}}>
+											<Card.Img variant="top" src={equipment[0].Icon} style={{backgroundColor: `${getGearGradeColor(equipment[0].Grade)}`}}/>
+											<Card.Footer style={{padding: "0px", backgroundColor: getBackgroundColor(equipmentDetailArray[0].Element_001.value.qualityValue)}}>
+												<small style={{color: "#ff5d5d"}}><b>{equipment[0].Name.split(" ")[0]}</b></small>
+												<br/>
+												<small style={{color: "#ffffff"}}><b>{equipmentDetailArray[0].Element_001.value.qualityValue}</b></small>
+											</Card.Footer>
+										</Card>
 									</div>
 								</Col>
 							</Row>
@@ -336,96 +366,54 @@ const Profile = () => {
 							<Row>
 								<Col style={{textAlign: "center"}}>
 									<div style={{display: "flex"}}>
-										<OverlayTrigger
-											placement="top"
-											delay={{ show: 10, hide: 10 }}
-											overlay={renderTooltip}
-										>
-											<Card style={{width: "48px", margin: "5px"}}>
-												<Card.Img variant="top" src={equipment[6].Icon} style={{backgroundColor: "#ffc062"}}/>
-												<Card.Footer style={{padding: "0px", backgroundColor: getBackgroundColor(equipmentDetailArray[6].Element_001.value.qualityValue)}}>
-													<small style={{color: "#ffffff"}}><b>{equipmentDetailArray[6].Element_001.value.qualityValue}</b></small>
-												</Card.Footer>
-											</Card>
-										</OverlayTrigger>
+										<Card style={{width: "48px", margin: "5px"}}>
+											<Card.Img variant="top" src={equipment[6].Icon} style={{backgroundColor: `${getGearGradeColor(equipment[6].Grade)}`}}/>
+											<Card.Footer style={{padding: "0px", backgroundColor: getBackgroundColor(equipmentDetailArray[6].Element_001.value.qualityValue)}}>
+												<small style={{color: "#ffffff"}}><b>{equipmentDetailArray[6].Element_001.value.qualityValue}</b></small>
+											</Card.Footer>
+										</Card>
 										
-										<OverlayTrigger
-											placement="top"
-											delay={{ show: 10, hide: 10 }}
-											overlay={renderTooltip}
-										>
-											<Card style={{width: "48px", margin: "5px"}}>
-												<Card.Img variant="top" src={equipment[7].Icon} style={{backgroundColor: "#ffc062"}}/>
-												<Card.Footer style={{padding: "0px", backgroundColor: getBackgroundColor(equipmentDetailArray[7].Element_001.value.qualityValue)}}>
-													<small style={{color: "#ffffff"}}><b>{equipmentDetailArray[7].Element_001.value.qualityValue}</b></small>
-												</Card.Footer>
-											</Card>
-										</OverlayTrigger>
+										<Card style={{width: "48px", margin: "5px"}}>
+											<Card.Img variant="top" src={equipment[7].Icon} style={{backgroundColor: `${getGearGradeColor(equipment[7].Grade)}`}}/>
+											<Card.Footer style={{padding: "0px", backgroundColor: getBackgroundColor(equipmentDetailArray[7].Element_001.value.qualityValue)}}>
+												<small style={{color: "#ffffff"}}><b>{equipmentDetailArray[7].Element_001.value.qualityValue}</b></small>
+											</Card.Footer>
+										</Card>
 										
-										<OverlayTrigger
-											placement="top"
-											delay={{ show: 10, hide: 10 }}
-											overlay={renderTooltip}
-										>
-											<Card style={{width: "48px", margin: "5px"}}>
-												<Card.Img variant="top" src={equipment[8].Icon} style={{backgroundColor: "#ffc062"}}/>
-												<Card.Footer style={{padding: "0px", backgroundColor: getBackgroundColor(equipmentDetailArray[8].Element_001.value.qualityValue)}}>
-													<small style={{color: "#ffffff"}}><b>{equipmentDetailArray[8].Element_001.value.qualityValue}</b></small>
-												</Card.Footer>
-											</Card>
-										</OverlayTrigger>
+										<Card style={{width: "48px", margin: "5px"}}>
+											<Card.Img variant="top" src={equipment[8].Icon} style={{backgroundColor: `${getGearGradeColor(equipment[8].Grade)}`}}/>
+											<Card.Footer style={{padding: "0px", backgroundColor: getBackgroundColor(equipmentDetailArray[8].Element_001.value.qualityValue)}}>
+												<small style={{color: "#ffffff"}}><b>{equipmentDetailArray[8].Element_001.value.qualityValue}</b></small>
+											</Card.Footer>
+										</Card>
 										
-										<OverlayTrigger
-											placement="top"
-											delay={{ show: 10, hide: 10 }}
-											overlay={renderTooltip}
-										>
-											<Card style={{width: "48px", margin: "5px"}}>
-												<Card.Img variant="top" src={equipment[9].Icon} style={{backgroundColor: "#ffc062"}}/>
-												<Card.Footer style={{padding: "0px", backgroundColor: getBackgroundColor(equipmentDetailArray[9].Element_001.value.qualityValue)}}>
-													<small style={{color: "#ffffff"}}><b>{equipmentDetailArray[9].Element_001.value.qualityValue}</b></small>
-												</Card.Footer>
-											</Card>
-										</OverlayTrigger>
+										<Card style={{width: "48px", margin: "5px"}}>
+											<Card.Img variant="top" src={equipment[9].Icon} style={{backgroundColor: `${getGearGradeColor(equipment[9].Grade)}`}}/>
+											<Card.Footer style={{padding: "0px", backgroundColor: getBackgroundColor(equipmentDetailArray[9].Element_001.value.qualityValue)}}>
+												<small style={{color: "#ffffff"}}><b>{equipmentDetailArray[9].Element_001.value.qualityValue}</b></small>
+											</Card.Footer>
+										</Card>
 										
-										<OverlayTrigger
-											placement="top"
-											delay={{ show: 10, hide: 10 }}
-											overlay={renderTooltip}
-										>
-											<Card style={{width: "48px", margin: "5px"}}>
-												<Card.Img variant="top" src={equipment[10].Icon} style={{backgroundColor: "#ffc062"}}/>
-												<Card.Footer style={{padding: "0px", backgroundColor: getBackgroundColor(equipmentDetailArray[10].Element_001.value.qualityValue)}}>
-													<small style={{color: "#ffffff"}}><b>{equipmentDetailArray[10].Element_001.value.qualityValue}</b></small>
-												</Card.Footer>
-											</Card>
-										</OverlayTrigger>
+										<Card style={{width: "48px", margin: "5px"}}>
+											<Card.Img variant="top" src={equipment[10].Icon} style={{backgroundColor: `${getGearGradeColor(equipment[10].Grade)}`}}/>
+											<Card.Footer style={{padding: "0px", backgroundColor: getBackgroundColor(equipmentDetailArray[10].Element_001.value.qualityValue)}}>
+												<small style={{color: "#ffffff"}}><b>{equipmentDetailArray[10].Element_001.value.qualityValue}</b></small>
+											</Card.Footer>
+										</Card>
 										
-										<OverlayTrigger
-											placement="top"
-											delay={{ show: 10, hide: 10 }}
-											overlay={renderTooltip}
-										>
-											<Card style={{width: "48px", margin: "5px"}}>
-												<Card.Img variant="top" src={equipment[12] !== undefined ? equipment[12].Icon : ""} style={{backgroundColor: "#ffc062"}}/>
-												<Card.Footer style={{padding: "0px", backgroundColor: getBackgroundColor(equipmentDetailArray[12].Element_001.value.qualityValue)}}>
-													<small style={{color: "#ffffff"}}><b>{equipmentDetailArray[12] !== undefined ? equipmentDetailArray[12].Element_001.value.qualityValue : ""}</b></small>
-												</Card.Footer>
-											</Card>
-										</OverlayTrigger>
+										<Card style={{width: "48px", margin: "5px"}}>
+											<Card.Img variant="top" src={equipment[12] !== undefined ? equipment[12].Icon : ""} style={{backgroundColor: `${getGearGradeColor(equipment[12].Grade)}`}}/>
+											<Card.Footer style={{padding: "0px", backgroundColor: getBackgroundColor(equipmentDetailArray[12].Element_001.value.qualityValue)}}>
+												<small style={{color: "#ffffff"}}><b>{equipmentDetailArray[12] !== undefined ? equipmentDetailArray[12].Element_001.value.qualityValue : ""}</b></small>
+											</Card.Footer>
+										</Card>
 										
-										<OverlayTrigger
-											placement="top"
-											delay={{ show: 10, hide: 10 }}
-											overlay={renderTooltip}
-										>
-											<Card style={{width: "48px", margin: "5px"}}>
-												<Card.Img variant="top" src={equipment[11] !== undefined ? equipment[11].Icon : ""} style={{backgroundColor: "#ffc062"}}/>
-												<Card.Footer style={{padding: "0px", backgroundColor: getBackgroundColor(equipmentDetailArray[11].Element_001.value.qualityValue)}}>
-													<small style={{color: "#ffffff"}}><b>{equipmentDetailArray[11] !== undefined ? equipmentDetailArray[11].Element_001.value.qualityValue : ""}</b></small>
-												</Card.Footer>
-											</Card>
-										</OverlayTrigger>
+										<Card style={{width: "48px", margin: "5px"}}>
+											<Card.Img variant="top" src={equipment[11] !== undefined ? equipment[11].Icon : ""} style={{backgroundColor: `${getGearGradeColor(equipment[11].Grade)}`}}/>
+											<Card.Footer style={{padding: "0px", backgroundColor: getBackgroundColor(equipmentDetailArray[11].Element_001.value.qualityValue)}}>
+												<small style={{color: "#ffffff"}}><b>{equipmentDetailArray[11] !== undefined ? equipmentDetailArray[11].Element_001.value.qualityValue : ""}</b></small>
+											</Card.Footer>
+										</Card>
 									</div>
 								</Col>
 							</Row>
@@ -571,8 +559,15 @@ const Profile = () => {
 									</div>
 								</Col>
 							</Row>
+							
 							<Row xs={6} md={6} className="g-2">
 								{renderCardGroup(cards.Cards)}
+							</Row>
+
+							<Row>
+								<ul style={{color: "#ffffcc"}}>
+									{renderCardGroupEffect(cards.Effects[0].Items)}
+								</ul>
 							</Row>
 						</Container>
 					</>
