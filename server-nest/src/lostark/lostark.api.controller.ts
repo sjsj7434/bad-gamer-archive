@@ -1,17 +1,17 @@
 import { Param, Controller, Get, Post, UploadedFile, UseInterceptors } from '@nestjs/common';
-import { AppService } from './app.service';
+import { LostarkAPIService } from './lostark.api.service';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { extname } from 'path';
 import { ConfigService } from '@nestjs/config';
 
 @Controller()
-export class AppController {
-	constructor(private readonly appService: AppService, private configService: ConfigService) { }
+export class LostarkAPIController {
+	constructor(private readonly lostarkAPIService: LostarkAPIService, private configService: ConfigService) { }
 
 	@Get('test/:characterNickName')
 	async getTestJson(@Param('characterNickName') characterNickName: string): Promise<object> {
 		console.log('[Controller-get] test => ' + decodeURIComponent(characterNickName));
-		const result = await this.appService.getTestJson(characterNickName);
+		const result = await this.lostarkAPIService.getTestJson(characterNickName);
 		return result;
 	}
 
@@ -27,14 +27,14 @@ export class AppController {
 		console.log(`${dbConfig.port}, ${dbUser}, ${dbHost}`);
 
 		console.log('[Controller-get] guilds => ' + decodeURIComponent(serverName));
-		const result = await this.appService.getGuildList(serverName);
+		const result = await this.lostarkAPIService.getGuildList(serverName);
 		return result;
 	}
 
 	@Get('character/:characterNickName')
 	async getCharacterInfo(@Param('characterNickName') characterNickName: string): Promise<object> {
 		console.log('[Controller-get] character => ' + decodeURIComponent(characterNickName));
-		const profile: object = await this.appService.getCharacterInfoProfile(characterNickName);
+		const profile: object = await this.lostarkAPIService.getCharacterInfoProfile(characterNickName);
 		
 		return profile;
 	}
@@ -42,7 +42,7 @@ export class AppController {
 	@Get('equipment/:characterNickName')
 	async getEquipmentInfo(@Param('characterNickName') characterNickName: string): Promise<object> {
 		console.log('[Controller-get] Equipment => ' + decodeURIComponent(characterNickName));
-		const equipment: object = await this.appService.getCharacterInfoEquipment(characterNickName);
+		const equipment: object = await this.lostarkAPIService.getCharacterInfoEquipment(characterNickName);
 
 		return equipment;
 	}
@@ -50,7 +50,7 @@ export class AppController {
 	@Get('engravings/:characterNickName')
 	async getEngravingsInfo(@Param('characterNickName') characterNickName: string): Promise<object> {
 		console.log('[Controller-get] Engravings => ' + decodeURIComponent(characterNickName));
-		const engravings: object = await this.appService.getCharacterInfoEngravings(characterNickName);
+		const engravings: object = await this.lostarkAPIService.getCharacterInfoEngravings(characterNickName);
 
 		return engravings;
 	}
@@ -58,7 +58,7 @@ export class AppController {
 	@Get('cards/:characterNickName')
 	async getCardsInfo(@Param('characterNickName') characterNickName: string): Promise<object> {
 		console.log('[Controller-get] Cards => ' + decodeURIComponent(characterNickName));
-		const cards: object = await this.appService.getCharacterInfoCards(characterNickName);
+		const cards: object = await this.lostarkAPIService.getCharacterInfoCards(characterNickName);
 
 		return cards;
 	}
@@ -66,7 +66,7 @@ export class AppController {
 	@Get('gems/:characterNickName')
 	async getGemsInfo(@Param('characterNickName') characterNickName: string): Promise<object> {
 		console.log('[Controller-get] Gems => ' + decodeURIComponent(characterNickName));
-		const gems: object = await this.appService.getCharacterInfoGems(characterNickName);
+		const gems: object = await this.lostarkAPIService.getCharacterInfoGems(characterNickName);
 
 		return gems;
 	}
@@ -74,7 +74,7 @@ export class AppController {
 	@Get('characters/:characterNickName')
 	async getCharacterList(@Param('characterNickName') characterNickName: string): Promise<object> {
 		console.log('[Controller-get] characters => ' + decodeURIComponent(characterNickName));
-		const result = await this.appService.getCharacterList(characterNickName);
+		const result = await this.lostarkAPIService.getCharacterList(characterNickName);
 		return result;
 	}
 

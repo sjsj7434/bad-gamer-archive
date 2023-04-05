@@ -6,7 +6,7 @@ import { catchError, firstValueFrom } from 'rxjs';
 const lostarkAPIToken = "write_your_lostark_api_key_here"; //keep it secret, do not upload on Github even private repo!
 
 @Injectable()
-export class AppService {
+export class LostarkAPIService {
 	constructor(private readonly httpService: HttpService) { }
 
 	getLostArkAPI = async (destination: string) => {
