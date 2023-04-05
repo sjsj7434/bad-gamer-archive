@@ -2,10 +2,11 @@ import { Param, Controller, Get, Post, UploadedFile, UseInterceptors } from '@ne
 import { AppService } from './app.service';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { extname } from 'path';
+import { ConfigService } from '@nestjs/config';
 
 @Controller()
 export class AppController {
-	constructor(private readonly appService: AppService) { }
+	constructor(private readonly appService: AppService, private configService: ConfigService) { }
 
 	@Get('test/:characterNickName')
 	async getTestJson(@Param('characterNickName') characterNickName: string): Promise<object> {
@@ -16,6 +17,15 @@ export class AppController {
 
 	@Get('guilds/:serverName')
 	async getGuildList(@Param('serverName') serverName: string): Promise<object> {
+		interface DatabaseConfig {
+			host: string;
+			port: number;
+		}
+		const dbConfig = this.configService.get<DatabaseConfig>('database');// get an environment variable
+		const dbUser = this.configService.get<string>('DATABASE_USER');// get a custom configuration value
+		const dbHost = this.configService.get<string>('database.host');
+		console.log(`${dbConfig.port}, ${dbUser}, ${dbHost}`);
+
 		console.log('[Controller-get] guilds => ' + decodeURIComponent(serverName));
 		const result = await this.appService.getGuildList(serverName);
 		return result;
