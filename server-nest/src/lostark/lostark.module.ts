@@ -10,7 +10,6 @@ const environmentHere: string = "dev"; //dev, prod
 @Module({
 	imports: [
 		HttpModule,
-		LostarkModule,
 		ConfigModule.forRoot({
 			envFilePath: (environmentHere === "dev" ? ['.dev.env'] : ['.prod.env']),
 			load: [configuration],
