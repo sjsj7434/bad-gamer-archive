@@ -6,17 +6,54 @@ import { AccountsDTO } from './accounts.dto';
 
 @Injectable()
 export class AccountsService {
-	constructor(@InjectRepository(Accounts) private accountsRepository: Repository<Accounts>) { }
+	constructor(
+		@InjectRepository(Accounts) private accountsRepository: Repository<Accounts>,
+	) { }
 
-	findOneByID(findID: string): Promise<Accounts | null> {
-		return this.accountsRepository.findOneBy({ "id": findID });
+	/**
+	 * ID로 1개의 계정을 찾는다
+	 */
+	findWithID(accountID: string): Promise<Accounts | null> {
+		return this.accountsRepository.findOne({
+			where: {
+				id: accountID,
+			},
+		});
 	}
 
-	async createOne(body: AccountsDTO): Promise<Accounts | null> {
-		console.log('[Service-user-create] => ', body);
-		const test = this.accountsRepository.create({ "id": body.id, "age": body.age });
-		await this.accountsRepository.save(body);
+	/**
+	 * Controller에서 넘겨준 정보를 사용하여 계정을 전부 찾는다
+	 */
+	findAll(): Promise<Accounts[]> {
+		return this.accountsRepository.find({
+			// where: whereCondition,
+			// take, skip / it is for the pagination
+			// order
+		});
+	}
+
+	/**
+	 * 계정을 생성한다
+	 */
+	async createAccount(dto: AccountsDTO): Promise<Accounts | null> {
+		await this.accountsRepository.save(dto)
 
 		return;
+	}
+
+	/**
+	 * ID에 맞는 계정을 수정한다
+	 * find > 정보 수정 > save 처리
+	 */
+	async updateAccount(dto: AccountsDTO) {
+		const account = await this.accountsRepository.findOne({
+			where: {
+				code: dto.code,
+			}
+		});
+
+		account.id = dto.id;
+
+		await this.accountsRepository.save(account);
 	}
 }

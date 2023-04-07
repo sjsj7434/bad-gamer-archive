@@ -3,12 +3,12 @@
  * @param {string} destination fetch url, 목적지
  * @returns {object} 가져온 정보 JSON
  */
-const fatchTemplate = async (method, destination) => {
+const fatchTemplate = async (method, destination, bodyData) => {
 	console.log(`fatchTemplate, method: ${method}, destination: ${destination}`);
 
 	const result = await fetch(destination, {
 		method: method,
-		body: JSON.stringify({id: 't', age: 45}),
+		body: JSON.stringify(bodyData),
 		headers: {
 			"Content-Type": "application/json",
 		},
@@ -40,9 +40,20 @@ const fatchTemplate = async (method, destination) => {
  * 입력한 캐릭터 이름의 기본 정보를 가져온다
  * @returns {object} 가져온 캐릭터 정보 JSON
  */
-export const postTest = async () => {
-	const result = await fatchTemplate('POST', `${process.env.REACT_APP_SERVER}/accounts`);
+export const postTest = async (sendData) => {
+	const result = await fatchTemplate('POST', `${process.env.REACT_APP_SERVER}/accounts`, sendData);
 	console.log('postTest', result);
+
+	return result;
+}
+
+/**
+ * 입력한 캐릭터 이름의 기본 정보를 가져온다
+ * @returns {object} 가져온 캐릭터 정보 JSON
+ */
+export const putTest = async (sendData) => {
+	const result = await fatchTemplate('PUT', `${process.env.REACT_APP_SERVER}/accounts`, sendData);
+	console.log('putTest', result);
 
 	return result;
 }

@@ -9,7 +9,27 @@ const Main = () => {
 	const navigate = useNavigate();
 
 	const postTest = async () => {
-		const result = await dbActions.postTest();
+		const sendData = {
+			id: 'helloo',
+			age: 12,
+		};
+
+		const result = await dbActions.postTest(sendData);
+		if(result === null){
+			console.log(0);
+		}
+		else{
+			console.log(1);
+		}
+	}
+
+	const putTest = async () => {
+		const sendData = {
+			code: 10,
+			id: 'testnewname',
+		};
+
+		const result = await dbActions.putTest(sendData);
 		if(result === null){
 			console.log(0);
 		}
@@ -32,7 +52,10 @@ const Main = () => {
 			<button onClick={() => { getCharacterInfo() }}>API(Character)</button>
 
 			<br/><br/>
-			<button onClick={() => { postTest() }}>API(TEST)</button>
+			<button onClick={() => { postTest() }}>postTest</button>
+
+			<br/><br/>
+			<button onClick={() => { putTest() }}>putTest</button>
 		</div>
 	);
 }
