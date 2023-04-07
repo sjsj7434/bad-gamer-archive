@@ -13,18 +13,18 @@ const Cards = (props) => {
 
 		for(const card of cardList){
 			cardListElement.push(
-				<Col>
+				<Col key={card.Icon}>
 					<div style={{display: "flex", flexDirection: "column", justifyContent: "flex-end"}}>
 						<div>
 							<div>
 								<div style={{aspectRatio: 24 / 35, overflow: "hidden", backgroundSize: "cover", backgroundImage: `url('${card.Icon}')`}}>
-									<img src={'https://cdn-lostark.game.onstove.com/2018/obt/assets/images/pc/profile/img_card_grade.png'}  style={{position: "relative", left: `-${cardGradeLeft(card.Grade)}%`, top: "-2%", width: "656%"}} />
+									<img src={'https://cdn-lostark.game.onstove.com/2018/obt/assets/images/pc/profile/img_card_grade.png'} alt={"cards"} style={{position: "relative", left: `-${cardGradeLeft(card.Grade)}%`, top: "-2%", width: "656%"}} />
 								</div>
 							</div>
 
 							<div>
 								<div style={{aspectRatio: 3 / 1, overflow: "hidden", backgroundSize: "cover", backgroundImage: `url('https://cdn-lostark.game.onstove.com/2018/obt/assets/images/pc/profile/img_profile_awake.png')`}}>
-									<img src={"https://cdn-lostark.game.onstove.com/2018/obt/assets/images/pc/profile/img_profile_awake.png"} style={{position: "relative", left: `-${cardAwakeCountLeft(card.AwakeCount)}%`, top: "-97%", width: "100%"}} />
+									<img src={"https://cdn-lostark.game.onstove.com/2018/obt/assets/images/pc/profile/img_profile_awake.png"} alt={"awakes"} style={{position: "relative", left: `-${cardAwakeCountLeft(card.AwakeCount)}%`, top: "-97%", width: "100%"}} />
 								</div>
 							</div>
 						</div>
@@ -120,7 +120,7 @@ const Cards = (props) => {
 		}
 		
 		call(props.characterName);
-	}, [props]); //처음 페이지 로딩 될때만
+	}); //처음 페이지 로딩 될때만
 
 	return (
 		<div>

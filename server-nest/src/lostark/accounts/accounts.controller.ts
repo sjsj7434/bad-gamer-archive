@@ -1,4 +1,4 @@
-import { Param, Controller, Get, Post, Put, Body } from '@nestjs/common';
+import { Param, Controller, Get, Post, Put, Delete, Body } from '@nestjs/common';
 import { AccountsService } from './accounts.service';
 import { AccountsDTO } from './accounts.dto';
 
@@ -45,6 +45,14 @@ export class  AccountsController {
 
 		return { result: 'update' };
 	}
-}
 
-//삭제 : delete()
+	@Delete()
+	async deleteAccount(@Body() body: AccountsDTO): Promise<object> {
+		console.log('[Controller-user-deleteAccount] => ', body);
+
+		const result = await this.accountsService.deleteAccount(body);
+		console.log(result);
+
+		return { result: 'soft-delete' };
+	}
+}

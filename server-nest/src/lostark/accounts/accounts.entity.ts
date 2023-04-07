@@ -1,4 +1,4 @@
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, DeleteDateColumn } from 'typeorm';
 
 // This will create following database table
 @Entity()
@@ -11,4 +11,13 @@ export class Accounts {
 
 	@Column()
 	age: number;
+	
+	@CreateDateColumn()
+	createdAt!: Date;
+  
+	@UpdateDateColumn()
+	updatedAt!: Date;
+  
+	@DeleteDateColumn()
+	deletedAt!: Date | null;
 }

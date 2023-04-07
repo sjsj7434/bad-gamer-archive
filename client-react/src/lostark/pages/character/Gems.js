@@ -5,8 +5,6 @@ import Image from 'react-bootstrap/Image';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
-import Popover from 'react-bootstrap/Popover';
-import Stack from 'react-bootstrap/Stack';
 
 const Gems = (props) => {
 	// "searchResult"라는 새 상태 변수를 선언합니다

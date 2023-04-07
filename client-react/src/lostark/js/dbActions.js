@@ -57,3 +57,14 @@ export const putTest = async (sendData) => {
 
 	return result;
 }
+
+/**
+ * 입력한 캐릭터 이름의 기본 정보를 가져온다
+ * @returns {object} 가져온 캐릭터 정보 JSON
+ */
+export const deleteTest = async (sendData) => {
+	const result = await fatchTemplate('DELETE', `${process.env.REACT_APP_SERVER}/accounts`, sendData);
+	console.log('deleteTest', result);
+
+	return result;
+}

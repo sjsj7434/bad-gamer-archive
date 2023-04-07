@@ -48,12 +48,22 @@ export class AccountsService {
 	async updateAccount(dto: AccountsDTO) {
 		const account = await this.accountsRepository.findOne({
 			where: {
-				code: dto.code,
+				age: dto.age,
 			}
 		});
 
 		account.id = dto.id;
 
 		await this.accountsRepository.save(account);
+	}
+
+	/**
+	 * code에 맞는 계정을 삭제(논리 삭제)
+	 * find > 정보 수정 > save 처리
+	 */
+	async deleteAccount(dto: AccountsDTO) {
+		await this.accountsRepository.softDelete({
+			code: dto.code
+		});
 	}
 }

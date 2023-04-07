@@ -11,7 +11,7 @@ const Main = () => {
 	const postTest = async () => {
 		const sendData = {
 			id: 'helloo',
-			age: 12,
+			age: parseFloat(Math.random().toFixed(2).replace('0.', '')),
 		};
 
 		const result = await dbActions.postTest(sendData);
@@ -25,11 +25,26 @@ const Main = () => {
 
 	const putTest = async () => {
 		const sendData = {
-			code: 10,
+			age: parseFloat(Math.random().toFixed(2).replace('0.', '')),
 			id: 'testnewname',
 		};
 
 		const result = await dbActions.putTest(sendData);
+		if(result === null){
+			console.log(0);
+		}
+		else{
+			console.log(1);
+		}
+	}
+
+	const deleteTest = async () => {
+		const code = document.querySelector("#code").value;
+		const sendData = {
+			code: code,
+		};
+
+		const result = await dbActions.deleteTest(sendData);
 		if(result === null){
 			console.log(0);
 		}
@@ -52,10 +67,10 @@ const Main = () => {
 			<button onClick={() => { getCharacterInfo() }}>API(Character)</button>
 
 			<br/><br/>
+			<input type='text' id='code' placeholder="code" defaultValue={''} />{' '}
 			<button onClick={() => { postTest() }}>postTest</button>
-
-			<br/><br/>
 			<button onClick={() => { putTest() }}>putTest</button>
+			<button onClick={() => { deleteTest() }}>deleteTest</button>
 		</div>
 	);
 }
