@@ -6,6 +6,42 @@ import { AccountsDTO } from './accounts.dto';
 export class  AccountsController {
 	constructor(private readonly accountsService: AccountsService) { }
 
+	@Get('token')
+	async publishUserToken(): Promise<string> {
+		console.log('[Controller-user-publishUserToken] => ');
+
+		const userProfileToken = await this.accountsService.publishUserToken();
+		console.log(`userProfileToken : ${userProfileToken}`);
+
+		return userProfileToken;
+	}
+
+	@Get('stove/:stoveURL')
+	async validateAccount(@Param('stoveURL') stoveURL: string): Promise<object> {
+		console.log('[Controller-user-validateAccount] => ' + stoveURL);
+		const stoveURLWithoutProtocol = stoveURL.replace(/https:\/\/|http:\/\//g, '');
+		
+		if(stoveURLWithoutProtocol.split('/').length === 2){
+			const stoveCode: string = stoveURLWithoutProtocol.split('/')[1];
+			const userProfileToken = await this.accountsService.getStoveUserToken(stoveCode);
+			const isTokenOK = userProfileToken !== '' ? true : false; //여기에 발급한 토큰과 비교 필요
+			console.log(`userProfileToken : ${userProfileToken}`);
+	
+			if(isTokenOK === true){
+				const characterNames = await this.accountsService.getStoveUserCharacters(stoveCode);
+				console.log(characterNames);
+				
+				return characterNames;
+			}
+			else{
+				return {result: 'fail'};
+			}
+		}
+		else{
+			return {result: 'url'};
+		}
+	}
+
 	@Get(':accountID')
 	async findWithID(@Param('accountID') accountID: string): Promise<object> {
 		console.log('[Controller-user-findWithID]');

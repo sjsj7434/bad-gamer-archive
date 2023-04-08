@@ -28,7 +28,7 @@ import { LostarkModule } from './lostark/lostark.module';
 				synchronize: true, // sychronize 가 켜져 있기 때문에 정의한 entity가 db에 생기는 것???
 			}),
 			inject: [ConfigService],
-		})
+		}),
 	],
 	controllers: [],
 	providers: [],
