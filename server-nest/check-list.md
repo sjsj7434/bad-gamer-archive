@@ -10,7 +10,8 @@
 
 ## 기능 목록
 - <input type='checkbox' checked> 본캐 인증 절차 수립(공홈)
-- <input type='checkbox'> 본캐 인증을 통한 회원가입
+- <input type='checkbox'> 회원가입
+- <input type='checkbox'> 회원가입 후, 본캐 인증
 - <input type='checkbox'> 회원정보 암호화
 - <input type='checkbox'> ckEditor5 게시글 작성 기능(인증 전용)
 - <input type='checkbox'> ckEditor5 게시글 수정 기능?(인증 전용)
@@ -25,7 +26,7 @@
 - <input type='checkbox'> 웹서버용 EC2 AWS 구매
 - <input type='checkbox'> DB용 EC2 AWS 구매(RDS 너무 비쌈)
 - <input type='checkbox'> 이미지서버용 S3 AWS 구매
-- <input type='checkbox'> HTTPS
+- <input type='checkbox'> HTTPS 인증서
 
 ## 본캐 인증 절차(유저)
 ```bash
