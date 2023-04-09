@@ -1,7 +1,7 @@
 const Wrapper = (props) => {
 	return(
 		<>
-			<div style={{backgroundColor: "#15181d"}}>
+			<div style={{backgroundColor: ""}}>
 				{props.innerNode}
 			</div>
 		</>

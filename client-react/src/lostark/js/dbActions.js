@@ -5,14 +5,8 @@
  */
 const fatchTemplate = async (method, destination, bodyData) => {
 	console.log(`fatchTemplate, method: ${method}, destination: ${destination}`);
-
-	const result = await fetch(destination, {
-		method: method,
-		body: JSON.stringify(bodyData),
-		headers: {
-			"Content-Type": "application/json",
-		},
-	});
+	const fecthOption = method === "GET" ?  {method: method, headers: {"Content-Type": "application/json",}} : {method: method, body: JSON.stringify(bodyData), headers: {"Content-Type": "application/json",}}
+	const result = await fetch(destination, fecthOption);
 	
 	if(result === null){
 		return null;
@@ -65,6 +59,28 @@ export const putTest = async (sendData) => {
 export const deleteTest = async (sendData) => {
 	const result = await fatchTemplate('DELETE', `${process.env.REACT_APP_SERVER}/accounts`, sendData);
 	console.log('deleteTest', result);
+
+	return result;
+}
+
+/**
+ * stove 계정 소개란에 적을 인증코드를 생성한다
+ * @returns {object} 생성한 인증코드
+ */
+export const getVerificationCode = async (sendData) => {
+	const result = await fatchTemplate('GET', `${process.env.REACT_APP_SERVER}/accounts/token`, sendData);
+	console.log('getVerificationCode', result);
+
+	return result;
+}
+
+/**
+ * stove 계정 소개란에 적어놓은 인증코드와 비교
+ * @returns {object} 가져온 stove 소개란 인증코드
+ */
+export const checkCodeMatch = async (sendData) => {
+	const result = await fatchTemplate('GET', `${process.env.REACT_APP_SERVER}/accounts/stove/${sendData}`, null);
+	console.log('getStoveVerificationCode', result);
 
 	return result;
 }

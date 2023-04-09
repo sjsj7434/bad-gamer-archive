@@ -120,7 +120,7 @@ const Cards = (props) => {
 		}
 		
 		call(props.characterName);
-	}); //처음 페이지 로딩 될때만
+	}, [props]); //처음 페이지 로딩 될때만
 
 	return (
 		<div>

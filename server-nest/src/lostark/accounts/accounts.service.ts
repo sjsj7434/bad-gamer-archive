@@ -18,23 +18,23 @@ export class AccountsService {
 	/**
 	 * 유저의 스토브 소개란에 적을 인증 코드(32글자)를 생성한다
 	 */
-	async publishUserToken(): Promise<string>{
+	async publishUserToken(): Promise<object>{
 		const verificationCode = randomBytes(16).toString('hex');
 		
 		//인증번호는 node-cache를 사용하는 방법을 고려 중...
-		const value = await this.cacheManager.get('verificationCode');
-		console.log('hello =>   ', value)
-		await this.cacheManager.set('verificationCode', verificationCode, (60 * 1000 * 3)); //3 minutes TTL(Time to live)
+		// const value = await this.cacheManager.get('verificationCode');
+		// console.log('cacheManager verificationCode => ', value)
+		// await this.cacheManager.set('verificationCode', verificationCode, (60 * 1000 * 3)); //3 minutes TTL(Time to live)
 		// await this.cacheManager.del('verificationCode');
-		//await this.cacheManager.reset();
+		// await this.cacheManager.reset();
 
-		return verificationCode;
+		return {"data": verificationCode};
 	}
 
 	/**
 	 * 유저의 스토브 소개란에 적힌 인증 코드를 가져온다
 	 */
-	async getStoveUserToken(stoveCode: string): Promise<string>{
+	async getStoveUserToken(stoveCode: string): Promise<object>{
 		const browser = await puppeteer.launch({
 			headless: true,
 			waitForInitialPage: true,
@@ -42,16 +42,17 @@ export class AccountsService {
 		const page = await browser.newPage();
 		// await page.setViewport({width: 1920, height: 1080}); //화면 크기 설정, headless: false 여야 확인 가능
 		await page.goto(`https://timeline.onstove.com/${stoveCode}`, {waitUntil: 'networkidle2'});
+		console.log(`https://timeline.onstove.com/${stoveCode}`)
 
 		const targetElement = await page.$('#navContent > div > div.layout-column-r > section:nth-child(1) > div.section-body > p'); //소개
 
-		const data = await page.evaluate((data) => {
+		const stoveVerificationCode = await page.evaluate((data) => {
 			return data.textContent;
 		}, targetElement);
 		
 		await browser.close(); //창 종료
 
-		return data;
+		return {"data": stoveVerificationCode};
 	}
 
 	/**
