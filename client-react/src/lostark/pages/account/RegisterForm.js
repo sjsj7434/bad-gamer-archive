@@ -64,6 +64,48 @@ const RegisterForm = (props) => {
 		}
 	}
 
+	/**
+	 * 중복되는 ID가 있는지 확인
+	 * @returns boolean
+	 */
+	const isDuplicatedID = async () => {
+		const id = document.querySelector("#id");
+		const result = await dbActions.isDuplicatedID(id.value);
+		console.log(result);
+
+		if(result !== null){
+			id.classList.remove("is-valid");
+			id.classList.add("is-invalid");
+			return false;
+		}
+		else{
+			id.classList.add("is-valid");
+			id.classList.remove("is-invalid");
+			return true;
+		}
+	}
+
+	/**
+	 * 중복되는 닉네임이 있는지 확인
+	 * @returns boolean
+	 */
+	const isDuplicatedNickname = async () => {
+		const nickname = document.querySelector("#nickname");
+		const result = await dbActions.isDuplicatedNickname(nickname.value);
+		console.log(result);
+
+		if(result !== null){
+			nickname.classList.remove("is-valid");
+			nickname.classList.add("is-invalid");
+			return false;
+		}
+		else{
+			nickname.classList.add("is-valid");
+			nickname.classList.remove("is-invalid");
+			return true;
+		}
+	}
+
 	return (
 		<Container style={{maxWidth: "600px"}}>
 			<div style={{ marginTop: "30px" }}>
@@ -77,8 +119,8 @@ const RegisterForm = (props) => {
 						</Form.Label>
 						<Col>
 							<InputGroup>
-								<Form.Control required maxLength={20} type="text" placeholder="ID" isValid={false} isInvalid={false} />
-								<Button variant="outline-dark">
+								<Form.Control id="id" required maxLength={20} type="text" placeholder="ID" isValid={false} isInvalid={false} />
+								<Button variant="outline-dark" onClick={() => {isDuplicatedID()}}>
 									Check
 								</Button>
 							</InputGroup>
@@ -94,8 +136,8 @@ const RegisterForm = (props) => {
 						</Form.Label>
 						<Col>
 							<InputGroup>
-								<Form.Control required maxLength={20} type="text" placeholder="Nickname" />
-								<Button variant="outline-dark">
+								<Form.Control id="nickname" required maxLength={20} type="text" placeholder="Nickname" />
+								<Button variant="outline-dark"onClick={() => {isDuplicatedNickname()}}>
 									Check
 								</Button>
 							</InputGroup>

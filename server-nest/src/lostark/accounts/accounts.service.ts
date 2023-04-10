@@ -111,6 +111,18 @@ export class AccountsService {
 	}
 
 	/**
+	 * Nickname으로 1개의 계정을 찾는다
+	 * 아직 미구현이라 ID -> Nickname으로 교체 필요, DB도 없음
+	 */
+	findWithNickname(nickname: string): Promise<Accounts | null> {
+		return this.accountsRepository.findOne({
+			where: {
+				id: nickname,
+			},
+		});
+	}
+
+	/**
 	 * Controller에서 넘겨준 정보를 사용하여 계정을 전부 찾는다
 	 */
 	findAll(): Promise<Accounts[]> {

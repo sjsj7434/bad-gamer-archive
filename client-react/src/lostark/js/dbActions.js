@@ -84,3 +84,25 @@ export const checkCodeMatch = async (sendData) => {
 
 	return result;
 }
+
+/**
+ * 이미 존재하는 ID인지 확인
+ * @returns {object} 가져온 stove 소개란 인증코드
+ */
+export const isDuplicatedID = async (id) => {
+	const result = await fatchTemplate('GET', `${process.env.REACT_APP_SERVER}/accounts/${id}`, null);
+	console.log('getStoveVerificationCode', result);
+
+	return result;
+}
+
+/**
+ * 이미 존재하는 닉네임인지 확인
+ * @returns {object} 가져온 stove 소개란 인증코드
+ */
+export const isDuplicatedNickname = async (nickname) => {
+	const result = await fatchTemplate('GET', `${process.env.REACT_APP_SERVER}/accounts/nickname/${nickname}`, null);
+	console.log('getStoveVerificationCode', result);
+
+	return result;
+}

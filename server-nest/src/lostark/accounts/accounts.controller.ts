@@ -41,9 +41,27 @@ export class  AccountsController {
 		console.log('[Controller-user-findWithID]');
 		
 		const result = await this.accountsService.findWithID(accountID);
-		console.log(result)
+		console.log(result);
 
-		return result;
+		if(result === null){
+			console.log('findWithID is null');
+		}
+
+		return {data: result};
+	}
+
+	@Get('nickname/:nickname')
+	async findWithNickname(@Param('nickname') nickname: string): Promise<object> {
+		console.log('[Controller-user-findWithNickname]');
+		
+		const result = await this.accountsService.findWithNickname(nickname);
+		console.log(result);
+
+		if(result === null){
+			console.log('findWithNickname is null');
+		}
+
+		return {data: result};
 	}
 
 	@Get()
