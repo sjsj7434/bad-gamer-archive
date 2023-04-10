@@ -7,7 +7,7 @@ import { randomBytes } from 'crypto';
 import puppeteer from 'puppeteer';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Cache } from 'cache-manager';
- 
+
 @Injectable()
 export class AccountsService {
 	constructor(

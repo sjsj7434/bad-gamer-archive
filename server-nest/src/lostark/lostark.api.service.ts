@@ -1,18 +1,17 @@
 import { HttpService } from '@nestjs/axios';
 import { Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { AxiosError } from 'axios';
 import { catchError, firstValueFrom } from 'rxjs';
 
-const lostarkAPIToken = "write_your_lostark_api_key_here"; //keep it secret, do not upload on Github even private repo!
-
 @Injectable()
 export class LostarkAPIService {
-	constructor(private readonly httpService: HttpService) { }
+	constructor(private readonly httpService: HttpService, private configService: ConfigService) { }
 
 	getLostArkAPI = async (destination: string) => {
 		const headersRequest = {
 			'Content-Type': 'application/json', // As Far As I Know, this one is not needed
-			'Authorization': `bearer ${lostarkAPIToken}`,
+			'Authorization': `bearer ${this.configService.get('LOSTARK_API_KEY')}`,
 		};
 
 		const { data } = await firstValueFrom(
