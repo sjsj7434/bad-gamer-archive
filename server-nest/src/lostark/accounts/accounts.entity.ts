@@ -71,6 +71,12 @@ export class Accounts {
 	age: number;
 
 	/**
+	 * 유저 로그인할 때 비밀번호 틀린 횟수
+	 */
+	@Column("int")
+	wrongCount: number;
+
+	/**
 	 * 유저 계정 잠김
 	 */
 	@Column("boolean")
