@@ -79,9 +79,8 @@ export class  AccountsController {
 		console.log('[Controller-user-createAccount] => ', body);
 
 		const result = await this.accountsService.createAccount(body);
-		console.log(result);
 
-		return { result: 'create' };
+		return { data: result };
 	}
 
 	@Put()
@@ -91,7 +90,7 @@ export class  AccountsController {
 		const result = await this.accountsService.updateAccount(body);
 		console.log(result);
 
-		return { result: 'update' };
+		return { data: 'update' };
 	}
 
 	@Delete()
@@ -101,6 +100,6 @@ export class  AccountsController {
 		const result = await this.accountsService.deleteAccount(body);
 		console.log(result);
 
-		return { result: 'soft-delete' };
+		return { data: 'soft-delete' };
 	}
 }

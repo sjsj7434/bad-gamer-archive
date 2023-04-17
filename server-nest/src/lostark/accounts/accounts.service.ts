@@ -112,12 +112,11 @@ export class AccountsService {
 
 	/**
 	 * Nickname으로 1개의 계정을 찾는다
-	 * 아직 미구현이라 ID -> Nickname으로 교체 필요, DB도 없음
 	 */
 	findWithNickname(nickname: string): Promise<Accounts | null> {
 		return this.accountsRepository.findOne({
 			where: {
-				id: nickname,
+				nickname: nickname,
 			},
 		});
 	}
@@ -134,12 +133,21 @@ export class AccountsService {
 	}
 
 	/**
-	 * 계정을 생성한다
+	 * 중복되는 정보가 있는지 확인 후 계정을 생성한다
 	 */
-	async createAccount(dto: AccountsDTO): Promise<Accounts | null> {
-		await this.accountsRepository.save(dto)
+	async createAccount(dto: AccountsDTO): Promise<number | null> {
+		const idCheck = await this.findWithID(dto.id);
+		const nicknameCheck = await this.findWithNickname(dto.nickname);
+		console.log("idCheck : ", idCheck === null);
+		console.log("nicknameCheck : ", nicknameCheck === null);
 
-		return;
+		if (idCheck !== null || nicknameCheck !== null){
+			return 0; //이미 계정이 존재
+		}
+		else{
+			await this.accountsRepository.save(dto);
+			return 1; //정상 처리
+		}
 	}
 
 	/**
@@ -149,7 +157,7 @@ export class AccountsService {
 	async updateAccount(dto: AccountsDTO) {
 		const account = await this.accountsRepository.findOne({
 			where: {
-				age: dto.age,
+				id: dto.id,
 			}
 		});
 
@@ -160,7 +168,7 @@ export class AccountsService {
 
 	/**
 	 * code에 맞는 계정을 삭제(논리 삭제)
-	 * find > 정보 수정 > save 처리
+	 * find > 정보 수정 > softDelete 처리
 	 */
 	async deleteAccount(dto: AccountsDTO) {
 		await this.accountsRepository.softDelete({

@@ -7,6 +7,7 @@ const fatchTemplate = async (method, destination, bodyData) => {
 	console.log(`fatchTemplate, method: ${method}, destination: ${destination}`);
 	const fecthOption = method === "GET" ?  {method: method, headers: {"Content-Type": "application/json",}} : {method: method, body: JSON.stringify(bodyData), headers: {"Content-Type": "application/json",}}
 	const result = await fetch(destination, fecthOption);
+	console.log(result)
 	
 	if(result === null){
 		return null;
@@ -80,7 +81,7 @@ export const getVerificationCode = async (sendData) => {
  */
 export const checkCodeMatch = async (sendData) => {
 	const result = await fatchTemplate('GET', `${process.env.REACT_APP_SERVER}/accounts/stove/${sendData}`, null);
-	console.log('getStoveVerificationCode', result);
+	console.log('checkCodeMatch', result);
 
 	return result;
 }
@@ -91,7 +92,7 @@ export const checkCodeMatch = async (sendData) => {
  */
 export const isDuplicatedID = async (id) => {
 	const result = await fatchTemplate('GET', `${process.env.REACT_APP_SERVER}/accounts/${id}`, null);
-	console.log('getStoveVerificationCode', result);
+	console.log('isDuplicatedID', result);
 
 	return result;
 }
@@ -102,7 +103,18 @@ export const isDuplicatedID = async (id) => {
  */
 export const isDuplicatedNickname = async (nickname) => {
 	const result = await fatchTemplate('GET', `${process.env.REACT_APP_SERVER}/accounts/nickname/${nickname}`, null);
-	console.log('getStoveVerificationCode', result);
+	console.log('isDuplicatedNickname', result);
+
+	return result;
+}
+
+/**
+ * 회원가입
+ * @returns {object} 회원가입 처리 결과
+ */
+export const createAccount = async (accountInfo) => {
+	const result = await fatchTemplate('POST', `${process.env.REACT_APP_SERVER}/accounts`, accountInfo);
+	console.log('createAccount', result);
 
 	return result;
 }

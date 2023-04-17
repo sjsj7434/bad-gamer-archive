@@ -1,12 +1,15 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from "react-router-dom";
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Form from 'react-bootstrap/Form';
 import Container from 'react-bootstrap/Container';
 import InputGroup from 'react-bootstrap/InputGroup';
 import Button from 'react-bootstrap/Button';
+import Modal from 'react-bootstrap/Modal';
+import Spinner from 'react-bootstrap/Spinner';
 
-import * as dbActions from '../../js/dbActions.js'
+import * as accountAction from '../../js/accountAction.js'
 
 const RegisterForm = (props) => {
 	const [idValid, setIdValid] = useState(0);
@@ -16,6 +19,9 @@ const RegisterForm = (props) => {
 	const [rePasswordValid, setRePasswordValid] = useState(0);
 	const [idDuplicated, setIdDuplicated] = useState(0);
 	const [nicknameDuplicated, setNicknameDuplicated] = useState(0);
+	const [waitModalShow, setWaitModalShow] = useState(false);
+	const [waitModalMessage, setWaitModalMessage] = useState("");
+	const navigate = useNavigate();
 
 	useEffect(() => {
 		const call = async (characterName) => {
@@ -25,56 +31,85 @@ const RegisterForm = (props) => {
 		call(props.characterName);
 	}, [props]); //처음 페이지 로딩 될때만
 
-	const handleSubmit = (event) => {
+	const handleSubmit = async (event) => {
 		event.preventDefault();
 		event.stopPropagation();
 		const form = event.currentTarget;
-		
-		console.log(form);
 
 		if(idValid !== 2){
-			alert("please check your ID");
+			alert("Please check your ID");
 			form.idInput.focus();
 			return;
 		}
 		if(idDuplicated !== 2){
-			alert("please check your ID is duplicated");
+			alert("Please check your ID is duplicated");
 			return;
 		}
 		if(nicknameValid !== 2){
-			alert("please check your Nickname");
+			alert("Please check your Nickname");
 			form.nicknameInput.focus();
 			return;
 		}
 		if(nicknameDuplicated !== 2){
-			alert("please check your Nickname is duplicated");
+			alert("Please check your Nickname is duplicated");
 			return;
 		}
 		if(emailValid !== 2){
-			alert("please check your Email");
+			alert("Please check your Email");
 			form.emailInput.focus();
 			return;
 		}
 		if(passwordValid !== 2){
-			alert("please check your Password");
+			alert("Please check your Password");
 			form.passwordInput.focus();
 			return;
 		}
+		if(rePasswordValid !== 2){
+			alert("Please check your Re-Password");
+			form.rePasswordInput.focus();
+			return;
+		}
 
-		if(window.confirm("save?")){
-			form.idCheck.disabled = true;
-			form.nicknameCheck.disabled = true;
+		if(window.confirm("Do you wanna proceed?")){
+			setWaitModalShow(true);
+			setWaitModalMessage("Welcome!");
+			await asyncWaiter(1);
+			setWaitModalShow(false);
 
-			alert('Let it submit ~');
+			const createResult = await accountAction.createAccount({
+				code: 0,
+				id: form.idInput.value,
+				nickname: (form.nicknameInput.value),
+				email: form.emailInput.value,
+				password: form.passwordInput.value,
+				passwordSalt: "passwordSalt",
+				loginFailCount: 0,
+				passwordChangeDate: null,
+				personalQuestion: "",
+				personalAnswer: "",
+			});
+
+			if(createResult === 1){
+				alert("Hey Dev, you need to make encryption pwd\nGood, Welcome!\nMove to [Login] page");
+				navigate("/");
+			}
+			else if(createResult === 0){
+				alert("[Failed] There is same ID or Nickname already!");
+				setIdValid(1);
+				setNicknameValid(1);
+				setIdDuplicated(1);
+				setNicknameDuplicated(1);
+
+				form.idInput.value = "";
+				form.nicknameInput.value = "";
+			}
 		}
 	};
 
 	const checkID = () => {
-		const idCheck = document.querySelector("#idCheck");
 		const idInput = document.querySelector("#idInput");
 		const idRegExp = new RegExp("[a-z0-9]", "g");
 
-		idCheck.value = false; //새로 중복 검사를 하도록 함
 		idInput.value = idInput.value.toLowerCase();
 		setIdDuplicated(0);
 
@@ -87,11 +122,9 @@ const RegisterForm = (props) => {
 	}
 
 	const checkNickname = () => {
-		const nicknameCheck = document.querySelector("#nicknameCheck");
 		const nicknameInput = document.querySelector("#nicknameInput");
 		const nicknameRegExp = new RegExp("[a-zA-Z0-9가-힣ㄱ-ㅎㅏ-ㅣ]", "g");
 
-		nicknameCheck.value = false; //새로 중복 검사를 하도록 함
 		setNicknameDuplicated(0);
 
 		if(nicknameInput.value.replace(nicknameRegExp, "") === "" && (1 <= nicknameInput.value.length && nicknameInput.value.length <= 20)){
@@ -141,36 +174,39 @@ const RegisterForm = (props) => {
 	}
 
 	/**
+	 * 과도한 호출을 방지하기위한 대기
+	 * @param {number} second 대기할 초
+	 * @returns 없음
+	 */
+	const asyncWaiter = async (second) => {
+		return new Promise((prom) => setTimeout(prom, second * 1000));
+	}
+
+	/**
 	 * 중복되는 ID가 있는지 확인
 	 * @returns boolean
 	 */
 	const isDuplicatedID = async () => {
-		const idCheck = document.querySelector("#idCheck");
 		const idInput = document.querySelector("#idInput");
 		
-		if(idInput.classList.contains("is-valid") === true){
-			const result = await dbActions.isDuplicatedID(idInput.value);
-			console.log(result);
+		if(idValid === 2){
+			setWaitModalShow(true);
+			setWaitModalMessage("We're checking your ID");
+			await asyncWaiter(1);
+			setWaitModalShow(false);
+
+			const result = await accountAction.isDuplicatedID(idInput.value);
 	
 			if(result !== null){
-				idInput.classList.remove("is-valid");
-				idInput.classList.add("is-invalid");
-				idCheck.value = false;
-				alert("sorry, you can not use this id");
 				setIdDuplicated(1);
 				return false;
 			}
 			else{
-				idInput.classList.add("is-valid");
-				idInput.classList.remove("is-invalid");
-				idCheck.value = true;
-				alert("good, you can use this id");
 				setIdDuplicated(2);
 				return true;
 			}
 		}
 		else{
-			alert("please write your id");
 			idInput.focus();
 			setIdDuplicated(0);
 			return false;
@@ -182,32 +218,26 @@ const RegisterForm = (props) => {
 	 * @returns boolean
 	 */
 	const isDuplicatedNickname = async () => {
-		const nicknameCheck = document.querySelector("#nicknameCheck");
 		const nicknameInput = document.querySelector("#nicknameInput");
 		
 		if(nicknameInput.classList.contains("is-valid") === true){
-			const result = await dbActions.isDuplicatedNickname(nicknameInput.value);
-			console.log(result);
+			setWaitModalShow(true);
+			setWaitModalMessage("We're checking your Nickname");
+			await asyncWaiter(1);
+			setWaitModalShow(false);
+
+			const result = await accountAction.isDuplicatedNickname(nicknameInput.value);
 
 			if(result !== null){
-				nicknameInput.classList.remove("is-valid");
-				nicknameInput.classList.add("is-invalid");
-				nicknameCheck.value = false;
-				alert("sorry, you can not use this nickname");
 				setNicknameDuplicated(1);
 				return false;
 			}
 			else{
-				nicknameInput.classList.add("is-valid");
-				nicknameInput.classList.remove("is-invalid");
-				nicknameCheck.value = true;
-				alert("good, you can use this nickname");
 				setNicknameDuplicated(2);
 				return true;
 			}
 		}
 		else{
-			alert("please write your nickname");
 			nicknameInput.focus();
 			setNicknameDuplicated(0);
 			return false;
@@ -240,13 +270,24 @@ const RegisterForm = (props) => {
 
 	return (
 		<Container style={{maxWidth: "600px"}}>
+			<Modal
+				show={waitModalShow}
+				backdrop="static"
+				keyboard={false}
+				centered
+			>
+				<Modal.Body>
+					<div style={{display: "flex", flexDirection: "row", justifyContent: "center", marginTop: "50px", marginBottom: "50px"}}>
+						<Spinner animation="grow" variant="success" />&nbsp;&nbsp;<h4>{waitModalMessage}</h4>
+					</div>
+				</Modal.Body>
+			</Modal>
+
 			<div style={{ marginTop: "30px" }}>
 				<div style={{ marginBottom: "30px" }}>
-					<h3>Welcome To here</h3>
+					<h2>Welcome To here</h2>
 				</div>
 				<Form noValidate onSubmit={handleSubmit}>
-					<input type="hidden" id="idCheck" name="idCheck" value={false}></input>
-					<input type="hidden" id="nicknameCheck" name="nicknameCheck" value={false}></input>
 					<Form.Group as={Row} className="mb-3">
 						<Form.Label style={{fontWeight: "800"}}>
 							ID

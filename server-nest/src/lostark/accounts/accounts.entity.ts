@@ -13,85 +13,131 @@ export class Accounts {
 	/**
 	 * 유저 ID
 	 */
-	@Column("varchar", { length: 50 })
+	@Column({
+		type: "varchar"
+		, length: 50
+		, nullable: false
+		, unique: true
+	})
 	id: string;
 
 	/**
 	 * 유저 닉네임
 	 */
-	@Column("varchar", { length: 60 })
+	@Column({
+		type: "varchar"
+		, length: 60
+		, nullable: false
+		, unique: true
+	})
 	nickname: string;
 
 	/**
 	 * 유저 이메일
 	 */
-	@Column("varchar", { length: 100 })
+	@Column({
+		type: "varchar"
+		, length: 100
+		, nullable: false
+	})
 	email: string;
 
 	/**
 	 * 유저 비밀번호(암호화)
 	 */
-	@Column("varchar", { length: 50 })
+	@Column({
+		type: "varchar"
+		, length: 200
+		, nullable: false
+	})
 	password: string;
 
 	/**
 	 * 유저 비밀번호(암호화에 쓰일 값)
 	 */
-	@Column("varchar", { length: 100 })
+	@Column({
+		type: "varchar"
+		, length: 50
+		, nullable: false
+	})
 	passwordSalt: string;
 
 	/**
 	 * 유저 마지막 로그인 날짜
 	 */
-	@Column("datetime")
+	@Column({
+		type: "datetime"
+		, nullable: true
+	})
 	lastLogin: Date | null;
 
 	/**
 	 * 유저 비밀번호 변경 일자
 	 */
-	@Column("datetime")
+	@Column({
+		type: "datetime"
+		, nullable: true
+	})
 	passwordChangeDate: Date | null;
 
 	/**
 	 * 유저 아이디 및 비밀번호 찾기 힌트 질문
 	 */
-	@Column("varchar", { length: 200 })
+	@Column({
+		type: "varchar"
+		, length: 200
+		, nullable: true
+	})
 	personalQuestion: string;
 
 	/**
 	 * 유저 아이디 및 비밀번호 찾기 힌트 질문에 대한 답변
 	 */
-	@Column("varchar", { length: 100 })
+	@Column({
+		type: "varchar"
+		, length: 100
+		, nullable: true
+	})
 	personalAnswer: string;
-
-	/**
-	 * 유저 생년월일, 나이
-	 */
-	@Column("int")
-	age: number;
 
 	/**
 	 * 유저 로그인할 때 비밀번호 틀린 횟수
 	 */
-	@Column("int")
-	wrongCount: number;
+	@Column({
+		type: "tinyint" //0 ~ 255
+		, nullable: false
+		, default: 0
+	})
+	loginFailCount: number;
 
 	/**
 	 * 유저 계정 잠김
 	 */
-	@Column("boolean")
+	@Column({
+		type: "boolean"
+		, nullable: false
+		, default: false
+	})
 	isLocked: boolean;
 
 	/**
 	 * 유저 계정 잃어버림
 	 */
-	@Column("boolean")
+	@Column({
+		type: "boolean"
+		, nullable: false
+		, default: false
+	})
 	isLost: boolean;
 
 	/**
 	 * 유저 계정 정지당함
 	 */
-	@Column("boolean")
+	@Column({
+		type: "boolean"
+		, nullable: false
+		, default: false
+	})
 	isBanned: boolean;
 
 	/**

@@ -1,5 +1,13 @@
 export class AccountsDTO {
 	code: number;
 	id: string;
-	age: number;
+	nickname: string;
+	email: string;
+	password: string;
+	passwordSalt: string;
+	loginFailCount: number;
+	lastLogin: Date;
+	passwordChangeDate: Date;
+	personalQuestion: string;
+	personalAnswer: string;
 }
