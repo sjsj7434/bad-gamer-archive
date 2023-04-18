@@ -11,7 +11,7 @@ import Spinner from 'react-bootstrap/Spinner';
 
 import * as accountAction from '../../js/accountAction.js'
 
-const RegisterForm = (props) => {
+const SignUpForm = () => {
 	const [idValid, setIdValid] = useState(0);
 	const [nicknameValid, setNicknameValid] = useState(0);
 	const [emailValid, setEmailValid] = useState(0);
@@ -133,7 +133,7 @@ const RegisterForm = (props) => {
 		}
 	}
 
-	const checkEmail = () => {
+	const isValidEmail = () => {
 		const emailInput = document.querySelector("#emailInput");
 		const emailRegExp = new RegExp("^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$", "i");
 
@@ -145,7 +145,7 @@ const RegisterForm = (props) => {
 		}
 	}
 
-	const checkPassword = () => {
+	const isValidPassword = () => {
 		const passwordInput = document.querySelector("#passwordInput");
 		const passwordRegExp = new RegExp("^(?=.*[a-zA-Z])(?=.*[!@#$%^*+=-])(?=.*[0-9]).{8,20}$");
 
@@ -218,7 +218,7 @@ const RegisterForm = (props) => {
 
 			<div style={{ marginTop: "30px" }}>
 				<div style={{ marginBottom: "30px" }}>
-					<h2>Welcome To here</h2>
+					<h2>Sign Up</h2>
 				</div>
 				<Form noValidate onSubmit={handleSubmit}>
 					<Form.Group as={Row} className="mb-3">
@@ -260,7 +260,7 @@ const RegisterForm = (props) => {
 							Email
 						</Form.Label>
 						<Col>
-							<Form.Control className={statusParser(emailValid)} id="emailInput" maxLength={50} type="email" placeholder="email" onChange={() => {checkEmail()}} autoComplete="off" />
+							<Form.Control className={statusParser(emailValid)} id="emailInput" maxLength={50} type="email" placeholder="email" onChange={() => {isValidEmail()}} autoComplete="off" />
 							<Form.Text muted>
 								Your Email will be used when you lost your password
 							</Form.Text>
@@ -275,9 +275,11 @@ const RegisterForm = (props) => {
 							Password
 						</Form.Label>
 						<Col>
-							<Form.Control className={statusParser(passwordValid)} id="passwordInput" maxLength={20} type="password" placeholder="password" onChange={() => {checkPassword()}} />
+							<Form.Control className={statusParser(passwordValid)} id="passwordInput" maxLength={20} type="password" placeholder="password" onChange={() => {isValidPassword()}} />
 							<Form.Text muted>
 								Your password must be 8-20 characters long, contain letters and numbers
+								<br/>
+								password will be encrypted, so web admin will not know your password
 							</Form.Text>
 							
 							<Form.Control.Feedback id="passwordValid" type="valid">
@@ -306,15 +308,13 @@ const RegisterForm = (props) => {
 							</Form.Control.Feedback>
 						</Col>
 					</Form.Group>
-					
-					<Button type="submit">Submit form</Button>
+
+					<br/>
+					<Button type="submit" variant="success" size="lg" style={{width: "100%"}}>Sign Up</Button>
 				</Form>
 			</div>
-
-			<br/>
-			password will be encrypted, so web admin will not know your password
 		</Container>
 	);
 }
 
-export default RegisterForm;
+export default SignUpForm;

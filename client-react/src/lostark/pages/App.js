@@ -5,7 +5,8 @@ import CaseRegistration from './CaseRegistration';
 import TopMenu from './TopMenu';
 import Wrapper from './Wrapper';
 import CharacterInfo from './character/CharacterInfo';
-import RegisterForm from './account/RegisterForm';
+import SignUpForm from './accounts/SignUpForm';
+import SignInForm from './accounts/SignInForm';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 
@@ -25,8 +26,12 @@ const App = () => {
 					<Wrapper innerNode={<><TopMenu /><CharacterInfo /></>} />
 				}></Route>
 
-				<Route path="/account/register" element={
-					<Wrapper innerNode={<><TopMenu /><RegisterForm /></>} />
+				<Route path="/accounts/signup" element={
+					<Wrapper innerNode={<><TopMenu /><SignUpForm /></>} />
+				}></Route>
+
+				<Route path="/accounts/signin" element={
+					<Wrapper innerNode={<><TopMenu /><SignInForm /></>} />
 				}></Route>
 
 				<Route path="/registration" element={

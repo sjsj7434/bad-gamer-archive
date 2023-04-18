@@ -32,14 +32,18 @@ const TopMenu = () => {
 							navbarScroll
 						>
 							<Nav.Link as={Link} to="/">Main</Nav.Link>
-							<Nav.Link as={Link} to="/account/register">Register</Nav.Link>
 							<Nav.Link as={Link} to="/registration">CaseRegistration</Nav.Link>
-							<Nav.Link as={Link} to="/pricing">Pricing</Nav.Link>
+							<Nav.Link as={Link} to="/pricing">404</Nav.Link>
 						</Nav>
 
 						<Form className="d-flex">
-							<Button variant="info">Login</Button>
-							<Button variant="info">Register</Button>
+							<Nav.Link as={Link} to="/accounts/signup">
+								<Button variant="info">Sign Up</Button>
+							</Nav.Link>
+							&nbsp;
+							<Nav.Link as={Link} to="/accounts/signin">
+								<Button variant="info">Sign In</Button>
+							</Nav.Link>
 						</Form>
 					</Navbar.Collapse>
 				</Container>
