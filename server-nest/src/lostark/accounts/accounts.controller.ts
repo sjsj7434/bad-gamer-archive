@@ -1,6 +1,7 @@
-import { Param, Controller, Get, Post, Put, Delete, Body } from '@nestjs/common';
+import { Param, Controller, Get, Post, Put, Delete, Body, Res, Req } from '@nestjs/common';
 import { AccountsService } from './accounts.service';
 import { AccountsDTO } from './accounts.dto';
+import { Request, Response } from 'express';
 
 @Controller("accounts")
 export class  AccountsController {
@@ -110,5 +111,13 @@ export class  AccountsController {
 		console.log(result);
 
 		return { data: "soft-delete" };
+	}
+
+	@Post("cookies/set")
+	async testCookie(@Body() body, @Req() req: Request, @Res() res: Response){
+		res.cookie(body.idInput, new Date(), { maxAge: 1000 * 60 * 10, httpOnly: false });
+		console.log("testCookie : ", req.cookies[body.idInput]); // or "req.cookies["cookieKey"]"
+
+		return res.json({ d: 123 });
 	}
 }

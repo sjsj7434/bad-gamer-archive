@@ -129,3 +129,25 @@ export const signInAccount = async (accountInfo) => {
 
 	return result;
 }
+
+/**
+ * testCookie
+ * @returns {object} testCookie 처리 결과
+ */
+export const testCookie = async (idInput) => {
+	const headers = new Headers();
+	headers.append('Content-Type', 'application/json');
+	headers.append('Accept', 'application/json');
+
+	const result = await fetch(`${process.env.REACT_APP_SERVER}/accounts/cookies/set`, {
+		method: 'POST',
+		redirect: 'follow',
+		credentials: 'include', // Don't forget to specify this if you need cookies
+		body: JSON.stringify({
+			"idInput": idInput
+		})
+	});
+	console.log("testCookie", result);
+
+	return result;
+}
