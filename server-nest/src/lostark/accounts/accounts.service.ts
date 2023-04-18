@@ -9,6 +9,8 @@ import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Cache } from 'cache-manager';
 import * as bcrypt from 'bcrypt';
 
+const LOGIN_FAIL_LIMIT: number = 5; //로그인 최대 실패
+
 @Injectable()
 export class AccountsService {
 	constructor(
@@ -20,13 +22,13 @@ export class AccountsService {
 	 * 유저의 스토브 소개란에 적을 인증 코드(32글자)를 생성한다
 	 */
 	async publishUserToken(): Promise<object>{
-		const verificationCode = randomBytes(16).toString('hex');
+		const verificationCode = randomBytes(16).toString("hex");
 		
 		//인증번호는 node-cache를 사용하는 방법을 고려 중...
-		// const value = await this.cacheManager.get('verificationCode');
-		// console.log('cacheManager verificationCode => ', value)
-		// await this.cacheManager.set('verificationCode', verificationCode, (60 * 1000 * 3)); //3 minutes TTL(Time to live)
-		// await this.cacheManager.del('verificationCode');
+		// const value = await this.cacheManager.get("verificationCode");
+		// console.log("cacheManager verificationCode => ", value)
+		// await this.cacheManager.set("verificationCode", verificationCode, (60 * 1000 * 3)); //3 minutes TTL(Time to live)
+		// await this.cacheManager.del("verificationCode");
 		// await this.cacheManager.reset();
 
 		return {"data": verificationCode};
@@ -42,10 +44,10 @@ export class AccountsService {
 		});
 		const page = await browser.newPage();
 		// await page.setViewport({width: 1920, height: 1080}); //화면 크기 설정, headless: false 여야 확인 가능
-		await page.goto(`https://timeline.onstove.com/${stoveCode}`, {waitUntil: 'networkidle2'});
+		await page.goto(`https://timeline.onstove.com/${stoveCode}`, {waitUntil: "networkidle2"});
 		console.log(`https://timeline.onstove.com/${stoveCode}`)
 
-		const targetElement = await page.$('#navContent > div > div.layout-column-r > section:nth-child(1) > div.section-body > p'); //소개
+		const targetElement = await page.$("#navContent > div > div.layout-column-r > section:nth-child(1) > div.section-body > p"); //소개
 
 		const stoveVerificationCode = await page.evaluate((data) => {
 			return data.textContent;
@@ -62,8 +64,8 @@ export class AccountsService {
 	 */
 	async getStoveUserCharacters(stoveCode: string): Promise<object>{
 		const result: object = {
-			characterName: '',
-			serverName: ''
+			characterName: "",
+			serverName: ""
 		};
 		const browser = await puppeteer.launch({
 			headless: true,
@@ -71,15 +73,15 @@ export class AccountsService {
 		});
 		const page = await browser.newPage();
 		// await page.setViewport({width: 1920, height: 1080}); //화면 크기 설정, headless: false 여야 확인 가능
-		await page.goto(`https://lostark.game.onstove.com/Board/GetExpandInfo?memberNo=${stoveCode}`, {timeout: 10000, waitUntil: 'networkidle2'});
+		await page.goto(`https://lostark.game.onstove.com/Board/GetExpandInfo?memberNo=${stoveCode}`, {timeout: 10000, waitUntil: "networkidle2"});
 
 		const pageTarget = page.target(); //save this to know that this was the opener
-		await page.click('body > div.profile-library > div.profile-link > a.button.button--black'); //click on a link
+		await page.click("body > div.profile-library > div.profile-link > a.button.button--black"); //click on a link
 		const newTarget = await browser.waitForTarget(target => target.opener() === pageTarget); //check that you opened this page, rather than just checking the url
 		const newPage = await newTarget.page(); //get the page object
 		await newPage.waitForSelector("body"); //wait for page to be loaded
 
-		// const serverInfo = await newPage.$$eval('#expand-character-list > strong', (servers) => {
+		// const serverInfo = await newPage.$$eval("#expand-character-list > strong", (servers) => {
 		// 	const serverList: Array<string> = [];
 		// 	for(const element of servers){
 		// 		serverList.push(element.textContent);
@@ -87,7 +89,7 @@ export class AccountsService {
 		// 	return serverList;
 		// });
 
-		const characterNames = await newPage.$$eval('#expand-character-list > ul > li > span > button > span', (characters) => {
+		const characterNames = await newPage.$$eval("#expand-character-list > ul > li > span > button > span", (characters) => {
 			const characterList: Array<string> = [];
 			for(const element of characters){
 				characterList.push(element.textContent);
@@ -161,11 +163,60 @@ export class AccountsService {
 			}
 			else {
 				dto.password = hash;
-				dto.encryptSalt = encryptSalt;
 
 				await this.accountsRepository.save(dto);
 
 				return 4; //정상 처리
+			}
+		}
+	}
+
+	/**
+	 * ID에 맞는 계정을 수정한다
+	 * find > 정보 수정 > save 처리
+	 */
+	async signInAccount(dto: AccountsDTO): Promise<number> {
+		const account = await this.accountsRepository.findOne({
+			where: {
+				id: dto.id,
+			}
+		});
+
+		if (account.isLocked === true) {
+			// login fail
+			return 0;
+		}
+		else if (account.isBanned === true) {
+			// login fail
+			return 1;
+		}
+		else if (account.isLost === true) {
+			// login fail
+			return 2;
+		}
+		else{
+			const isMatch: boolean = await bcrypt.compare(dto.password, account.password);
+
+			if (isMatch === false) {
+				// login fail
+				account.loginFailCount++;
+
+				if (account.loginFailCount >= LOGIN_FAIL_LIMIT) {
+					account.isLocked = true;
+				}
+
+				await this.accountsRepository.save(account);
+
+				return 3;
+			}
+			else {
+				// login success
+				account.loginFailCount = 0;
+				account.lastLogin = new Date();
+
+				await this.accountsRepository.save(account);
+
+				return 4;
 			}
 		}
 	}

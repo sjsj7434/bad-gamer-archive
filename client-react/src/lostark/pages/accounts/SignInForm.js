@@ -48,32 +48,33 @@ const SignInForm = (props) => {
 			await asyncWaiter(1);
 			setWaitModalShow(false);
 
-			const createResult = await accountsAction.createAccount({
+			const signInResult = await accountsAction.signInAccount({
 				id: form.idInput.value,
 				password: form.passwordInput.value,
 			});
 
-			if(createResult === 4){
-				alert("Hey Dev, you need to make encryption pwd\nGood, Welcome!\nMove to [Login] page");
-				navigate("/");
+			if(signInResult === 4){
+				setSignInStatus();
 			}
-			else if(createResult === 0){
-				alert("[Failed] There is same ID & Nickname already!");
-
-				setIdValid(1);
-				form.idInput.value = "";
+			else if(signInResult === 0){
+				alert("isLocked");
 			}
-			else if(createResult === 1){
-				alert("[Failed] There is same ID already!");
-
-				setIdValid(1);
-				form.idInput.value = "";
+			else if(signInResult === 1){
+				alert("isBanned");
 			}
-			else if(createResult === 3){
-				alert("[Failed] There were error!");
+			else if(signInResult === 2){
+				alert("isLost");
+			}
+			else if(signInResult === 3){
+				alert("failed");
 			}
 		}
 	};
+
+	const setSignInStatus = () => {
+		alert("Good!");
+		// navigate("/");
+	}
 
 	const isValidID = () => {
 		const idInput = document.querySelector("#idInput");
@@ -159,13 +160,6 @@ const SignInForm = (props) => {
 						</Form.Label>
 						<Col>
 							<Form.Control className={statusParser(passwordValid)} id="passwordInput" maxLength={20} type="password" placeholder="password" onChange={() => {isValidPassword()}} />
-							
-							<Form.Control.Feedback id="passwordValid" type="valid">
-								good
-							</Form.Control.Feedback>
-							<Form.Control.Feedback id="passwordInvalid" type="invalid">
-								bad
-							</Form.Control.Feedback>
 						</Col>
 					</Form.Group>
 

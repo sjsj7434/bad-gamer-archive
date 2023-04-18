@@ -70,8 +70,8 @@ const SignUpForm = () => {
 			});
 
 			if(createResult === 4){
-				alert("Hey Dev, you need to make encryption pwd\nGood, Welcome!\nMove to [Login] page");
-				navigate("/");
+				alert("Welcome!\nNow move to [Sign In] page");
+				navigate("/accounts/signin");
 			}
 			else if(createResult === 0){
 				alert("[Failed] There is same ID & Nickname already!");

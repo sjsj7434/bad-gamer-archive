@@ -13,7 +13,7 @@ const fatchTemplate = async (method, destination, bodyData) => {
 		return null;
 	}
 	else if(result.status === 500){
-		alert('Error!\nCan not get answer');
+		alert("Error!\nCan not get answer");
 		return null;
 	}
 	else{
@@ -36,8 +36,8 @@ const fatchTemplate = async (method, destination, bodyData) => {
  * @returns {object} 가져온 캐릭터 정보 JSON
  */
 export const postTest = async (sendData) => {
-	const result = await fatchTemplate('POST', `${process.env.REACT_APP_SERVER}/accounts`, sendData);
-	console.log('postTest', result);
+	const result = await fatchTemplate("POST", `${process.env.REACT_APP_SERVER}/accounts`, sendData);
+	console.log("postTest", result);
 
 	return result;
 }
@@ -47,8 +47,8 @@ export const postTest = async (sendData) => {
  * @returns {object} 가져온 캐릭터 정보 JSON
  */
 export const putTest = async (sendData) => {
-	const result = await fatchTemplate('PUT', `${process.env.REACT_APP_SERVER}/accounts`, sendData);
-	console.log('putTest', result);
+	const result = await fatchTemplate("PUT", `${process.env.REACT_APP_SERVER}/accounts`, sendData);
+	console.log("putTest", result);
 
 	return result;
 }
@@ -58,8 +58,8 @@ export const putTest = async (sendData) => {
  * @returns {object} 가져온 캐릭터 정보 JSON
  */
 export const deleteTest = async (sendData) => {
-	const result = await fatchTemplate('DELETE', `${process.env.REACT_APP_SERVER}/accounts`, sendData);
-	console.log('deleteTest', result);
+	const result = await fatchTemplate("DELETE", `${process.env.REACT_APP_SERVER}/accounts`, sendData);
+	console.log("deleteTest", result);
 
 	return result;
 }
@@ -69,8 +69,8 @@ export const deleteTest = async (sendData) => {
  * @returns {object} 생성한 인증코드
  */
 export const getVerificationCode = async (sendData) => {
-	const result = await fatchTemplate('GET', `${process.env.REACT_APP_SERVER}/accounts/token`, sendData);
-	console.log('getVerificationCode', result);
+	const result = await fatchTemplate("GET", `${process.env.REACT_APP_SERVER}/accounts/token`, sendData);
+	console.log("getVerificationCode", result);
 
 	return result;
 }
@@ -80,8 +80,8 @@ export const getVerificationCode = async (sendData) => {
  * @returns {object} 가져온 stove 소개란 인증코드
  */
 export const checkCodeMatch = async (sendData) => {
-	const result = await fatchTemplate('GET', `${process.env.REACT_APP_SERVER}/accounts/stove/${sendData}`, null);
-	console.log('checkCodeMatch', result);
+	const result = await fatchTemplate("GET", `${process.env.REACT_APP_SERVER}/accounts/stove/${sendData}`, null);
+	console.log("checkCodeMatch", result);
 
 	return result;
 }
@@ -91,8 +91,8 @@ export const checkCodeMatch = async (sendData) => {
  * @returns {object} 가져온 stove 소개란 인증코드
  */
 export const isDuplicatedID = async (id) => {
-	const result = await fatchTemplate('GET', `${process.env.REACT_APP_SERVER}/accounts/${id}`, null);
-	console.log('isDuplicatedID', result);
+	const result = await fatchTemplate("GET", `${process.env.REACT_APP_SERVER}/accounts/${id}`, null);
+	console.log("isDuplicatedID", result);
 
 	return result;
 }
@@ -102,8 +102,8 @@ export const isDuplicatedID = async (id) => {
  * @returns {object} 가져온 stove 소개란 인증코드
  */
 export const isDuplicatedNickname = async (nickname) => {
-	const result = await fatchTemplate('GET', `${process.env.REACT_APP_SERVER}/accounts/nickname/${nickname}`, null);
-	console.log('isDuplicatedNickname', result);
+	const result = await fatchTemplate("GET", `${process.env.REACT_APP_SERVER}/accounts/nickname/${nickname}`, null);
+	console.log("isDuplicatedNickname", result);
 
 	return result;
 }
@@ -113,8 +113,19 @@ export const isDuplicatedNickname = async (nickname) => {
  * @returns {object} 회원가입 처리 결과
  */
 export const createAccount = async (accountInfo) => {
-	const result = await fatchTemplate('POST', `${process.env.REACT_APP_SERVER}/accounts`, accountInfo);
-	console.log('createAccount', result);
+	const result = await fatchTemplate("POST", `${process.env.REACT_APP_SERVER}/accounts`, accountInfo);
+	console.log("createAccount", result);
+
+	return result;
+}
+
+/**
+ * 로그인, Sign In
+ * @returns {object} 로그인 처리 결과
+ */
+export const signInAccount = async (accountInfo) => {
+	const result = await fatchTemplate("POST", `${process.env.REACT_APP_SERVER}/accounts/signin`, accountInfo);
+	console.log("signInAccount", result);
 
 	return result;
 }

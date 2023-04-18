@@ -10,15 +10,15 @@ export class LostarkAPIService {
 
 	getLostArkAPI = async (destination: string) => {
 		const headersRequest = {
-			'Content-Type': 'application/json', // As Far As I Know, this one is not needed
-			'Authorization': `bearer ${this.configService.get('LOSTARK_API_KEY')}`,
+			"Content-Type": "application/json", // As Far As I Know, this one is not needed
+			"Authorization": `bearer ${this.configService.get("LOSTARK_API_KEY")}`,
 		};
 
 		const { data } = await firstValueFrom(
 			this.httpService.get<object>(destination, { headers: headersRequest }).pipe(
 				catchError((error: AxiosError) => {
 					console.error(error.response.data);
-					throw 'An error happened!';
+					throw "An error happened!";
 				}),
 			),
 		);

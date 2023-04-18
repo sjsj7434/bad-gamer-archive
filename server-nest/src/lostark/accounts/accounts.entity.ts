@@ -43,7 +43,7 @@ export class Accounts {
 	email: string;
 
 	/**
-	 * 유저 비밀번호(암호화)
+	 * 유저 비밀번호(암호화), Salt는 암호화된 비밀번호에 포함되어있으니 따로 저장할 필요 없음
 	 */
 	@Column({
 		type: "varchar"
@@ -51,16 +51,6 @@ export class Accounts {
 		, nullable: false
 	})
 	password: string;
-
-	/**
-	 * 암호화에 쓰인 Salt
-	 */
-	@Column({
-		type: "varchar"
-		, length: 50
-		, nullable: false
-	})
-	encryptSalt: string;
 
 	/**
 	 * 유저 마지막 로그인 날짜
