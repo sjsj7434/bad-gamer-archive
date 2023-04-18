@@ -10,9 +10,10 @@
 
 ## 기능 목록
 - <input type='checkbox' checked> 본캐 인증 절차 수립(공홈)
-- <input type='checkbox'> 회원가입
+- <input type='checkbox' checked> 회원가입
+- <input type='checkbox' checked> 회원 비밀번호 암호화
+- <input type='checkbox'> 로그인 구현
 - <input type='checkbox'> 회원가입 후, 본캐 인증
-- <input type='checkbox'> 회원정보 암호화
 - <input type='checkbox'> ckEditor5 게시글 작성 기능(인증 전용)
 - <input type='checkbox'> ckEditor5 게시글 수정 기능?(인증 전용)
 - <input type='checkbox'> 연관 게시글 링크 기능?(인증 전용)
