@@ -8,6 +8,7 @@ import puppeteer from 'puppeteer';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Cache } from 'cache-manager';
 import * as bcrypt from 'bcrypt';
+import { Request, Response } from 'express';
 
 const LOGIN_FAIL_LIMIT: number = 5; //로그인 최대 실패
 
@@ -175,24 +176,28 @@ export class AccountsService {
 	 * ID에 맞는 계정을 수정한다
 	 * find > 정보 수정 > save 처리
 	 */
-	async signInAccount(dto: AccountsDTO): Promise<number> {
+	async signInAccount(dto: AccountsDTO): Promise<string> {
 		const account = await this.accountsRepository.findOne({
 			where: {
 				id: dto.id,
 			}
 		});
 
-		if (account.isLocked === true) {
-			// login fail
-			return 0;
+		if (account === null) {
+			// no account
+			return "fail";
+		}
+		else if (account.isLocked === true) {
+			// login isLocked
+			return "fail";
 		}
 		else if (account.isBanned === true) {
-			// login fail
-			return 1;
+			// login isBanned
+			return "fail";
 		}
 		else if (account.isLost === true) {
-			// login fail
-			return 2;
+			// login isLost
+			return "fail";
 		}
 		else{
 			const isMatch: boolean = await bcrypt.compare(dto.password, account.password);
@@ -207,7 +212,7 @@ export class AccountsService {
 
 				await this.accountsRepository.save(account);
 
-				return 3;
+				return "fail";
 			}
 			else {
 				// login success
@@ -216,7 +221,7 @@ export class AccountsService {
 
 				await this.accountsRepository.save(account);
 
-				return 4;
+				return "success";
 			}
 		}
 	}
@@ -245,5 +250,20 @@ export class AccountsService {
 		await this.accountsRepository.softDelete({
 			code: dto.code
 		});
+	}
+
+	/**
+	 * 로그인 시 Cookie 설정
+	 */
+	async setSignInCookie(body: object, req: Request, res: Response): Promise<string> {
+		const saltRounds = 10;
+		const generatedKey: string = await bcrypt.genSalt(saltRounds);
+
+		res.cookie(body["id"], generatedKey, { maxAge: 1000 * 5, httpOnly: true });
+		console.log(`all cookies : `, req.cookies);
+		console.log(`${body["id"]} : `, req.cookies[body["id"]]);
+		console.log("");
+
+		return generatedKey;
 	}
 }

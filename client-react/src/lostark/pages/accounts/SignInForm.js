@@ -52,20 +52,11 @@ const SignInForm = (props) => {
 			password: form.passwordInput.value,
 		});
 
-		if(signInResult === 4){
-			setSignInStatus(form.idInput.value);
+		if(signInResult === "success"){
+			await setSignInStatus(form.idInput.value);
 		}
-		else if(signInResult === 0){
-			alert("isLocked");
-		}
-		else if(signInResult === 1){
-			alert("isBanned");
-		}
-		else if(signInResult === 2){
-			alert("isLost");
-		}
-		else if(signInResult === 3){
-			alert("failed");
+		else if(signInResult === "fail"){
+			alert("login failed");
 		}
 	};
 
@@ -74,9 +65,7 @@ const SignInForm = (props) => {
 			id: idInput
 		});
 
-		console.log(`testCookieResult : ${testCookieResult}`);
-
-		// alert("Good!");
+		alert(`Your Key is ${testCookieResult.data}`);
 		// navigate("/");
 	}
 

@@ -134,20 +134,27 @@ export const signInAccount = async (accountInfo) => {
  * testCookie
  * @returns {object} testCookie 처리 결과
  */
-export const testCookie = async (idInput) => {
-	const headers = new Headers();
-	headers.append('Content-Type', 'application/json');
-	headers.append('Accept', 'application/json');
-
-	const result = await fetch(`${process.env.REACT_APP_SERVER}/accounts/cookies/set`, {
-		method: 'POST',
-		redirect: 'follow',
-		credentials: 'include', // Don't forget to specify this if you need cookies
-		body: JSON.stringify({
-			"idInput": idInput
-		})
+export const testCookie = async (accountInfo) => {
+	const result = await fetch(`${process.env.REACT_APP_SERVER}/accounts/signin/cookie`, {
+		method: "POST",
+		redirect: "follow",
+		credentials: "include", // Don't forget to specify this if you need cookies
+		headers: {"Content-Type": "application/json",},
+		body: JSON.stringify(accountInfo)
 	});
-	console.log("testCookie", result);
+	
+	if(result === null){
+		return null;
+	}
+	else if(result.status === 500){
+		alert("Error!\nCan not get answer");
+		return null;
+	}
+	else{
+		const jsonResult = await result.json();
 
-	return result;
+		console.log("testCookie", jsonResult);
+	
+		return jsonResult;
+	}
 }

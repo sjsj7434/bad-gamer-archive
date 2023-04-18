@@ -113,11 +113,10 @@ export class  AccountsController {
 		return { data: "soft-delete" };
 	}
 
-	@Post("cookies/set")
-	async testCookie(@Body() body, @Req() req: Request, @Res() res: Response){
-		res.cookie(body.idInput, new Date(), { maxAge: 1000 * 60 * 10, httpOnly: false });
-		console.log("testCookie : ", req.cookies[body.idInput]); // or "req.cookies["cookieKey"]"
+	@Post("signin/cookie")
+	async testCookie(@Body() body: object, @Req() req: Request, @Res() res: Response){
+		const generatedKey = await this.accountsService.setSignInCookie(body, req, res);
 
-		return res.json({ d: 123 });
+		return res.send({ data: generatedKey });
 	}
 }
