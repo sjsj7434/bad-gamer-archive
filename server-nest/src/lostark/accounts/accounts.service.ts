@@ -7,6 +7,7 @@ import { randomBytes } from 'crypto';
 import puppeteer from 'puppeteer';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Cache } from 'cache-manager';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class AccountsService {
@@ -135,18 +136,37 @@ export class AccountsService {
 	/**
 	 * 중복되는 정보가 있는지 확인 후 계정을 생성한다
 	 */
-	async createAccount(dto: AccountsDTO): Promise<number | null> {
-		const idCheck = await this.findWithID(dto.id);
-		const nicknameCheck = await this.findWithNickname(dto.nickname);
-		console.log("idCheck : ", idCheck === null);
-		console.log("nicknameCheck : ", nicknameCheck === null);
+	async createAccount(dto: AccountsDTO): Promise<number> {
+		const idCheck: object|null = await this.findWithID(dto.id);
+		const nicknameCheck: object | null = await this.findWithNickname(dto.nickname);
 
-		if (idCheck !== null || nicknameCheck !== null){
-			return 0; //이미 계정이 존재
+		if (idCheck !== null && nicknameCheck !== null) {
+			return 0; //이미 ID & Nickname 존재
+		}
+		else if (idCheck !== null) {
+			return 1; //이미 ID 존재
+		}
+		else if (nicknameCheck !== null) {
+			return 2; //이미 Nickname 존재
 		}
 		else{
-			await this.accountsRepository.save(dto);
-			return 1; //정상 처리
+			const saltRounds = 10;
+			const password: string = dto.password;
+			const encryptSalt: string = await bcrypt.genSalt(saltRounds);
+			const hash = await bcrypt.hash(password, encryptSalt);
+			const isMatch = await bcrypt.compare(password, hash);
+
+			if (isMatch === false){
+				return 3; //비밀번호 암호화 도중 오류 발생
+			}
+			else {
+				dto.password = hash;
+				dto.encryptSalt = encryptSalt;
+
+				await this.accountsRepository.save(dto);
+
+				return 4; //정상 처리
+			}
 		}
 	}
 

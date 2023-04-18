@@ -47,20 +47,20 @@ export class Accounts {
 	 */
 	@Column({
 		type: "varchar"
-		, length: 200
+		, length: 100
 		, nullable: false
 	})
 	password: string;
 
 	/**
-	 * 유저 비밀번호(암호화에 쓰일 값)
+	 * 암호화에 쓰인 Salt
 	 */
 	@Column({
 		type: "varchar"
 		, length: 50
 		, nullable: false
 	})
-	passwordSalt: string;
+	encryptSalt: string;
 
 	/**
 	 * 유저 마지막 로그인 날짜
