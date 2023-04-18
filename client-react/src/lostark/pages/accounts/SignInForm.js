@@ -9,7 +9,7 @@ import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import Spinner from 'react-bootstrap/Spinner';
 
-import * as accountAction from '../../js/accountAction.js'
+import * as accountsAction from '../../js/accountsAction.js'
 
 const SignInForm = (props) => {
 	const [idValid, setIdValid] = useState(0);
@@ -48,7 +48,7 @@ const SignInForm = (props) => {
 			await asyncWaiter(1);
 			setWaitModalShow(false);
 
-			const createResult = await accountAction.createAccount({
+			const createResult = await accountsAction.createAccount({
 				id: form.idInput.value,
 				password: form.passwordInput.value,
 			});

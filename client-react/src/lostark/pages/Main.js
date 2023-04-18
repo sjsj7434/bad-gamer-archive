@@ -3,7 +3,7 @@
 	1. nest에서 API키, DB PWD 같은 것은 어떻게 보호하는가?
 */
 import { useNavigate } from "react-router-dom";
-import * as accountAction from '../js/accountAction.js'
+import * as accountsAction from '../js/accountsAction.js'
 
 const Main = () => {
 	const navigate = useNavigate();
@@ -14,7 +14,7 @@ const Main = () => {
 			age: parseFloat(Math.random().toFixed(2).replace('0.', '')),
 		};
 
-		const result = await accountAction.postTest(sendData);
+		const result = await accountsAction.postTest(sendData);
 		if(result === null){
 			console.log(0);
 		}
@@ -29,7 +29,7 @@ const Main = () => {
 			id: 'testnewname',
 		};
 
-		const result = await accountAction.putTest(sendData);
+		const result = await accountsAction.putTest(sendData);
 		if(result === null){
 			console.log(0);
 		}
@@ -44,7 +44,7 @@ const Main = () => {
 			code: code,
 		};
 
-		const result = await accountAction.deleteTest(sendData);
+		const result = await accountsAction.deleteTest(sendData);
 		if(result === null){
 			console.log(0);
 		}
