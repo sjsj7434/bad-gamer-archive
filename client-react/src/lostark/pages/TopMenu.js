@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 import { useNavigate } from "react-router-dom";
 import logo from '../images/logo192.png';
 import { useState, useEffect } from 'react';
@@ -8,12 +8,13 @@ import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
+import Offcanvas from 'react-bootstrap/Offcanvas';
 
 import * as accountsAction from '../js/accountsAction.js'
 
 const TopMenu = (props) => {
 	const [loginStatus, setLoginStatus] = useState("");
-	const [userID, setUserID] = useState("");
+	const [accountData, setAccountData] = useState({});
 	const navigate = useNavigate();
 
 	useEffect(() => {
@@ -35,7 +36,7 @@ const TopMenu = (props) => {
 			}
 
 			setLoginStatus(statusJSON.status);
-			setUserID(statusJSON.id);
+			setAccountData(statusJSON);
 		}
 		
 		call();
@@ -50,56 +51,72 @@ const TopMenu = (props) => {
 
 	return(
 		<>
-			<Navbar bg="primary" variant="primary" expand="lg">
+			<Navbar collapseOnSelect bg="dark" variant="dark" expand="md" className="mb-3">
 				<Container fluid>
-					<Navbar.Brand as={Link} to="/">
+					<Navbar.Brand as={NavLink} to="/">
 						<img
 							alt=""
 							src={logo}
 							width="30"
 							height="30"
 							className="d-inline-block align-top"
-						/>{' '}
+						/>
+						&nbsp;
 						TOP-MENU
 					</Navbar.Brand>
 
-					<Navbar.Toggle aria-controls="navbarScroll" />
+					<Navbar.Toggle />
 
-					<Navbar.Collapse id="navbarScroll">
-						<Nav
-							className="me-auto my-2 my-lg-0"
-							style={{ maxHeight: '100px' }}
-							navbarScroll
-						>
-							<Nav.Link as={Link} to="/">Main</Nav.Link>
-							<Nav.Link as={Link} to="/registration">CaseRegistration</Nav.Link>
-							<Nav.Link as={Link} to="/pricing1">404-1</Nav.Link>
-							<Nav.Link as={Link} to="/pricing2">404-2</Nav.Link>
-						</Nav>
+					<Navbar.Offcanvas placement="end">
+						<Offcanvas.Header closeButton style={{backgroundColor: "#878787"}}>
+							<Offcanvas.Title>
+								<b>Menu</b>
+							</Offcanvas.Title>
+						</Offcanvas.Header>
+						<Offcanvas.Body style={{backgroundColor: "#212529"}}>
+							<Nav className="justify-content-start flex-grow-1 pe-3">
+								<Nav.Link as={NavLink} href="#" to="/" style={({ isActive, isPending }) => isActive ? {color: "#89d4ff"} : isPending ? {color: "red"} : {color: "white"}}>
+									Main
+								</Nav.Link>
+								<Nav.Link as={NavLink} href="#" to="/registration" style={({ isActive, isPending }) => isActive ? {color: "#89d4ff"} : isPending ? {color: "red"} : {color: "white"}}>
+									CaseRegistration
+								</Nav.Link>
+								<Nav.Link as={NavLink} href="#" to="/pricing" style={({ isActive, isPending }) => isActive ? {color: "#89d4ff"} : isPending ? {color: "red"} : {color: "white"}}>
+									404-1
+								</Nav.Link>
+								<Nav.Link as={NavLink} href="#" to="/" style={({ isActive, isPending }) => isActive ? {color: "#89d4ff"} : isPending ? {color: "red"} : {color: "white"}}>
+									Main-2
+								</Nav.Link>
+							</Nav>
 
-						{
-							loginStatus === "using" ?
-							(
-								<Form className="d-flex">
-									Hello, {userID}
-									&nbsp;
-									<Button variant="info" onClick={() => {signOut()}}>Sign Out</Button>
-								</Form>
-							)
-							:
-							(
-								<Form className="d-flex">
-									<Nav.Link as={Link} to="/accounts/signup">
-										<Button variant="info">Sign Up</Button>
-									</Nav.Link>
-									&nbsp;
-									<Nav.Link as={Link} to="/accounts/signin">
-										<Button variant="info">Sign In</Button>
-									</Nav.Link>
-								</Form>
-							)
-						}
-					</Navbar.Collapse>
+							{
+								loginStatus === "using" ?
+								(
+									<Form className="d-flex">
+										<Navbar.Collapse className="justify-content-end">
+											<Navbar.Text style={{color: "#ffffff"}}>
+												[Your ID] : <a href="#login">{accountData.id}</a> / <a href="#login">{accountData.nickname}</a>
+											</Navbar.Text>
+										</Navbar.Collapse>
+										&nbsp;&nbsp;
+										<Button variant="outline-warning" onClick={() => {signOut()}}>Logout</Button>
+									</Form>
+								)
+								:
+								(
+									<Form className="d-flex">
+										<Nav.Link as={NavLink} href="#" to="/accounts/signup">
+											<Button variant="info">Sign Up</Button>
+										</Nav.Link>
+										&nbsp;
+										<Nav.Link as={NavLink} href="#" to="/accounts/signin">
+											<Button variant="info">Sign In</Button>
+										</Nav.Link>
+									</Form>
+								)
+							}
+						</Offcanvas.Body>
+					</Navbar.Offcanvas>
 				</Container>
 			</Navbar>
 		</>

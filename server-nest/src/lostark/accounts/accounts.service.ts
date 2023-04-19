@@ -202,11 +202,13 @@ export class AccountsService {
 	/**
 	 * 중복 로그인 방지, 이미 해당 계정으로 로그인한 사람이 있는지 확인
 	 */
-	async checkSignInStatus(request: Request, response: Response): Promise<{ status: string, id: string }> {
+	async checkSignInStatus(request: Request, response: Response): Promise<{ status: string, id: string, nickname: string }> {
 		if (request.cookies["sessionCode"] === undefined) {
+			console.log(SIGN_IN_SESSION)
 			return {
 				status: "no_cookie",
 				id: "",
+				nickname: "",
 			}
 		}
 		else if (SIGN_IN_SESSION.has(request.cookies["sessionCode"]) === true) { //해당 계정 세션이 이미 존재
@@ -222,6 +224,7 @@ export class AccountsService {
 				return {
 					status: "locked",
 					id: "",
+					nickname: "",
 				}
 			}
 			else if (userData.isBanned === true) {
@@ -230,6 +233,7 @@ export class AccountsService {
 				return {
 					status: "banned",
 					id: "",
+					nickname: "",
 				}
 			}
 			else if (userData.isLost === true) {
@@ -238,6 +242,7 @@ export class AccountsService {
 				return {
 					status: "lost",
 					id: "",
+					nickname: "",
 				}
 			}
 			else{
@@ -245,7 +250,8 @@ export class AccountsService {
 
 				return {
 					status: "using",
-					id: SIGN_IN_SESSION.get(request.cookies["sessionCode"]),
+					id: userData.id,
+					nickname: userData.nickname,
 				}
 			}
 		}
@@ -254,6 +260,7 @@ export class AccountsService {
 			return {
 				status: "wrong_cookie",
 				id: "",
+				nickname: "",
 			}
 		}
 	}
