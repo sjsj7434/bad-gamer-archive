@@ -91,6 +91,26 @@ export class Accounts {
 	personalAnswer: string;
 
 	/**
+	 * 로그인 성공한 IP
+	 */
+	@Column({
+		type: "varchar"
+		, length: 50
+		, nullable: true
+	})
+	loginSuccessIP: string;
+
+	/**
+	 * 로그인 실패한 IP
+	 */
+	@Column({
+		type: "varchar"
+		, length: 50
+		, nullable: true
+	})
+	loginFailIP: string;
+
+	/**
 	 * 유저 로그인할 때 비밀번호 틀린 횟수
 	 */
 	@Column({

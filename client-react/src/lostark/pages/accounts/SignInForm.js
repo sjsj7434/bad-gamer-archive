@@ -19,11 +19,16 @@ const SignInForm = (props) => {
 	const navigate = useNavigate();
 
 	useEffect(() => {
-		const call = async (characterName) => {
-			// console.log(characterName);
+		const call = async () => {
+			const loginStatus = await accountsAction.checkSignInStatus();
+			console.log(loginStatus)
+
+			if(loginStatus.status === "using"){
+				navigate("/");
+			}
 		}
 		
-		call(props.characterName);
+		call();
 	}, [props]); //처음 페이지 로딩 될때만
 
 	const handleSubmit = async (event) => {
@@ -44,7 +49,7 @@ const SignInForm = (props) => {
 
 		setWaitModalShow(true);
 		setWaitModalMessage("Sign In...");
-		await asyncWaiter(1);
+		// await asyncWaiter(1);
 		setWaitModalShow(false);
 
 		const signInResult = await accountsAction.signInAccount({
@@ -53,21 +58,21 @@ const SignInForm = (props) => {
 		});
 
 		if(signInResult === "success"){
-			await setSignInStatus(form.idInput.value);
+			navigate("/");
 		}
 		else if(signInResult === "fail"){
 			alert("login failed");
 		}
+		else if(signInResult === "locked"){
+			alert("account is locked");
+		}
+		else if(signInResult === "wrong_cookie"){
+			alert("login failed");
+		}
+		else if(signInResult === "same_user"){
+			alert("login failed");
+		}
 	};
-
-	const setSignInStatus = async (idInput) => {
-		const testCookieResult = await accountsAction.testCookie({
-			id: idInput
-		});
-
-		alert(`Your Key is ${testCookieResult.data}`);
-		// navigate("/");
-	}
 
 	const isValidID = () => {
 		const idInput = document.querySelector("#idInput");

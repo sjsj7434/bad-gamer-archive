@@ -69,7 +69,7 @@ export const deleteTest = async (sendData) => {
  * @returns {object} 생성한 인증코드
  */
 export const getVerificationCode = async (sendData) => {
-	const result = await fatchTemplate("GET", `${process.env.REACT_APP_SERVER}/accounts/token`, sendData);
+	const result = await fatchTemplate("GET", `${process.env.REACT_APP_SERVER}/accounts/stove/token`, sendData);
 	console.log("getVerificationCode", result);
 
 	return result;
@@ -91,7 +91,7 @@ export const checkCodeMatch = async (sendData) => {
  * @returns {object} 가져온 stove 소개란 인증코드
  */
 export const isDuplicatedID = async (id) => {
-	const result = await fatchTemplate("GET", `${process.env.REACT_APP_SERVER}/accounts/${id}`, null);
+	const result = await fatchTemplate("GET", `${process.env.REACT_APP_SERVER}/accounts/id/${id}`, null);
 	console.log("isDuplicatedID", result);
 
 	return result;
@@ -124,18 +124,7 @@ export const createAccount = async (accountInfo) => {
  * @returns {object} 로그인 처리 결과
  */
 export const signInAccount = async (accountInfo) => {
-	const result = await fatchTemplate("POST", `${process.env.REACT_APP_SERVER}/accounts/signin`, accountInfo);
-	console.log("signInAccount", result);
-
-	return result;
-}
-
-/**
- * testCookie
- * @returns {object} testCookie 처리 결과
- */
-export const testCookie = async (accountInfo) => {
-	const result = await fetch(`${process.env.REACT_APP_SERVER}/accounts/signin/cookie`, {
+	const result = await fetch(`${process.env.REACT_APP_SERVER}/accounts/signin`, {
 		method: "POST",
 		redirect: "follow",
 		credentials: "include", // Don't forget to specify this if you need cookies
@@ -153,8 +142,45 @@ export const testCookie = async (accountInfo) => {
 	else{
 		const jsonResult = await result.json();
 
-		console.log("testCookie", jsonResult);
+		console.log("signInAccount: ", jsonResult);
 	
-		return jsonResult;
+		return jsonResult.data;
 	}
+}
+
+/**
+ * 로그인, Sign In
+ * @returns {object} 로그인 처리 결과
+ */
+export const checkSignInStatus = async () => {
+	const result = await fetch(`${process.env.REACT_APP_SERVER}/accounts/signin/status`, {
+		method: "POST",
+		redirect: "follow",
+		credentials: "include", // Don't forget to specify this if you need cookies
+	});
+	
+	if(result === null){
+		return null;
+	}
+	else if(result.status === 500){
+		alert("Error!\nCan not get answer");
+		return null;
+	}
+	else{
+		const jsonResult = await result.json();
+
+		return jsonResult.data;
+	}
+}
+
+/**
+ * 로그아웃, sign out
+ * @returns {object} 로그아웃 처리 결과
+ */
+export const setSignOut = async () => {
+	await fetch(`${process.env.REACT_APP_SERVER}/accounts/signout`, {
+		method: "POST",
+		redirect: "follow",
+		credentials: "include", // Don't forget to specify this if you need cookies
+	});
 }
