@@ -24,15 +24,19 @@ const TopMenu = (props) => {
 			
 			if(statusJSON.status === "locked"){
 				alert("somebody keep trying to login your account, so it's locked now");
+				navigate("/accounts/signin");
 			}
 			else if(statusJSON.status === "banned"){
 				alert("sorry, you are banned");
+				navigate("/accounts/signin");
 			}
 			else if(statusJSON.status === "lost"){
 				alert("this account is lost, how can you use this?");
+				navigate("/accounts/signin");
 			}
 			else if(statusJSON.status === "wrong_cookie"){
 				alert("somebody using your account");
+				navigate("/accounts/signin");
 			}
 
 			setLoginStatus(statusJSON.status);
