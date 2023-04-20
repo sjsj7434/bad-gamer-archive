@@ -5,9 +5,9 @@ import Col from 'react-bootstrap/Col';
 import { useParams } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import * as lostarkAPI from '../../js/lostarkAPI.js'
-import testImage from '../../images/logo192.png'
+import testImage from '../../../common/images/logo192.png'
 
-import EmptyResult from '../EmptyResult.js';
+import EmptyResult from '../../../common/pages/errors/EmptyResult.js';
 import Equipment from './Equipment.js';
 import ProfileBasic from './ProfileBasic.js';
 import ProfileDetail from './ProfileDetail.js';

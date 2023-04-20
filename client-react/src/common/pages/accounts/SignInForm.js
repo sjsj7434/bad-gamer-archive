@@ -9,7 +9,7 @@ import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import Spinner from 'react-bootstrap/Spinner';
 
-import * as accountsAction from '../../js/accountsAction.js'
+import * as accountsAction from '../../../common/js/accountsAction.js'
 
 const SignInForm = (props) => {
 	const [idValid, setIdValid] = useState(0);

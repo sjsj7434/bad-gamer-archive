@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import * as lostarkAPI from '../../js/lostarkAPI.js'
-import EmptyResult from '../EmptyResult.js';
+import EmptyResult from '../../../common/pages/errors/EmptyResult.js';
 import Image from 'react-bootstrap/Image';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';

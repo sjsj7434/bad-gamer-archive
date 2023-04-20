@@ -4,7 +4,7 @@ import Main from './Main';
 import CaseRegistration from './CaseRegistration';
 import TopMenu from './TopMenu';
 import Wrapper from './Wrapper';
-import CharacterInfo from './character/CharacterInfo';
+import CharacterInfo from '../../lostark/pages/character/CharacterInfo';
 import SignUpForm from './accounts/SignUpForm';
 import SignInForm from './accounts/SignInForm';
 

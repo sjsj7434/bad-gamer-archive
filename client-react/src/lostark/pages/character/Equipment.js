@@ -4,7 +4,7 @@ import Card from 'react-bootstrap/Card';
 
 import { useState, useEffect } from 'react';
 import * as lostarkAPI from '../../js/lostarkAPI.js'
-import EmptyResult from '../EmptyResult';
+import EmptyResult from '../../../common/pages/errors/EmptyResult.js';
 
 const Equipment = (props) => {
 	// "searchResult"라는 새 상태 변수를 선언합니다

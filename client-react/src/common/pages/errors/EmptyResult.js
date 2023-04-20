@@ -1,4 +1,4 @@
-import logo from '../images/logo192.png';
+import logo from '../../images/logo192.png';
 
 const EmptyResult = () => {
 	return(

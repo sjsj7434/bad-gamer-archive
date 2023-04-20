@@ -3,7 +3,7 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 
 import { useState, useEffect } from 'react';
-import EmptyResult from '../EmptyResult.js';
+import EmptyResult from '../../../common/pages/errors/EmptyResult.js';
 
 const ProfileBasic = (props) => {
 	// "searchResult"라는 새 상태 변수를 선언합니다
