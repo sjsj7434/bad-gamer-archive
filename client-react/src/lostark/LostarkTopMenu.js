@@ -1,6 +1,6 @@
 import { NavLink } from 'react-router-dom';
 import { useNavigate } from "react-router-dom";
-import logo from '../images/logo192.png';
+import logo from '../common/images/logo192.png';
 import { useState, useEffect } from 'react';
 
 import Container from 'react-bootstrap/Container';
@@ -10,9 +10,9 @@ import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import Offcanvas from 'react-bootstrap/Offcanvas';
 
-import * as accountsAction from '../js/accountsAction.js'
+import * as accountsAction from '../common/js/accountsAction.js'
 
-const TopMenu = (props) => {
+const CommonTopMenu = (props) => {
 	const [loginStatus, setLoginStatus] = useState("");
 	const [accountData, setAccountData] = useState({});
 	const navigate = useNavigate();
@@ -66,7 +66,7 @@ const TopMenu = (props) => {
 							className="d-inline-block align-top"
 						/>
 						&nbsp;
-						TOP-MENU
+						Lostark-TOP-MENU
 					</Navbar.Brand>
 
 					<Navbar.Toggle />
@@ -82,14 +82,8 @@ const TopMenu = (props) => {
 								<Nav.Link as={NavLink} href="#" to="/" style={({ isActive, isPending }) => isActive ? {color: "#89d4ff"} : isPending ? {color: "red"} : {color: "white"}}>
 									Main
 								</Nav.Link>
-								<Nav.Link as={NavLink} href="#" to="/registration" style={({ isActive, isPending }) => isActive ? {color: "#89d4ff"} : isPending ? {color: "red"} : {color: "white"}}>
-									CaseRegistration
-								</Nav.Link>
-								<Nav.Link as={NavLink} href="#" to="/pricing" style={({ isActive, isPending }) => isActive ? {color: "#89d4ff"} : isPending ? {color: "red"} : {color: "white"}}>
-									404-1
-								</Nav.Link>
-								<Nav.Link as={NavLink} href="#" to="/" style={({ isActive, isPending }) => isActive ? {color: "#89d4ff"} : isPending ? {color: "red"} : {color: "white"}}>
-									Main-2
+								<Nav.Link as={NavLink} href="#" to="/lostark" style={({ isActive, isPending }) => isActive ? {color: "#89d4ff"} : isPending ? {color: "red"} : {color: "white"}}>
+									LA
 								</Nav.Link>
 							</Nav>
 
@@ -127,4 +121,4 @@ const TopMenu = (props) => {
 	);
 }
 
-export default TopMenu;
+export default CommonTopMenu;
