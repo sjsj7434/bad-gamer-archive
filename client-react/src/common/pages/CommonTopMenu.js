@@ -56,8 +56,8 @@ const CommonTopMenu = (props) => {
 	return(
 		<>
 			<Navbar collapseOnSelect bg="dark" variant="dark" expand="md" className="mb-3">
-				<Container fluid>
-					<Navbar.Brand as={NavLink} to="/">
+				<Container fluid style={{maxWidth: "1440px"}}>
+					<Navbar.Brand as={NavLink} to="/lostark">
 						<img
 							alt=""
 							src={logo}
@@ -66,7 +66,7 @@ const CommonTopMenu = (props) => {
 							className="d-inline-block align-top"
 						/>
 						&nbsp;
-						COMMON-TOP-MENU
+						Common-TOP-MENU
 					</Navbar.Brand>
 
 					<Navbar.Toggle />
@@ -79,15 +79,18 @@ const CommonTopMenu = (props) => {
 						</Offcanvas.Header>
 						<Offcanvas.Body style={{backgroundColor: "#212529"}}>
 							<Nav className="justify-content-start flex-grow-1 pe-3">
-								<Nav.Link as={NavLink} href="#" to="/" style={({ isActive, isPending }) => isActive ? {color: "#89d4ff"} : isPending ? {color: "red"} : {color: "white"}}>
-									Main
-								</Nav.Link>
 								<Nav.Link as={NavLink} href="#" to="/lostark" style={({ isActive, isPending }) => isActive ? {color: "#89d4ff"} : isPending ? {color: "red"} : {color: "white"}}>
 									LA
+								</Nav.Link>
+								
+								{/* 아직 오픈 계획 없음
+								<Nav.Link as={NavLink} href="#" to="/" style={({ isActive, isPending }) => isActive ? {color: "#89d4ff"} : isPending ? {color: "red"} : {color: "white"}}>
+									Main
 								</Nav.Link>
 								<Nav.Link as={NavLink} href="#" to="/deadbydaylight" style={({ isActive, isPending }) => isActive ? {color: "#89d4ff"} : isPending ? {color: "red"} : {color: "white"}}>
 									DBD
 								</Nav.Link>
+								*/}
 							</Nav>
 
 							{
@@ -96,11 +99,13 @@ const CommonTopMenu = (props) => {
 									<Form className="d-flex">
 										<Navbar.Collapse className="justify-content-end">
 											<Navbar.Text style={{color: "#ffffff"}}>
-												[Your ID] : <a href="#login">{accountData.id}</a> / <a href="#login">{accountData.nickname}</a>
+												Hello, {accountData.nickname}
 											</Navbar.Text>
+											&nbsp;&nbsp;
+											<Button variant="info" onClick={() => {navigate("/accounts/mypage")}}>My Page</Button>
+											&nbsp;&nbsp;
+											<Button variant="outline-warning" onClick={() => {signOut()}}>Logout</Button>
 										</Navbar.Collapse>
-										&nbsp;&nbsp;
-										<Button variant="outline-warning" onClick={() => {signOut()}}>Logout</Button>
 									</Form>
 								)
 								:
