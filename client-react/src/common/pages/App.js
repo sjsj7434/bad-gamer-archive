@@ -20,7 +20,7 @@ const App = () => {
 		<BrowserRouter>
 			<Routes>
 				<Route path="/" element={<Navigate to="/lostark" replace={true} />}></Route>
-				<Route path="lostark" element={<><CommonTopMenu /><LostarkMain /></>}>
+				<Route path="lostark/*" element={<><CommonTopMenu /><LostarkMain /></>}>
 				</Route>
 
 				<Route path="accounts">
@@ -42,7 +42,7 @@ const App = () => {
 				<Route path="/character/:characterName" element={<Wrapper><CommonTopMenu /><CharacterInfo /></Wrapper>}></Route>
 
 				{/* 상단에 위치하는 라우트들의 규칙을 모두 확인, 일치하는 라우트가 없는경우 처리 */}
-				<Route path="*" element={<Wrapper innerNode={<></>}><CommonTopMenu /><Error404 /></Wrapper>}></Route>
+				<Route path="*" element={<><CommonTopMenu /><Error404 /></>}></Route>
 			</Routes>
 		</BrowserRouter>
 	);
