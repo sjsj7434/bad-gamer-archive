@@ -2,12 +2,12 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Error404 from './errors/Error404';
 
 import LostarkMain from '../../lostark/pages/LostarkMain';
-import DeadByDaylightMain from '../../deadByDaylight/pages/DeadByDaylightMain';
 import CaseRegistration from './CaseRegistration';
 import CharacterInfo from '../../lostark/pages/character/CharacterInfo';
 import SignUpForm from './accounts/SignUpForm';
 import SignInForm from './accounts/SignInForm';
 import CommonTopMenu from './CommonTopMenu';
+import Wrapper from './Wrapper';
 import MyPage from './accounts/MyPage';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -19,19 +19,30 @@ const App = () => {
 	return (
 		<BrowserRouter>
 			<Routes>
-				<Route exact path="/" element={<><Navigate to="/lostark" replace={true} /></>}></Route>
-				<Route path="/lostark/*" element={<><CommonTopMenu /><LostarkMain /></>}></Route>
+				<Route path="/" element={<Navigate to="/lostark" replace={true} />}></Route>
+				<Route path="lostark" element={<><CommonTopMenu /><LostarkMain /></>}>
+				</Route>
 
-				<Route path="/accounts/signup" element={<><CommonTopMenu /><SignUpForm /></>}></Route>
-				<Route path="/accounts/signin" element={<><CommonTopMenu /><SignInForm /></>}></Route>
-				<Route path="/accounts/mypage" element={<><CommonTopMenu /><MyPage /></>}></Route>
+				<Route path="accounts">
+					<Route path="signup" element={<><CommonTopMenu /><SignUpForm /></>}>
+					</Route>
 
-				<Route path="/registration" element={<><CommonTopMenu /><CaseRegistration /></>}></Route>
-				<Route path="/character/:characterName" element={<><CommonTopMenu /><CharacterInfo /></>}></Route>
-				<Route path="/deadbydaylight" element={<><CommonTopMenu /><DeadByDaylightMain /></>}></Route>
+					<Route path="signin" element={<><CommonTopMenu /><SignInForm /></>}>
+					</Route>
+
+					<Route path="mypage" element={<><CommonTopMenu /><MyPage /></>}>
+					</Route>
+				</Route>
+
+				{/* <Route path="/accounts/signup" element={<Wrapper innerNode={<></>}><CommonTopMenu /><SignUpForm /></Wrapper>}></Route> */}
+				{/* <Route path="/accounts/signin" element={<Wrapper innerNode={<></>}><CommonTopMenu /><SignInForm /></Wrapper>}></Route> */}
+				{/* <Route path="/accounts/mypage" element={<Wrapper innerNode={<></>}><CommonTopMenu /><MyPage /></Wrapper>}></Route> */}
+
+				<Route path="/registration" element={<Wrapper innerNode={<></>}><CommonTopMenu /><CaseRegistration /></Wrapper>}></Route>
+				<Route path="/character/:characterName" element={<Wrapper><CommonTopMenu /><CharacterInfo /></Wrapper>}></Route>
 
 				{/* 상단에 위치하는 라우트들의 규칙을 모두 확인, 일치하는 라우트가 없는경우 처리 */}
-				<Route path="*" element={<><CommonTopMenu /><Error404 /></>}></Route>
+				<Route path="*" element={<Wrapper innerNode={<></>}><CommonTopMenu /><Error404 /></Wrapper>}></Route>
 			</Routes>
 		</BrowserRouter>
 	);
