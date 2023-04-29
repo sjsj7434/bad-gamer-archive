@@ -1,25 +1,24 @@
-import { Routes, Route } from 'react-router-dom';
 import Container from 'react-bootstrap/Container';
-import { useNavigate } from "react-router-dom";
+import { Routes, Route, useNavigate } from "react-router-dom";
+import CaseRegistration from '../../common/pages/CaseRegistration';
 
 const LostarkMain = () => {
 	const navigate = useNavigate();
 
 	return(
 		<Container style={{maxWidth: "1440px"}}>
-			<h2>Here is LA</h2>
-			
 			<div style={{display: "flex"}}>
-				<span onClick={() => {navigate("test1")}}>site 1</span>
+				<span onClick={() => {navigate("test1")}}>List</span>
 				&nbsp;&nbsp;|&nbsp;&nbsp;
-				<span onClick={() => {navigate("test2")}}>site 2</span>
+				<span onClick={() => {navigate("test2")}}>Write</span>
 				&nbsp;&nbsp;|&nbsp;&nbsp;
-				<span onClick={() => {navigate("test3")}}>site 3</span>
+				<span onClick={() => {navigate("test3")}}>None</span>
 			</div>
+			
 			<Routes>
 				<Route path="" element={<><div>main</div></>}></Route>
-				<Route path="test1" element={<><div>HERE IS SITE 1</div></>}></Route>
-				<Route path="test2" element={<><div>HERE IS SITE 2</div></>}></Route>
+				<Route path="test1" element={<><div>HERE IS your list</div></>}></Route>
+				<Route path="test2" element={<><CaseRegistration /></>}></Route>
 				<Route path="*" element={<><div>NOTHING</div></>}></Route>
 			</Routes>
 		</Container>

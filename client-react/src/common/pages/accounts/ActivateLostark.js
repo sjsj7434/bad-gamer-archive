@@ -9,11 +9,10 @@ import Modal from 'react-bootstrap/Modal';
 import ListGroup from 'react-bootstrap/ListGroup';
 import Tab from 'react-bootstrap/Tab';
 
-import * as dbActions from '../../js/dbActions.js'
+import * as accountsAction from '../../js/accountsAction'
 
-const RegisterForm = (props) => {
-	const [validated, setValidated] = useState(false);
-	const [modalShow, setModalShow] = useState(false);
+const ActivateLostark = (props) => {
+	const [characterModalShow, setCharacterModalShow] = useState(false);
 	const [characterList, setcharacterList] = useState([]);
 
 	useEffect(() => {
@@ -28,10 +27,11 @@ const RegisterForm = (props) => {
 		const stoveURL = document.querySelector('#stoveURL').value;
 		window.open(`https://timeline.onstove.com/${stoveURL}`);
 	}
-	const showVerificationArea = async () => {
-		const verificationCode = await dbActions.getVerificationCode();
+	const getVerificationCode = async () => {
+		const verificationCode = await accountsAction.getVerificationCode();
 		document.querySelector('#verificationCode').value = verificationCode;
 		document.querySelector("#verificationArea").style.display = "";
+		document.querySelector("#getCodeButton").disabled = true;
 	}
 	const copyVerificationCode = async () => {
 		const verificationCode = document.querySelector('#verificationCode');
@@ -39,30 +39,39 @@ const RegisterForm = (props) => {
 		alert('인증코드가 복사되었습니다');
 	}
 
-	const showCharacterModal = async () => {
+	const compareCodeWithStove = async () => {
+		//아직 정확한 비교가 이루어지지 않고 있으니 코드 비교 구현 필요
+		props.setWaitModalShow(true);
 		const stoveURL = document.querySelector('#stoveURL').value;
-		const characterNames = await dbActions.checkCodeMatch(stoveURL);
-		console.log(characterNames);
+		const characterNames = await accountsAction.checkCodeMatch(stoveURL);
+		console.log("characterNames", characterNames);
 
-		const ele = [];
-		ele.push(characterNames.map((character) => {
-			return (
-				<ListGroup.Item key={character} action onClick={() => {setCharacter(character)}}>
-					{character}
-				</ListGroup.Item>
-			)
-		}))
+		if(characterNames.length === 0){
+			alert("No data!");
+			setCharacterModalShow(false);
+		}
+		else{
+			const elements = [];
+			elements.push(characterNames.map((character) => {
+				return (
+					<ListGroup.Item key={character} action onClick={() => {setCharacter(character)}}>
+						{character}
+					</ListGroup.Item>
+				)
+			}));
 
-		setcharacterList(ele)
+			setcharacterList(elements);
+			setCharacterModalShow(true);
+		}
 		
-		setModalShow(true);
+		props.setWaitModalShow(false);
 	}
 
 	const setCharacter = (character) => {
 		if(window.confirm(`${character}로 캐릭터를 설정하시겠습니까?`)){
 			document.querySelector('#getCodeButton').disabled = true;
 			document.querySelector('#verifyButton').disabled = true;
-			setModalShow(false);
+			setCharacterModalShow(false);
 			document.querySelector("#formArea").style.display = "";
 			
 			document.querySelector('#chosenCharacter').value = character;
@@ -70,8 +79,8 @@ const RegisterForm = (props) => {
 	}
 
 	return (
-		<Container>
-			<div style={{ margin: "20px" }}>
+		<Container fluid>
+			<div style={{ marginTop: "20px" }}>
 				<Form>
 					<Form.Group as={Row} className="mb-3">
 						<Form.Label column sm="2">
@@ -85,9 +94,9 @@ const RegisterForm = (props) => {
 										defaultValue={"83200592"}
 									/>
 									<Button variant="outline-secondary" onClick={() => {moveToStovePage()}}>
-										Open Page
+										Go Stove
 									</Button>
-									<Button variant="outline-secondary" id="getCodeButton" onClick={() => {showVerificationArea()}}>
+									<Button variant="outline-secondary" id="getCodeButton" onClick={() => {getVerificationCode()}}>
 										Get Code
 									</Button>
 								</InputGroup>
@@ -105,7 +114,7 @@ const RegisterForm = (props) => {
 									<Button variant="outline-secondary" onClick={() => {copyVerificationCode()}}>
 										Copy
 									</Button>
-									<Button variant="outline-secondary" id="verifyButton" onClick={() => {showCharacterModal()}}>
+									<Button variant="outline-secondary" id="verifyButton" onClick={() => {compareCodeWithStove()}}>
 										Verify
 									</Button>
 								</InputGroup>
@@ -116,7 +125,7 @@ const RegisterForm = (props) => {
 						</Col>
 					</Form.Group>
 					
-					<Modal show={modalShow} onHide={() => {setModalShow(false)}} animation={true} backdrop="static" keyboard={false} centered>
+					<Modal show={characterModalShow} onHide={() => {setCharacterModalShow(false)}} animation={true} backdrop="static" keyboard={false} centered>
 						<Modal.Header>
 							<Modal.Title>Choose one</Modal.Title>
 						</Modal.Header>
@@ -134,9 +143,9 @@ const RegisterForm = (props) => {
 					</Modal>
 
 					<div id="formArea" style={{display: "none"}}>
-						<Form.Group as={Row} className="mb-5">
+						<Form.Group as={Row} className="mb-3">
 							<Form.Label column sm="2">
-								Set Character
+								Character
 							</Form.Label>
 							<Col sm="10">
 								<Form.Control id="chosenCharacter" plaintext readOnly />
@@ -148,69 +157,33 @@ const RegisterForm = (props) => {
 						
 						<Form.Group as={Row} className="mb-3">
 							<Form.Label column sm="2">
-								ID
+								Level
 							</Form.Label>
 							<Col sm="10">
-								<Form.Control defaultValue="" />
+								<Form.Control id="chosenCharacterLevel" defaultValue="1232.34" plaintext readOnly />
 								<Form.Text muted>
 									Your ID must be 1-20 characters long, only alphabet
 								</Form.Text>
 							</Col>
 						</Form.Group>
-
+						
 						<Form.Group as={Row} className="mb-3">
 							<Form.Label column sm="2">
-								Nickname
+								Class
 							</Form.Label>
 							<Col sm="10">
-								<Form.Control defaultValue="" />
+								<Form.Control id="chosenCharacterClass" defaultValue="goal keep" plaintext readOnly />
 								<Form.Text muted>
-									Your Nickname must be 1-20 characters long, no special letters
-								</Form.Text>
-							</Col>
-						</Form.Group>
-
-						<Form.Group as={Row} className="mb-3">
-							<Form.Label column sm="2">
-								Email
-							</Form.Label>
-							<Col sm="10">
-								<Form.Control defaultValue="email@example.com" />
-								<Form.Text muted>
-									Your Email will be used when you lost your password
-								</Form.Text>
-							</Col>
-						</Form.Group>
-
-						<Form.Group as={Row} className="mb-3">
-							<Form.Label column sm="2">
-								Password
-							</Form.Label>
-							<Col sm="10">
-								<Form.Control type="password" placeholder="Password" />
-								<Form.Text muted>
-									Your password must be 8-20 characters long, contain letters and numbers
-									<br/>
-									be calm, password will be encrypted, so web admin will not know your password
-								</Form.Text>
-							</Col>
-						</Form.Group>
-						<Form.Group as={Row} className="mb-3">
-							<Form.Label column sm="2">
-								Re-Password
-							</Form.Label>
-							<Col sm="10">
-								<Form.Control type="password" placeholder="Re-Password" />
-								<Form.Text muted>
-									Type your password once more
+									Your ID must be 1-20 characters long, only alphabet
 								</Form.Text>
 							</Col>
 						</Form.Group>
 					</div>
+					<Button size={"lg"} style={{width: "100%"}}>SAVE</Button>
 				</Form>
 			</div>
 		</Container>
 	);
 }
 
-export default RegisterForm;
+export default ActivateLostark;

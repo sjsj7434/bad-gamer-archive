@@ -19,16 +19,12 @@ const SignInForm = (props) => {
 	const navigate = useNavigate();
 
 	useEffect(() => {
-		const call = async () => {
-			const loginStatus = await accountsAction.checkSignInStatus();
-			console.log(loginStatus)
+		console.log("SignInForm", props.accountData);
 
-			if(loginStatus.status === "using"){
-				navigate("/");
-			}
+		if(props.accountData.status === "using"){
+			alert("already login!");
+			navigate("/");
 		}
-		
-		call();
 	}, [props]); //처음 페이지 로딩 될때만
 
 	const handleSubmit = async (event) => {

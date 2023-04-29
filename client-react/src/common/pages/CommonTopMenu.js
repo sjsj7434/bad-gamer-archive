@@ -1,7 +1,7 @@
 import { NavLink } from 'react-router-dom';
 import { useNavigate } from "react-router-dom";
-import logo from '../images/logo192.png';
 import { useState, useEffect } from 'react';
+import logo from '../images/logo192.png';
 
 import Container from 'react-bootstrap/Container';
 import Nav from 'react-bootstrap/Nav';
@@ -13,50 +13,23 @@ import Offcanvas from 'react-bootstrap/Offcanvas';
 import * as accountsAction from '../js/accountsAction.js'
 
 const CommonTopMenu = (props) => {
-	const [loginStatus, setLoginStatus] = useState("");
-	const [accountData, setAccountData] = useState({});
 	const navigate = useNavigate();
 
 	useEffect(() => {
-		const call = async () => {
-			const statusJSON = await accountsAction.checkSignInStatus();
-			console.log("topMenu", statusJSON)
-			
-			if(statusJSON.status === "locked"){
-				alert("somebody keep trying to login your account, so it's locked now");
-				navigate("/accounts/signin");
-			}
-			else if(statusJSON.status === "banned"){
-				alert("sorry, you are banned");
-				navigate("/accounts/signin");
-			}
-			else if(statusJSON.status === "lost"){
-				alert("this account is lost, how can you use this?");
-				navigate("/accounts/signin");
-			}
-			else if(statusJSON.status === "wrong_cookie"){
-				alert("somebody using your account");
-				navigate("/accounts/signin");
-			}
-
-			setLoginStatus(statusJSON.status);
-			setAccountData(statusJSON);
-		}
-		
-		call();
-	}, [props]); //처음 페이지 로딩 될때만
+		props.renewLogin();
+		console.log("CommonTopMenu", props);
+	}, []); //처음 페이지 로딩 될때만
 
 	const signOut = async () => {
 		await accountsAction.setSignOut();
 		alert("LogOUT!")
-		setLoginStatus("");
 		navigate("/");
 	}
 
 	return(
 		<>
 			<Navbar collapseOnSelect bg="dark" variant="dark" expand="md" className="mb-3">
-				<Container fluid style={{maxWidth: "1440px"}}>
+				<Container style={{maxWidth: "1440px"}}>
 					<Navbar.Brand as={NavLink} to="/lostark">
 						<img
 							alt=""
@@ -92,14 +65,13 @@ const CommonTopMenu = (props) => {
 								</Nav.Link>
 								*/}
 							</Nav>
-
 							{
-								loginStatus === "using" ?
+								props.accountData.status === "using" ?
 								(
 									<Form className="d-flex">
 										<Navbar.Collapse className="justify-content-end">
 											<Navbar.Text style={{color: "#ffffff"}}>
-												Hello, {accountData.nickname}
+												Hello, {props.accountData.nickname}
 											</Navbar.Text>
 											&nbsp;&nbsp;
 											<Button variant="info" onClick={() => {navigate("/accounts/mypage")}}>My Page</Button>
