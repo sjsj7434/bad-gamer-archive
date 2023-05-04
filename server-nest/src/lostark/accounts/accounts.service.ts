@@ -13,7 +13,7 @@ import { Request, Response } from 'express';
 const LOGIN_FAIL_LIMIT: number = 5; //로그인 최대 실패
 const SIGN_IN_SESSION: Map<string, string> = new Map(); //로그인 세션
 const LOGIN_COOKIE_TTL = 1000 * 60 * 60; //로그인 쿠키 유지 기간 : 1 Hour
-const TOKEN_CACHE_TTL = 1000 * 10; //인증 토큰 캐시 유지 기간 : 1 Hour
+const TOKEN_CACHE_TTL = 1000 * 60; //인증 토큰 캐시 유지 기간 : 1 Hour
 
 @Injectable()
 export class AccountsService {
@@ -27,15 +27,16 @@ export class AccountsService {
 	 */
 	async publishUserToken(request: Request): Promise<object>{
 		const verificationCode = randomBytes(16).toString("hex");
-		await this.cacheManager.set(request.cookies["sessionCode"] + "token", verificationCode, TOKEN_CACHE_TTL);
+		const shortToken = verificationCode.substring(0, 5);
+		await this.cacheManager.set(request.cookies["sessionCode"] + "token", shortToken, TOKEN_CACHE_TTL);
 
-		return {"data": verificationCode};
+		return {"data": shortToken};
 	}
 
 	/**
 	 * 유저의 스토브 소개란에 적힌 인증 코드를 가져와 비교한다
 	 */
-	async compareStoveUserToken(request: Request, stoveCode: string): Promise<boolean>{
+	async compareStoveUserToken(request: Request, stoveCode: string): Promise<string>{
 		const browser = await puppeteer.launch({
 			headless: true,
 			waitForInitialPage: true,
@@ -54,15 +55,19 @@ export class AccountsService {
 		await browser.close(); //창 종료
 		
 		const publishedToken = await this.cacheManager.get(request.cookies["sessionCode"] + "token");
+		console.log("sessionCode => ", request.cookies["sessionCode"]);
 		console.log("publishedToken => ", publishedToken);
 		console.log("stoveVerificationCode => ", stoveVerificationCode);
-		if (publishedToken !== undefined && publishedToken === stoveVerificationCode) {
+		if (publishedToken === undefined) {
+			return "empty";
+		}
+		else if (publishedToken === stoveVerificationCode) {
 			await this.cacheManager.del(request.cookies["sessionCode"] + "token");
 
-			return true;
+			return "good";
 		}
 		else{
-			return false;
+			return "bad";
 		}
 	}
 

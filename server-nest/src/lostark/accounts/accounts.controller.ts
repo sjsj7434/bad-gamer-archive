@@ -20,16 +20,18 @@ export class  AccountsController {
 		const stoveURLWithOutProtocol: string = stoveURL.replace(/https:\/\/|http:\/\//g, "");
 		
 		if(isNaN(Number(stoveURLWithOutProtocol)) === false){
-			const userProfileToken = await this.accountsService.compareStoveUserToken(request, stoveURLWithOutProtocol);
-	
-			if (userProfileToken === true){
+			const compareResult = await this.accountsService.compareStoveUserToken(request, stoveURLWithOutProtocol);
+			if (compareResult === "good"){
 				const characterNames = await this.accountsService.getStoveUserCharacters(stoveURLWithOutProtocol);
 				console.log(characterNames);
 				
 				return {data: characterNames};
 			}
-			else{
-				return {data: "fail"};
+			else if (compareResult === "bad") {
+				return { data: "fail" };
+			}
+			else {
+				return { data: "redo" };
 			}
 		}
 		else{

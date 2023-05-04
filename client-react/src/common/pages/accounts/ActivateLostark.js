@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Form from 'react-bootstrap/Form';
@@ -14,7 +14,11 @@ import * as accountsAction from '../../js/accountsAction'
 const ActivateLostark = (props) => {
 	const [characterModalShow, setCharacterModalShow] = useState(false);
 	const [characterList, setcharacterList] = useState([]);
-
+	const [startTime, setStartTime] = useState(null);
+	const [nowTime, setNowTime] = useState(null);
+	const [isTokenAlive, setIsTokenAlive] = useState(false);
+	const intervalRef = useRef(null);
+	
 	useEffect(() => {
 		const call = async (characterName) => {
 			console.log(characterName);
@@ -24,25 +28,53 @@ const ActivateLostark = (props) => {
 	}, [props]); //처음 페이지 로딩 될때만
 
 	const moveToStovePage = async () => {
-		const stoveURL = document.querySelector('#stoveURL').value;
-		window.open(`https://timeline.onstove.com/${stoveURL}`);
+		const stoveURL = document.querySelector("#stoveURL").value;
+		window.open(`https://timeline.onstove.com/${stoveURL}/setting`);
 	}
 	const getVerificationCode = async () => {
 		const verificationCode = await accountsAction.getVerificationCode();
-		document.querySelector('#verificationCode').value = verificationCode;
+		document.querySelector("#verificationCode").value = verificationCode;
 		document.querySelector("#verificationArea").style.display = "";
 		document.querySelector("#getCodeButton").disabled = true;
+
+		clearInterval(intervalRef.current);
+		setStartTime(Date.now());
+		setNowTime(Date.now());
+		setIsTokenAlive(true);
+		intervalRef.current = setInterval(() => {
+			console.log('inter')
+			setNowTime(Date.now());
+		}, 1000);
 	}
+
+	let counter = 0;
+	if (startTime != null && nowTime != null) {
+		counter = 2 - parseInt((nowTime - startTime) / 1000, 10);
+		if(counter <= 0){
+			clearInterval(intervalRef.current);
+			// setIsTokenAlive(false);
+			console.log("Token is dead now");
+		}
+	}
+
 	const copyVerificationCode = async () => {
-		const verificationCode = document.querySelector('#verificationCode');
+		const verificationCode = document.querySelector("#verificationCode");
 		await navigator.clipboard.writeText(verificationCode.value);
-		alert('인증코드가 복사되었습니다');
+		// alert("인증코드가 복사되었습니다");
 	}
 
 	const compareCodeWithStove = async () => {
+		if(isTokenAlive !== true){
+			alert(1)
+			return;
+		}
+		return;
 		props.setWaitModalShow(true);
-		const stoveURL = document.querySelector('#stoveURL').value;
+		const stoveURL = document.querySelector("#stoveURL").value;
 		const matchResult = await accountsAction.checkTokenMatch(stoveURL);
+
+		clearInterval(intervalRef.current);
+		setIsTokenAlive(false);
 
 		if(matchResult === "code"){
 			alert("please check your stove code");
@@ -50,6 +82,10 @@ const ActivateLostark = (props) => {
 		}
 		else if(matchResult === "fail"){
 			alert("token is not correct");
+			setCharacterModalShow(false);
+		}
+		else if(matchResult === "redo"){
+			alert("token is expired");
 			setCharacterModalShow(false);
 		}
 		else if(matchResult.length === 0){
@@ -75,12 +111,12 @@ const ActivateLostark = (props) => {
 
 	const setCharacter = (character) => {
 		if(window.confirm(`${character}로 캐릭터를 설정하시겠습니까?`)){
-			document.querySelector('#getCodeButton').disabled = true;
-			document.querySelector('#verifyButton').disabled = true;
+			document.querySelector("#getCodeButton").disabled = true;
+			document.querySelector("#verifyButton").disabled = true;
 			setCharacterModalShow(false);
 			document.querySelector("#formArea").style.display = "";
 			
-			document.querySelector('#chosenCharacter').value = character;
+			document.querySelector("#chosenCharacter").value = character;
 		}
 	}
 
@@ -97,7 +133,7 @@ const ActivateLostark = (props) => {
 								<InputGroup>
 									<Form.Control
 										id="stoveURL"
-										defaultValue={"83200592"}
+										defaultValue={"83359381"}
 									/>
 									<Button variant="outline-secondary" onClick={() => {moveToStovePage()}}>
 										Go Stove
@@ -125,7 +161,7 @@ const ActivateLostark = (props) => {
 									</Button>
 								</InputGroup>
 								<Form.Text muted>
-									Your password must be 8-20 characters long, contain letters and numbers
+									Time left : <span id="TTLZone">{counter}</span>
 								</Form.Text>
 							</Row>
 						</Col>
@@ -185,7 +221,7 @@ const ActivateLostark = (props) => {
 							</Col>
 						</Form.Group>
 					</div>
-					<Button size={"lg"} style={{width: "100%"}}>SAVE</Button>
+					<Button size={"lg"} style={{width: "100%", marginBottom: "15px"}}>SAVE</Button>
 				</Form>
 			</div>
 		</Container>
