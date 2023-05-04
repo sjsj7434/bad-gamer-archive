@@ -40,19 +40,25 @@ const ActivateLostark = (props) => {
 	}
 
 	const compareCodeWithStove = async () => {
-		//아직 정확한 비교가 이루어지지 않고 있으니 코드 비교 구현 필요
 		props.setWaitModalShow(true);
 		const stoveURL = document.querySelector('#stoveURL').value;
-		const characterNames = await accountsAction.checkCodeMatch(stoveURL);
-		console.log("characterNames", characterNames);
+		const matchResult = await accountsAction.checkTokenMatch(stoveURL);
 
-		if(characterNames.length === 0){
-			alert("No data!");
+		if(matchResult === "code"){
+			alert("please check your stove code");
+			setCharacterModalShow(false);
+		}
+		else if(matchResult === "fail"){
+			alert("token is not correct");
+			setCharacterModalShow(false);
+		}
+		else if(matchResult.length === 0){
+			alert("No character data!");
 			setCharacterModalShow(false);
 		}
 		else{
 			const elements = [];
-			elements.push(characterNames.map((character) => {
+			elements.push(matchResult.map((character) => {
 				return (
 					<ListGroup.Item key={character} action onClick={() => {setCharacter(character)}}>
 						{character}

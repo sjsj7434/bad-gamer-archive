@@ -12,6 +12,8 @@ import { Request, Response } from 'express';
 
 const LOGIN_FAIL_LIMIT: number = 5; //로그인 최대 실패
 const SIGN_IN_SESSION: Map<string, string> = new Map(); //로그인 세션
+const LOGIN_COOKIE_TTL = 1000 * 60 * 60; //로그인 쿠키 유지 기간 : 1 Hour
+const TOKEN_CACHE_TTL = 1000 * 10; //인증 토큰 캐시 유지 기간 : 1 Hour
 
 @Injectable()
 export class AccountsService {
@@ -23,23 +25,17 @@ export class AccountsService {
 	/**
 	 * 유저의 스토브 소개란에 적을 인증 코드(32글자)를 생성한다
 	 */
-	async publishUserToken(): Promise<object>{
+	async publishUserToken(request: Request): Promise<object>{
 		const verificationCode = randomBytes(16).toString("hex");
-		
-		//인증번호는 node-cache를 사용하는 방법을 고려 중...
-		// const value = await this.cacheManager.get("verificationCode");
-		// console.log("cacheManager verificationCode => ", value)
-		// await this.cacheManager.set("verificationCode", verificationCode, (60 * 1000 * 3)); //3 minutes TTL(Time to live)
-		// await this.cacheManager.del("verificationCode");
-		// await this.cacheManager.reset();
+		await this.cacheManager.set(request.cookies["sessionCode"] + "token", verificationCode, TOKEN_CACHE_TTL);
 
 		return {"data": verificationCode};
 	}
 
 	/**
-	 * 유저의 스토브 소개란에 적힌 인증 코드를 가져온다
+	 * 유저의 스토브 소개란에 적힌 인증 코드를 가져와 비교한다
 	 */
-	async getStoveUserToken(stoveCode: string): Promise<object>{
+	async compareStoveUserToken(request: Request, stoveCode: string): Promise<boolean>{
 		const browser = await puppeteer.launch({
 			headless: true,
 			waitForInitialPage: true,
@@ -56,8 +52,18 @@ export class AccountsService {
 		}, targetElement);
 		
 		await browser.close(); //창 종료
+		
+		const publishedToken = await this.cacheManager.get(request.cookies["sessionCode"] + "token");
+		console.log("publishedToken => ", publishedToken);
+		console.log("stoveVerificationCode => ", stoveVerificationCode);
+		if (publishedToken !== undefined && publishedToken === stoveVerificationCode) {
+			await this.cacheManager.del(request.cookies["sessionCode"] + "token");
 
-		return {"data": stoveVerificationCode};
+			return true;
+		}
+		else{
+			return false;
+		}
 	}
 
 	/**
@@ -246,7 +252,7 @@ export class AccountsService {
 				}
 			}
 			else{
-				response.cookie("sessionCode", request.cookies["sessionCode"], { maxAge: (1000 * 60 * 2), httpOnly: true, secure: true }); //expire 갱신
+				response.cookie("sessionCode", request.cookies["sessionCode"], { maxAge: LOGIN_COOKIE_TTL, httpOnly: true, secure: true }); //expire 갱신
 
 				return {
 					status: "using",
@@ -351,14 +357,14 @@ export class AccountsService {
 
 		SIGN_IN_SESSION.set(sessionCode, dto.id);
 
-		response.cookie("sessionCode", sessionCode, { maxAge: (1000 * 60 * 2), httpOnly: true, secure: true });
+		response.cookie("sessionCode", sessionCode, { maxAge: LOGIN_COOKIE_TTL, httpOnly: true, secure: true });
 	}
 
 	/**
 	 * 로그아웃 Cookie 설정
 	 */
 	setSignOut(request: Request, response: Response) {
-		console.log("[!] setSignOut")
+		console.log("[!] setSignOut => " + request.cookies["sessionCode"]);
 		if (SIGN_IN_SESSION.has(request.cookies["sessionCode"]) === true) { //초기화
 			SIGN_IN_SESSION.delete(request.cookies["sessionCode"]);
 		}

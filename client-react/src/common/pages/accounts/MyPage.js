@@ -53,7 +53,7 @@ const MyPage = (props) => {
 	else{
 		mypageElements = (
 			<>
-				{/* <Navigate to="/accounts/signin" replace={true} /> */}
+				<Navigate to="/accounts/signin" replace={true} />
 				You have to Login
 			</>
 		)

@@ -9,22 +9,21 @@ export class  AccountsController {
 	constructor(private readonly accountsService: AccountsService) { }
 
 	@Get("stove/token")
-	async publishUserToken(): Promise<object> {
-		const userProfileToken = await this.accountsService.publishUserToken();
+	async publishUserToken(@Req() request: Request): Promise<object> {
+		const userProfileToken = await this.accountsService.publishUserToken(request);
 		return userProfileToken;
 	}
 
 	@Get("stove/:stoveURL")
-	async validateAccount(@Param("stoveURL") stoveURL: string): Promise<{ data: any }> {
-		console.log("[Controller-user-validateAccount] => " + stoveURL);
-		const stoveURLWithoutProtocol: string = stoveURL.replace(/https:\/\/|http:\/\//g, "");
+	async checkTokenMatch(@Req() request: Request, @Param("stoveURL") stoveURL: string): Promise<{ data: any }> {
+		console.log("[Controller-user-checkTokenMatch] => " + stoveURL);
+		const stoveURLWithOutProtocol: string = stoveURL.replace(/https:\/\/|http:\/\//g, "");
 		
-		if(isNaN(Number(stoveURLWithoutProtocol)) === false){
-			const userProfileToken = await this.accountsService.getStoveUserToken(stoveURLWithoutProtocol);
-			const isTokenOK = userProfileToken["data"] !== "" ? true : false; //여기에 발급한 토큰과 비교 필요
+		if(isNaN(Number(stoveURLWithOutProtocol)) === false){
+			const userProfileToken = await this.accountsService.compareStoveUserToken(request, stoveURLWithOutProtocol);
 	
-			if(isTokenOK === true){
-				const characterNames = await this.accountsService.getStoveUserCharacters(stoveURLWithoutProtocol);
+			if (userProfileToken === true){
+				const characterNames = await this.accountsService.getStoveUserCharacters(stoveURLWithOutProtocol);
 				console.log(characterNames);
 				
 				return {data: characterNames};

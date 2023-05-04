@@ -3,21 +3,16 @@
  * @param {string} destination fetch url, 목적지
  * @returns {object} 가져온 정보 JSON
  */
-const fatchTemplate = async (method, destination, bodyData) => {
-	console.log(`fatchTemplate, method: ${method}, destination: ${destination}`);
-	const fecthOption = method === "GET" ?  {method: method, headers: {"Content-Type": "application/json",}} : {method: method, body: JSON.stringify(bodyData), headers: {"Content-Type": "application/json",}}
-	const result = await fetch(destination, fecthOption);
-	console.log(result)
-	
-	if(result === null){
+const parseStringToJson = async (jsonString) => {
+	if(jsonString === null){
 		return null;
 	}
-	else if(result.status === 500){
-		alert("Error!\nCan not get answer");
+	else if(jsonString.status === 500){
+		alert("Error!\nCan not get data");
 		return null;
 	}
 	else{
-		const jsonResult = await result.json();
+		const jsonResult = await jsonString.json();
 
 		if(jsonResult.statusCode === 500){
 			return null;
@@ -36,10 +31,18 @@ const fatchTemplate = async (method, destination, bodyData) => {
  * @returns {object} 가져온 캐릭터 정보 JSON
  */
 export const postTest = async (sendData) => {
-	const result = await fatchTemplate("POST", `${process.env.REACT_APP_SERVER}/accounts`, sendData);
-	console.log("postTest", result);
+	const fecthOption = {
+		method: "POST"
+		, body: JSON.stringify(sendData)
+		, headers: {"Content-Type": "application/json",}
+		, credentials: "include", // Don't forget to specify this if you need cookies
+	};
+	const jsonString = await fetch(`${process.env.REACT_APP_SERVER}/accounts`, fecthOption);
+	const jsonData = await parseStringToJson(jsonString);
 
-	return result;
+	console.log("postTest", jsonData);
+
+	return jsonData;
 }
 
 /**
@@ -47,10 +50,18 @@ export const postTest = async (sendData) => {
  * @returns {object} 가져온 캐릭터 정보 JSON
  */
 export const putTest = async (sendData) => {
-	const result = await fatchTemplate("PUT", `${process.env.REACT_APP_SERVER}/accounts`, sendData);
-	console.log("putTest", result);
+	const fecthOption = {
+		method: "PUT"
+		, body: JSON.stringify(sendData)
+		, headers: {"Content-Type": "application/json",}
+		, credentials: "include", // Don't forget to specify this if you need cookies
+	};
+	const jsonString = await fetch(`${process.env.REACT_APP_SERVER}/accounts`, fecthOption);
+	const jsonData = await parseStringToJson(jsonString);
 
-	return result;
+	console.log("putTest", jsonData);
+
+	return jsonData;
 }
 
 /**
@@ -58,32 +69,54 @@ export const putTest = async (sendData) => {
  * @returns {object} 가져온 캐릭터 정보 JSON
  */
 export const deleteTest = async (sendData) => {
-	const result = await fatchTemplate("DELETE", `${process.env.REACT_APP_SERVER}/accounts`, sendData);
-	console.log("deleteTest", result);
+	const fecthOption = {
+		method: "DELETE"
+		, body: JSON.stringify(sendData)
+		, headers: {"Content-Type": "application/json",}
+		, credentials: "include", // Don't forget to specify this if you need cookies
+	};
+	const jsonString = await fetch(`${process.env.REACT_APP_SERVER}/accounts`, fecthOption);
+	const jsonData = await parseStringToJson(jsonString);
 
-	return result;
+	console.log("deleteTest", jsonData);
+
+	return jsonData;
 }
 
 /**
  * stove 계정 소개란에 적을 인증코드를 생성한다
  * @returns {object} 생성한 인증코드
  */
-export const getVerificationCode = async (sendData) => {
-	const result = await fatchTemplate("GET", `${process.env.REACT_APP_SERVER}/accounts/stove/token`, sendData);
-	console.log("getVerificationCode", result);
+export const getVerificationCode = async () => {
+	const fecthOption = {
+		method: "GET"
+		, headers: {"Content-Type": "application/json",}
+		, credentials: "include", // Don't forget to specify this if you need cookies
+	};
+	const jsonString = await fetch(`${process.env.REACT_APP_SERVER}/accounts/stove/token`, fecthOption);
+	const jsonData = await parseStringToJson(jsonString);
 
-	return result;
+	console.log("getVerificationCode", jsonData);
+
+	return jsonData;
 }
 
 /**
  * stove 계정 소개란에 적어놓은 인증코드와 비교
  * @returns {object} 가져온 stove 소개란 인증코드
  */
-export const checkCodeMatch = async (sendData) => {
-	const result = await fatchTemplate("GET", `${process.env.REACT_APP_SERVER}/accounts/stove/${sendData}`, null);
-	console.log("checkCodeMatch", result);
+export const checkTokenMatch = async (stoveCode) => {
+	const fecthOption = {
+		method: "GET"
+		, headers: {"Content-Type": "application/json",}
+		, credentials: "include", // Don't forget to specify this if you need cookies
+	};
+	const jsonString = await fetch(`${process.env.REACT_APP_SERVER}/accounts/stove/${stoveCode}`, fecthOption);
+	const jsonData = await parseStringToJson(jsonString);
 
-	return result;
+	console.log("checkTokenMatch", jsonData);
+
+	return jsonData;
 }
 
 /**
@@ -91,10 +124,17 @@ export const checkCodeMatch = async (sendData) => {
  * @returns {object} 가져온 stove 소개란 인증코드
  */
 export const isDuplicatedID = async (id) => {
-	const result = await fatchTemplate("GET", `${process.env.REACT_APP_SERVER}/accounts/id/${id}`, null);
-	console.log("isDuplicatedID", result);
+	const fecthOption = {
+		method: "GET"
+		, headers: {"Content-Type": "application/json",}
+		, credentials: "include", // Don't forget to specify this if you need cookies
+	};
+	const jsonString = await fetch(`${process.env.REACT_APP_SERVER}/accounts/id/${id}`, fecthOption);
+	const jsonData = await parseStringToJson(jsonString);
 
-	return result;
+	console.log("isDuplicatedID", jsonData);
+
+	return jsonData;
 }
 
 /**
@@ -102,10 +142,17 @@ export const isDuplicatedID = async (id) => {
  * @returns {object} 가져온 stove 소개란 인증코드
  */
 export const isDuplicatedNickname = async (nickname) => {
-	const result = await fatchTemplate("GET", `${process.env.REACT_APP_SERVER}/accounts/nickname/${nickname}`, null);
-	console.log("isDuplicatedNickname", result);
+	const fecthOption = {
+		method: "GET"
+		, headers: {"Content-Type": "application/json",}
+		, credentials: "include", // Don't forget to specify this if you need cookies
+	};
+	const jsonString = await fetch(`${process.env.REACT_APP_SERVER}/accounts/nickname/${nickname}`, fecthOption);
+	const jsonData = await parseStringToJson(jsonString);
 
-	return result;
+	console.log("isDuplicatedNickname", jsonData);
+
+	return jsonData;
 }
 
 /**
@@ -113,10 +160,18 @@ export const isDuplicatedNickname = async (nickname) => {
  * @returns {object} 회원가입 처리 결과
  */
 export const createAccount = async (accountInfo) => {
-	const result = await fatchTemplate("POST", `${process.env.REACT_APP_SERVER}/accounts`, accountInfo);
-	console.log("createAccount", result);
+	const fecthOption = {
+		method: "POST"
+		, body: JSON.stringify(accountInfo)
+		, headers: {"Content-Type": "application/json",}
+		, credentials: "include", // Don't forget to specify this if you need cookies
+	};
+	const jsonString = await fetch(`${process.env.REACT_APP_SERVER}/accounts`, fecthOption);
+	const jsonData = await parseStringToJson(jsonString);
 
-	return result;
+	console.log("createAccount", jsonData);
+
+	return jsonData;
 }
 
 /**
@@ -124,28 +179,18 @@ export const createAccount = async (accountInfo) => {
  * @returns {object} 로그인 처리 결과
  */
 export const signInAccount = async (accountInfo) => {
-	const result = await fetch(`${process.env.REACT_APP_SERVER}/accounts/signin`, {
-		method: "POST",
-		redirect: "follow",
-		credentials: "include", // Don't forget to specify this if you need cookies
-		headers: {"Content-Type": "application/json",},
-		body: JSON.stringify(accountInfo)
-	});
-	
-	if(result === null){
-		return null;
-	}
-	else if(result.status === 500){
-		alert("Error!\nCan not get answer");
-		return null;
-	}
-	else{
-		const jsonResult = await result.json();
+	const fecthOption = {
+		method: "POST"
+		, body: JSON.stringify(accountInfo)
+		, headers: {"Content-Type": "application/json",}
+		, credentials: "include", // Don't forget to specify this if you need cookies
+	};
+	const jsonString = await fetch(`${process.env.REACT_APP_SERVER}/accounts/signin`, fecthOption);
+	const jsonData = await parseStringToJson(jsonString);
 
-		console.log("signInAccount: ", jsonResult);
-	
-		return jsonResult.data;
-	}
+	console.log("signInAccount", jsonData);
+
+	return jsonData;
 }
 
 /**
@@ -153,24 +198,16 @@ export const signInAccount = async (accountInfo) => {
  * @returns {object} 로그인 처리 결과
  */
 export const checkSignInStatus = async () => {
-	const result = await fetch(`${process.env.REACT_APP_SERVER}/accounts/signin/status`, {
-		method: "POST",
-		redirect: "follow",
-		credentials: "include", // Don't forget to specify this if you need cookies
-	});
-	
-	if(result === null){
-		return null;
-	}
-	else if(result.status === 500){
-		alert("Error!\nCan not get answer");
-		return null;
-	}
-	else{
-		const jsonResult = await result.json();
+	const fecthOption = {
+		method: "POST"
+		, credentials: "include", // Don't forget to specify this if you need cookies
+	};
+	const jsonString = await fetch(`${process.env.REACT_APP_SERVER}/accounts/signin/status`, fecthOption);
+	const jsonData = await parseStringToJson(jsonString);
 
-		return jsonResult.data;
-	}
+	console.log("checkSignInStatus", jsonData);
+
+	return jsonData;
 }
 
 /**
@@ -178,9 +215,9 @@ export const checkSignInStatus = async () => {
  * @returns {object} 로그아웃 처리 결과
  */
 export const setSignOut = async () => {
-	await fetch(`${process.env.REACT_APP_SERVER}/accounts/signout`, {
-		method: "POST",
-		redirect: "follow",
-		credentials: "include", // Don't forget to specify this if you need cookies
-	});
+	const fecthOption = {
+		method: "POST"
+		, credentials: "include", // Don't forget to specify this if you need cookies
+	};
+	await fetch(`${process.env.REACT_APP_SERVER}/accounts/signout`, fecthOption);
 }
