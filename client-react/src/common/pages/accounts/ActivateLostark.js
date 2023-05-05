@@ -16,16 +16,28 @@ const ActivateLostark = (props) => {
 	const [characterList, setcharacterList] = useState([]);
 	const [startTime, setStartTime] = useState(null);
 	const [nowTime, setNowTime] = useState(null);
-	const [isTokenAlive, setIsTokenAlive] = useState(false);
 	const intervalRef = useRef(null);
-	
-	useEffect(() => {
-		const call = async (characterName) => {
-			console.log(characterName);
+	const tokenStatus = useRef(null);
+	const TOKEN_TIME_LIMIT = 180; //sec
+
+	let tokenLife = 0;
+	if (startTime != null && nowTime != null) {
+		tokenStatus.alive = true;
+		tokenLife = TOKEN_TIME_LIMIT - parseInt((nowTime - startTime) / 1000, 10);
+		if(tokenLife <= 0){
+			tokenStatus.alive = false;
+			clearInterval(intervalRef.current);
+			
+			document.querySelector("#getCodeButton").disabled = false;
+			document.querySelector("#verifyButton").disabled = true;
 		}
-		
-		call(props.characterName);
-	}, [props]); //처음 페이지 로딩 될때만
+	}
+
+	useEffect(() => {
+		return() => {
+			clearInterval(intervalRef.current);
+		}
+	}, []);
 
 	const moveToStovePage = async () => {
 		const stoveURL = document.querySelector("#stoveURL").value;
@@ -36,45 +48,39 @@ const ActivateLostark = (props) => {
 		document.querySelector("#verificationCode").value = verificationCode;
 		document.querySelector("#verificationArea").style.display = "";
 		document.querySelector("#getCodeButton").disabled = true;
+		document.querySelector("#verifyButton").disabled = false;
+		document.querySelector("#copyButton").textContent = 'Copy';
+		document.querySelector("#copyButton").classList.replace("btn-outline-primary", "btn-outline-secondary");
 
 		clearInterval(intervalRef.current);
 		setStartTime(Date.now());
 		setNowTime(Date.now());
-		setIsTokenAlive(true);
 		intervalRef.current = setInterval(() => {
-			console.log('inter')
+			console.log('Token...');
 			setNowTime(Date.now());
 		}, 1000);
 	}
 
-	let counter = 0;
-	if (startTime != null && nowTime != null) {
-		counter = 2 - parseInt((nowTime - startTime) / 1000, 10);
-		if(counter <= 0){
-			clearInterval(intervalRef.current);
-			// setIsTokenAlive(false);
-			console.log("Token is dead now");
-		}
-	}
-
 	const copyVerificationCode = async () => {
+		document.querySelector("#copyButton").textContent = 'Copied';
 		const verificationCode = document.querySelector("#verificationCode");
 		await navigator.clipboard.writeText(verificationCode.value);
 		// alert("인증코드가 복사되었습니다");
+		
+		document.querySelector("#copyButton").classList.replace("btn-outline-secondary", "btn-outline-primary");
 	}
 
 	const compareCodeWithStove = async () => {
-		if(isTokenAlive !== true){
-			alert(1)
+		if(tokenStatus.alive !== true){
+			alert('no token');
 			return;
 		}
-		return;
+
 		props.setWaitModalShow(true);
 		const stoveURL = document.querySelector("#stoveURL").value;
 		const matchResult = await accountsAction.checkTokenMatch(stoveURL);
 
 		clearInterval(intervalRef.current);
-		setIsTokenAlive(false);
 
 		if(matchResult === "code"){
 			alert("please check your stove code");
@@ -153,7 +159,7 @@ const ActivateLostark = (props) => {
 										readOnly
 									/>
 									
-									<Button variant="outline-secondary" onClick={() => {copyVerificationCode()}}>
+									<Button variant="outline-secondary" id="copyButton" onClick={() => {copyVerificationCode()}}>
 										Copy
 									</Button>
 									<Button variant="outline-secondary" id="verifyButton" onClick={() => {compareCodeWithStove()}}>
@@ -161,9 +167,9 @@ const ActivateLostark = (props) => {
 									</Button>
 								</InputGroup>
 								<Form.Text muted>
-									Time left : <span id="TTLZone">{counter}</span>
-								</Form.Text>
-							</Row>
+									{tokenStatus.alive === true ? <span>Time left : {tokenLife}</span> : <span style={{color: "red"}}>Token has expired, Click <b>[Get Code]</b> button again please</span>}
+  								</Form.Text>
+							</Row> 
 						</Col>
 					</Form.Group>
 					
@@ -220,8 +226,9 @@ const ActivateLostark = (props) => {
 								</Form.Text>
 							</Col>
 						</Form.Group>
+
+						<Button size={"lg"} style={{width: "100%", marginBottom: "15px"}}>SAVE</Button>
 					</div>
-					<Button size={"lg"} style={{width: "100%", marginBottom: "15px"}}>SAVE</Button>
 				</Form>
 			</div>
 		</Container>
