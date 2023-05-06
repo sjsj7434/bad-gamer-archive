@@ -53,6 +53,16 @@ export class Accounts {
 	password: string;
 
 	/**
+	 * lostark 인증 캐릭터
+	 */
+	@Column({
+		type: "varchar"
+		, length: 100
+		, nullable: true
+	})
+	lostarkMainCharacter: string;
+
+	/**
 	 * 유저 마지막 로그인 날짜
 	 */
 	@Column({

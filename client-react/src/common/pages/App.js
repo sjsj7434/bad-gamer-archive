@@ -35,7 +35,7 @@ const App = () => {
 			alert("this account is lost, how can you use this?");
 		}
 		else if(statusJSON.status === "wrong_cookie"){
-			alert("somebody using your account");
+			alert("can not read who you are");
 		}
 
 		setAccountData(statusJSON);

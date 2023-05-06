@@ -13,7 +13,7 @@ import { Request, Response } from 'express';
 const LOGIN_FAIL_LIMIT: number = 5; //로그인 최대 실패
 const SIGN_IN_SESSION: Map<string, string> = new Map(); //로그인 세션
 const LOGIN_COOKIE_TTL = 1000 * 60 * 60; //로그인 쿠키 유지 기간 : 1 Hour
-const TOKEN_CACHE_TTL = 1000 * 60; //인증 토큰 캐시 유지 기간 : 1 Hour
+const TOKEN_CACHE_TTL = 1000 * 60 * 3; //인증 토큰 캐시 유지 기간 : 3 Minutes
 
 @Injectable()
 export class AccountsService {
@@ -27,10 +27,9 @@ export class AccountsService {
 	 */
 	async publishUserToken(request: Request): Promise<object>{
 		const verificationCode = randomBytes(16).toString("hex");
-		const shortToken = verificationCode.substring(0, 5);
-		await this.cacheManager.set(request.cookies["sessionCode"] + "token", shortToken, TOKEN_CACHE_TTL);
+		await this.cacheManager.set(request.cookies["sessionCode"] + "token", verificationCode, TOKEN_CACHE_TTL);
 
-		return {"data": shortToken};
+		return {"data": verificationCode};
 	}
 
 	/**
@@ -39,30 +38,24 @@ export class AccountsService {
 	async compareStoveUserToken(request: Request, stoveCode: string): Promise<string>{
 		const browser = await puppeteer.launch({
 			headless: true,
-			waitForInitialPage: true,
+			waitForInitialPage: false,
 		});
 		const page = await browser.newPage();
 		// await page.setViewport({width: 1920, height: 1080}); //화면 크기 설정, headless: false 여야 확인 가능
 		await page.goto(`https://timeline.onstove.com/${stoveCode}`, {waitUntil: "networkidle2"});
-		console.log(`https://timeline.onstove.com/${stoveCode}`)
-
 		const targetElement = await page.$("#navContent > div > div.layout-column-r > section:nth-child(1) > div.section-body > p"); //소개
-
 		const stoveVerificationCode = await page.evaluate((data) => {
 			return data.textContent;
 		}, targetElement);
-		
-		await browser.close(); //창 종료
+		browser.close(); //창 종료
 		
 		const publishedToken = await this.cacheManager.get(request.cookies["sessionCode"] + "token");
-		console.log("sessionCode => ", request.cookies["sessionCode"]);
-		console.log("publishedToken => ", publishedToken);
-		console.log("stoveVerificationCode => ", stoveVerificationCode);
+		
 		if (publishedToken === undefined) {
 			return "empty";
 		}
 		else if (publishedToken === stoveVerificationCode) {
-			await this.cacheManager.del(request.cookies["sessionCode"] + "token");
+			this.cacheManager.del(request.cookies["sessionCode"] + "token");
 
 			return "good";
 		}
@@ -72,17 +65,12 @@ export class AccountsService {
 	}
 
 	/**
-	 * 유저의 스토브 ID로 로스트아크 캐릭터 이름 목록을 가져온다
-	 * 서버이름에 포함된 @를 이용해 반환 값을 split하여 사용
+	 * 유저의 스토브 ID로 로스트아크 대표 캐릭터 이름을 가져온다
 	 */
-	async getStoveUserCharacters(stoveCode: string): Promise<object>{
-		const result: object = {
-			characterName: "",
-			serverName: ""
-		};
+	async getStoveUserCharacters_api(stoveCode: string): Promise<string>{
 		const browser = await puppeteer.launch({
 			headless: true,
-			waitForInitialPage: true,
+			waitForInitialPage: false,
 		});
 		const page = await browser.newPage();
 		// await page.setViewport({width: 1920, height: 1080}); //화면 크기 설정, headless: false 여야 확인 가능
@@ -93,24 +81,81 @@ export class AccountsService {
 		const newTarget = await browser.waitForTarget(target => target.opener() === pageTarget); //check that you opened this page, rather than just checking the url
 		const newPage = await newTarget.page(); //get the page object
 		await newPage.waitForSelector("body"); //wait for page to be loaded
+		
+		const targetElement = await newPage.$("#lostark-wrapper > div > main > div > div.profile-character-info > span.profile-character-info__name");
 
-		// const serverInfo = await newPage.$$eval("#expand-character-list > strong", (servers) => {
-		// 	const serverList: Array<string> = [];
-		// 	for(const element of servers){
-		// 		serverList.push(element.textContent);
-		// 	}
-		// 	return serverList;
-		// });
+		const characterName = await newPage.evaluate((data) => {
+			return data.getAttribute("title");
+		}, targetElement);
+		
+		console.log("i found => ", characterName);
 
-		const characterNames = await newPage.$$eval("#expand-character-list > ul > li > span > button > span", (characters) => {
-			const characterList: Array<string> = [];
-			for(const element of characters){
-				characterList.push(element.textContent);
-			}
-			return characterList;
+		browser.close(); //창 종료
+
+		return characterName;
+	}
+
+	/**
+	 * 유저의 스토브 ID로 로스트아크 캐릭터 이름 목록을 가져온다
+	 * 서버이름에 포함된 @를 이용해 반환 값을 split하여 사용
+	 */
+	async getStoveUserCharacters_scrap(stoveCode: string): Promise<object>{
+		const result: object = {
+			characterName: "",
+			serverName: ""
+		};
+		const browser = await puppeteer.launch({
+			headless: true,
+			waitForInitialPage: false,
 		});
+		const page = await browser.newPage();
+		// await page.setViewport({width: 1920, height: 1080}); //화면 크기 설정, headless: false 여야 확인 가능
+		await page.goto(`https://lostark.game.onstove.com/Board/GetExpandInfo?memberNo=${stoveCode}`, {timeout: 10000, waitUntil: "networkidle2"});
 
-		await browser.close(); //창 종료
+		const pageTarget = page.target(); //save this to know that this was the opener
+		await page.click("body > div.profile-library > div.profile-link > a.button.button--black"); //click on a link
+		const newTarget = await browser.waitForTarget(target => target.opener() === pageTarget); //check that you opened this page, rather than just checking the url
+		const newPage = await newTarget.page(); //get the page object
+		await newPage.waitForSelector("body"); //wait for page to be loaded
+		
+		const targetElement = await newPage.$("#expand-character-list"); //소개
+
+		const characterNames = await newPage.evaluate((data) => {
+			const serverNameElements = data.querySelectorAll("strong");
+			const serverCharacterElements = data.querySelectorAll("ul");
+			const characterNameElements = data.querySelectorAll("ul > li > span > button > span");
+			const serverNames: Array<string> = [];
+			const serverCharacterCounts: Array<number> = [];
+			const characterNames: Array<string> = [];
+
+			console.log(serverNameElements);
+			console.log(serverCharacterElements);
+			console.log(characterNameElements);
+			
+			for(const element of serverNameElements){
+				serverNames.push(element.textContent);
+			}
+			for(const element of serverCharacterElements){
+				serverCharacterCounts.push(element.querySelectorAll("li").length);
+			}
+
+			let serverIndex = 0;
+			let characterIndex = 0;
+			for(const element of characterNameElements){
+				if(characterIndex >= serverCharacterCounts[serverIndex]){
+					characterIndex = 0;
+					serverIndex++;
+				}
+				characterNames.push(serverNames[serverIndex] + " => " + element.textContent);
+				characterIndex++;
+			}
+
+			return characterNames;
+		}, targetElement);
+		
+		console.log(characterNames)
+
+		browser.close(); //창 종료
 
 		return characterNames;
 	}
@@ -185,22 +230,6 @@ export class AccountsService {
 	}
 
 	/**
-	 * ID에 맞는 계정을 수정한다
-	 * find > 정보 수정 > save 처리
-	 */
-	async updateAccount(dto: AccountsDTO) {
-		const account = await this.accountsRepository.findOne({
-			where: {
-				id: dto.id,
-			}
-		});
-
-		account.id = dto.id;
-
-		await this.accountsRepository.save(account);
-	}
-
-	/**
 	 * code에 맞는 계정을 삭제(논리 삭제)
 	 * find > 정보 수정 > softDelete 처리
 	 */
@@ -213,13 +242,14 @@ export class AccountsService {
 	/**
 	 * 중복 로그인 방지, 이미 해당 계정으로 로그인한 사람이 있는지 확인
 	 */
-	async checkSignInStatus(request: Request, response: Response): Promise<{ status: string, id: string, nickname: string }> {
+	async checkSignInStatus(request: Request, response: Response): Promise<{ status: string, id: string, nickname: string, lostarkMainCharacter: string }> {
 		if (request.cookies["sessionCode"] === undefined) {
 			console.log(SIGN_IN_SESSION)
 			return {
 				status: "no_cookie",
 				id: "",
 				nickname: "",
+				lostarkMainCharacter: "",
 			}
 		}
 		else if (SIGN_IN_SESSION.has(request.cookies["sessionCode"]) === true) { //해당 계정 세션이 이미 존재
@@ -236,6 +266,7 @@ export class AccountsService {
 					status: "locked",
 					id: "",
 					nickname: "",
+					lostarkMainCharacter: "",
 				}
 			}
 			else if (userData.isBanned === true) {
@@ -245,6 +276,7 @@ export class AccountsService {
 					status: "banned",
 					id: "",
 					nickname: "",
+					lostarkMainCharacter: "",
 				}
 			}
 			else if (userData.isLost === true) {
@@ -254,6 +286,7 @@ export class AccountsService {
 					status: "lost",
 					id: "",
 					nickname: "",
+					lostarkMainCharacter: "",
 				}
 			}
 			else{
@@ -263,6 +296,7 @@ export class AccountsService {
 					status: "using",
 					id: userData.id,
 					nickname: userData.nickname,
+					lostarkMainCharacter: userData.lostarkMainCharacter,
 				}
 			}
 		}
@@ -272,6 +306,7 @@ export class AccountsService {
 				status: "wrong_cookie",
 				id: "",
 				nickname: "",
+				lostarkMainCharacter: "",
 			}
 		}
 	}
@@ -343,6 +378,22 @@ export class AccountsService {
 				}
 			}
 		}
+	}
+
+	/**
+	 * ID에 맞는 계정을 수정한다
+	 * find > 정보 수정 > save 처리
+	 */
+	async updateLostarkMainCharacter(request: Request, dto: AccountsDTO) {
+		const account = await this.accountsRepository.findOne({
+			where: {
+				id: SIGN_IN_SESSION.get(request.cookies["sessionCode"]),
+			}
+		});
+
+		account.lostarkMainCharacter = dto.lostarkMainCharacter;
+
+		await this.accountsRepository.save(account);
 	}
 
 	/**

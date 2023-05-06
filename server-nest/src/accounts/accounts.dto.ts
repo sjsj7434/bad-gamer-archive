@@ -4,7 +4,7 @@ export class AccountsDTO {
 	nickname: string;
 	email: string;
 	password: string;
-	encryptSalt: string;
+	lostarkMainCharacter: string;
 	loginFailCount: number;
 	lastLogin: Date;
 	passwordChangeDate: Date;

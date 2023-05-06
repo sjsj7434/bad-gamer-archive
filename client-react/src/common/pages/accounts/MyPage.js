@@ -37,7 +37,7 @@ const MyPage = (props) => {
 					<br />
 					nickname : {props.accountData.nickname}
 					<br />
-					lostA : {props.accountData.lostA}
+					lostA : {props.accountData.lostarkMainCharacter}
 					<br />
 					<Button onClick={() => {navigate("lostark")}}>lostark</Button>
 					<br />

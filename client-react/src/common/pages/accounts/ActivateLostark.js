@@ -8,6 +8,7 @@ import Container from 'react-bootstrap/Container';
 import Modal from 'react-bootstrap/Modal';
 import ListGroup from 'react-bootstrap/ListGroup';
 import Tab from 'react-bootstrap/Tab';
+import { useNavigate } from "react-router-dom";
 
 import * as accountsAction from '../../js/accountsAction'
 
@@ -18,7 +19,8 @@ const ActivateLostark = (props) => {
 	const [nowTime, setNowTime] = useState(null);
 	const intervalRef = useRef(null);
 	const tokenStatus = useRef(null);
-	const TOKEN_TIME_LIMIT = 180; //sec
+	const TOKEN_TIME_LIMIT = 60 * 3; //sec
+	const navigate = useNavigate();
 
 	let tokenLife = 0;
 	if (startTime != null && nowTime != null) {
@@ -28,8 +30,7 @@ const ActivateLostark = (props) => {
 			tokenStatus.alive = false;
 			clearInterval(intervalRef.current);
 			
-			document.querySelector("#getCodeButton").disabled = false;
-			document.querySelector("#verifyButton").disabled = true;
+			controlActivateVerify("deactivate");
 		}
 	}
 
@@ -39,6 +40,24 @@ const ActivateLostark = (props) => {
 		}
 	}, []);
 
+	const controlActivateVerify = (status) => {
+		if(status === "activate"){
+			document.querySelector("#getCodeButton").disabled = true;
+			document.querySelector("#verifyButton").disabled = false;
+			document.querySelector("#copyButton").textContent = 'Copy';
+			document.querySelector("#copyButton").classList.replace("btn-outline-primary", "btn-outline-secondary");
+		}
+		else if(status === "deactivate"){
+			document.querySelector("#verificationCode").value = "";
+			document.querySelector("#getCodeButton").disabled = false;
+			document.querySelector("#verifyButton").disabled = true;
+		}
+		else if(status === "done"){
+			document.querySelector("#getCodeButton").disabled = true;
+			document.querySelector("#verifyButton").disabled = true;
+		}
+	}
+
 	const moveToStovePage = async () => {
 		const stoveURL = document.querySelector("#stoveURL").value;
 		window.open(`https://timeline.onstove.com/${stoveURL}/setting`);
@@ -47,10 +66,8 @@ const ActivateLostark = (props) => {
 		const verificationCode = await accountsAction.getVerificationCode();
 		document.querySelector("#verificationCode").value = verificationCode;
 		document.querySelector("#verificationArea").style.display = "";
-		document.querySelector("#getCodeButton").disabled = true;
-		document.querySelector("#verifyButton").disabled = false;
-		document.querySelector("#copyButton").textContent = 'Copy';
-		document.querySelector("#copyButton").classList.replace("btn-outline-primary", "btn-outline-secondary");
+
+		controlActivateVerify("activate");
 
 		clearInterval(intervalRef.current);
 		setStartTime(Date.now());
@@ -80,8 +97,6 @@ const ActivateLostark = (props) => {
 		const stoveURL = document.querySelector("#stoveURL").value;
 		const matchResult = await accountsAction.checkTokenMatch(stoveURL);
 
-		clearInterval(intervalRef.current);
-
 		if(matchResult === "code"){
 			alert("please check your stove code");
 			setCharacterModalShow(false);
@@ -93,17 +108,24 @@ const ActivateLostark = (props) => {
 		else if(matchResult === "redo"){
 			alert("token is expired");
 			setCharacterModalShow(false);
+
+			clearInterval(intervalRef.current);
+			controlActivateVerify("deactivate");
 		}
 		else if(matchResult.length === 0){
 			alert("No character data!");
 			setCharacterModalShow(false);
 		}
 		else{
+			clearInterval(intervalRef.current);
+
+			console.log(matchResult)
+
 			const elements = [];
-			elements.push(matchResult.map((character) => {
+			elements.push(matchResult.map((characterInfo) => {
 				return (
-					<ListGroup.Item key={character} action onClick={() => {setCharacter(character)}}>
-						{character}
+					<ListGroup.Item key={characterInfo.CharacterName} action onClick={() => {setCharacter(characterInfo)}}>
+						[{characterInfo.ServerName}] <b>{characterInfo.CharacterName}</b> / {characterInfo.ItemMaxLevel} / {characterInfo.CharacterClassName}
 					</ListGroup.Item>
 				)
 			}));
@@ -115,14 +137,17 @@ const ActivateLostark = (props) => {
 		props.setWaitModalShow(false);
 	}
 
-	const setCharacter = (character) => {
-		if(window.confirm(`${character}로 캐릭터를 설정하시겠습니까?`)){
-			document.querySelector("#getCodeButton").disabled = true;
-			document.querySelector("#verifyButton").disabled = true;
+	const setCharacter = (characterInfo) => {
+		if(window.confirm(`[${characterInfo.CharacterName} (Level.${characterInfo.ItemMaxLevel})] 캐릭터로 인증하시겠습니까?`)){
 			setCharacterModalShow(false);
-			document.querySelector("#formArea").style.display = "";
+			controlActivateVerify("done");
 			
-			document.querySelector("#chosenCharacter").value = character;
+			props.setWaitModalShow(true);
+			accountsAction.setLostarkMainCharacter({
+				lostarkMainCharacter: characterInfo.CharacterName,
+			});
+			props.setWaitModalShow(false);
+			navigate("/accounts/mypage")
 		}
 	}
 
@@ -141,16 +166,16 @@ const ActivateLostark = (props) => {
 										id="stoveURL"
 										defaultValue={"83359381"}
 									/>
-									<Button variant="outline-secondary" onClick={() => {moveToStovePage()}}>
-										Go Stove
-									</Button>
 									<Button variant="outline-secondary" id="getCodeButton" onClick={() => {getVerificationCode()}}>
 										Get Code
 									</Button>
 								</InputGroup>
 								<Form.Text muted>
 									Please write only the "code", not all url
+
+									<Button size={"lg"} style={{width: "100%", marginBottom: "15px"}} onClick={() => {moveToStovePage()}}>Go stove</Button>
 								</Form.Text>
+
 							</Row>
 							<Row id="verificationArea" className="mb-3" style={{display: "none"}}>
 								<InputGroup>
@@ -162,14 +187,13 @@ const ActivateLostark = (props) => {
 									<Button variant="outline-secondary" id="copyButton" onClick={() => {copyVerificationCode()}}>
 										Copy
 									</Button>
-									<Button variant="outline-secondary" id="verifyButton" onClick={() => {compareCodeWithStove()}}>
-										Verify
-									</Button>
 								</InputGroup>
 								<Form.Text muted>
 									{tokenStatus.alive === true ? <span>Time left : {tokenLife}</span> : <span style={{color: "red"}}>Token has expired, Click <b>[Get Code]</b> button again please</span>}
+									
+									<Button size={"lg"} style={{width: "100%", marginBottom: "15px"}} id="verifyButton" onClick={() => {compareCodeWithStove()}}>Verify</Button>
   								</Form.Text>
-							</Row> 
+							</Row>
 						</Col>
 					</Form.Group>
 					
@@ -189,46 +213,6 @@ const ActivateLostark = (props) => {
 							</Tab.Container>
 						</Modal.Body>
 					</Modal>
-
-					<div id="formArea" style={{display: "none"}}>
-						<Form.Group as={Row} className="mb-3">
-							<Form.Label column sm="2">
-								Character
-							</Form.Label>
-							<Col sm="10">
-								<Form.Control id="chosenCharacter" plaintext readOnly />
-								<Form.Text muted>
-									Your ID must be 1-20 characters long, only alphabet
-								</Form.Text>
-							</Col>
-						</Form.Group>
-						
-						<Form.Group as={Row} className="mb-3">
-							<Form.Label column sm="2">
-								Level
-							</Form.Label>
-							<Col sm="10">
-								<Form.Control id="chosenCharacterLevel" defaultValue="1232.34" plaintext readOnly />
-								<Form.Text muted>
-									Your ID must be 1-20 characters long, only alphabet
-								</Form.Text>
-							</Col>
-						</Form.Group>
-						
-						<Form.Group as={Row} className="mb-3">
-							<Form.Label column sm="2">
-								Class
-							</Form.Label>
-							<Col sm="10">
-								<Form.Control id="chosenCharacterClass" defaultValue="goal keep" plaintext readOnly />
-								<Form.Text muted>
-									Your ID must be 1-20 characters long, only alphabet
-								</Form.Text>
-							</Col>
-						</Form.Group>
-
-						<Button size={"lg"} style={{width: "100%", marginBottom: "15px"}}>SAVE</Button>
-					</div>
 				</Form>
 			</div>
 		</Container>

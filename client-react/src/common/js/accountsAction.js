@@ -49,25 +49,6 @@ export const postTest = async (sendData) => {
  * 입력한 캐릭터 이름의 기본 정보를 가져온다
  * @returns {object} 가져온 캐릭터 정보 JSON
  */
-export const putTest = async (sendData) => {
-	const fecthOption = {
-		method: "PUT"
-		, body: JSON.stringify(sendData)
-		, headers: {"Content-Type": "application/json",}
-		, credentials: "include", // Don't forget to specify this if you need cookies
-	};
-	const jsonString = await fetch(`${process.env.REACT_APP_SERVER}/accounts`, fecthOption);
-	const jsonData = await parseStringToJson(jsonString);
-
-	console.log("putTest", jsonData);
-
-	return jsonData;
-}
-
-/**
- * 입력한 캐릭터 이름의 기본 정보를 가져온다
- * @returns {object} 가져온 캐릭터 정보 JSON
- */
 export const deleteTest = async (sendData) => {
 	const fecthOption = {
 		method: "DELETE"
@@ -220,4 +201,24 @@ export const setSignOut = async () => {
 		, credentials: "include", // Don't forget to specify this if you need cookies
 	};
 	await fetch(`${process.env.REACT_APP_SERVER}/accounts/signout`, fecthOption);
+}
+
+/**
+ * lostark 캐릭터
+ * @returns {object} 로그아웃 처리 결과
+ */
+export const setLostarkMainCharacter = async (accountInfo) => {
+	console.log(accountInfo)
+	const fecthOption = {
+		method: "PUT"
+		, body: JSON.stringify(accountInfo)
+		, headers: {"Content-Type": "application/json",}
+		, credentials: "include", // Don't forget to specify this if you need cookies
+	};
+	const jsonString = await fetch(`${process.env.REACT_APP_SERVER}/accounts/lostark/character`, fecthOption);
+	const jsonData = await parseStringToJson(jsonString);
+
+	console.log("setLostarkMainCharacter", jsonData);
+
+	return jsonData;
 }

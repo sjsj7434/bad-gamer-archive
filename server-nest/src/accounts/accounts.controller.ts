@@ -3,10 +3,11 @@ import { AccountsService } from './accounts.service';
 import { AccountsDTO } from './accounts.dto';
 import { Request, Response } from 'express';
 import { Accounts } from './accounts.entity';
+import { LostarkAPIService } from '../lostark/api/lostark.api.service';
 
 @Controller("accounts")
 export class  AccountsController {
-	constructor(private readonly accountsService: AccountsService) { }
+	constructor(private accountsService: AccountsService, private apiService: LostarkAPIService) { }
 
 	@Get("stove/token")
 	async publishUserToken(@Req() request: Request): Promise<object> {
@@ -21,9 +22,11 @@ export class  AccountsController {
 		
 		if(isNaN(Number(stoveURLWithOutProtocol)) === false){
 			const compareResult = await this.accountsService.compareStoveUserToken(request, stoveURLWithOutProtocol);
+
 			if (compareResult === "good"){
-				const characterNames = await this.accountsService.getStoveUserCharacters(stoveURLWithOutProtocol);
-				console.log(characterNames);
+				// const characterNames = await this.accountsService.getStoveUserCharacters_scrap(stoveURLWithOutProtocol);
+				const characterName = await this.accountsService.getStoveUserCharacters_api(stoveURLWithOutProtocol);
+				const characterNames = await this.apiService.getCharacterList(characterName);
 				
 				return {data: characterNames};
 			}
@@ -86,16 +89,6 @@ export class  AccountsController {
 		return { data: result };
 	}
 
-	@Put()
-	async updateAccount(@Body() body: AccountsDTO): Promise<{data: string}> {
-		console.log("[Controller-user-updateAccount] => ", body);
-
-		const result = await this.accountsService.updateAccount(body);
-		console.log(result);
-
-		return { data: "update" };
-	}
-
 	@Delete()
 	async deleteAccount(@Body() body: AccountsDTO): Promise<{data: string}> {
 		console.log("[Controller-user-deleteAccount] => ", body);
@@ -104,6 +97,16 @@ export class  AccountsController {
 		console.log(result);
 
 		return { data: "soft-delete" };
+	}
+
+	@Put("lostark/character")
+	async updateLostarkMainCharacter(@Req() request: Request, @Body() body: AccountsDTO): Promise<{data: string}> {
+		console.log("[Controller-user-updateLostarkMainCharacter] => ", body);
+
+		const result = await this.accountsService.updateLostarkMainCharacter(request, body);
+		console.log(result);
+
+		return { data: "update lostark" };
 	}
 
 	@Post("signin")

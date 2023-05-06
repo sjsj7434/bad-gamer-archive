@@ -4,7 +4,7 @@ import { ConfigModule } from '@nestjs/config';
 import { LostarkAPIController } from './lostark.api.controller';
 import { LostarkAPIService } from './lostark.api.service';
 
-import configuration from './config/configuration';
+import configuration from '../config/configuration';
 const environmentHere: string = "dev"; //dev, prod
 
 @Module({
@@ -17,5 +17,6 @@ const environmentHere: string = "dev"; //dev, prod
 	],
 	controllers: [LostarkAPIController],
 	providers: [LostarkAPIService],
+	exports: [LostarkAPIService],
 })
 export class LostarkModule {}

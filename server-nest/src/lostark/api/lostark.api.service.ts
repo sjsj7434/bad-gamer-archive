@@ -23,7 +23,7 @@ export class LostarkAPIService {
 			),
 		);
 
-		return { "data": data };
+		return data;
 	}
 
 	async getTestJson(characterNickName: string): Promise<object> {
