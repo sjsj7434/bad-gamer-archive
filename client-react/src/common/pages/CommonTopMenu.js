@@ -54,7 +54,7 @@ const CommonTopMenu = (props) => {
 					<Navbar.Toggle onClick={() => setShowOffcanvas(true)}/>
 
 					<Navbar.Offcanvas show={showOffcanvas} onHide={() => setShowOffcanvas(false)} placement="end">
-						<Offcanvas.Header closeButton style={{backgroundColor: "#878787"}}>
+						<Offcanvas.Header closeButton style={{backgroundColor: "#ffffff"}}>
 							<Offcanvas.Title>
 								<b>Menu</b>
 							</Offcanvas.Title>
