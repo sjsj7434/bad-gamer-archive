@@ -13,6 +13,7 @@ import Offcanvas from 'react-bootstrap/Offcanvas';
 import * as accountsAction from '../js/accountsAction.js'
 
 const CommonTopMenu = (props) => {
+	const [showOffcanvas, setShowOffcanvas] = useState(false);
 	const navigate = useNavigate();
 
 	useEffect(() => {
@@ -20,9 +21,17 @@ const CommonTopMenu = (props) => {
 		console.log("CommonTopMenu", props);
 	}, []); //처음 페이지 로딩 될때만
 
+	const menuClick = (url) => {
+		props.renewLogin();
+		setShowOffcanvas(false);
+		navigate(url);
+	}
+
 	const signOut = async () => {
 		await accountsAction.setSignOut();
-		alert("LogOUT!")
+		setShowOffcanvas(false);
+		props.renewLogin();
+		alert("LogOUT!");
 		navigate("/");
 	}
 
@@ -42,20 +51,18 @@ const CommonTopMenu = (props) => {
 						Common-TOP-MENU
 					</Navbar.Brand>
 
-					<Navbar.Toggle />
+					<Navbar.Toggle onClick={() => setShowOffcanvas(true)}/>
 
-					<Navbar.Offcanvas placement="end">
+					<Navbar.Offcanvas show={showOffcanvas} onHide={() => setShowOffcanvas(false)} placement="end">
 						<Offcanvas.Header closeButton style={{backgroundColor: "#878787"}}>
 							<Offcanvas.Title>
 								<b>Menu</b>
 							</Offcanvas.Title>
 						</Offcanvas.Header>
-						<Offcanvas.Body style={{backgroundColor: "#212529"}}>
+						<Offcanvas.Body>
 							<Nav className="justify-content-start flex-grow-1 pe-3">
-								<Nav.Link as={NavLink} href="#" to="/lostark" style={({ isActive, isPending }) => isActive ? {color: "#89d4ff"} : isPending ? {color: "red"} : {color: "white"}}>
-									LA
-								</Nav.Link>
-								
+								<Nav.Link href="#" onClick={() => menuClick("/lostark")}>LA</Nav.Link>
+
 								{/* 아직 오픈 계획 없음
 								<Nav.Link as={NavLink} href="#" to="/" style={({ isActive, isPending }) => isActive ? {color: "#89d4ff"} : isPending ? {color: "red"} : {color: "white"}}>
 									Main
@@ -69,27 +76,22 @@ const CommonTopMenu = (props) => {
 								props.accountData.status === "using" ?
 								(
 									<Form className="d-flex">
-										<Navbar.Collapse className="justify-content-end">
-											<Navbar.Text style={{color: "#ffffff"}}>
-												Hello, {props.accountData.nickname}
-											</Navbar.Text>
-											&nbsp;&nbsp;
-											<Button variant="info" onClick={() => {navigate("/accounts/mypage")}}>My Page</Button>
-											&nbsp;&nbsp;
-											<Button variant="outline-warning" onClick={() => {signOut()}}>Logout</Button>
-										</Navbar.Collapse>
+										<Navbar.Text>
+											Hello, {props.accountData.nickname}
+										</Navbar.Text>
+										&nbsp;&nbsp;
+										
+										<Button variant="info" onClick={() => menuClick("/accounts/mypage")}>My Page</Button>
+										&nbsp;&nbsp;
+										<Button variant="outline-warning" onClick={() => {signOut()}}>Logout</Button>
 									</Form>
 								)
 								:
 								(
 									<Form className="d-flex">
-										<Nav.Link as={NavLink} href="#" to="/accounts/signup">
-											<Button variant="info">Sign Up</Button>
-										</Nav.Link>
+										<Button variant="info" onClick={() => menuClick("/accounts/signup")}>Sign Up</Button>
 										&nbsp;
-										<Nav.Link as={NavLink} href="#" to="/accounts/signin">
-											<Button variant="info">Sign In</Button>
-										</Nav.Link>
+										<Button variant="info" onClick={() => menuClick("/accounts/signin")}>Sign In</Button>
 									</Form>
 								)
 							}
