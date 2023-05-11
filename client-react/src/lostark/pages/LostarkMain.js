@@ -19,10 +19,10 @@ const LostarkMain = () => {
 			>
 				<Tab eventKey="hot" title="Hot">
 					<ListGroup variant="flush">
-						<ListGroup.Item>Cras justo odio</ListGroup.Item>
-						<ListGroup.Item>Dapibus ac facilisis in</ListGroup.Item>
-						<ListGroup.Item>Morbi leo risus</ListGroup.Item>
-						<ListGroup.Item>Porta ac consectetur ac</ListGroup.Item>
+						<ListGroup.Item action onClick={() => {navigate('Cras')}}>Cras justo odio</ListGroup.Item>
+						<ListGroup.Item action onClick={() => {navigate('Dapibus')}}>Dapibus ac facilisis in</ListGroup.Item>
+						<ListGroup.Item action onClick={() => {navigate('Morbi')}}>Morbi leo risus</ListGroup.Item>
+						<ListGroup.Item action onClick={() => {navigate('Porta')}}>Porta ac consectetur ac</ListGroup.Item>
 					</ListGroup>
 				</Tab>
 				<Tab eventKey="class" title="Class" mountOnEnter={true} unmountOnExit={false}>
