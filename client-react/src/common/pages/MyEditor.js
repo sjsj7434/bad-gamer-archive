@@ -179,7 +179,7 @@ const editorConfiguration = {
 	}
 };
 
-const MyEditor = () => {
+const MyEditor = (props) => {
 	return (
 		<>
 			<h2>Using CKEditor 5 build in React</h2>
@@ -225,6 +225,8 @@ const MyEditor = () => {
 			/>
 			<div id="word-count"></div>
 			<div id="html-count"></div>
+
+			<button onClick={props.save}>SAVE</button>
 		</>
 	);
 }

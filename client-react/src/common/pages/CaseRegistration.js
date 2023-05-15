@@ -4,7 +4,7 @@ const CaseRegistration = () => {
 	return(
 		<>
 			<div style={{ margin: "20px" }}>
-				<MyEditor></MyEditor>
+				<MyEditor save={() => {alert("hello, props from CaseRegistration")}}></MyEditor>
 			</div>
 		</>
 	);
