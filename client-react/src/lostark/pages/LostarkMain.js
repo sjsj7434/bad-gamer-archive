@@ -104,7 +104,12 @@ const LostarkMain = () => {
 
 			<Routes>
 				<Route path="test1" element={<>1</>}></Route>
-				<Route path="board/free/write" element={<><CaseRegistration /></>}></Route>
+				<Route path="board/free/write" element={<>
+					<CaseRegistration />
+					<div style={{display: "flex", flexDirection: "row-reverse"}}>
+						<span onClick={() => {navigate("/lostark")}}>To Main</span>
+					</div>
+				</>}></Route>
 			</Routes>
 		</Container>
 	);

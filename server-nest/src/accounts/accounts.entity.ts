@@ -33,7 +33,7 @@ export class Accounts {
 	nickname: string;
 
 	/**
-	 * 유저 이메일
+	 * 유저 이메일 / 이메일을 아이디로 사용하여 로그인한다? 왜냐면 비밀번호 찾기할 때 그냥 갖다 쓰니까
 	 */
 	@Column({
 		type: "varchar"
