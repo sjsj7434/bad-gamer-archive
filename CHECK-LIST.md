@@ -8,12 +8,19 @@
 	<span style="font-size: 15px">2023-04-08 ver</span>
 </p>
 
-	[실행 순서]
-	cd server-nest
-	npm run start:dev
+```
+[할 일 목록]
+2023-05-20 : 이전에 만든 게시판 DB에 비로그인 전용 게시판 기능 구현하기!
+```
 
-	cd client-react
-	npm run start
+```
+[실행 순서]
+cd server-nest
+npm run start:dev
+
+cd client-react
+npm run start
+```
 
 ## 기능 목록
 - <input type='checkbox' checked> 본캐 인증 절차 수립(공홈)
