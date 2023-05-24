@@ -22,7 +22,7 @@ export class BoardsController {
 	}
 
 	//set cookies/headers 정도만 사용하고, 나머지는 프레임워크에 떠넘기는 식으로 @Res()를 사용하는 거라면 passthrough: true 옵션은 필수! 그렇지 않으면 fetch 요청이 마무리가 안됨
-	@Post("content")
+	@Post("free/content")
 	async createContent(@Ip() ipData: string, @Body() boardData: BoardsDTO, @Req() request: Request, @Res({ passthrough: true }) response: Response): Promise<{ data: BoardsDTO | Boards }>{
 		console.log("[Controller-boards-createContent]");
 		boardData.ip = ipData;
