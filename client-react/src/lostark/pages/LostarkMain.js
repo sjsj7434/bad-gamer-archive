@@ -3,7 +3,7 @@ import Tab from 'react-bootstrap/Tab';
 import Tabs from 'react-bootstrap/Tabs';
 import ListGroup from 'react-bootstrap/ListGroup';
 import { Routes, Route, useNavigate } from "react-router-dom";
-import CaseRegistration from '../../common/pages/CaseRegistration';
+import BoardWrite from '../../common/pages/BoardWrite';
 
 const LostarkMain = () => {
 	const navigate = useNavigate();
@@ -105,7 +105,7 @@ const LostarkMain = () => {
 			<Routes>
 				<Route path="test1" element={<>1</>}></Route>
 				<Route path="board/free/write" element={<>
-					<CaseRegistration />
+					<BoardWrite />
 					<div style={{display: "flex", flexDirection: "row-reverse"}}>
 						<span onClick={() => {navigate("/lostark")}}>To Main</span>
 					</div>

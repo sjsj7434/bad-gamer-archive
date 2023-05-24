@@ -22,15 +22,21 @@ export class BoardsService {
 	}
 
 	/**
-	 * 중복되는 정보가 있는지 확인 후 게시글을 생성한다
+	 * 미인증 전용 게시판에 게시글을 생성한다
+	 * 
+	 * export class BoardsDTO {
+		code: number;
+		category: string;
+		title: string;
+		content: string;
+		writer: string;
+		ip: string;
+	}
 	 */
-	async createContent(dto: BoardsDTO): Promise<number> {
-		const idCheck: object|null = await this.findWithCode(dto.code);
-		
-		dto.title = "hash";
+	async createContent(boardData: BoardsDTO): Promise<BoardsDTO | Boards> {
+		console.log(`serviec Called : createContent`)
+		const createdContent = await this.boardsRepository.save(boardData);
 
-		await this.boardsRepository.save(dto);
-
-		return 0; //이미 ID & Nickname 존재
+		return createdContent;
 	}
 }
