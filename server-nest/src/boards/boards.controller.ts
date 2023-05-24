@@ -7,15 +7,15 @@ import { BoardsDTO } from './boards.dto';
 export class BoardsController {
 	constructor(private boardsService: BoardsService) { }
 
-	@Get("code/:contentCode")
-	async findWithCode(@Param("contentCode") contentCode: number): Promise<{ data: Boards | null }> {
-		console.log("[Controller-boards-findWithCode]");
+	@Get("free/view/:contentCode")
+	async getContentByCode(@Param("contentCode") contentCode: number): Promise<{ data: Boards | null }> {
+		console.log("[Controller-boards-getContentByCode]");
 
-		const result = await this.boardsService.findWithCode(contentCode);
+		const result = await this.boardsService.getContentByCode(contentCode);
 		console.log(result);
 
 		if (result === null) {
-			console.log("findWithCode is null");
+			console.log("getContentByCode is null");
 		}
 
 		return { data: result };
@@ -25,6 +25,8 @@ export class BoardsController {
 	@Post("free/content")
 	async createContent(@Ip() ipData: string, @Body() boardData: BoardsDTO, @Req() request: Request, @Res({ passthrough: true }) response: Response): Promise<{ data: BoardsDTO | Boards }>{
 		console.log("[Controller-boards-createContent]");
+		boardData.category = "not_verified";
+		boardData.writer = "";
 		boardData.ip = ipData;
 
 		const createdContent = await this.boardsService.createContent(boardData);

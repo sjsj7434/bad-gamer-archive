@@ -4,6 +4,7 @@ import Tabs from 'react-bootstrap/Tabs';
 import ListGroup from 'react-bootstrap/ListGroup';
 import { Routes, Route, useNavigate } from "react-router-dom";
 import BoardWrite from '../../common/pages/BoardWrite';
+import BoardView from '../../common/pages/BoardView';
 
 const LostarkMain = () => {
 	const navigate = useNavigate();
@@ -54,52 +55,7 @@ const LostarkMain = () => {
 					</Tabs>
 				</>}></Route>
 
-				<Route path="board/free/view/:code" element={<>
-					<div>
-						<h2>Title</h2>
-						<hr></hr>
-						<div>
-							<p>hello, i am the contents</p>
-							<p>this is interesting</p>
-							<p>Good night</p>
-						</div>
-						<hr></hr>
-					</div>
-
-					<div>
-						<h5>Replies</h5>
-						<div>
-							<textarea style={{width: "100%"}}></textarea>
-						</div>
-						<div>
-							<p>ACE : hello, i am the hero</p>
-						</div>
-						<div>
-							<p>CAT : sister, you are the one</p>
-						</div>
-						<hr></hr>
-					</div>
-
-					<div>
-						<h5>List</h5>
-						<div>
-							<p>Did you see that? LOL</p>
-						</div>
-						<div>
-							<p>Why my cat died yestderday, i found it</p>
-						</div>
-						<div>
-							<p>Crazy Dog in my room</p>
-						</div>
-						<hr></hr>
-					</div>
-
-					<div style={{display: "flex", flexDirection: "row-reverse"}}>
-						<span onClick={() => {navigate("board/free/write")}}>Write</span>
-						&nbsp;&nbsp;|&nbsp;&nbsp;
-						<span onClick={() => {navigate("/lostark")}}>To Main</span>
-					</div>
-				</>}></Route>
+				<Route path="board/free/view/:contentCode" element={<><BoardView></BoardView></>}></Route>
 			</Routes>
 
 			<Routes>

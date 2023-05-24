@@ -13,7 +13,7 @@ export class BoardsService {
 	/**
 	 * Code로 1개의 게시글을 찾는다
 	 */
-	findWithCode(contentCode: number): Promise<Boards | null> {
+	getContentByCode(contentCode: number): Promise<Boards | null> {
 		return this.boardsRepository.findOne({
 			where: {
 				code: contentCode,

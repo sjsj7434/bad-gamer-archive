@@ -49,10 +49,8 @@ const BoardWrite = () => {
 	const saveEditorData = async (contentData) => {
 		console.log("func called : saveEditorData");
 		let result = await createContent({
-			category: "not_verified"
-			, title: document.querySelector("#title").value
+			title: document.querySelector("#title").value
 			, content: contentData.content
-			, writer: ""
 		});
 
 		console.log("saveEditorData", result);
