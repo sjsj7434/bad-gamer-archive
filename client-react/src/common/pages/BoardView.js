@@ -1,16 +1,11 @@
-import { useState, useEffect } from 'react';
-import { useNavigate } from "react-router-dom";
-import { useParams } from 'react-router-dom';
-import MyEditorView from './MyEditorView';
+import { useState, useEffect, useCallback } from 'react';
+import { useNavigate, useParams } from "react-router-dom";
 
 const BoardView = () => {
-	const [contentData, setContentData] = useState(null);
+	const [contentCode, setContentCode] = useState(null);
+	const [renderData, setRenderData] = useState(<></>);
 	const navigate = useNavigate();
 	const params = useParams();
-
-	useEffect(() => {
-		readContent(params.contentCode);
-	}, [])
 
 	/**
 	 * 자주 사용하는 fetch 템플릿
@@ -44,73 +39,48 @@ const BoardView = () => {
 	 * 입력한 캐릭터 이름의 기본 정보를 가져온다
 	 * @returns {object} 가져온 캐릭터 정보 JSON
 	 */
-	const readContent = async (contentCode) => {
-		const fecthOption = {
-			method: "GET"
-			, headers: {"Content-Type": "application/json",}
-			, credentials: "include", // Don't forget to specify this if you need cookies
-		};
-		const jsonString = await fetch(`${process.env.REACT_APP_SERVER}/boards/free/view/${contentCode}`, fecthOption);
-		const jsonData = await parseStringToJson(jsonString);
+	const readContent = useCallback(async () => {
+		if(contentCode !== null){
+			const fecthOption = {
+				method: "GET"
+				, headers: {"Content-Type": "application/json",}
+				, credentials: "include", // Don't forget to specify this if you need cookies
+			};
+			const jsonString = await fetch(`${process.env.REACT_APP_SERVER}/boards/view/${contentCode}`, fecthOption);
+			const jsonData = await parseStringToJson(jsonString);
 
-		console.log("readContent", jsonData);
-		setContentData(jsonData);
-	}
+			console.log("readContent", jsonData);
+
+			setRenderData(
+				<>
+					<div>
+						<h2>{jsonData.title}</h2>
+						<hr></hr>
+					</div>
+
+					{/*
+						sanitizer libraries for HTML XSS Attacks : DOMPurify
+					*/}
+					<div dangerouslySetInnerHTML={{__html: jsonData.content}}></div>
+
+					<div style={{display: "flex", flexDirection: "row-reverse"}}>
+						<span onClick={() => {navigate("/lostark/board/write/anonymous")}}>Write</span>
+						&nbsp;&nbsp;|&nbsp;&nbsp;
+						<span onClick={() => {navigate("/lostark")}}>To Main</span>
+					</div>
+				</>
+			);
+		}
+	}, [contentCode])
+
+	useEffect(() => {
+		setContentCode(params.contentCode);
+		readContent();
+	}, [readContent, params.contentCode]);
 	
 	return(
 		<>
-			{
-				contentData === null ?
-					<></>
-					:
-					<>
-						<div>
-							<h2>{contentData.title}</h2>
-							<hr></hr>
-							<MyEditorView contentData={contentData}></MyEditorView>
-							<hr></hr>
-						</div>
-
-						{/*
-							sanitizer libraries for HTML XSS Attacks : DOMPurify
-						 */}
-						<div dangerouslySetInnerHTML={{__html: contentData.content}}></div>
-
-						<div>
-							<h5>Replies</h5>
-							<div>
-								<textarea style={{width: "100%"}}></textarea>
-							</div>
-							<div>
-								<p>ACE : hello, i am the hero</p>
-							</div>
-							<div>
-								<p>CAT : sister, you are the one</p>
-							</div>
-							<hr></hr>
-						</div>
-
-						<div>
-							<h5>List</h5>
-							<div>
-								<p>Did you see that? LOL</p>
-							</div>
-							<div>
-								<p>Why my cat died yestderday, i found it</p>
-							</div>
-							<div>
-								<p>Crazy Dog in my room</p>
-							</div>
-							<hr></hr>
-						</div>
-
-						<div style={{display: "flex", flexDirection: "row-reverse"}}>
-							<span onClick={() => {navigate("/lostark/board/free/write")}}>Write</span>
-							&nbsp;&nbsp;|&nbsp;&nbsp;
-							<span onClick={() => {navigate("/lostark")}}>To Main</span>
-						</div>
-					</>
-			}
+			{renderData}
 		</>
 	);
 }
