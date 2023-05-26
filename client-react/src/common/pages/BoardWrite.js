@@ -1,7 +1,10 @@
+import { useParams } from "react-router-dom";
 import MyEditor from './MyEditor'
 import Form from 'react-bootstrap/Form';
 
 const BoardWrite = () => {
+	const params = useParams();
+
 	/**
 	 * 자주 사용하는 fetch 템플릿
 	 * @param {string} destination fetch url, 목적지
@@ -41,7 +44,7 @@ const BoardWrite = () => {
 			, headers: {"Content-Type": "application/json",}
 			, credentials: "include", // Don't forget to specify this if you need cookies
 		};
-		const jsonString = await fetch(`${process.env.REACT_APP_SERVER}/boards/anonymous`, fecthOption);
+		const jsonString = await fetch(`${process.env.REACT_APP_SERVER}/boards/${params.category}`, fecthOption);
 		const jsonData = await parseStringToJson(jsonString);
 
 		return jsonData;
@@ -60,6 +63,7 @@ const BoardWrite = () => {
 	return(
 		<>
 			<div style={{ margin: "20px" }}>
+				* Board : {params.category}
 				<Form.Control id="title" type="text" placeholder="title" style={{marginBottom: "10px"}} />
 				<MyEditor saveContent={(contentData) => {saveEditorData(contentData)}}></MyEditor>
 			</div>

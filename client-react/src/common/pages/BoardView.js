@@ -53,20 +53,21 @@ const BoardView = () => {
 
 			setRenderData(
 				<>
-					<div>
-						<h2>{jsonData.title}</h2>
-						<hr></hr>
-					</div>
+					<div style={{margin: 10}}>
+						<div>
+							<h2>{params.category}</h2>
+							<h2>{jsonData.title}</h2>
+							<hr></hr>
+						</div>
 
-					{/*
-						sanitizer libraries for HTML XSS Attacks : DOMPurify
-					*/}
-					<div dangerouslySetInnerHTML={{__html: jsonData.content}}></div>
+						{/*
+							sanitizer libraries for HTML XSS Attacks : DOMPurify
+						*/}
+						<div dangerouslySetInnerHTML={{__html: jsonData.content}}></div>
 
-					<div style={{display: "flex", flexDirection: "row-reverse"}}>
-						<span onClick={() => {navigate("/lostark/board/write/anonymous")}}>Write</span>
-						&nbsp;&nbsp;|&nbsp;&nbsp;
-						<span onClick={() => {navigate("/lostark")}}>To Main</span>
+						<div style={{display: "flex", flexDirection: "row-reverse"}}>
+							<span onClick={() => {navigate(`/lostark/board/${params.category}`)}}>To List</span>
+						</div>
 					</div>
 				</>
 			);

@@ -21,6 +21,10 @@ const CommonTopMenu = (props) => {
 		console.log("CommonTopMenu", props);
 	}, []); //처음 페이지 로딩 될때만
 
+	useEffect(() => {
+		console.log("-----------> window.location.href", window.location.href);
+	}, [window.location.href]); //처음 페이지 로딩 될때만
+
 	const menuClick = (url) => {
 		props.renewLogin();
 		setShowOffcanvas(false);
@@ -60,8 +64,10 @@ const CommonTopMenu = (props) => {
 							</Offcanvas.Title>
 						</Offcanvas.Header>
 						<Offcanvas.Body>
-							<Nav className="justify-content-start flex-grow-1 pe-3">
-								<Nav.Link href="#" onClick={() => menuClick("/lostark")}>LA</Nav.Link>
+							<Nav variant="pills" className="justify-content-start flex-grow-1 pe-3">
+								<Nav.Link active={false} eventKey="link-1" onClick={() => menuClick("/lostark")}>Main</Nav.Link>
+								<Nav.Link active={false} eventKey="link-2" onClick={() => menuClick("/lostark/board/anonymous/1")}>Anonymous Board</Nav.Link>
+								<Nav.Link active={false} eventKey="link-2" onClick={() => menuClick("/lostark/board/identified/1")}>Identified Board</Nav.Link>
 
 								{/* 아직 오픈 계획 없음
 								<Nav.Link as={NavLink} href="#" to="/" style={({ isActive, isPending }) => isActive ? {color: "#89d4ff"} : isPending ? {color: "red"} : {color: "white"}}>

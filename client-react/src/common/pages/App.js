@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { Navigate } from "react-router-dom";
 
 import LostarkMain from '../../lostark/pages/LostarkMain';
+import LostarkRouter from '../../lostark/pages/LostarkRouter';
 import CharacterInfo from '../../lostark/pages/character/CharacterInfo';
 import SignUpForm from './accounts/SignUpForm';
 import SignInForm from './accounts/SignInForm';
@@ -60,8 +61,8 @@ const App = () => {
 
 						<Routes>
 							{/* Contents */}
-							<Route path="/" element={<Navigate to="/lostark" replace={true} />}></Route>
-							<Route path="lostark/*" element={<><LostarkMain /></>}></Route>
+							<Route path="/" element={<Navigate to="lostark" replace={true} />}></Route>
+							<Route path="lostark/*" element={<><LostarkRouter /></>}></Route>
 
 							<Route path="accounts">
 								<Route path="signup" element={<><SignUpForm /></>}>
