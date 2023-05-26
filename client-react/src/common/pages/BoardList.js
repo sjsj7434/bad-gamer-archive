@@ -79,18 +79,22 @@ const BoardList = () => {
 					{contentListData}
 				</div>
 
-				let maxPageCount = 24;
-				let currentPage = Number(params.page);
-				paginationData.push(<Pagination.Prev />);
-				for (let index = currentPage; index < currentPage + 10; index++) {
-					if(index >= maxPageCount){
-						break;
-					}
+				const maxPageCount = 24;
+				const currentPage = Number(params.page);
+				const startPage = ((parseInt((currentPage - 1) / 10, 10)) * 10) + 1;
+				const endPage = (startPage + 10 >= maxPageCount ? maxPageCount + 1 : startPage + 10);
+				const prevPage = (startPage - 1 <= 0 ? 1 : startPage - 1);
+				const nextPage = (endPage >= maxPageCount ? endPage - 1 : endPage);
+				const isDisablePrev = (startPage - 1 <= 0 ? true : false);
+				const isDisableNext = (maxPageCount <= endPage ? true : false);
+
+				paginationData.push(<Pagination.Prev disabled={isDisablePrev} onClick={() => {navigate(`/lostark/list/${contentCategory}/${prevPage}`)}} />);
+				for (let index = startPage; index < endPage; index++) {
 					paginationData.push(
 						<Pagination.Item key={"pagenation_" + index} active={index === Number(page) ? true : false} onClick={() => {navigate(`/lostark/list/${contentCategory}/${index}`)}}>{index}</Pagination.Item>
 					);
 				}
-				paginationData.push(<Pagination.Next />);
+				paginationData.push(<Pagination.Next disabled={isDisableNext} onClick={() => {navigate(`/lostark/list/${contentCategory}/${nextPage}`)}} />);
 
 				tempRenderData.push(
 					<div style={{minHeight: "600px"}} key="contentListData">
