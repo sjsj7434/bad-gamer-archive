@@ -24,8 +24,8 @@ export class BoardsService {
 	/**
 	 * category에 해당하는 글 목록 가져오기
 	 */
-	getContentListByCategory(category: string, page: number): Promise<Boards[] | null> {
-		return this.boardsRepository.find({
+	getContentListByCategory(category: string, page: number): Promise<[Boards[], number]> {
+		return this.boardsRepository.findAndCount({
 			skip: (page - 1) * 10, //시작 인덱스
 			take: 10, //페이지 당 갯수
 			select: {

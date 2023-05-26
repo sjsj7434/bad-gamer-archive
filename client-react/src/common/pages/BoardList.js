@@ -51,13 +51,15 @@ const BoardList = () => {
 				};
 				const jsonString = await fetch(`${process.env.REACT_APP_SERVER}/boards/list/${contentCategory}/${page}`, fecthOption);
 				const jsonData = await parseStringToJson(jsonString);
+				const contentJson = jsonData[0];
+				const contentCount = jsonData[1];
 
 				console.log(`readContentList / page: ${page}`, jsonData);
 				const tempRenderData = [];
 				const contentListData = [];
 				const paginationData = [];
 
-				if(jsonData.length === 0){
+				if(contentJson.length === 0){
 					contentListData.push(
 						<div key={"noContent"}>
 							<h2>No data</h2>
@@ -65,7 +67,7 @@ const BoardList = () => {
 					);
 				}
 				else{
-					contentListData.push(jsonData.map((data) => {
+					contentListData.push(contentJson.map((data) => {
 						return(
 							<div key={"content" + data.code}>
 								<h4 onClick={() => {navigate(`/lostark/board/view/${data.code}`)}}>{data.title}</h4>
@@ -79,7 +81,8 @@ const BoardList = () => {
 					{contentListData}
 				</div>
 
-				const maxPageCount = 24;
+				const contentPerPage = 10;
+				const maxPageCount = parseInt((contentCount - 1) / contentPerPage, 10) + 1;
 				const currentPage = Number(params.page);
 				const startPage = ((parseInt((currentPage - 1) / 10, 10)) * 10) + 1;
 				const endPage = (startPage + 10 >= maxPageCount ? maxPageCount + 1 : startPage + 10);
