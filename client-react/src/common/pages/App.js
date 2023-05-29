@@ -3,7 +3,6 @@ import Error404 from './errors/Error404';
 import { useState, useEffect } from 'react';
 import { Navigate } from "react-router-dom";
 
-import LostarkMain from '../../lostark/pages/LostarkMain';
 import LostarkRouter from '../../lostark/pages/LostarkRouter';
 import CharacterInfo from '../../lostark/pages/character/CharacterInfo';
 import SignUpForm from './accounts/SignUpForm';

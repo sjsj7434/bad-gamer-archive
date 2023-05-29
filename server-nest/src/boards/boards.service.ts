@@ -46,4 +46,31 @@ export class BoardsService {
 
 		return createdContent;
 	}
+
+	/**
+	 * 게시글을 softDelete한다
+	 */
+	async softDeleteContent(contentCode: number, contentPassword: string): Promise<boolean>{
+		try {
+			const contentData = await this.getContentByCode(contentCode);
+
+			if(contentData !== null){
+				if(contentData.password === contentPassword){
+					this.boardsRepository.softDelete({
+						code: contentCode
+					});
+
+					return true;
+				}
+				else{
+					return false;
+				}
+			}
+			else{
+				return false;
+			}
+		} catch (error) {
+			return false;
+		}
+	}
 }

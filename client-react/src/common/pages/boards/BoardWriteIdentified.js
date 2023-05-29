@@ -1,9 +1,13 @@
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import MyEditor from './MyEditor'
 import Form from 'react-bootstrap/Form';
+import Container from 'react-bootstrap/Container';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
 
-const BoardWrite = () => {
+const BoardWriteIdentified = () => {
 	const params = useParams();
+	const navigate = useNavigate();
 
 	/**
 	 * 자주 사용하는 fetch 템플릿
@@ -44,31 +48,50 @@ const BoardWrite = () => {
 			, headers: {"Content-Type": "application/json",}
 			, credentials: "include", // Don't forget to specify this if you need cookies
 		};
-		const jsonString = await fetch(`${process.env.REACT_APP_SERVER}/boards/${params.category}`, fecthOption);
+		const jsonString = await fetch(`${process.env.REACT_APP_SERVER}/boards/identified`, fecthOption);
 		const jsonData = await parseStringToJson(jsonString);
 
 		return jsonData;
 	}
+
 	const saveEditorData = async (contentData) => {
 		console.log("func called : saveEditorData");
+		const titleElement = document.querySelector("#title");
+
+		if(titleElement.value === ""){
+			alert("제목을 입력해주세요");
+			titleElement.focus();
+			return;
+		}
+
+		if(window.confirm("게시글을 저장하시겠습니까?") === false){
+			return;
+		}
+
 		let result = await createContent({
-			title: document.querySelector("#title").value
-			, content: contentData.content
+			title: titleElement.value,
+			content: contentData.content
 		});
 
 		console.log("saveEditorData", result);
-		alert("saved!");
+
+		if(result !== null){
+			alert("저장되었습니다");
+			navigate(`/lostark/board/identified/1`);
+		}
+		else{
+			alert("문제가 발생하여 게시글을 저장할 수 없습니다");
+			// localStorage.setItem("tempContentData", contentData.content); //다시 작성하는 일이 생기지 않도록?
+		}
 	}
 	
 	return(
-		<>
-			<div style={{ margin: "20px" }}>
-				* Board : {params.category}
-				<Form.Control id="title" type="text" placeholder="title" style={{marginBottom: "10px"}} />
-				<MyEditor saveContent={(contentData) => {saveEditorData(contentData)}}></MyEditor>
-			</div>
-		</>
+		<Container style={{maxWidth: "1440px"}}>
+			* Board : identified
+			<Form.Control id="title" type="text" placeholder="제목" style={{marginBottom: "10px"}} />
+			<MyEditor saveContent={(contentData) => {saveEditorData(contentData)}}></MyEditor>
+		</Container>
 	);
 }
 
-export default BoardWrite;
+export default BoardWriteIdentified;

@@ -1,12 +1,12 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
 import Error404 from '../../common/pages/errors/Error404';
-import LostarkMain from '../../lostark/pages/LostarkMain';
-import BoardList from '../../common/pages/BoardList'
-import BoardView from '../../common/pages/BoardView';
-import BoardWrite from '../../common/pages/BoardWrite';
+import BoardList from '../../common/pages/boards/BoardList'
+import BoardView from '../../common/pages/boards/BoardView';
+import BoardWriteAnonymous from '../../common/pages/boards/BoardWriteAnonymous';
+import BoardWriteIdentified from '../../common/pages/boards/BoardWriteIdentified';
+import LostarkMain from './LostarkMain';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
-
 
 // index.js에서 StrictMode 존재하면 두번 랜더링, 개발 모드에서만 적용됩니다. 생명주기 메서드들은 프로덕션 모드에서 이중으로 호출되지 않습니다.
 	// get Login info here and give props to child
@@ -23,7 +23,8 @@ const LostarkRouter = () => {
 						<Route path=":category" element={<Navigate to={"1"} />}></Route>
 						<Route path=":category/:page" element={<BoardList />}></Route>
 						<Route path=":category/view/:contentCode" element={<BoardView />}></Route>
-						<Route path=":category/write" element={<BoardWrite />}></Route>
+						<Route path="anonymous/write" element={<BoardWriteAnonymous />}></Route>
+						<Route path="identified/write" element={<BoardWriteIdentified />}></Route>
 					</Route>
 					{/* <Route path="board/list/:category/:page" element={<><BoardList></BoardList></>}></Route>
 					<Route path="board/view/:contentCode" element={<><BoardView></BoardView></>}></Route> */}

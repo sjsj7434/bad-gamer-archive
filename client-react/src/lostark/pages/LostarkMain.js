@@ -1,12 +1,10 @@
 import Container from 'react-bootstrap/Container';
 import Tab from 'react-bootstrap/Tab';
 import Tabs from 'react-bootstrap/Tabs';
-import { Routes, Route, useNavigate } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import HotContent from './HotContent';
 
 const LostarkMain = () => {
-	const navigate = useNavigate();
-
 	const tabOnSelect = (tabKey) => {
 		console.log(tabKey);
 	}

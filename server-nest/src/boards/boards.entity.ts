@@ -2,6 +2,11 @@ import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateCol
 
 // This will create following database table
 // If table is already exsists there could be error
+
+//이모티콘 때문에 저장 오류가 발생한다면
+//ALTER DATABASE game_agora CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci;
+//ALTER TABLE boards CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_bin
+
 @Entity()
 export class Boards {
 	/**
@@ -38,6 +43,16 @@ export class Boards {
 		, nullable: false
 	})
 	content: string;
+
+	/**
+	 * 익명 게시글 수정&삭제 비밀번호
+	 */
+	@Column({
+		type: "varchar"
+		, length: 20
+		, nullable: true
+	})
+	password: string;
 
 	/**
 	 * 작성자 ID

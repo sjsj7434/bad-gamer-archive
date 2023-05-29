@@ -3,6 +3,7 @@ export class BoardsDTO {
 	category: string;
 	title: string;
 	content: string;
+	contentPassword: string
 	writer: string;
 	ip: string;
 }

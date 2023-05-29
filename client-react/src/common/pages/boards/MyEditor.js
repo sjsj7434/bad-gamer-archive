@@ -1,7 +1,7 @@
 import { CKEditor } from '@ckeditor/ckeditor5-react';
 import ClassicEditor from 'ckeditor5-custom-build/build/ckeditor'; //online-build, custom build, [npm add file]
 // https://stackoverflow.com/questions/62243323/reactjs-import-ckeditor-5-from-online-build
-import '../css/MyEditor.css'
+import '../../css/MyEditor.css'
 
 const editorMaxKB = 50; //에디터 HTML 최대 Byte
 const editorConfiguration = {

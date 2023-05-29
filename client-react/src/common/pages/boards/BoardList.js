@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from "react-router-dom";
 import Pagination from 'react-bootstrap/Pagination';
+import Container from 'react-bootstrap/Container';
 
 const BoardList = () => {
 	const [contentCategory, setContentCategory] = useState(null);
@@ -54,7 +55,7 @@ const BoardList = () => {
 				const contentJson = jsonData[0];
 				const contentCount = jsonData[1];
 
-				console.log(`readContentList / page: ${page}`, jsonData);
+				console.log(`readContentList / contentCategory: ${contentCategory}, page: ${page}`, jsonData);
 				const tempRenderData = [];
 				const contentListData = [];
 				const paginationData = [];
@@ -81,7 +82,7 @@ const BoardList = () => {
 			
 				const contentPerPage = 10;
 				const maxPageCount = parseInt((contentCount - 1) / contentPerPage, 10) + 1;
-				const currentPage = Number(params.page);
+				const currentPage = Number(page);
 				const startPage = ((parseInt((currentPage - 1) / 10, 10)) * 10) + 1;
 				const endPage = (startPage + 10 >= maxPageCount ? maxPageCount + 1 : startPage + 10);
 				const prevPage = (startPage - 1 <= 0 ? 1 : startPage - 1);
@@ -89,24 +90,24 @@ const BoardList = () => {
 				const isDisablePrev = (startPage - 1 <= 0 ? true : false);
 				const isDisableNext = (maxPageCount <= endPage ? true : false);
 
-				paginationData.push(<Pagination.Prev disabled={isDisablePrev} onClick={() => {navigate(`/lostark/board/${contentCategory}/${prevPage}`)}} />);
+				paginationData.push(<Pagination.Prev key={"pagenation_prev"} disabled={isDisablePrev} onClick={() => {navigate(`/lostark/board/${contentCategory}/${prevPage}`)}} />);
 				for (let index = startPage; index < endPage; index++) {
 					paginationData.push(
 						<Pagination.Item key={"pagenation_" + index} active={index === Number(page) ? true : false} onClick={() => {navigate(`/lostark/board/${contentCategory}/${index}`)}}>{index}</Pagination.Item>
 					);
 				}
-				paginationData.push(<Pagination.Next disabled={isDisableNext} onClick={() => {navigate(`/lostark/board/${contentCategory}/${nextPage}`)}} />);
+				paginationData.push(<Pagination.Next key={"pagenation_next"} disabled={isDisableNext} onClick={() => {navigate(`/lostark/board/${contentCategory}/${nextPage}`)}} />);
 
 				tempRenderData.push(
-					<>
-						<div style={{minHeight: "600px", margin: "10px"}} key="contentListData">
+					<div key="contentListData">
+						<div style={{minHeight: "600px", margin: "10px"}}>
 							{contentListData}
 						</div>
 
 						<div style={{display: "flex", flexDirection: "row-reverse"}}>
 							<span onClick={() => {navigate(`/lostark/board/${contentCategory}/write`)}}>Write</span>
 						</div>
-					</>
+					</div>
 				);
 
 				tempRenderData.push(
@@ -121,24 +122,31 @@ const BoardList = () => {
 			}
 		}
 		
-		if(isNaN(params.page) === false){
-			setContentCategory(params.category);
-			setPage(params.page);
-			console.log(`params.page: ${params.page} / page: ${page}`)
+		if(page !== null){
+			console.log(`page: ${page} / contentCategory: ${contentCategory}`)
 
-			if(params.page === page){
-				readContentList();
-			}
+			readContentList();
 		}
 		else{
 			setRenderData(<div>404!</div>);
 		}
-	}, [params.category, params.page, contentCategory, page])
+	}, [page, contentCategory, navigate])
+
+	useEffect(() => {
+		if(isNaN(params.page) === false){
+			setContentCategory(params.category);
+			setPage(params.page);
+		}
+		else{
+			setContentCategory(null);
+			setPage(null);
+		}
+	}, [params.category, params.page])
 	
 	return(
-		<>
+		<Container style={{maxWidth: "1440px"}}>
 			{renderData}
-		</>
+		</Container>
 	);
 }
 

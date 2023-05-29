@@ -1,4 +1,4 @@
-import { Param, Controller, Get, Post, Body, Ip, Req, Res } from '@nestjs/common';
+import { Param, Controller, Get, Post, Body, Ip, Req, Res, Delete } from '@nestjs/common';
 import { BoardsService } from './boards.service';
 import { Boards } from './boards.entity';
 import { BoardsDTO } from './boards.dto';
@@ -52,5 +52,12 @@ export class BoardsController {
 		else{
 			return { data: null };
 		}
+	}
+
+	@Delete(":contentCode")
+	async deleteContent(@Param("contentCode") contentCode: number, @Body() boardData: BoardsDTO): Promise<{data: boolean}> {
+		console.log("[Controller-boards-deleteContent]");
+		const isDeleted = await this.boardsService.softDeleteContent(contentCode, boardData.contentPassword);
+		return { data: isDeleted };
 	}
 }
