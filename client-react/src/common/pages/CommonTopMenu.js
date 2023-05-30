@@ -21,10 +21,6 @@ const CommonTopMenu = (props) => {
 		console.log("CommonTopMenu", props);
 	}, []); //처음 페이지 로딩 될때만
 
-	useEffect(() => {
-		console.log("-----------> window.location.href", window.location.href);
-	}, [window.location.href]); //처음 페이지 로딩 될때만
-
 	const menuClick = (url) => {
 		props.renewLogin();
 		setShowOffcanvas(false);

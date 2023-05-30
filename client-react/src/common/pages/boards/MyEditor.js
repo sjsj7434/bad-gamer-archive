@@ -156,7 +156,7 @@ const editorConfiguration = {
 	wordCount: {
 		onUpdate: (stats) => {
 			// Prints the current content statistics.
-			console.log(`Characters: ${stats.characters}\nWords: ${stats.words}`, stats);
+			// console.log(`Characters: ${stats.characters}\nWords: ${stats.words}`, stats);
 
 			const wordCountWrapper = document.getElementById("word-count");
 			wordCountWrapper.textContent = `글자 수 => ${stats.characters}`;
@@ -188,7 +188,7 @@ const MyEditor = (props) => {
 			<CKEditor
 				config={editorConfiguration}
 				editor={ClassicEditor}
-				data=""
+				data={props.savedData}
 				onReady={(editor) => {
 					// You can store the "editor" and use when it is needed.
 					console.log("Editor is ready to use!", editor);
@@ -201,7 +201,6 @@ const MyEditor = (props) => {
 				}}
 				onChange={(event, editor) => {
 					const data = editor.getData();
-					console.log(data);
 					const wordCountWrapper = document.getElementById("html-size");
 
 					const stringByteLength = (

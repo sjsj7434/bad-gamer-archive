@@ -1,15 +1,46 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useNavigate, useParams } from "react-router-dom";
 import Container from 'react-bootstrap/Container';
+import Placeholder from 'react-bootstrap/Placeholder';
 
 const BoardView = () => {
 	const [contentCode, setContentCode] = useState(null);
 	const [category, setCategory] = useState(null);
+	const [contentTitle, setContentTitle] = useState("");
+	const [contentData, setContentData] = useState("");
 	const [renderData, setRenderData] = useState(<></>);
 	const navigate = useNavigate();
 	const params = useParams();
 
-	const deleteContent = async () => {
+	/**
+	 * 자주 사용하는 fetch 템플릿
+	 * @param {string} destination fetch url, 목적지
+	 * @returns {object} 가져온 정보 JSON
+	 */
+	const parseStringToJson = async (jsonString) => {
+		if(jsonString === null){
+			return null;
+		}
+		else if(jsonString.status === 500){
+			alert("Error!\nCan not get data");
+			return null;
+		}
+		else{
+			const jsonResult = await jsonString.json();
+
+			if(jsonResult.statusCode === 500){
+				return null;
+			}
+			else if(jsonResult.data === null){
+				return null;
+			}
+			else{
+				return jsonResult.data;
+			}
+		}
+	}
+
+	const deleteContent = useCallback(async () => {
 		const contentPassword = prompt("게시글의 비밀번호를 입력해주세요");
 		if(contentPassword === null){
 			return;
@@ -40,35 +71,7 @@ const BoardView = () => {
 		else{
 			alert("게시글이 삭제되지 않았습니다\n올바른 게시글 비밀번호가 아닙니다");
 		}
-	}
-
-	/**
-	 * 자주 사용하는 fetch 템플릿
-	 * @param {string} destination fetch url, 목적지
-	 * @returns {object} 가져온 정보 JSON
-	 */
-	const parseStringToJson = async (jsonString) => {
-		if(jsonString === null){
-			return null;
-		}
-		else if(jsonString.status === 500){
-			alert("Error!\nCan not get data");
-			return null;
-		}
-		else{
-			const jsonResult = await jsonString.json();
-
-			if(jsonResult.statusCode === 500){
-				return null;
-			}
-			else if(jsonResult.data === null){
-				return null;
-			}
-			else{
-				return jsonResult.data;
-			}
-		}
-	}
+	}, [contentCode, category, navigate])
 
 	/**
 	 * 입력한 캐릭터 이름의 기본 정보를 가져온다
@@ -85,39 +88,70 @@ const BoardView = () => {
 			const jsonData = await parseStringToJson(jsonString);
 
 			console.log("readContent", jsonData);
-
-			setRenderData(
-				<>
-					<div style={{margin: 10}}>
-						<div>
-							<h4>{category} Board</h4>
-							<h2>{jsonData.title}</h2>
-							<hr></hr>
-						</div>
-
-						{/*
-							sanitizer libraries for HTML XSS Attacks : DOMPurify
-						*/}
-						<div dangerouslySetInnerHTML={{__html: jsonData.content}}></div>
-
-						<div style={{display: "flex", flexDirection: "row-reverse"}}>
-							<span onClick={() => {navigate(`/lostark/board/${category}`)}}>To List</span>
-							&nbsp;|&nbsp;
-							<span onClick={() => {deleteContent()}}>Delete</span>
-							&nbsp;|&nbsp;
-							<span onClick={() => {navigate(`/lostark/board/${category}`)}}>Edit</span>
-						</div>
-					</div>
-				</>
-			);
+			setContentTitle(jsonData.title);
+			setContentData(jsonData.content);
 		}
-	}, [contentCode, category, navigate])
+	}, [contentCode])
 
 	useEffect(() => {
 		setContentCode(params.contentCode);
 		setCategory(params.category)
 		readContent();
 	}, [readContent, params.contentCode, params.category]);
+
+	useEffect(() => {
+		if(contentTitle === "" && contentData === ""){
+			setRenderData(
+				<>
+					<div style={{margin: 10}}>
+						<div>
+							<h4>{category} Board</h4>
+							<Placeholder xs={12} />
+							<hr></hr>
+						</div>
+
+						<Placeholder xs={12} />
+						<Placeholder xs={12} />
+						<Placeholder xs={12} />
+
+						<div style={{display: "flex", flexDirection: "row-reverse"}}>
+							<span onClick={() => {navigate(`/lostark/board/${category}`)}}>To List</span>
+							&nbsp;|&nbsp;
+							<span onClick={() => {deleteContent()}}>Delete</span>
+							&nbsp;|&nbsp;
+							<span onClick={() => {navigate(`/lostark/board/${category}/edit/${contentCode}`)}}>Edit</span>
+						</div>
+					</div>
+				</>
+			);
+		}
+		else{
+			setRenderData(
+				<>
+					<div style={{margin: 10}}>
+						<div>
+							<h4>{category} Board</h4>
+							<h2>{contentTitle}</h2>
+							<hr></hr>
+						</div>
+
+						{/*
+							sanitizer libraries for HTML XSS Attacks : DOMPurify
+						*/}
+						<div dangerouslySetInnerHTML={{__html: contentData}}></div>
+
+						<div style={{display: "flex", flexDirection: "row-reverse"}}>
+							<span onClick={() => {navigate(`/lostark/board/${category}`)}}>To List</span>
+							&nbsp;|&nbsp;
+							<span onClick={() => {deleteContent()}}>Delete</span>
+							&nbsp;|&nbsp;
+							<span onClick={() => {navigate(`/lostark/board/${category}/edit/${contentCode}`)}}>Edit</span>
+						</div>
+					</div>
+				</>
+			);
+		}
+	}, [category, contentTitle, contentData]);
 	
 	return(
 		<Container style={{maxWidth: "1440px"}}>

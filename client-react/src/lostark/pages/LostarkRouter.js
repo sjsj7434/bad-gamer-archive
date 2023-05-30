@@ -24,6 +24,7 @@ const LostarkRouter = () => {
 						<Route path=":category/:page" element={<BoardList />}></Route>
 						<Route path=":category/view/:contentCode" element={<BoardView />}></Route>
 						<Route path="anonymous/write" element={<BoardWriteAnonymous />}></Route>
+						<Route path="anonymous/edit/:contentCode" element={<BoardWriteAnonymous />}></Route>
 						<Route path="identified/write" element={<BoardWriteIdentified />}></Route>
 					</Route>
 					{/* <Route path="board/list/:category/:page" element={<><BoardList></BoardList></>}></Route>

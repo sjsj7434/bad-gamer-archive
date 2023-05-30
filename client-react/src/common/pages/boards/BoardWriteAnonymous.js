@@ -1,11 +1,18 @@
 import { useNavigate, useParams } from "react-router-dom";
+import { useState, useEffect, useCallback } from 'react';
 import MyEditor from './MyEditor'
 import Form from 'react-bootstrap/Form';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
+import Placeholder from 'react-bootstrap/Placeholder';
 
 const BoardWriteAnonymous = () => {
+	const [writeMode, setWriteMode] = useState("");
+	const [contentCode, setContentCode] = useState(null);
+	const [renderData, setRenderData] = useState(<></>);
+	const [contentTitle, setContentTitle] = useState("");
+	const [contentData, setContentData] = useState("");
 	const params = useParams();
 	const navigate = useNavigate();
 
@@ -38,10 +45,9 @@ const BoardWriteAnonymous = () => {
 	}
 
 	/**
-	 * 입력한 캐릭터 이름의 기본 정보를 가져온다
-	 * @returns {object} 가져온 캐릭터 정보 JSON
+	 * 게시글 생성
 	 */
-	const createContent = async (sendData) => {
+	const createContent = useCallback(async (sendData) => {
 		const fecthOption = {
 			method: "POST"
 			, body: JSON.stringify(sendData)
@@ -52,10 +58,9 @@ const BoardWriteAnonymous = () => {
 		const jsonData = await parseStringToJson(jsonString);
 
 		return jsonData;
-	}
+	}, [])
 
-	const saveEditorData = async (contentData) => {
-		console.log("func called : saveEditorData");
+	const saveEditorData = useCallback(async (editorData) => {
 		const passwordElement = document.querySelector("#contentPassword");
 		const titleElement = document.querySelector("#title");
 
@@ -77,7 +82,7 @@ const BoardWriteAnonymous = () => {
 		let result = await createContent({
 			password: passwordElement.value,
 			title: titleElement.value,
-			content: contentData.content
+			content: editorData.content
 		});
 
 		console.log("saveEditorData", result);
@@ -90,21 +95,109 @@ const BoardWriteAnonymous = () => {
 			alert("문제가 발생하여 게시글을 저장할 수 없습니다");
 			// localStorage.setItem("tempContentData", contentData.content); //다시 작성하는 일이 생기지 않도록?
 		}
-	}
+	}, [createContent, navigate])
+
+	/**
+	 * 게시글 정보 가져오기
+	 */
+	const readContent = useCallback(async () => {
+		if(contentCode !== null){
+			const fecthOption = {
+				method: "GET"
+				, headers: {"Content-Type": "application/json",}
+				, credentials: "include", // Don't forget to specify this if you need cookies
+			};
+			const jsonString = await fetch(`${process.env.REACT_APP_SERVER}/boards/view/${contentCode}`, fecthOption);
+			const jsonData = await parseStringToJson(jsonString);
+
+			console.log("readContent", jsonData);
+
+			setContentTitle(jsonData.title);
+			setContentData(jsonData.content);
+		}
+	}, [contentCode])
+
+	useEffect(() => {
+		console.log(`useEffect 3`)
+		if(params.contentCode !== undefined){
+			setContentCode(params.contentCode);
+			setWriteMode("edit");
+		}
+		else{
+			setContentCode(null);
+			setWriteMode("new");
+		}
+	}, [params.contentCode])
+
+	useEffect(() => {
+		console.log(`useEffect 2`)
+		readContent();
+	}, [contentCode, readContent])
+
+	useEffect(() => {
+		console.log(`useEffect 1 : ${writeMode}`)
+		if(writeMode === "edit"){
+			// setRenderData(
+			// 	<>
+			// 		* Board : 익명
+			// 		<br />
+			// 		* Mode : 수정
+			// 		<Form.Control id="title" type="text" placeholder="제목" style={{marginBottom: "10px"}} defaultValue={contentTitle} />
+			// 		<MyEditor savedData={contentData} saveContent={(editorData) => {saveEditorData(editorData)}}></MyEditor>
+			// 	</>
+			// );
+
+			if(contentData === "" && contentTitle === ""){
+				setRenderData(
+					<>
+						<Placeholder as="p" animation="glow">
+							<Placeholder xs={12} />
+							<Placeholder xs={12} />
+							<Placeholder xs={12} />
+						</Placeholder>
+						<Placeholder as="p" animation="glow">
+							<Placeholder xs={12} />
+							<Placeholder xs={12} />
+						</Placeholder>
+					</>
+				);
+			}
+			else{
+				setRenderData(
+					<>
+						* Board : 익명
+						<br />
+						* Mode : 수정
+						<Form.Control id="title" type="text" placeholder="제목" style={{marginBottom: "10px"}} defaultValue={contentTitle} />
+						<MyEditor savedData={contentData} saveContent={(editorData) => {saveEditorData(editorData)}}></MyEditor>
+					</>
+				);
+			}
+		}
+		else if(writeMode === "new"){
+			setRenderData(
+				<>
+					* Board : 익명
+					<br />
+					* Mode : 신규
+					<Row className="g-2">
+						<Col>
+							<Form.Control id="writer" type="text" placeholder="작성자" defaultValue={"익명"} style={{marginBottom: "10px"}} readOnly />
+						</Col>
+						<Col>
+							<Form.Control id="contentPassword" type="password" placeholder="비밀번호" maxLength={20} style={{marginBottom: "10px"}} />
+						</Col>
+					</Row>
+					<Form.Control id="title" type="text" placeholder="제목" style={{marginBottom: "10px"}} defaultValue={""} />
+					<MyEditor savedData={""} saveContent={(editorData) => {saveEditorData(editorData)}}></MyEditor>
+				</>
+			)
+		}
+	}, [writeMode, contentTitle, contentData, saveEditorData])
 	
 	return(
 		<Container style={{maxWidth: "1440px"}}>
-			* Board : anonymous
-			<Row className="g-2">
-				<Col>
-					<Form.Control id="writer" type="text" placeholder="작성자" defaultValue={"익명"} style={{marginBottom: "10px"}} readOnly />
-				</Col>
-				<Col>
-					<Form.Control id="contentPassword" type="password" placeholder="비밀번호" maxLength={20} style={{marginBottom: "10px"}} />
-				</Col>
-			</Row>
-			<Form.Control id="title" type="text" placeholder="제목" style={{marginBottom: "10px"}} />
-			<MyEditor saveContent={(contentData) => {saveEditorData(contentData)}}></MyEditor>
+			{renderData}
 		</Container>
 	);
 }
