@@ -48,6 +48,16 @@ export class BoardsService {
 	}
 
 	/**
+	 * 게시판에 게시글을 수정한다
+	 */
+	async updateContent(boardData: BoardsDTO): Promise<BoardsDTO | Boards> {
+		console.log(`serviec Called : createContent`)
+		const createdContent = await this.boardsRepository.update(boardData);
+
+		return createdContent;
+	}
+
+	/**
 	 * 게시글을 softDelete한다
 	 */
 	async softDeleteContent(contentCode: number, contentPassword: string): Promise<boolean>{
