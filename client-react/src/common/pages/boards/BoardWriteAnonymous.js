@@ -60,6 +60,45 @@ const BoardWriteAnonymous = () => {
 		return jsonData;
 	}, [])
 
+	/**
+	 * 게시글 정보 가져오기
+	 */
+	const readContent = useCallback(async () => {
+		if(contentCode !== null){
+			const fecthOption = {
+				method: "GET"
+				, headers: {"Content-Type": "application/json",}
+				, credentials: "include", // Don't forget to specify this if you need cookies
+			};
+			const jsonString = await fetch(`${process.env.REACT_APP_SERVER}/boards/view/${contentCode}`, fecthOption);
+			const jsonData = await parseStringToJson(jsonString);
+
+			console.log("readContent", jsonData);
+
+			setContentTitle(jsonData.title);
+			setContentData(jsonData.content);
+		}
+	}, [contentCode])
+
+	/**
+	 * 게시글 수정
+	 */
+	const updateContent = useCallback(async (sendData) => {
+		const fecthOption = {
+			method: "PATCH"
+			, body: JSON.stringify(sendData)
+			, headers: {"Content-Type": "application/json",}
+			, credentials: "include", // Don't forget to specify this if you need cookies
+		};
+		const jsonString = await fetch(`${process.env.REACT_APP_SERVER}/boards/anonymous`, fecthOption);
+		const jsonData = await parseStringToJson(jsonString);
+
+		return jsonData;
+	}, [contentCode])
+
+	/**
+	 * 신규 게시글 작성
+	 */
 	const saveEditorData = useCallback(async (editorData) => {
 		const passwordElement = document.querySelector("#contentPassword");
 		const titleElement = document.querySelector("#title");
@@ -82,7 +121,7 @@ const BoardWriteAnonymous = () => {
 		let result = await createContent({
 			password: passwordElement.value,
 			title: titleElement.value,
-			content: editorData.content
+			content: editorData.content,
 		});
 
 		console.log("saveEditorData", result);
@@ -98,24 +137,38 @@ const BoardWriteAnonymous = () => {
 	}, [createContent, navigate])
 
 	/**
-	 * 게시글 정보 가져오기
+	 * 게시글 수정
 	 */
-	const readContent = useCallback(async () => {
-		if(contentCode !== null){
-			const fecthOption = {
-				method: "GET"
-				, headers: {"Content-Type": "application/json",}
-				, credentials: "include", // Don't forget to specify this if you need cookies
-			};
-			const jsonString = await fetch(`${process.env.REACT_APP_SERVER}/boards/view/${contentCode}`, fecthOption);
-			const jsonData = await parseStringToJson(jsonString);
+	const editEditorData = useCallback(async (editorData) => {
+		const titleElement = document.querySelector("#title");
 
-			console.log("readContent", jsonData);
-
-			setContentTitle(jsonData.title);
-			setContentData(jsonData.content);
+		if(titleElement.value === ""){
+			alert("제목을 입력해주세요");
+			titleElement.focus();
+			return;
 		}
-	}, [contentCode])
+
+		if(window.confirm("게시글을 수정하시겠습니까?") === false){
+			return;
+		}
+
+		let result = await updateContent({
+			code: contentCode,
+			title: titleElement.value,
+			content: editorData.content,
+		});
+
+		console.log("editEditorData", result);
+
+		if(result !== null){
+			alert("수정되었습니다");
+			navigate(`/lostark/board/anonymous/1`);
+		}
+		else{
+			alert("문제가 발생하여 게시글을 수정할 수 없습니다");
+			// localStorage.setItem("tempContentData", contentData.content); //다시 작성하는 일이 생기지 않도록?
+		}
+	}, [createContent, navigate])
 
 	useEffect(() => {
 		console.log(`useEffect 3`)
@@ -137,16 +190,6 @@ const BoardWriteAnonymous = () => {
 	useEffect(() => {
 		console.log(`useEffect 1 : ${writeMode}`)
 		if(writeMode === "edit"){
-			// setRenderData(
-			// 	<>
-			// 		* Board : 익명
-			// 		<br />
-			// 		* Mode : 수정
-			// 		<Form.Control id="title" type="text" placeholder="제목" style={{marginBottom: "10px"}} defaultValue={contentTitle} />
-			// 		<MyEditor savedData={contentData} saveContent={(editorData) => {saveEditorData(editorData)}}></MyEditor>
-			// 	</>
-			// );
-
 			if(contentData === "" && contentTitle === ""){
 				setRenderData(
 					<>
@@ -169,7 +212,7 @@ const BoardWriteAnonymous = () => {
 						<br />
 						* Mode : 수정
 						<Form.Control id="title" type="text" placeholder="제목" style={{marginBottom: "10px"}} defaultValue={contentTitle} />
-						<MyEditor savedData={contentData} saveContent={(editorData) => {saveEditorData(editorData)}}></MyEditor>
+						<MyEditor savedData={contentData} writeMode={writeMode} saveFunction={(editorData) => {saveEditorData(editorData)}}></MyEditor>
 					</>
 				);
 			}
@@ -189,11 +232,11 @@ const BoardWriteAnonymous = () => {
 						</Col>
 					</Row>
 					<Form.Control id="title" type="text" placeholder="제목" style={{marginBottom: "10px"}} defaultValue={""} />
-					<MyEditor savedData={""} saveContent={(editorData) => {saveEditorData(editorData)}}></MyEditor>
+					<MyEditor savedData={""} writeMode={writeMode} saveFunction={(editorData) => {editEditorData(editorData)}}></MyEditor>
 				</>
 			)
 		}
-	}, [writeMode, contentTitle, contentData, saveEditorData])
+	}, [writeMode, contentTitle, contentData, saveEditorData, editEditorData])
 	
 	return(
 		<Container style={{maxWidth: "1440px"}}>

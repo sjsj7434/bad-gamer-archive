@@ -138,9 +138,6 @@ const BoardView = () => {
 						{/*
 							sanitizer libraries for HTML XSS Attacks : DOMPurify
 						*/}
-						{/* <div dangerouslySetInnerHTML={{__html: contentData}}></div> */}
-						{/* <div dangerouslySetInnerHTML={{__html: contentData}} style={{overflow: "scroll"}}></div> */}
-						{/* <div dangerouslySetInnerHTML={{__html: contentData}} style={{overflowWrap: "break-word"}}></div> */}
 						<div dangerouslySetInnerHTML={{__html: contentData}} style={{overflowWrap: "anywhere", overflow: "auto"}}></div>
 
 						<div style={{display: "flex", flexDirection: "row-reverse"}}>

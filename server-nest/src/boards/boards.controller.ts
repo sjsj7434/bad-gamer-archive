@@ -1,4 +1,4 @@
-import { Param, Controller, Get, Post, Body, Ip, Req, Res, Delete } from '@nestjs/common';
+import { Param, Controller, Get, Post, Body, Ip, Req, Res, Delete, Patch } from '@nestjs/common';
 import { BoardsService } from './boards.service';
 import { Boards } from './boards.entity';
 import { BoardsDTO } from './boards.dto';
@@ -59,5 +59,18 @@ export class BoardsController {
 		console.log("[Controller-boards-deleteContent]");
 		const isDeleted = await this.boardsService.softDeleteContent(contentCode, boardData.contentPassword);
 		return { data: isDeleted };
+	}
+
+	@Patch("anonymous")
+	async updateContentAnonymous(@Ip() ipData: string, @Body() boardData: BoardsDTO, @Req() request: Request, @Res({ passthrough: true }) response: Response): Promise<{ data: BoardsDTO | Boards }> {
+		console.log("[Controller-boards-updateContentAnonymous]");
+		boardData.category = "anonymous";
+		boardData.writer = "";
+		boardData.ip = ipData;
+
+		const createdContent = await this.boardsService.createContent(boardData);
+		console.log(createdContent);
+
+		return { data: createdContent };
 	}
 }
