@@ -37,7 +37,7 @@ const CommonTopMenu = (props) => {
 
 	return(
 		<>
-			<Navbar collapseOnSelect bg="dark" variant="dark" expand="md" className="mb-3">
+			<Navbar collapseOnSelect bg="dark" variant="dark" expand="md" className="mb-3" sticky="top">
 				<Container style={{maxWidth: "1440px"}}>
 					<Navbar.Brand as={NavLink} to="/lostark">
 						<img
