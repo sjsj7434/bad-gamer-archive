@@ -50,11 +50,19 @@ export class BoardsService {
 	/**
 	 * 게시판에 게시글을 수정한다
 	 */
-	async updateContent(boardData: BoardsDTO): Promise<BoardsDTO | Boards> {
-		console.log(`serviec Called : createContent`)
-		const createdContent = await this.boardsRepository.update(boardData);
+	async updateContent(boardData: BoardsDTO) {
+		console.log(`serviec Called : updateContent`)
 
-		return createdContent;
+		const content = await this.boardsRepository.findOne({
+			where: {
+				code: boardData.code
+			}
+		});
+
+		content.title = boardData.title;
+		content.content = boardData.content;
+
+		await this.boardsRepository.save(content);
 	}
 
 	/**

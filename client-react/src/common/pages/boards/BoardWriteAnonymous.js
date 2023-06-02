@@ -168,7 +168,7 @@ const BoardWriteAnonymous = () => {
 			alert("문제가 발생하여 게시글을 수정할 수 없습니다");
 			// localStorage.setItem("tempContentData", contentData.content); //다시 작성하는 일이 생기지 않도록?
 		}
-	}, [createContent, navigate])
+	}, [contentCode, updateContent, navigate])
 
 	useEffect(() => {
 		console.log(`useEffect 3`)
@@ -212,7 +212,7 @@ const BoardWriteAnonymous = () => {
 						<br />
 						* Mode : 수정
 						<Form.Control id="title" type="text" placeholder="제목" style={{marginBottom: "10px"}} defaultValue={contentTitle} />
-						<MyEditor savedData={contentData} writeMode={writeMode} saveFunction={(editorData) => {saveEditorData(editorData)}}></MyEditor>
+						<MyEditor savedData={contentData} writeMode={writeMode} saveFunction={(editorData) => {editEditorData(editorData)}}></MyEditor>
 					</>
 				);
 			}
@@ -232,7 +232,7 @@ const BoardWriteAnonymous = () => {
 						</Col>
 					</Row>
 					<Form.Control id="title" type="text" placeholder="제목" style={{marginBottom: "10px"}} defaultValue={""} />
-					<MyEditor savedData={""} writeMode={writeMode} saveFunction={(editorData) => {editEditorData(editorData)}}></MyEditor>
+					<MyEditor savedData={""} writeMode={writeMode} saveFunction={(editorData) => {saveEditorData(editorData)}}></MyEditor>
 				</>
 			)
 		}

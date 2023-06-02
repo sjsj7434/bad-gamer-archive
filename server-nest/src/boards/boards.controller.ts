@@ -62,15 +62,14 @@ export class BoardsController {
 	}
 
 	@Patch("anonymous")
-	async updateContentAnonymous(@Ip() ipData: string, @Body() boardData: BoardsDTO, @Req() request: Request, @Res({ passthrough: true }) response: Response): Promise<{ data: BoardsDTO | Boards }> {
+	async updateContentAnonymous(@Ip() ipData: string, @Body() boardData: BoardsDTO, @Req() request: Request, @Res({ passthrough: true }) response: Response): Promise<{ data: number }> {
 		console.log("[Controller-boards-updateContentAnonymous]");
 		boardData.category = "anonymous";
 		boardData.writer = "";
 		boardData.ip = ipData;
 
-		const createdContent = await this.boardsService.createContent(boardData);
-		console.log(createdContent);
+		await this.boardsService.updateContent(boardData);
 
-		return { data: createdContent };
+		return { data: 1 };
 	}
 }
