@@ -2,12 +2,14 @@ import { useState, useEffect, useCallback } from 'react';
 import { useNavigate, useParams } from "react-router-dom";
 import Container from 'react-bootstrap/Container';
 import Placeholder from 'react-bootstrap/Placeholder';
+import BoardReply from './BoardReply';
 
 const BoardView = () => {
 	const [contentCode, setContentCode] = useState(null);
 	const [category, setCategory] = useState(null);
 	const [contentTitle, setContentTitle] = useState("");
 	const [contentData, setContentData] = useState("");
+	const [contentJson, setContentJson] = useState(null);
 	const [renderData, setRenderData] = useState(<></>);
 	const navigate = useNavigate();
 	const params = useParams();
@@ -41,12 +43,8 @@ const BoardView = () => {
 	}
 
 	const deleteContent = useCallback(async () => {
-		const contentPassword = prompt("게시글의 비밀번호를 입력해주세요");
+		const contentPassword = prompt("삭제하시려면 게시글의 비밀번호를 입력해주세요");
 		if(contentPassword === null){
-			return;
-		}
-
-		if(window.confirm("게시글을 삭제하시겠습니까?\n삭제된 게시글은 복구할 수 없습니다") === false){
 			return;
 		}
 
@@ -90,6 +88,7 @@ const BoardView = () => {
 			console.log("readContent", jsonData);
 			setContentTitle(jsonData.title);
 			setContentData(jsonData.content);
+			setContentJson(jsonData);
 		}
 	}, [contentCode])
 
@@ -100,19 +99,30 @@ const BoardView = () => {
 	}, [readContent, params.contentCode, params.category]);
 
 	useEffect(() => {
-		if(contentTitle === "" && contentData === ""){
+		if(contentJson === null){
 			setRenderData(
 				<>
 					<div style={{margin: 10}}>
 						<div>
 							<h4>{category} Board</h4>
-							<Placeholder xs={12} />
-							<hr></hr>
+
+							<Placeholder as={"p"} animation="glow">
+								<Placeholder style={{width: "5%"}} />{" "}<Placeholder style={{width: "45%"}} />{" "}
+								<Placeholder style={{width: "10%"}} />{" "}<Placeholder style={{width: "40%"}} />{" "}
+								<Placeholder style={{width: "25%"}} />{" "}<Placeholder style={{width: "35%"}} />{" "}
+							</Placeholder>
+
+							<hr style={{border: "2px solid #5893ff"}} />
 						</div>
 
-						<Placeholder xs={12} />
-						<Placeholder xs={12} />
-						<Placeholder xs={12} />
+						<Placeholder as={"p"} animation="glow">
+							<Placeholder style={{width: "10%"}} />{" "}<Placeholder style={{width: "35%"}} />{" "}<Placeholder style={{width: "25%"}} />{" "}
+							<Placeholder style={{width: "25%"}} />{" "}<Placeholder style={{width: "35%"}} />{" "}
+							<Placeholder style={{width: "45%"}} />{" "}<Placeholder style={{width: "15%"}} />{" "}<Placeholder style={{width: "15%"}} />{" "}
+							<Placeholder style={{width: "45%"}} />{" "}<Placeholder style={{width: "45%"}} />{" "}
+						</Placeholder>
+
+						<BoardReply contentCode={contentCode}></BoardReply>
 
 						<div style={{display: "flex", flexDirection: "row-reverse"}}>
 							<span onClick={() => {navigate(`/lostark/board/${category}`)}}>To List</span>
@@ -130,9 +140,25 @@ const BoardView = () => {
 				<>
 					<div style={{margin: 10}}>
 						<div>
-							<h4>{category} Board</h4>
-							<h2>{contentTitle}</h2>
-							<hr></hr>
+							{/* <p>{category} Board</p> */}
+							<div style={{fontWeight: "800", fontSize: "1.5rem"}}>
+								<span>{contentJson.title}</span>
+							</div>
+							<div style={{fontWeight: "400", fontSize: "0.8rem"}}>
+								<span>
+									{contentJson.writer === "" ? "익명" : contentJson.writer} ({contentJson.ip})
+								</span>
+								&nbsp;|&nbsp;
+								<span>
+									{new Date(contentJson.createdAt).toLocaleString("sv-SE")}
+								</span>
+							</div>
+							<div style={{fontWeight: "400", fontSize: "0.8rem", color: "orange"}}>
+								<span>
+									{contentJson.updatedAt !== null ? `${new Date(contentJson.updatedAt).toLocaleString("sv-SE")} 수정됨` : ""}
+								</span>
+							</div>
+							<hr style={{border: "2px solid #5893ff"}} />
 						</div>
 
 						{/*
@@ -140,6 +166,10 @@ const BoardView = () => {
 						*/}
 						<div dangerouslySetInnerHTML={{__html: contentData}} style={{overflowWrap: "anywhere", overflow: "auto"}}></div>
 
+						<hr style={{border: "2px solid #5893ff"}} />
+						<BoardReply contentCode={contentCode}></BoardReply>
+
+						<hr style={{border: "2px solid #5893ff"}} />
 						<div style={{display: "flex", flexDirection: "row-reverse"}}>
 							<span onClick={() => {navigate(`/lostark/board/${category}`)}}>To List</span>
 							&nbsp;|&nbsp;

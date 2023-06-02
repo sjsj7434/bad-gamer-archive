@@ -225,32 +225,12 @@ const MyEditor = (props) => {
 			<div id="word-count"></div>
 			<div id="html-size"></div>
 
-			{
-				props.writeMode === "new" ?
-					<>
-						<button onClick={
-							() => {props.saveFunction({
-								content: editorForOutside.getData()
-							})
-						}}>저장</button>
-						&nbsp;
-						<button onClick={() => {editorForOutside.setData("")}}>Reset</button>
-					</>
-				:
-					<></>
-			}
-			{
-				props.writeMode === "edit" ?
-					<>
-						<button onClick={
-							() => {props.saveFunction({
-								content: editorForOutside.getData()
-							})
-						}}>수정</button>
-					</>
-				:
-					<></>
-			}
+			<button onClick={() => {props.saveFunction({
+					content: editorForOutside.getData()
+				})
+			}}>
+				{props.writeMode === "new" ? "저장" : "수정"}
+			</button>
 		</>
 	);
 }

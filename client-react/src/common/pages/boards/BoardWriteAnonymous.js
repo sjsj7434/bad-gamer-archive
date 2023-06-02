@@ -162,7 +162,7 @@ const BoardWriteAnonymous = () => {
 
 		if(result !== null){
 			alert("수정되었습니다");
-			navigate(`/lostark/board/anonymous/1`);
+			navigate(`/lostark/board/anonymous/view/${contentCode}`);
 		}
 		else{
 			alert("문제가 발생하여 게시글을 수정할 수 없습니다");
@@ -189,35 +189,8 @@ const BoardWriteAnonymous = () => {
 
 	useEffect(() => {
 		console.log(`useEffect 1 : ${writeMode}`)
-		if(writeMode === "edit"){
-			if(contentData === "" && contentTitle === ""){
-				setRenderData(
-					<>
-						<Placeholder as="p" animation="glow">
-							<Placeholder xs={12} />
-							<Placeholder xs={12} />
-							<Placeholder xs={12} />
-						</Placeholder>
-						<Placeholder as="p" animation="glow">
-							<Placeholder xs={12} />
-							<Placeholder xs={12} />
-						</Placeholder>
-					</>
-				);
-			}
-			else{
-				setRenderData(
-					<>
-						* Board : 익명
-						<br />
-						* Mode : 수정
-						<Form.Control id="title" type="text" placeholder="제목" style={{marginBottom: "10px"}} defaultValue={contentTitle} />
-						<MyEditor savedData={contentData} writeMode={writeMode} saveFunction={(editorData) => {editEditorData(editorData)}}></MyEditor>
-					</>
-				);
-			}
-		}
-		else if(writeMode === "new"){
+
+		if(writeMode === "new"){
 			setRenderData(
 				<>
 					* Board : 익명
@@ -233,8 +206,46 @@ const BoardWriteAnonymous = () => {
 					</Row>
 					<Form.Control id="title" type="text" placeholder="제목" style={{marginBottom: "10px"}} defaultValue={""} />
 					<MyEditor savedData={""} writeMode={writeMode} saveFunction={(editorData) => {saveEditorData(editorData)}}></MyEditor>
+					&nbsp;
+					<button onClick={() => {if(window.confirm("작성한 내용을 전부 비우시겠습니까?") === true){console.log('clear')}}}>비우기</button>
+					&nbsp;
+					<button onClick={() => {if(window.confirm("작성한 내용을 저장하지않고 나가시겠습니까?") === true){navigate("/lostark/board/anonymous/1")}}}>취소</button>
 				</>
 			)
+		}
+		else if(writeMode === "edit"){
+			if(contentData === "" && contentTitle === ""){
+				setRenderData(
+					<>
+						<Placeholder as={"p"} animation="glow">
+							<Placeholder style={{width: "10%"}} />{" "}<Placeholder style={{width: "35%"}} />{" "}<Placeholder style={{width: "25%"}} />{" "}
+							<Placeholder style={{width: "10%"}} />{" "}<Placeholder style={{width: "35%"}} />{" "}<Placeholder style={{width: "25%"}} />{" "}
+						</Placeholder>
+						<Placeholder as={"p"} animation="glow">
+							<Placeholder style={{width: "30%"}} />{" "}<Placeholder style={{width: "55%"}} />{" "}
+						</Placeholder>
+						<Placeholder as={"p"} animation="glow">
+							<Placeholder style={{width: "100%", height: "350px"}} />
+						</Placeholder>
+						<Placeholder as={"p"} animation="glow">
+							<Placeholder style={{width: "10%"}} />{" "}<Placeholder style={{width: "10%"}} />
+						</Placeholder>
+					</>
+				);
+			}
+			else{
+				setRenderData(
+					<>
+						* Board : 익명
+						<br />
+						* Mode : 수정
+						<Form.Control id="title" type="text" placeholder="제목" style={{marginBottom: "10px"}} defaultValue={contentTitle} />
+						<MyEditor savedData={contentData} writeMode={writeMode} saveFunction={(editorData) => {editEditorData(editorData)}}></MyEditor>
+						&nbsp;
+						<button onClick={() => {if(window.confirm("내용을 수정하지않고 나가시겠습니까?") === true){navigate(`/lostark/board/anonymous/view/${contentCode}`)}}}>취소</button>
+					</>
+				);
+			}
 		}
 	}, [writeMode, contentTitle, contentData, saveEditorData, editEditorData])
 	

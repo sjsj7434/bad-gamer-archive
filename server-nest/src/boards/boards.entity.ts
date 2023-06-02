@@ -82,8 +82,8 @@ export class Boards {
 	/**
 	 * 게시글 변경일자(자동)
 	 */
-	@UpdateDateColumn()
-	updatedAt!: Date;
+	@UpdateDateColumn({ default: () => "null", nullable: true })
+	updatedAt!: Date | null;
 
 	/**
 	 * 게시글 삭제일자(자동), soft delete

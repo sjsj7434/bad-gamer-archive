@@ -66,6 +66,8 @@ const BoardList = () => {
 				const contentCount = jsonData[1];
 				const contentListData = [];
 
+				console.log(contentJson)
+
 				if(contentJson !== null){
 					if(contentJson.length === 0){
 						contentListData.push(
@@ -77,19 +79,47 @@ const BoardList = () => {
 					else{
 						contentListData.push(contentJson.map((data) => {
 							return(
-								<div key={"content" + data.code} style={{cursor: "pointer"}}>
-									<Link
-										to={`/lostark/board/${contentCategory}/view/${data.code}`}
-										 onMouseOver={(event) => {event.target.style.backgroundColor = "cyan"}}
-										 onMouseOut={(event) => {event.target.style.backgroundColor = ""}}
+								<Link
+									key={"content" + data.code}
+									to={`/lostark/board/${contentCategory}/view/${data.code}`}
+									style={{
+										textDecoration: "none",
+									}}
+								>
+									<div
+										id={"contentRow" + data.code}
+										style={{
+											cursor: "pointer",
+											color: "black",
+											textDecoration: "none",
+											borderBottom: "1px solid gray",
+											paddingTop: "5px",
+											paddingBottom: "5px",
+										}}
+										onMouseOver={() => {document.querySelector("#contentRow" + data.code).style.backgroundColor = "lightgray"}}
+										onMouseOut={() => {document.querySelector("#contentRow" + data.code).style.backgroundColor = ""}}
 									>
-										{data.title}
-									</Link>
-									{/* <p onClick={() => {navigate(`/lostark/board/${contentCategory}/view/${data.code}`)}} onMouseOver={(event) => {event.target.style.backgroundColor = "cyan"}} onMouseOut={(event) => {event.target.style.backgroundColor = ""}}>
-										{data.title}
-									</p> */}
-									<hr />
-								</div>
+										<div style={{display: "flex", alignItems: "center"}}>
+											<div style={{width: "90%"}}>
+												<div style={{fontSize: "0.95rem", fontWeight: "600", maxWidth: "95%", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap"}}>{data.title}</div>
+												<div style={{fontSize: "0.75rem", color: "#5a5a5a", maxWidth: "95%", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap"}}>
+													<span>{data.writer === "" ? "익명" : data.writer} ({data.ip})</span>
+													&nbsp;|&nbsp;
+													<span>{new Date(data.createdAt).toLocaleDateString("sv-SE").replace(/-/g, ".")}</span>
+													&nbsp;
+													<span>{new Date(data.createdAt).toLocaleTimeString("sv-SE", {hour: "numeric", minute: "2-digit"})}</span>
+													&nbsp;|&nbsp;
+													<span>조회 {parseInt(Math.random() * 100000, 10)}</span>
+													&nbsp;|&nbsp;
+													<span>추천 {parseInt(Math.random() * 100, 10)}</span>
+												</div>
+											</div>
+											<div style={{textAlign: "end"}}>
+												<span style={{fontSize: "0.85rem", color: "orangered"}}>{parseInt(Math.random() * 1693, 10) > 999 ? "999+" : parseInt(Math.random() * 1000, 10)}</span>
+											</div>
+										</div>
+									</div>
+								</Link>
 							);
 						}));
 					}
@@ -125,7 +155,6 @@ const BoardList = () => {
 		}
 
 		if(contentCategory !== null && page !== null){
-			console.log(`readContentList => contentCategory: ${contentCategory} / page: ${page}`);
 			readContentList();
 		}
 	}, [contentCategory, page])

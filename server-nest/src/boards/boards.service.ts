@@ -13,12 +13,17 @@ export class BoardsService {
 	/**
 	 * code로 1개의 게시글을 찾는다
 	 */
-	getContentByCode(contentCode: number): Promise<Boards | null> {
-		return this.boardsRepository.findOne({
+	async getContentByCode(contentCode: number): Promise<Boards | null> {
+		const content = await this.boardsRepository.findOne({
+			select: {
+				code: true, category: true, title: true, content: true, writer: true, ip: true, createdAt: true, updatedAt: true
+			},
 			where: {
 				code: contentCode,
 			},
 		});
+
+		return content;
 	}
 
 	/**
@@ -29,11 +34,15 @@ export class BoardsService {
 			skip: (page - 1) * 10, //시작 인덱스
 			take: 10, //페이지 당 갯수
 			select: {
-				code: true, title: true, writer: true, createdAt: true
+				code: true, title: true, writer: true, ip: true, createdAt: true
 			},
 			where: {
 				category: category,
 			},
+			order: {
+				createdAt: "DESC",
+				code: "DESC",
+			}
 		});
 	}
 

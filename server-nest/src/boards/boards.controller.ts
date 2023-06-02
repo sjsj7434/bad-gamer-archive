@@ -12,10 +12,12 @@ export class BoardsController {
 		console.log("[Controller-boards-getContentByCode]");
 
 		const result = await this.boardsService.getContentByCode(contentCode);
-		console.log(result);
 
 		if (result === null) {
 			console.log("getContentByCode is null");
+		}
+		else{
+			result.ip = result.ip.split(".")[0] + (result.ip.split(".")[1] !== undefined ? "." + result.ip.split(".")[1] : "");
 		}
 
 		return { data: result };
@@ -26,10 +28,14 @@ export class BoardsController {
 		console.log("[Controller-boards-getContentListByCategory]");
 
 		const result = await this.boardsService.getContentListByCategory(category, page);
-		console.log(result);
 
 		if (result === null) {
 			console.log("getContentListByCategory is null");
+		}
+		else {
+			for (let index: number = 0; index < result[0].length; index++){
+				result[0][index]["ip"] = result[0][index]["ip"].split(".")[0] + (result[0][index]["ip"].split(".")[1] !== undefined ? "." + result[0][index]["ip"].split(".")[1] : "");
+			}
 		}
 
 		return { data: result };
@@ -42,7 +48,8 @@ export class BoardsController {
 		if (["anonymous", "identified"].includes(category) === true){
 			boardData.category = category;
 			boardData.writer = "";
-			boardData.ip = ipData;
+			// boardData.ip = ipData;
+			boardData.ip = Math.random().toString().substring(2, 5) + "." + Math.random().toString().substring(2, 5) + "." + Math.random().toString().substring(2, 5) + "." + Math.random().toString().substring(2, 5);
 	
 			const createdContent = await this.boardsService.createContent(boardData);
 			console.log(createdContent);
