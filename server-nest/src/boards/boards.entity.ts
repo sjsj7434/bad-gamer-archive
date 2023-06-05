@@ -45,6 +45,49 @@ export class Boards {
 	content: string;
 
 	/**
+	 * 게시글에 이미지가 있는지
+	 */
+	@Column({
+		type: "boolean"
+		, default: false
+		, nullable: false
+	})
+	hasImage: boolean;
+
+	/**
+	 * 게시글 조회수
+	 */
+	@Column({
+		type: "int"
+		, unsigned: true
+		, default: 0
+		, nullable: false
+	})
+	view: number;
+
+	/**
+	 * 게시글 추천수
+	 */
+	@Column({
+		type: "int"
+		, unsigned: true
+		, default: 0
+		, nullable: false
+	})
+	goodPoint: number;
+
+	/**
+	 * 게시글 비추천수
+	 */
+	@Column({
+		type: "int"
+		, unsigned: true
+		, default: 0
+		, nullable: false
+	})
+	badPoint: number;
+
+	/**
 	 * 익명 게시글 수정&삭제 비밀번호
 	 */
 	@Column({

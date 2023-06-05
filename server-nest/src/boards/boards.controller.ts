@@ -1,4 +1,4 @@
-import { Param, Controller, Get, Post, Body, Ip, Req, Res, Delete, Patch } from '@nestjs/common';
+import { Param, Controller, Get, Post, Body, Ip, Req, Res, Delete, Patch, Query } from '@nestjs/common';
 import { BoardsService } from './boards.service';
 import { Boards } from './boards.entity';
 import { BoardsDTO } from './boards.dto';
@@ -8,10 +8,10 @@ export class BoardsController {
 	constructor(private boardsService: BoardsService) { }
 
 	@Get("view/:contentCode")
-	async getContentByCode(@Param("contentCode") contentCode: number): Promise<{ data: Boards | null }> {
-		console.log("[Controller-boards-getContentByCode]");
+	async getContentByCode(@Param("contentCode") contentCode: number, @Query("type") type: string): Promise<{ data: Boards | null }> {
+		console.log("[Controller-boards-getContentByCode]" + type);
 
-		const result = await this.boardsService.getContentByCode(contentCode);
+		const result = await this.boardsService.getContentByCode(contentCode, type);
 
 		if (result === null) {
 			console.log("getContentByCode is null");
@@ -37,6 +37,17 @@ export class BoardsController {
 				result[0][index]["ip"] = result[0][index]["ip"].split(".")[0] + (result[0][index]["ip"].split(".")[1] !== undefined ? "." + result[0][index]["ip"].split(".")[1] : "");
 			}
 		}
+
+		return { data: result };
+	}
+
+	@Post("check/password/:contentCode")
+	async checkContentPassword(@Param("contentCode") contentCode: number, @Body() boardData: BoardsDTO): Promise<{ data: boolean}> {
+		console.log("[Controller-boards-checkContentPassword]");
+
+		boardData.code = contentCode;
+
+		const result = await this.boardsService.checkContentPassword(boardData);
 
 		return { data: result };
 	}

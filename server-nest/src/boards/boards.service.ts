@@ -11,22 +11,6 @@ export class BoardsService {
 	) { }
 
 	/**
-	 * code로 1개의 게시글을 찾는다
-	 */
-	async getContentByCode(contentCode: number): Promise<Boards | null> {
-		const content = await this.boardsRepository.findOne({
-			select: {
-				code: true, category: true, title: true, content: true, writer: true, ip: true, createdAt: true, updatedAt: true
-			},
-			where: {
-				code: contentCode,
-			},
-		});
-
-		return content;
-	}
-
-	/**
 	 * category에 해당하는 글 목록 가져오기
 	 */
 	getContentListByCategory(category: string, page: number): Promise<[Boards[], number]> {
@@ -34,7 +18,7 @@ export class BoardsService {
 			skip: (page - 1) * 10, //시작 인덱스
 			take: 10, //페이지 당 갯수
 			select: {
-				code: true, title: true, writer: true, ip: true, createdAt: true
+				code: true, title: true, view: true, goodPoint: true, badPoint: true, writer: true, ip: true, createdAt: true
 			},
 			where: {
 				category: category,
@@ -44,6 +28,53 @@ export class BoardsService {
 				code: "DESC",
 			}
 		});
+	}
+
+	/**
+	 * code로 1개의 게시글을 찾는다
+	 */
+	async getContentByCode(contentCode: number, type: string): Promise<Boards | null> {
+		const contentData = await this.boardsRepository.findOne({
+			select: {
+				code: true, category: true, title: true, content: true, view: true, goodPoint: true, badPoint: true, writer: true, ip: true, createdAt: true, updatedAt: true
+			},
+			where: {
+				code: contentCode,
+			},
+		});
+
+		if (contentData !== null){
+			if (type === "view"){
+				contentData.view += 1;
+				await this.boardsRepository.save(contentData);
+			}
+		}
+
+		return contentData;
+	}
+
+	/**
+	 * code로 1개의 게시글을 찾는다
+	 */
+	async checkContentPassword(boardData: BoardsDTO): Promise<boolean> {
+		const contentData = await this.boardsRepository.findOne({
+			select: {
+				writer: true, password: true
+			},
+			where: {
+				code: boardData.code,
+			},
+		});
+
+		let isCorrect = false;
+
+		if (contentData !== null) {
+			if (contentData.password === boardData.contentPassword) {
+				isCorrect = true;
+			}
+		}
+
+		return isCorrect;
 	}
 
 	/**
@@ -62,16 +93,16 @@ export class BoardsService {
 	async updateContent(boardData: BoardsDTO) {
 		console.log(`serviec Called : updateContent`)
 
-		const content = await this.boardsRepository.findOne({
+		const contentData = await this.boardsRepository.findOne({
 			where: {
 				code: boardData.code
 			}
 		});
 
-		content.title = boardData.title;
-		content.content = boardData.content;
+		contentData.title = boardData.title;
+		contentData.content = boardData.content;
 
-		await this.boardsRepository.save(content);
+		await this.boardsRepository.save(contentData);
 	}
 
 	/**
@@ -79,19 +110,18 @@ export class BoardsService {
 	 */
 	async softDeleteContent(contentCode: number, contentPassword: string): Promise<boolean>{
 		try {
-			const contentData = await this.getContentByCode(contentCode);
+			const contentData = new BoardsDTO();
+			contentData.code = contentCode;
+			contentData.contentPassword = contentPassword;
 
-			if(contentData !== null){
-				if(contentData.password === contentPassword){
-					this.boardsRepository.softDelete({
-						code: contentCode
-					});
+			const result = await this.checkContentPassword(contentData);
 
-					return true;
-				}
-				else{
-					return false;
-				}
+			if (result === true){
+				this.boardsRepository.softDelete({
+					code: contentCode
+				});
+
+				return true;
 			}
 			else{
 				return false;

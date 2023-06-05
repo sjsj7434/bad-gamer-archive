@@ -72,7 +72,7 @@ const BoardList = () => {
 					if(contentJson.length === 0){
 						contentListData.push(
 							<div key={"noContent"}>
-								<h2>No data</h2>
+								<span style={{color: "gray", fontSize: "0.85rem"}}>작성된 게시글이 없습니다</span>
 							</div>
 						);
 					}
@@ -99,9 +99,23 @@ const BoardList = () => {
 										onMouseOver={() => {document.querySelector("#contentRow" + data.code).style.backgroundColor = "lightgray"}}
 										onMouseOut={() => {document.querySelector("#contentRow" + data.code).style.backgroundColor = ""}}
 									>
-										<div style={{display: "flex", alignItems: "center"}}>
+										<div style={{display: "flex", alignItems: "center", justifyContent: "space-between"}}>
 											<div style={{width: "90%"}}>
-												<div style={{fontSize: "0.95rem", fontWeight: "600", maxWidth: "95%", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap"}}>{data.title}</div>
+												<div style={{fontSize: "0.95rem", fontWeight: "600", maxWidth: "95%", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap"}}>
+													{
+														data.hasImage === true ?
+														<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="darkseagreen" className="bi bi-image" viewBox="0 0 16 16">
+															<path d="M6.002 5.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0z"/>
+															<path d="M2.002 1a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V3a2 2 0 0 0-2-2h-12zm12 1a1 1 0 0 1 1 1v6.5l-3.777-1.947a.5.5 0 0 0-.577.093l-3.71 3.71-2.66-1.772a.5.5 0 0 0-.63.062L1.002 12V3a1 1 0 0 1 1-1h12z"/>
+														</svg>
+														:
+														<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="lightgray" className="bi bi-chat-left-dots-fill" viewBox="0 0 16 16">
+															<path d="M0 2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H4.414a1 1 0 0 0-.707.293L.854 15.146A.5.5 0 0 1 0 14.793V2zm5 4a1 1 0 1 0-2 0 1 1 0 0 0 2 0zm4 0a1 1 0 1 0-2 0 1 1 0 0 0 2 0zm3 1a1 1 0 1 0 0-2 1 1 0 0 0 0 2z"/>
+														</svg>
+													}
+													&nbsp;
+													{data.title}
+												</div>
 												<div style={{fontSize: "0.75rem", color: "#5a5a5a", maxWidth: "95%", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap"}}>
 													<span>{data.writer === "" ? "익명" : data.writer} ({data.ip})</span>
 													&nbsp;|&nbsp;
@@ -109,13 +123,22 @@ const BoardList = () => {
 													&nbsp;
 													<span>{new Date(data.createdAt).toLocaleTimeString("sv-SE", {hour: "numeric", minute: "2-digit"})}</span>
 													&nbsp;|&nbsp;
-													<span>조회 {parseInt(Math.random() * 100000, 10)}</span>
+													<span>조회 {data.view}</span>
 													&nbsp;|&nbsp;
-													<span>추천 {parseInt(Math.random() * 100, 10)}</span>
+													<span style={{color: "green"}}>↑{data.goodPoint}</span> | ↓<span style={{color: "red"}}>{data.badPoint}</span>
 												</div>
 											</div>
 											<div style={{textAlign: "end"}}>
-												<span style={{fontSize: "0.85rem", color: "orangered"}}>{parseInt(Math.random() * 1693, 10) > 999 ? "999+" : parseInt(Math.random() * 1000, 10)}</span>
+												{
+													parseInt(Math.random() * 1693, 10) > 999 ?
+													<span style={{fontSize: "0.85rem", color: "palevioletred"}}>
+														999+
+													</span>
+													:
+													<span style={{fontSize: "0.85rem", color: "darkseagreen"}}>
+														{parseInt(Math.random() * 1000, 10)}
+													</span>
+												}
 											</div>
 										</div>
 									</div>
@@ -128,12 +151,19 @@ const BoardList = () => {
 				if(contentListData.length > 0){
 					setRenderData(
 						<>
-							<div>
-								<h3>* {contentCategory} List</h3>
+							<div style={{margin: "10px"}}>
+								<h5>
+									<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-bar-chart-steps" viewBox="0 0 16 16">
+									<path d="M.5 0a.5.5 0 0 1 .5.5v15a.5.5 0 0 1-1 0V.5A.5.5 0 0 1 .5 0zM2 1.5a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-4a.5.5 0 0 1-.5-.5v-1zm2 4a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-7a.5.5 0 0 1-.5-.5v-1zm2 4a.5.5 0 0 1 .5-.5h6a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-6a.5.5 0 0 1-.5-.5v-1zm2 4a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-7a.5.5 0 0 1-.5-.5v-1z"/>
+									</svg>
+									&nbsp;
+									{contentCategory} 게시판
+								</h5>
+								<hr/>
 							</div>
 
 							<div key="contentListData">
-								<div style={{minHeight: "600px", margin: "10px"}}>
+								<div style={{minHeight: "570px", margin: "10px"}}>
 									{contentListData}
 								</div>
 
