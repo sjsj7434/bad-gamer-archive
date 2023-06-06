@@ -34,6 +34,10 @@ export class BoardsService {
 	 * code로 1개의 게시글을 찾는다
 	 */
 	async getContentByCode(contentCode: number, type: string): Promise<Boards | null> {
+		if (type === "view"){
+			await this.boardsRepository.increment({code: contentCode}, "view", 1);
+		}
+
 		const contentData = await this.boardsRepository.findOne({
 			select: {
 				code: true, category: true, title: true, content: true, view: true, goodPoint: true, badPoint: true, writer: true, ip: true, createdAt: true, updatedAt: true
@@ -42,13 +46,6 @@ export class BoardsService {
 				code: contentCode,
 			},
 		});
-
-		if (contentData !== null){
-			if (type === "view"){
-				contentData.view += 1;
-				await this.boardsRepository.save(contentData);
-			}
-		}
 
 		return contentData;
 	}
@@ -80,9 +77,9 @@ export class BoardsService {
 	/**
 	 * 게시판에 게시글을 생성한다
 	 */
-	async createContent(boardData: BoardsDTO): Promise<BoardsDTO | Boards> {
+	async createContent(contentData: BoardsDTO): Promise<BoardsDTO | Boards> {
 		console.log(`serviec Called : createContent`)
-		const createdContent = await this.boardsRepository.save(boardData);
+		const createdContent = await this.boardsRepository.save(contentData);
 
 		return createdContent;
 	}
@@ -101,6 +98,7 @@ export class BoardsService {
 
 		contentData.title = boardData.title;
 		contentData.content = boardData.content;
+		contentData.updatedAt = new Date(); //기본 값을 NULL로 삽입하기
 
 		await this.boardsRepository.save(contentData);
 	}

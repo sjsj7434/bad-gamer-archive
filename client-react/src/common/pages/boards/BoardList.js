@@ -96,7 +96,7 @@ const BoardList = () => {
 											paddingTop: "5px",
 											paddingBottom: "5px",
 										}}
-										onMouseOver={() => {document.querySelector("#contentRow" + data.code).style.backgroundColor = "lightgray"}}
+										onMouseOver={() => {document.querySelector("#contentRow" + data.code).style.backgroundColor = "#e9f7ff"}}
 										onMouseOut={() => {document.querySelector("#contentRow" + data.code).style.backgroundColor = ""}}
 									>
 										<div style={{display: "flex", alignItems: "center", justifyContent: "space-between"}}>

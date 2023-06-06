@@ -123,10 +123,13 @@ export class Boards {
 	createdAt!: Date;
 
 	/**
-	 * 게시글 변경일자(자동)
+	 * 게시글 변경일자(수동)
 	 */
-	@UpdateDateColumn({ default: () => "null", nullable: true })
-	updatedAt!: Date | null;
+	@Column({
+		type: "datetime"
+		, nullable: true
+	})
+	updatedAt: Date | null;
 
 	/**
 	 * 게시글 삭제일자(자동), soft delete

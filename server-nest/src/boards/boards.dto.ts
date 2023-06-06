@@ -6,4 +6,7 @@ export class BoardsDTO {
 	contentPassword: string
 	writer: string;
 	ip: string;
+	createdAt: Date;
+	updatedAt: Date;
+	deletedAt: Date;
 }
