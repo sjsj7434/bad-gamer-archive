@@ -18,7 +18,7 @@ export class BoardsService {
 			skip: (page - 1) * 10, //시작 인덱스
 			take: 10, //페이지 당 갯수
 			select: {
-				code: true, title: true, view: true, goodPoint: true, badPoint: true, writer: true, ip: true, createdAt: true
+				code: true, title: true, view: true, upvote: true, downvote: true, writer: true, ip: true, createdAt: true
 			},
 			where: {
 				category: category,
@@ -40,7 +40,7 @@ export class BoardsService {
 
 		const contentData = await this.boardsRepository.findOne({
 			select: {
-				code: true, category: true, title: true, content: true, view: true, goodPoint: true, badPoint: true, writer: true, ip: true, createdAt: true, updatedAt: true
+				code: true, category: true, title: true, content: true, view: true, upvote: true, downvote: true, writer: true, ip: true, createdAt: true, updatedAt: true
 			},
 			where: {
 				code: contentCode,
@@ -66,7 +66,7 @@ export class BoardsService {
 		let isCorrect = false;
 
 		if (contentData !== null) {
-			if (contentData.password === boardData.contentPassword) {
+			if (contentData.password === boardData.password) {
 				isCorrect = true;
 			}
 		}
@@ -88,19 +88,22 @@ export class BoardsService {
 	 * 게시판에 게시글을 수정한다
 	 */
 	async updateContent(boardData: BoardsDTO) {
-		console.log(`serviec Called : updateContent`)
-
 		const contentData = await this.boardsRepository.findOne({
 			where: {
-				code: boardData.code
+				code: boardData.code,
+				password: boardData.password,
 			}
 		});
 
-		contentData.title = boardData.title;
-		contentData.content = boardData.content;
-		contentData.updatedAt = new Date(); //기본 값을 NULL로 삽입하기
+		if (contentData !== null){
+			contentData.title = boardData.title;
+			contentData.content = boardData.content;
+			contentData.updatedAt = new Date(); //기본 값을 NULL로 삽입하기
+	
+			await this.boardsRepository.save(contentData);
+		}
 
-		await this.boardsRepository.save(contentData);
+		return contentData;
 	}
 
 	/**
@@ -110,7 +113,7 @@ export class BoardsService {
 		try {
 			const contentData = new BoardsDTO();
 			contentData.code = contentCode;
-			contentData.contentPassword = contentPassword;
+			contentData.password = contentPassword;
 
 			const result = await this.checkContentPassword(contentData);
 
@@ -127,5 +130,51 @@ export class BoardsService {
 		} catch (error) {
 			return false;
 		}
+	}
+
+	/**
+	 * code로 1개의 게시글 upvote
+	 */
+	async upvoteContent(contentCode: number, type: string): Promise<Boards | null> {
+		if (type === "cancel") {
+			await this.boardsRepository.increment({ code: contentCode }, "upvote", -1);
+		}
+		else {
+			await this.boardsRepository.increment({ code: contentCode }, "upvote", 1);
+		}
+
+		const contentData = await this.boardsRepository.findOne({
+			select: {
+				upvote: true, downvote: true,
+			},
+			where: {
+				code: contentCode,
+			},
+		});
+
+		return contentData;
+	}
+
+	/**
+	 * code로 1개의 게시글 downvote
+	 */
+	async downvoteContent(contentCode: number, type: string): Promise<Boards | null> {
+		if (type === "cancel") {
+			await this.boardsRepository.increment({ code: contentCode }, "downvote", -1);
+		}
+		else {
+			await this.boardsRepository.increment({ code: contentCode }, "downvote", 1);
+		}
+
+		const contentData = await this.boardsRepository.findOne({
+			select: {
+				upvote: true, downvote: true,
+			},
+			where: {
+				code: contentCode,
+			},
+		});
+
+		return contentData;
 	}
 }

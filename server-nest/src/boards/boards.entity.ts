@@ -74,7 +74,7 @@ export class Boards {
 		, default: 0
 		, nullable: false
 	})
-	goodPoint: number;
+	upvote: number;
 
 	/**
 	 * 게시글 비추천수
@@ -85,7 +85,7 @@ export class Boards {
 		, default: 0
 		, nullable: false
 	})
-	badPoint: number;
+	downvote: number;
 
 	/**
 	 * 익명 게시글 수정&삭제 비밀번호

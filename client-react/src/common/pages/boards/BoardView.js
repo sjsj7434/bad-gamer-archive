@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useNavigate, useParams } from "react-router-dom";
 import Container from 'react-bootstrap/Container';
 import Placeholder from 'react-bootstrap/Placeholder';
+import Button from 'react-bootstrap/Button';
 import BoardReply from './BoardReply';
 import LoadingModal from '../common/LoadingModal';
 
@@ -10,6 +11,8 @@ const BoardView = () => {
 	const [category, setCategory] = useState(null);
 	const [contentTitle, setContentTitle] = useState("");
 	const [contentData, setContentData] = useState("");
+	const [upvoteCount, setUpvoteCount] = useState(0);
+	const [downvoteCount, setDownvoteCount] = useState(0);
 	const [contentJson, setContentJson] = useState(null);
 	const [renderData, setRenderData] = useState(<></>);
 	const [loadingModalShow, setLoadingModalShow] = useState(false);
@@ -46,8 +49,8 @@ const BoardView = () => {
 	}
 
 	const deleteContent = useCallback(async () => {
-		const contentPassword = prompt("삭제하시려면 게시글의 비밀번호를 입력해주세요");
-		if(contentPassword === null){
+		const password = prompt("삭제하시려면 게시글의 비밀번호를 입력해주세요");
+		if(password === null){
 			return;
 		}
 
@@ -55,7 +58,7 @@ const BoardView = () => {
 		setLoadingModalMessage("게시글을 삭제 중입니다...");
 
 		const sendData = {
-			contentPassword: contentPassword
+			password: password
 		};
 		
 		const fecthOption = {
@@ -109,7 +112,59 @@ const BoardView = () => {
 			else{
 				setContentTitle(jsonData.title);
 				setContentData(jsonData.content);
+				setUpvoteCount(jsonData.upvote);
+				setDownvoteCount(jsonData.downvote);
 				setContentJson(jsonData);
+			}
+		}
+	}, [contentCode])
+
+	/**
+	 * 게시글 upvote
+	 */
+	const upvoteContent = useCallback(async () => {
+		if(contentCode !== null){
+			const fecthOption = {
+				method: "POST"
+				, headers: {"Content-Type": "application/json",}
+				, credentials: "include", // Don't forget to specify this if you need cookies
+			};
+			const jsonString = await fetch(`${process.env.REACT_APP_SERVER}/boards/upvote/${contentCode}`, fecthOption);
+			const jsonData = await parseStringToJson(jsonString);
+
+			console.log("upvoteContent", jsonData);
+
+			if(jsonData === null){
+				alert("이미 해당 게시물에 추천&비추천을 하였습니다");
+			}
+			else{
+				setUpvoteCount(jsonData.upvote);
+				setDownvoteCount(jsonData.downvote);
+			}
+		}
+	}, [contentCode])
+
+	/**
+	 * 게시글 downvote
+	 */
+	const downvoteContent = useCallback(async () => {
+		if(contentCode !== null){
+			const fecthOption = {
+				method: "POST"
+				, headers: {"Content-Type": "application/json",}
+				, credentials: "include", // Don't forget to specify this if you need cookies
+			};
+			const jsonString = await fetch(`${process.env.REACT_APP_SERVER}/boards/downvote/${contentCode}`, fecthOption);
+			const jsonData = await parseStringToJson(jsonString);
+
+			console.log("downvoteContent", jsonData);
+
+			if(jsonData === null){
+				alert("오늘은 이미 해당 게시물에 추천&비추천을 하였습니다");
+			}
+			else{
+				setUpvoteCount(jsonData.upvote);
+				setDownvoteCount(jsonData.downvote);
 			}
 		}
 	}, [contentCode])
@@ -188,14 +243,17 @@ const BoardView = () => {
 								<span>
 									{new Date(contentJson.createdAt).toLocaleString("sv-SE")}
 								</span>
-								&nbsp;|&nbsp;
+							</div>
+							<div style={{fontWeight: "400", fontSize: "0.8rem"}}>
 								<span>
 									조회 {contentJson.view}
 								</span>
+								&nbsp;|&nbsp;
+								<span style={{color: "green"}}>↑{contentJson.upvote}</span> | ↓<span style={{color: "red"}}>{contentJson.downvote}</span>
 							</div>
-							<div style={{fontWeight: "400", fontSize: "0.8rem", color: "orange"}}>
+							<div style={{fontWeight: "400", fontSize: "0.75rem", color: "orange"}}>
 								<span>
-									{contentJson.updatedAt !== null ? `${new Date(contentJson.updatedAt).toLocaleString("sv-SE")} 수정됨` : ""}
+									{contentJson.updatedAt !== null ? `${new Date(contentJson.updatedAt).toLocaleString("sv-SE")}에 게시글이 수정되었습니다` : ""}
 								</span>
 							</div>
 							<hr style={{border: "2px solid #5893ff"}} />
@@ -207,9 +265,17 @@ const BoardView = () => {
 						<div dangerouslySetInnerHTML={{__html: contentData}} style={{overflowWrap: "anywhere", overflow: "auto"}}></div>
 
 						<div style={{display: "flex", justifyContent: "center"}}>
-							<button>{contentJson.goodPoint} / UP</button>
-							&nbsp;
-							<button>{contentJson.badPoint} / DOWN</button>
+							<Button onClick={() => {upvoteContent()}} variant="success" style={{width: "30%", maxWidth: "130px", padding: "2px"}}>
+								<span style={{fontWeight: "800", fontSize: "1.1rem"}}>{upvoteCount}</span>
+								<br/>
+								<span style={{fontSize: "0.85rem"}}>UP ↑</span>
+							</Button>
+							&nbsp;&nbsp;
+							<Button onClick={() => {downvoteContent()}} variant="danger" style={{width: "30%", maxWidth: "130px", padding: "2px"}}>
+								<span style={{fontWeight: "800", fontSize: "1.1rem"}}>{downvoteCount}</span>
+								<br/>
+								<span style={{fontSize: "0.85rem"}}>DOWN ↓</span>
+							</Button>
 						</div>
 
 						<hr style={{border: "2px solid #5893ff"}} />
@@ -227,7 +293,7 @@ const BoardView = () => {
 				</>
 			);
 		}
-	}, [category, contentTitle, contentData]);
+	}, [category, contentTitle, contentData, upvoteCount, downvoteCount]);
 	
 	return(
 		<Container style={{maxWidth: "1440px"}}>

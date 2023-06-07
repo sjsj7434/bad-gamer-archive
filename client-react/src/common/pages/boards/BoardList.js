@@ -125,7 +125,7 @@ const BoardList = () => {
 													&nbsp;|&nbsp;
 													<span>조회 {data.view}</span>
 													&nbsp;|&nbsp;
-													<span style={{color: "green"}}>↑{data.goodPoint}</span> | ↓<span style={{color: "red"}}>{data.badPoint}</span>
+													<span style={{color: "green"}}>↑{data.upvote}</span> | ↓<span style={{color: "red"}}>{data.downvote}</span>
 												</div>
 											</div>
 											<div style={{textAlign: "end"}}>

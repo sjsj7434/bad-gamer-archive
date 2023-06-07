@@ -15,6 +15,7 @@ const BoardWriteAnonymous = () => {
 	const [renderData, setRenderData] = useState(<></>);
 	const [contentTitle, setContentTitle] = useState("");
 	const [contentData, setContentData] = useState("");
+	const [contentPassword, setContentPassword] = useState("");
 	const [identity, setIdentity] = useState(false);
 	const [failMessage, setFailMessage] = useState(<>&nbsp;</>);
 	const [loadingModalShow, setLoadingModalShow] = useState(false);
@@ -120,7 +121,7 @@ const BoardWriteAnonymous = () => {
 
 		const sendData = {
 			writer: "",
-			contentPassword: contentPasswordElement.value,
+			password: contentPasswordElement.value,
 		};
 		
 		const fecthOption = {
@@ -134,6 +135,7 @@ const BoardWriteAnonymous = () => {
 
 		if(jsonData === true){
 			setIdentity(true);
+			setContentPassword(contentPasswordElement.value);
 		}
 		else{
 			setFailMessage(<><b>[ ! ]</b> 올바른 비밀번호가 아닙니다</>);
@@ -199,6 +201,7 @@ const BoardWriteAnonymous = () => {
 			return;
 		}
 
+		console.log("contentPassword : " + contentPassword)
 		if(window.confirm("게시글을 수정하시겠습니까?") === false){
 			return;
 		}
@@ -208,13 +211,13 @@ const BoardWriteAnonymous = () => {
 
 		let result = await updateContent({
 			code: contentCode,
+			password: contentPassword,
 			title: titleElement.value,
 			content: editorData.content,
 		});
 
-		console.log("editEditorData", result);
-
 		if(result !== null){
+			//정상적으로 처리 성공
 			navigate(`/lostark/board/anonymous/view/${contentCode}`);
 		}
 		else{
@@ -223,7 +226,7 @@ const BoardWriteAnonymous = () => {
 			setLoadingModalMessage("");
 			// localStorage.setItem("tempContentData", contentData.content); //다시 작성하는 일이 생기지 않도록?
 		}
-	}, [contentCode, updateContent, navigate])
+	}, [contentCode, contentPassword, updateContent, navigate])
 
 	useEffect(() => {
 		console.log(`useEffect 3`)
@@ -318,7 +321,7 @@ const BoardWriteAnonymous = () => {
 				else{
 					setRenderData(
 						<>
-							* Board : 익명
+							* Board : 익명 / {contentPassword}
 							<br />
 							* Mode : 수정
 							<br />

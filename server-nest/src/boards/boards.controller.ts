@@ -2,6 +2,20 @@ import { Param, Controller, Get, Post, Body, Ip, Req, Res, Delete, Patch, Query 
 import { BoardsService } from './boards.service';
 import { Boards } from './boards.entity';
 import { BoardsDTO } from './boards.dto';
+import { setInterval } from 'timers';
+
+const voteData: Map<number, Array<string>> = new Map();
+let dateOfVote: string = new Date().toLocaleDateString("sv-SE", { year: "numeric", month: "2-digit", day: "2-digit" });
+const clearVoteInterval = setInterval(() => {
+	//1분 마다 확인하여 날짜가 바뀌면 추천 중복 방지 데이터를 초기화
+	const dateOfNow: string = new Date().toLocaleDateString("sv-SE", { year: "numeric", month: "2-digit", day: "2-digit" });
+	const timeOfNow = new Date().toLocaleTimeString("sv-SE", { hour: "numeric", minute: "2-digit" });
+
+	if (dateOfVote !== dateOfNow) {
+		voteData.clear();
+		dateOfVote = dateOfNow;
+	}
+}, (1000 * 60));
 
 @Controller("boards")
 export class BoardsController {
@@ -63,7 +77,6 @@ export class BoardsController {
 			boardData.ip = Math.random().toString().substring(2, 5) + "." + Math.random().toString().substring(2, 5) + "." + Math.random().toString().substring(2, 5) + "." + Math.random().toString().substring(2, 5);
 	
 			const createdContent = await this.boardsService.createContent(boardData);
-			console.log(createdContent);
 
 			return { data: createdContent };
 		}
@@ -75,19 +88,67 @@ export class BoardsController {
 	@Delete(":contentCode")
 	async deleteContent(@Param("contentCode") contentCode: number, @Body() boardData: BoardsDTO): Promise<{data: boolean}> {
 		console.log("[Controller-boards-deleteContent]");
-		const isDeleted = await this.boardsService.softDeleteContent(contentCode, boardData.contentPassword);
+		const isDeleted = await this.boardsService.softDeleteContent(contentCode, boardData.password);
 		return { data: isDeleted };
 	}
 
 	@Patch("anonymous")
-	async updateContentAnonymous(@Ip() ipData: string, @Body() boardData: BoardsDTO, @Req() request: Request, @Res({ passthrough: true }) response: Response): Promise<{ data: number }> {
-		console.log("[Controller-boards-updateContentAnonymous]");
-		boardData.category = "anonymous";
-		boardData.writer = "";
+	async updateContentAnonymous(@Ip() ipData: string, @Body() boardData: BoardsDTO, @Req() request: Request, @Res({ passthrough: true }) response: Response): Promise<{ data: Boards | null }> {
+		console.log("[Controller-boards-updateContentAnonymous]" + boardData.password);
 		boardData.ip = ipData;
 
-		await this.boardsService.updateContent(boardData);
+		const updatedContent = await this.boardsService.updateContent(boardData);
 
-		return { data: 1 };
+		return { data: updatedContent };
+	}
+
+	@Post("upvote/:contentCode")
+	async upvoteContent(@Ip() ipData: string, @Param("contentCode") contentCode: number, @Query("type") type: string, @Req() request: Request, @Res({ passthrough: true }) response: Response): Promise<{data: Boards | null}> {
+		console.log("[Controller-boards-upvoteContent]");
+		console.log(voteData)
+		console.log(`upvoteContent: ${ipData}`)
+
+		const ipArray: Array<string> | undefined = voteData.get(contentCode);
+		if (ipArray === undefined){
+			voteData.set(contentCode, [ipData]);
+			const updatecontent = await this.boardsService.upvoteContent(contentCode, type);
+
+			return { data: updatecontent }
+		}
+		else if (ipArray.includes(ipData) === false){
+			ipArray.push(ipData);
+			voteData.set(contentCode, ipArray);
+			const updatecontent = await this.boardsService.upvoteContent(contentCode, type);
+
+			return { data: updatecontent }
+		}
+		else{
+			return { data: null }
+		}
+	}
+
+	@Post("downvote/:contentCode")
+	async downvoteContent(@Ip() ipData: string, @Param("contentCode") contentCode: number, @Query("type") type: string, @Req() request: Request, @Res({ passthrough: true }) response: Response): Promise<{ data: Boards | null }> {
+		console.log("[Controller-boards-downvoteContent]");
+		console.log(voteData)
+		console.log(`downvoteContent: ${ipData}`)
+
+		const ipArray: Array<string> | undefined = voteData.get(contentCode);
+		if (ipArray === undefined) {
+			voteData.set(contentCode, [ipData]);
+			const updatecontent = await this.boardsService.downvoteContent(contentCode, type);
+
+			return { data: updatecontent }
+		}
+		else if (ipArray.includes(ipData) === false) {
+			ipArray.push(ipData);
+			voteData.set(contentCode, ipArray);
+			const updatecontent = await this.boardsService.downvoteContent(contentCode, type);
+
+			return { data: updatecontent }
+		}
+		else {
+			return { data: null }
+		}
 	}
 }
