@@ -123,6 +123,11 @@ const BoardView = () => {
 	 * 게시글 upvote
 	 */
 	const upvoteContent = useCallback(async () => {
+		const downvoteButton = document.querySelector("#downvoteButton");
+		const upvoteButton = document.querySelector("#upvoteButton");
+		upvoteButton.disabled = true;
+		downvoteButton.disabled = true;
+
 		if(contentCode !== null){
 			const fecthOption = {
 				method: "POST"
@@ -147,7 +152,12 @@ const BoardView = () => {
 	/**
 	 * 게시글 downvote
 	 */
-	const downvoteContent = useCallback(async () => {
+	const downvoteContent = useCallback(async (event) => {
+		const downvoteButton = document.querySelector("#downvoteButton");
+		const upvoteButton = document.querySelector("#upvoteButton");
+		upvoteButton.disabled = true;
+		downvoteButton.disabled = true;
+
 		if(contentCode !== null){
 			const fecthOption = {
 				method: "POST"
@@ -265,13 +275,13 @@ const BoardView = () => {
 						<div dangerouslySetInnerHTML={{__html: contentData}} style={{overflowWrap: "anywhere", overflow: "auto"}}></div>
 
 						<div style={{display: "flex", justifyContent: "center"}}>
-							<Button onClick={() => {upvoteContent()}} variant="success" style={{width: "30%", maxWidth: "130px", padding: "2px"}}>
+							<Button id={"upvoteButton"} onClick={() => {upvoteContent()}} variant="success" style={{width: "30%", maxWidth: "130px", padding: "2px"}}>
 								<span style={{fontWeight: "800", fontSize: "1.1rem"}}>{upvoteCount}</span>
 								<br/>
 								<span style={{fontSize: "0.85rem"}}>UP ↑</span>
 							</Button>
 							&nbsp;&nbsp;
-							<Button onClick={() => {downvoteContent()}} variant="danger" style={{width: "30%", maxWidth: "130px", padding: "2px"}}>
+							<Button id={"downvoteButton"} onClick={() => {downvoteContent()}} variant="danger" style={{width: "30%", maxWidth: "130px", padding: "2px"}}>
 								<span style={{fontWeight: "800", fontSize: "1.1rem"}}>{downvoteCount}</span>
 								<br/>
 								<span style={{fontSize: "0.85rem"}}>DOWN ↓</span>
