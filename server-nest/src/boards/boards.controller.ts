@@ -3,6 +3,7 @@ import { BoardsService } from './boards.service';
 import { Boards } from './boards.entity';
 import { BoardsDTO } from './boards.dto';
 import { setInterval } from 'timers';
+import { Replies } from './replies.entity';
 
 const voteData: Map<number, Array<string>> = new Map();
 let dateOfVote: string = new Date().toLocaleDateString("sv-SE", { year: "numeric", month: "2-digit", day: "2-digit" });
@@ -105,22 +106,20 @@ export class BoardsController {
 	@Post("upvote/:contentCode")
 	async upvoteContent(@Ip() ipData: string, @Param("contentCode") contentCode: number, @Query("type") type: string, @Req() request: Request, @Res({ passthrough: true }) response: Response): Promise<{data: Boards | null}> {
 		console.log("[Controller-boards-upvoteContent]");
-		console.log(voteData)
-		console.log(`upvoteContent: ${ipData}`)
 
 		const ipArray: Array<string> | undefined = voteData.get(contentCode);
 		if (ipArray === undefined){
 			voteData.set(contentCode, [ipData]);
-			const updatecontent = await this.boardsService.upvoteContent(contentCode, type);
+			const updatedContent = await this.boardsService.upvoteContent(contentCode, type);
 
-			return { data: updatecontent }
+			return { data: updatedContent }
 		}
 		else if (ipArray.includes(ipData) === false){
 			ipArray.push(ipData);
 			voteData.set(contentCode, ipArray);
-			const updatecontent = await this.boardsService.upvoteContent(contentCode, type);
+			const updatedContent = await this.boardsService.upvoteContent(contentCode, type);
 
-			return { data: updatecontent }
+			return { data: updatedContent }
 		}
 		else{
 			return { data: null }
@@ -130,25 +129,40 @@ export class BoardsController {
 	@Post("downvote/:contentCode")
 	async downvoteContent(@Ip() ipData: string, @Param("contentCode") contentCode: number, @Query("type") type: string, @Req() request: Request, @Res({ passthrough: true }) response: Response): Promise<{ data: Boards | null }> {
 		console.log("[Controller-boards-downvoteContent]");
-		console.log(voteData)
-		console.log(`downvoteContent: ${ipData}`)
 
 		const ipArray: Array<string> | undefined = voteData.get(contentCode);
 		if (ipArray === undefined) {
 			voteData.set(contentCode, [ipData]);
-			const updatecontent = await this.boardsService.downvoteContent(contentCode, type);
+			const updatedContent = await this.boardsService.downvoteContent(contentCode, type);
 
-			return { data: updatecontent }
+			return { data: updatedContent }
 		}
 		else if (ipArray.includes(ipData) === false) {
 			ipArray.push(ipData);
 			voteData.set(contentCode, ipArray);
-			const updatecontent = await this.boardsService.downvoteContent(contentCode, type);
+			const updatedContent = await this.boardsService.downvoteContent(contentCode, type);
 
-			return { data: updatecontent }
+			return { data: updatedContent }
 		}
 		else {
 			return { data: null }
 		}
+	}
+
+	@Get("reply/:contentCode/:page")
+	async getReplies(@Param("contentCode") contentCode: number, @Param("page") page: number, @Req() request: Request, @Res({ passthrough: true }) response: Response): Promise<{ data: [Replies[], number] }> {
+		console.log("[Controller-boards-getReplies]");
+
+		const createdReplies = await this.boardsService.getReplies(contentCode, page);
+		return { data: createdReplies }
+	}
+
+	@Post("reply/:contentCode")
+	async createReply(@Ip() ipData: string, @Body() replies: Replies, @Param("contentCode") contentCode: number, @Req() request: Request, @Res({ passthrough: true }) response: Response): Promise<{ data: Replies | null }> {
+		console.log("[Controller-boards-createReply]");
+		replies.ip = ipData;
+
+		const createdReply = await this.boardsService.createReply(replies);
+		return { data: createdReply }
 	}
 }

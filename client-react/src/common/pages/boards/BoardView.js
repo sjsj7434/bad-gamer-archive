@@ -120,9 +120,9 @@ const BoardView = () => {
 	}, [contentCode])
 
 	/**
-	 * 게시글 upvote
+	 * 게시글 upvote & downvote
 	 */
-	const upvoteContent = useCallback(async () => {
+	const voteContent = useCallback(async (type) => {
 		const downvoteButton = document.querySelector("#downvoteButton");
 		const upvoteButton = document.querySelector("#upvoteButton");
 		upvoteButton.disabled = true;
@@ -134,48 +134,19 @@ const BoardView = () => {
 				, headers: {"Content-Type": "application/json",}
 				, credentials: "include", // Don't forget to specify this if you need cookies
 			};
-			const jsonString = await fetch(`${process.env.REACT_APP_SERVER}/boards/upvote/${contentCode}`, fecthOption);
+			const jsonString = await fetch(`${process.env.REACT_APP_SERVER}/boards/${type}/${contentCode}`, fecthOption);
 			const jsonData = await parseStringToJson(jsonString);
 
-			console.log("upvoteContent", jsonData);
-
 			if(jsonData === null){
-				alert("이미 해당 게시물에 추천&비추천을 하였습니다");
+				alert("오늘은 이미 해당 게시물에 추천, 비추천을 하였습니다");
 			}
 			else{
 				setUpvoteCount(jsonData.upvote);
 				setDownvoteCount(jsonData.downvote);
 			}
-		}
-	}, [contentCode])
-
-	/**
-	 * 게시글 downvote
-	 */
-	const downvoteContent = useCallback(async (event) => {
-		const downvoteButton = document.querySelector("#downvoteButton");
-		const upvoteButton = document.querySelector("#upvoteButton");
-		upvoteButton.disabled = true;
-		downvoteButton.disabled = true;
-
-		if(contentCode !== null){
-			const fecthOption = {
-				method: "POST"
-				, headers: {"Content-Type": "application/json",}
-				, credentials: "include", // Don't forget to specify this if you need cookies
-			};
-			const jsonString = await fetch(`${process.env.REACT_APP_SERVER}/boards/downvote/${contentCode}`, fecthOption);
-			const jsonData = await parseStringToJson(jsonString);
-
-			console.log("downvoteContent", jsonData);
-
-			if(jsonData === null){
-				alert("오늘은 이미 해당 게시물에 추천&비추천을 하였습니다");
-			}
-			else{
-				setUpvoteCount(jsonData.upvote);
-				setDownvoteCount(jsonData.downvote);
-			}
+			
+			upvoteButton.disabled = false;
+			downvoteButton.disabled = false;
 		}
 	}, [contentCode])
 
@@ -275,13 +246,13 @@ const BoardView = () => {
 						<div dangerouslySetInnerHTML={{__html: contentData}} style={{overflowWrap: "anywhere", overflow: "auto"}}></div>
 
 						<div style={{display: "flex", justifyContent: "center"}}>
-							<Button id={"upvoteButton"} onClick={() => {upvoteContent()}} variant="success" style={{width: "30%", maxWidth: "130px", padding: "2px"}}>
+							<Button id={"upvoteButton"} onClick={() => {voteContent("upvote")}} variant="outline-success" style={{width: "30%", maxWidth: "130px", padding: "2px"}}>
 								<span style={{fontWeight: "800", fontSize: "1.1rem"}}>{upvoteCount}</span>
 								<br/>
 								<span style={{fontSize: "0.85rem"}}>UP ↑</span>
 							</Button>
 							&nbsp;&nbsp;
-							<Button id={"downvoteButton"} onClick={() => {downvoteContent()}} variant="danger" style={{width: "30%", maxWidth: "130px", padding: "2px"}}>
+							<Button id={"downvoteButton"} onClick={() => {voteContent("downvote")}} variant="outline-danger" style={{width: "30%", maxWidth: "130px", padding: "2px"}}>
 								<span style={{fontWeight: "800", fontSize: "1.1rem"}}>{downvoteCount}</span>
 								<br/>
 								<span style={{fontSize: "0.85rem"}}>DOWN ↓</span>

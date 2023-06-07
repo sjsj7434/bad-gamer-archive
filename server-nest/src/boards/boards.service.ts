@@ -3,11 +3,13 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Boards } from './boards.entity';
 import { BoardsDTO } from './boards.dto';
+import { Replies } from './replies.entity';
 
 @Injectable()
 export class BoardsService {
 	constructor(
 		@InjectRepository(Boards) private boardsRepository: Repository<Boards>,
+		@InjectRepository(Replies) private repliesRepository: Repository<Replies>,
 	) { }
 
 	/**
@@ -176,5 +178,34 @@ export class BoardsService {
 		});
 
 		return contentData;
+	}
+
+	/**
+	 * 댓글 생성
+	 */
+	async createReply(replies: Replies): Promise<Replies | null> {
+		const contentData = await this.repliesRepository.save(replies);
+
+		return contentData;
+	}
+
+	/**
+	 * 댓글 목록 가져오기
+	 */
+	async getReplies(contentCode: number, page: number): Promise<[Replies[], number]> {
+		return this.repliesRepository.findAndCount({
+			skip: (page - 1) * 10, //시작 인덱스
+			take: 10, //페이지 당 갯수
+			select: {
+				code: true, content: true, upvote: true, downvote: true, writer: true, ip: true, createdAt: true
+			},
+			where: {
+				parentCode: contentCode,
+			},
+			order: {
+				createdAt: "DESC",
+				code: "DESC",
+			}
+		});
 	}
 }
