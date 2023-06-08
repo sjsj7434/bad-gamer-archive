@@ -234,6 +234,19 @@ export class BoardsService {
 			},
 			withDeleted: true,
 		});
+
+		/*
+			SELECT
+				code, level, parentReplyCode
+			FROM game_agora.replies
+			WHERE parentContentCode = 21
+			ORDER BY
+				level ASC
+				, parentReplyCode DESC
+					, code DESC
+			#LIMIT 50 OFFSET 0
+			;
+		*/
 	}
 
 	/**
