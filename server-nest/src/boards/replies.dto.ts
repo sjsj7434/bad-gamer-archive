@@ -11,6 +11,9 @@ export class CreateRepliesDTO {
 	@IsNumber()
 	level: number;
 
+	@IsNumber()
+	replyOrder: number;
+
 	@IsString()
 	content: string;
 

@@ -43,9 +43,22 @@ const BoardReply = (props) => {
 	/**
 	 * 댓글 페이지 이동
 	 */
-	const pageMoveFunc = (pageIndex) => {
-		document.querySelector("div[id^=reply_]").scrollIntoView({ behavior: "smooth", block: "center" });
-		getReplies(pageIndex);
+	const pageMoveFunc = async (pageIndex) => {
+		await getReplies(pageIndex);
+		let timeLimit = 0;
+		const inter = setInterval(() => {
+			timeLimit++;
+			console.log("checking...");
+			if(document.querySelector("div[id^=reply_]") !== null){
+				console.log("clearInterval ok...");
+				document.querySelector("div[id^=reply_]").scrollIntoView({ behavior: "smooth", block: "center" });
+				clearInterval(inter);
+			}
+			if(timeLimit >= 30){
+				console.log("clearInterval limit...");
+				clearInterval(inter);
+			}
+		}, 100);
 	}
 
 	/**
@@ -71,6 +84,7 @@ const BoardReply = (props) => {
 			parentReplyCode: 0,
 			content: replyDataElement.value,
 			password: replyPasswordElement.value,
+			replyOrder: 0,
 			level: 0,
 			writer: "",
 		}
@@ -122,6 +136,7 @@ const BoardReply = (props) => {
 			parentReplyCode: replyCode,
 			content: formElement.content.value,
 			password: formElement.password.value,
+			replyOrder: 0,
 			level: 1,
 			writer: "",
 		}
@@ -292,10 +307,8 @@ const BoardReply = (props) => {
 						</div>
 					);
 
-					let testIndex = 0;
 					for (const replyData of jsonData[0]) {
 						if(replyData.level === 0){
-							testIndex++;
 							renderElement.push(
 								<div id={`reply_${replyData.code}`} key={`reply_${replyData.code}`} style={{display: "flex", flexDirection: "column", paddingBottom: "5px", marginBottom: "5px", borderBottom: "1px solid lightgray"}}>
 									<div style={{display: "flex", justifyContent: "space-between", alignItems: "center"}}>
@@ -305,8 +318,6 @@ const BoardReply = (props) => {
 											<span style={{fontSize: "0.8rem", color: "black"}}>{replyData.writer === "" ? `익명(${replyData.ip})` : replyData.writer}</span>
 											&nbsp;
 											<span style={{fontSize: "0.75rem", color: "lightgray"}}>{new Date(replyData.createdAt).toLocaleString("sv-SE")}</span>
-											&nbsp;
-											<span style={{fontSize: "0.75rem", color: "lightgray"}}>{testIndex}</span>
 										</div>
 										<div>
 											{
@@ -322,7 +333,7 @@ const BoardReply = (props) => {
 										</div>
 									</div>
 
-									<div style={{fontSize: "0.75rem", marginTop: "5px", whiteSpace: "pre-line"}}>
+									<div style={{fontSize: "0.75rem", marginTop: "5px", whiteSpace: "break-spaces"}}>
 										{(replyData.deletedAt === null ? replyData.content : <span style={{color: "palevioletred"}}>{replyData.content}</span>)}
 									</div>
 
@@ -353,41 +364,37 @@ const BoardReply = (props) => {
 									</Form>
 								</div>
 							);
-
-							const recursiveReply = jsonData[0].filter(childReply => childReply.parentReplyCode === replyData.code && childReply.level !== 0)
-							recursiveReply.sort((a, b) => {return a.code - b.code;})
-							
-							for (const childReply of recursiveReply) {
-								renderElement.push(
-									<div id={`reply_${childReply.code}`} key={`reply_${childReply.code}`} style={{display: "flex", flexDirection: "column", marginLeft: "22px", paddingBottom: "5px", marginBottom: "5px", borderBottom: "1px solid lightgray"}}>
-										<div style={{display: "flex", justifyContent: "space-between", alignItems: "center"}}>
-											<div>
-												<Image src="https://cdn-icons-png.flaticon.com/512/1211/1211612.png" roundedCircle style={{width: "1.7rem", height: "1.7rem", border: "1px solid lightgray", backgroundColor: "#fbecca"}} />
-												&nbsp;
-												<span style={{fontSize: "0.8rem", color: "black"}}>{childReply.writer === "" ? `익명(${childReply.ip})` : childReply.writer}</span>
-												&nbsp;
-												<span style={{fontSize: "0.75rem", color: "lightgray"}}>{new Date(childReply.createdAt).toLocaleString("sv-SE")}</span>
-											</div>
-											<div>
-												{
-													childReply.deletedAt === null ?
-													<>
-														<Button id={"deleteReply"} onClick={() => {deleteReply(childReply.code)}} variant="outline-danger" style={{padding: "2px", fontSize: "0.7rem"}}>
-															삭제
-														</Button>
-													</>
-													:
-													<></>
-												}
-											</div>
+						}
+						else{
+							renderElement.push(
+								<div id={`reply_${replyData.code}`} key={`reply_${replyData.code}`} style={{display: "flex", flexDirection: "column", marginLeft: "22px", paddingBottom: "5px", marginBottom: "5px", borderBottom: "1px solid lightgray"}}>
+									<div style={{display: "flex", justifyContent: "space-between", alignItems: "center"}}>
+										<div>
+											<Image src="https://cdn-icons-png.flaticon.com/512/1211/1211612.png" roundedCircle style={{width: "1.7rem", height: "1.7rem", border: "1px solid lightgray", backgroundColor: "#fbecca"}} />
+											&nbsp;
+											<span style={{fontSize: "0.8rem", color: "black"}}>{replyData.writer === "" ? `익명(${replyData.ip})` : replyData.writer}</span>
+											&nbsp;
+											<span style={{fontSize: "0.75rem", color: "lightgray"}}>{new Date(replyData.createdAt).toLocaleString("sv-SE")}</span>
 										</div>
-	
-										<div style={{fontSize: "0.75rem", marginTop: "5px", whiteSpace: "pre-line"}}>
-											{childReply.deletedAt === null ? childReply.content : <span style={{color: "palevioletred"}}>{childReply.content}</span>}
+										<div>
+											{
+												replyData.deletedAt === null ?
+												<>
+													<Button id={"deleteReply"} onClick={() => {deleteReply(replyData.code)}} variant="outline-danger" style={{padding: "2px", fontSize: "0.7rem"}}>
+														삭제
+													</Button>
+												</>
+												:
+												<></>
+											}
 										</div>
 									</div>
-								);
-							}
+
+									<div style={{fontSize: "0.75rem", marginTop: "5px", whiteSpace: "break-spaces"}}>
+										{replyData.deletedAt === null ? replyData.content : <span style={{color: "palevioletred"}}>{replyData.content}</span>}
+									</div>
+								</div>
+							);
 						}
 					}
 

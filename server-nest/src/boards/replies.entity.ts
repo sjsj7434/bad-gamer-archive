@@ -49,6 +49,16 @@ export class Replies {
 	level: number;
 
 	/**
+	 * 댓글 순서
+	 */
+	@Column({
+		type: "int",
+		unsigned: true,
+		nullable: false,
+	})
+	replyOrder: number;
+
+	/**
 	 * 댓글 내용
 	 */
 	@Column({

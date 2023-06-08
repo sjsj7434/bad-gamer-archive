@@ -226,9 +226,9 @@ export class BoardsService {
 				parentContentCode: contentCode,
 			},
 			order: {
+				replyOrder: "DESC",
 				level: "ASC",
-				code: "DESC",
-				parentReplyCode: "ASC",
+				code: "ASC",
 				// parentReplyCode: "DESC",
 				// createdAt: "DESC",
 			},
@@ -243,7 +243,7 @@ export class BoardsService {
 			ORDER BY
 				level ASC
 				, parentReplyCode DESC
-					, code DESC
+				, code DESC
 			#LIMIT 50 OFFSET 0
 			;
 
@@ -256,6 +256,14 @@ export class BoardsService {
 	 */
 	async createReply(createRepliesDTO: CreateRepliesDTO): Promise<Replies | null> {
 		const contentData = await this.repliesRepository.save(createRepliesDTO);
+
+		if(contentData.level === 0){
+			contentData.replyOrder = contentData.code;
+		}
+		else{
+			contentData.replyOrder = contentData.parentReplyCode;
+		}
+		await this.repliesRepository.save(contentData);
 
 		return contentData;
 	}
