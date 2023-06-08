@@ -246,6 +246,8 @@ export class BoardsService {
 					, code DESC
 			#LIMIT 50 OFFSET 0
 			;
+
+			댓글 순서 번호를 추가할까?
 		*/
 	}
 
