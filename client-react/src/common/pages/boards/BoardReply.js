@@ -313,8 +313,6 @@ const BoardReply = (props) => {
 								<div id={`reply_${replyData.code}`} key={`reply_${replyData.code}`} style={{display: "flex", flexDirection: "column", paddingBottom: "5px", marginBottom: "5px", borderBottom: "1px solid lightgray"}}>
 									<div style={{display: "flex", justifyContent: "space-between", alignItems: "center"}}>
 										<div>
-											<Image src="https://cdn-icons-png.flaticon.com/512/1211/1211612.png" roundedCircle style={{width: "1.7rem", height: "1.7rem", border: "1px solid lightgray", backgroundColor: "#fbecca"}} />
-											&nbsp;
 											<span style={{fontSize: "0.8rem", color: "black"}}>{replyData.writer === "" ? `익명(${replyData.ip})` : replyData.writer}</span>
 											&nbsp;
 											<span style={{fontSize: "0.75rem", color: "lightgray"}}>{new Date(replyData.createdAt).toLocaleString("sv-SE")}</span>
@@ -367,33 +365,39 @@ const BoardReply = (props) => {
 						}
 						else{
 							renderElement.push(
-								<div id={`reply_${replyData.code}`} key={`reply_${replyData.code}`} style={{display: "flex", flexDirection: "column", marginLeft: "22px", paddingBottom: "5px", marginBottom: "5px", borderBottom: "1px solid lightgray"}}>
-									<div style={{display: "flex", justifyContent: "space-between", alignItems: "center"}}>
-										<div>
-											<Image src="https://cdn-icons-png.flaticon.com/512/1211/1211612.png" roundedCircle style={{width: "1.7rem", height: "1.7rem", border: "1px solid lightgray", backgroundColor: "#fbecca"}} />
-											&nbsp;
-											<span style={{fontSize: "0.8rem", color: "black"}}>{replyData.writer === "" ? `익명(${replyData.ip})` : replyData.writer}</span>
-											&nbsp;
-											<span style={{fontSize: "0.75rem", color: "lightgray"}}>{new Date(replyData.createdAt).toLocaleString("sv-SE")}</span>
-										</div>
-										<div>
-											{
-												replyData.deletedAt === null ?
-												<>
-													<Button id={"deleteReply"} onClick={() => {deleteReply(replyData.code)}} variant="outline-danger" style={{padding: "2px", fontSize: "0.7rem"}}>
-														삭제
-													</Button>
-												</>
-												:
-												<></>
-											}
-										</div>
-									</div>
+								<>
+									<div style={{display: "flex", flexDirection: "row", alignItems: "baseline"}}>
+										<svg xmlns="http://www.w3.org/2000/svg" width="1.1rem" height="1.1rem" fill="currentColor" className="bi bi-arrow-return-right" viewBox="0 0 16 16">
+											<path fill-rule="evenodd" d="M1.5 1.5A.5.5 0 0 0 1 2v4.8a2.5 2.5 0 0 0 2.5 2.5h9.793l-3.347 3.346a.5.5 0 0 0 .708.708l4.2-4.2a.5.5 0 0 0 0-.708l-4-4a.5.5 0 0 0-.708.708L13.293 8.3H3.5A1.5 1.5 0 0 1 2 6.8V2a.5.5 0 0 0-.5-.5z"/>
+										</svg>
+										
+										<div id={`reply_${replyData.code}`} key={`reply_${replyData.code}`} style={{width: "100%", display: "flex", flexDirection: "column", marginLeft: "8px", paddingBottom: "5px", marginBottom: "5px", borderBottom: "1px solid lightgray"}}>
+											<div style={{display: "flex", justifyContent: "space-between", alignItems: "center"}}>
+												<div>
+													<span style={{fontSize: "0.8rem", color: "black"}}>{replyData.writer === "" ? `익명(${replyData.ip})` : replyData.writer}</span>
+													&nbsp;
+													<span style={{fontSize: "0.75rem", color: "lightgray"}}>{new Date(replyData.createdAt).toLocaleString("sv-SE")}</span>
+												</div>
+												<div>
+													{
+														replyData.deletedAt === null ?
+														<>
+															<Button id={"deleteReply"} onClick={() => {deleteReply(replyData.code)}} variant="outline-danger" style={{padding: "2px", fontSize: "0.7rem"}}>
+																삭제
+															</Button>
+														</>
+														:
+														<></>
+													}
+												</div>
+											</div>
 
-									<div style={{fontSize: "0.75rem", marginTop: "5px", whiteSpace: "break-spaces"}}>
-										{replyData.deletedAt === null ? replyData.content : <span style={{color: "palevioletred"}}>{replyData.content}</span>}
+											<div style={{fontSize: "0.75rem", marginTop: "5px", whiteSpace: "break-spaces"}}>
+												{replyData.deletedAt === null ? replyData.content : <span style={{color: "palevioletred"}}>{replyData.content}</span>}
+											</div>
+										</div>
 									</div>
-								</div>
+								</>
 							);
 						}
 					}
