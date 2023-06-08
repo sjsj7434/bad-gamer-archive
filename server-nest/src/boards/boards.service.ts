@@ -220,15 +220,19 @@ export class BoardsService {
 			skip: (page - 1) * perPage, //시작 인덱스
 			take: perPage, //페이지 당 갯수
 			select: {
-				code: true, content: true, upvote: true, downvote: true, writer: true, ip: true, createdAt: true
+				code: true, parentReplyCode: true, level: true, content: true, upvote: true, downvote: true, writer: true, ip: true, createdAt: true, deletedAt: true
 			},
 			where: {
 				parentContentCode: contentCode,
 			},
 			order: {
-				createdAt: "DESC",
+				level: "ASC",
 				code: "DESC",
-			}
+				parentReplyCode: "ASC",
+				// parentReplyCode: "DESC",
+				// createdAt: "DESC",
+			},
+			withDeleted: true,
 		});
 	}
 

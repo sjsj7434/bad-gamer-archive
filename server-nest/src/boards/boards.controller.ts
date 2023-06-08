@@ -166,6 +166,10 @@ export class BoardsController {
 		else {
 			for (let index: number = 0; index < repliesData[0].length; index++) {
 				repliesData[0][index]["ip"] = repliesData[0][index]["ip"].split(".")[0] + (repliesData[0][index]["ip"].split(".")[1] !== undefined ? "." + repliesData[0][index]["ip"].split(".")[1] : "");
+
+				if (repliesData[0][index]["deletedAt"] !== null){
+					repliesData[0][index]["content"] = new Date(repliesData[0][index]["deletedAt"]).toLocaleString("sv-SE") + " 삭제되었습니다";
+				}
 			}
 		}
 

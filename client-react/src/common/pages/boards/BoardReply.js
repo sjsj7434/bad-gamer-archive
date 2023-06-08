@@ -55,14 +55,14 @@ const BoardReply = (props) => {
 		const replyDataElement = document.querySelector("#replyData");
 		const replyPasswordElement = document.querySelector("#replyPassword");
 
-		if(replyDataElement.value === ""){
-			alert("내용을 입력해주세요");
-			replyDataElement.focus();
-			return;
-		}
-		else if(replyPasswordElement.value === ""){
+		if(replyPasswordElement.value === ""){
 			alert("삭제를 위한 비밀번호를 입력해주세요");
 			replyPasswordElement.focus();
+			return;
+		}
+		else if(replyDataElement.value === ""){
+			alert("내용을 입력해주세요");
+			replyDataElement.focus();
 			return;
 		}
 
@@ -97,6 +97,56 @@ const BoardReply = (props) => {
 				getReplies(1);
 				// document.querySelector("#replyForm").reset();
 			}
+		}
+	}, [props.contentCode])
+
+	/**
+	 * 대댓글 작성
+	 */
+	const createRecursiveReply = useCallback(async (replyCode) => {
+		const formElement = document.querySelector(`#replyOfReplyForm_${replyCode}`);
+
+		if(formElement.password.value === ""){
+			alert("삭제를 위한 비밀번호를 입력해주세요");
+			formElement.password.focus();
+			return;
+		}
+		else if(formElement.content.value === ""){
+			alert("내용을 입력해주세요");
+			formElement.content.focus();
+			return;
+		}
+
+		const sendData = {
+			parentContentCode: props.contentCode,
+			parentReplyCode: replyCode,
+			content: formElement.content.value,
+			password: formElement.password.value,
+			level: 1,
+			writer: "",
+		}
+
+		const fecthOption = {
+			method: "POST"
+			, body: JSON.stringify(sendData)
+			, headers: {"Content-Type": "application/json",}
+			, credentials: "include", // Don't forget to specify this if you need cookies
+		};
+		const jsonString = await fetch(`${process.env.REACT_APP_SERVER}/boards/reply`, fecthOption);
+		const jsonData = await parseStringToJson(jsonString);
+
+		console.log("createRecursiveReply", jsonData)
+
+		if(jsonData === null){
+			alert("답글 작성 중 오류가 발생하였습니다(1)");
+		}
+		else if(jsonData === undefined){
+			alert("답글 작성 중 오류가 발생하였습니다(2)");
+		}
+		else{
+			formElement.reset();
+			formElement.style.display = "none";
+			getReplies(1);
 		}
 	}, [props.contentCode])
 
@@ -242,55 +292,103 @@ const BoardReply = (props) => {
 						</div>
 					);
 
-					for (const element of jsonData[0]) {
-						renderElement.push(
-							<div id={`reply_${element.code}`} key={`reply_${element.code}`} style={{display: "flex", flexDirection: "column", paddingBottom: "5px", marginBottom: "5px", borderBottom: "1px solid lightgray"}}>
-								<div style={{display: "flex", justifyContent: "space-between", alignItems: "center"}}>
-									<div>
-										<Image src="https://cdn-icons-png.flaticon.com/512/1211/1211612.png" roundedCircle style={{width: "1.7rem", height: "1.7rem", border: "1px solid lightgray", backgroundColor: "#fbecca"}} />
-										&nbsp;
-										<span style={{fontSize: "0.8rem", color: "black"}}>{element.writer === "" ? `익명(${element.ip})` : element.writer}</span>
-										&nbsp;
-										<span style={{fontSize: "0.75rem", color: "lightgray"}}>{new Date().toLocaleString("sv-SE")}</span>
+					let testIndex = 0;
+					for (const replyData of jsonData[0]) {
+						if(replyData.level === 0){
+							testIndex++;
+							renderElement.push(
+								<div id={`reply_${replyData.code}`} key={`reply_${replyData.code}`} style={{display: "flex", flexDirection: "column", paddingBottom: "5px", marginBottom: "5px", borderBottom: "1px solid lightgray"}}>
+									<div style={{display: "flex", justifyContent: "space-between", alignItems: "center"}}>
+										<div>
+											<Image src="https://cdn-icons-png.flaticon.com/512/1211/1211612.png" roundedCircle style={{width: "1.7rem", height: "1.7rem", border: "1px solid lightgray", backgroundColor: "#fbecca"}} />
+											&nbsp;
+											<span style={{fontSize: "0.8rem", color: "black"}}>{replyData.writer === "" ? `익명(${replyData.ip})` : replyData.writer}</span>
+											&nbsp;
+											<span style={{fontSize: "0.75rem", color: "lightgray"}}>{new Date(replyData.createdAt).toLocaleString("sv-SE")}</span>
+											&nbsp;
+											<span style={{fontSize: "0.75rem", color: "lightgray"}}>{testIndex}</span>
+										</div>
+										<div>
+											{
+												replyData.deletedAt === null ?
+												<>
+													<Button id={"deleteReply"} onClick={() => {deleteReply(replyData.code)}} variant="outline-danger" style={{padding: "2px", fontSize: "0.7rem"}}>
+														삭제
+													</Button>
+												</>
+												:
+												<></>
+											}
+										</div>
 									</div>
-									<div>
-										<Button id={"deleteReply"} onClick={() => {deleteReply(element.code)}} variant="outline-danger" style={{padding: "2px", fontSize: "0.7rem"}}>
-											삭제
+
+									<div style={{fontSize: "0.75rem", marginTop: "5px", whiteSpace: "pre-line"}}>
+										{(replyData.deletedAt === null ? replyData.content : <span style={{color: "palevioletred"}}>{replyData.content}</span>)}
+									</div>
+
+									<div style={{marginTop: "5px"}}>
+										<Button id={"appendReply"} onClick={() => {appendReply(replyData.code)}} variant="outline-secondary" style={{padding: "1px", width: "15%", maxWidth: "150px", fontSize: "0.7rem"}}>
+											답글
 										</Button>
 									</div>
-								</div>
 
-								<div style={{fontSize: "0.75rem", marginTop: "5px"}}>
-									{element.content}
+									<Form id={`replyOfReplyForm_${replyData.code}`} style={{display: "none", margin: "4px", backgroundColor: "#efefef"}}>
+										<div style={{padding: "12px"}}>
+											<Form.Group className="mb-3">
+												<Form.Label style={{fontSize: "0.8rem"}}>답글 작성</Form.Label>
+												<Row className="g-2">
+													<Col>
+														<Form.Control name="writer" type="text" placeholder="작성자" defaultValue={"익명"} style={{marginBottom: "10px", fontSize: "0.8rem"}} readOnly />
+													</Col>
+													<Col>
+														<Form.Control name="password" type="password" placeholder="비밀번호" maxLength={20} style={{marginBottom: "10px", fontSize: "0.8rem"}} />
+													</Col>
+												</Row>
+												<Form.Control name="content" as="textarea" rows={3} style={{fontSize: "0.8rem"}} />
+												<Button onClick={() => {createRecursiveReply(replyData.code)}} variant="primary" style={{width: "100%", marginTop: "10px", fontSize: "0.8rem"}}>
+													저장
+												</Button>
+											</Form.Group>
+										</div>
+									</Form>
 								</div>
+							);
 
-								<div style={{marginTop: "5px"}}>
-									<Button id={"appendReply"} onClick={() => {appendReply(element.code)}} variant="outline-secondary" style={{padding: "1px", width: "15%", maxWidth: "150px", fontSize: "0.7rem"}}>
-										답글
-									</Button>
-								</div>
-
-								<Form id={`replyOfReplyForm_${element.code}`} style={{display: "none", margin: "4px", backgroundColor: "#efefef"}}>
-									<div style={{padding: "12px"}}>
-										<Form.Group className="mb-3">
-											<Form.Label style={{fontSize: "0.8rem"}}>대댓글 작성</Form.Label>
-											<Row className="g-2">
-												<Col>
-													<Form.Control type="text" placeholder="작성자" defaultValue={"익명"} style={{marginBottom: "10px", fontSize: "0.8rem"}} readOnly />
-												</Col>
-												<Col>
-													<Form.Control type="password" placeholder="비밀번호" maxLength={20} style={{marginBottom: "10px", fontSize: "0.8rem"}} />
-												</Col>
-											</Row>
-											<Form.Control as="textarea" rows={3} style={{fontSize: "0.8rem"}} />
-											<Button onClick={() => {deleteReply(element.code)}} variant="primary" style={{width: "100%", marginTop: "10px", fontSize: "0.8rem"}}>
-												저장
-											</Button>
-										</Form.Group>
+							const recursiveReply = jsonData[0].filter(childReply => childReply.parentReplyCode === replyData.code && childReply.level !== 0)
+							recursiveReply.sort((a, b) => {return a.code - b.code;})
+							
+							for (const childReply of recursiveReply) {
+								renderElement.push(
+									<div id={`reply_${childReply.code}`} key={`reply_${childReply.code}`} style={{display: "flex", flexDirection: "column", marginLeft: "22px", paddingBottom: "5px", marginBottom: "5px", borderBottom: "1px solid lightgray"}}>
+										<div style={{display: "flex", justifyContent: "space-between", alignItems: "center"}}>
+											<div>
+												<Image src="https://cdn-icons-png.flaticon.com/512/1211/1211612.png" roundedCircle style={{width: "1.7rem", height: "1.7rem", border: "1px solid lightgray", backgroundColor: "#fbecca"}} />
+												&nbsp;
+												<span style={{fontSize: "0.8rem", color: "black"}}>{childReply.writer === "" ? `익명(${childReply.ip})` : childReply.writer}</span>
+												&nbsp;
+												<span style={{fontSize: "0.75rem", color: "lightgray"}}>{new Date(childReply.createdAt).toLocaleString("sv-SE")}</span>
+											</div>
+											<div>
+												{
+													childReply.deletedAt === null ?
+													<>
+														<Button id={"deleteReply"} onClick={() => {deleteReply(childReply.code)}} variant="outline-danger" style={{padding: "2px", fontSize: "0.7rem"}}>
+															삭제
+														</Button>
+													</>
+													:
+													<></>
+												}
+											</div>
+										</div>
+	
+										<div style={{fontSize: "0.75rem", marginTop: "5px", whiteSpace: "pre-line"}}>
+											{childReply.deletedAt === null ? childReply.content : <span style={{color: "palevioletred"}}>{childReply.content}</span>}
+										</div>
 									</div>
-								</Form>
-							</div>
-						);
+								);
+							}
+						}
 					}
 
 					renderElement.push(
@@ -323,6 +421,9 @@ const BoardReply = (props) => {
 					</Form.Group>
 				</Form>
 				<div style={{display: "flex", justifyContent: "flex-end"}}>
+					<Button onClick={() => {getReplies(1)}} variant="outline-primary" style={{width: "30%", maxWidth: "200px", padding: "1px"}}>
+						<span style={{fontSize: "0.8rem"}}>Load</span>
+					</Button>&nbsp;
 					<Button id={"createReply"} onClick={() => {createReply()}} variant="outline-primary" style={{width: "30%", maxWidth: "200px", padding: "1px"}}>
 						<span style={{fontSize: "0.8rem"}}>등록</span>
 					</Button>
