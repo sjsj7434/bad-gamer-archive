@@ -7,7 +7,6 @@ const CustomPagination = (props) => {
 	const [currentPage, setCurrentPage] = useState(null);
 	const [contentPerPage, setContentPerPage] = useState(null);
 	const [contentCount, setContentCount] = useState(null);
-	const [moveURL, setMoveURL] = useState(null);
 	const [howManyPages, setHowManyPages] = useState(null);
 	const navigate = useNavigate();
 
@@ -15,12 +14,11 @@ const CustomPagination = (props) => {
 		setCurrentPage(Number(props.currentPage));
 		setContentPerPage(props.contentPerPage);
 		setContentCount(props.contentCount);
-		setMoveURL(props.moveURL);
 		setHowManyPages(props.howManyPages);
-	}, [props.currentPage, props.contentPerPage, props.contentCount, props.moveURL, props.howManyPages])
+	}, [props.currentPage, props.contentPerPage, props.contentCount, props.howManyPages])
 	
 	useEffect(() => {
-		if(currentPage !== null && contentPerPage !== null && contentCount !== null && moveURL !== null){
+		if(currentPage !== null && contentPerPage !== null && contentCount !== null){
 			const paginationData = [];
 			const maxPageCount = parseInt((contentCount - 1) / contentPerPage, 10) + 1;
 			const startPage = ((parseInt((currentPage - 1) / howManyPages, 10)) * howManyPages) + 1;
@@ -33,15 +31,15 @@ const CustomPagination = (props) => {
 			// console.log(`    startPage: ${startPage} / endPage: ${endPage} / maxPageCount: ${maxPageCount} / endDir: ${(startPage + howManyPages >= maxPageCount ? "left" : "right")}`);
 			// console.log(`    prevPageIndex: ${prevPageIndex} / isDisablePrev: ${isDisablePrev} / nextPageIndex: ${nextPageIndex} / isDisableNext: ${isDisableNext}`);
 
-			paginationData.push(<Pagination.Prev key={"pagenation_prev"} disabled={isDisablePrev} onClick={() => {navigate(`${moveURL}/${prevPageIndex}`)}} />);
+			paginationData.push(<Pagination.Prev key={"pagenation_prev"} disabled={isDisablePrev} onClick={() => {props.pageMoveFunc(prevPageIndex)}} />);
 			for (let pageIndex = startPage; pageIndex <= endPage; pageIndex++) {
 				paginationData.push(
-					<Pagination.Item key={"pagenation_" + pageIndex} active={pageIndex === currentPage ? true : false} onClick={() => {navigate(`${moveURL}/${pageIndex}`)}}>
+					<Pagination.Item key={"pagenation_" + pageIndex} active={pageIndex === currentPage ? true : false} onClick={() => {if(pageIndex !== currentPage){props.pageMoveFunc(pageIndex)}}}>
 						{pageIndex}
 					</Pagination.Item>
 				);
 			}
-			paginationData.push(<Pagination.Next key={"pagenation_next"} disabled={isDisableNext} onClick={() => {navigate(`${moveURL}/${nextPageIndex}`)}} />);
+			paginationData.push(<Pagination.Next key={"pagenation_next"} disabled={isDisableNext} onClick={() => {props.pageMoveFunc(nextPageIndex)}} />);
 
 			setRenderData(
 				<Pagination>
@@ -49,7 +47,7 @@ const CustomPagination = (props) => {
 				</Pagination>
 			);
 		}
-	}, [currentPage, contentPerPage, contentCount, moveURL, howManyPages, navigate])
+	}, [currentPage, contentPerPage, contentCount, howManyPages, props, navigate])
 	
 	return renderData;
 }

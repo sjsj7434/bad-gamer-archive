@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import Container from 'react-bootstrap/Container';
 import CustomPagination from './CustomPagination';
 
@@ -7,6 +7,7 @@ const BoardList = () => {
 	const [contentCategory, setContentCategory] = useState(null);
 	const [page, setPage] = useState(null);
 	const [renderData, setRenderData] = useState(<></>);
+	const navigate = useNavigate();
 	const params = useParams();
 
 	/**
@@ -35,6 +36,11 @@ const BoardList = () => {
 				return jsonResult.data;
 			}
 		}
+	}
+
+	const pageMoveFunc = (pageIndex) => {
+		console.log(`page move to : /lostark/board/${contentCategory}/${pageIndex}`);
+		navigate(`/lostark/board/${contentCategory}/${pageIndex}`);
 	}
 	
 	useEffect(() => {
@@ -176,7 +182,7 @@ const BoardList = () => {
 							</div>
 
 							<div style={{display: "flex", justifyContent: "center"}} key="paginationData">
-								<CustomPagination currentPage={page} contentPerPage={10} contentCount={contentCount} moveURL={`/lostark/board/${contentCategory}`} howManyPages={4} />
+								<CustomPagination currentPage={page} contentPerPage={10} contentCount={contentCount} moveURL={`/lostark/board/${contentCategory}`} howManyPages={4} pageMoveFunc={pageMoveFunc}/>
 							</div>
 						</>
 					);

@@ -46,7 +46,7 @@ const BoardWriteIdentified = () => {
 			, headers: {"Content-Type": "application/json",}
 			, credentials: "include", // Don't forget to specify this if you need cookies
 		};
-		const jsonString = await fetch(`${process.env.REACT_APP_SERVER}/boards/identified`, fecthOption);
+		const jsonString = await fetch(`${process.env.REACT_APP_SERVER}/boards/content/identified`, fecthOption);
 		const jsonData = await parseStringToJson(jsonString);
 
 		return jsonData;

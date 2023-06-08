@@ -61,7 +61,7 @@ const BoardWriteAnonymous = () => {
 			, headers: {"Content-Type": "application/json",}
 			, credentials: "include", // Don't forget to specify this if you need cookies
 		};
-		const jsonString = await fetch(`${process.env.REACT_APP_SERVER}/boards/anonymous`, fecthOption);
+		const jsonString = await fetch(`${process.env.REACT_APP_SERVER}/boards/content/anonymous`, fecthOption);
 		const jsonData = await parseStringToJson(jsonString);
 
 		return jsonData;

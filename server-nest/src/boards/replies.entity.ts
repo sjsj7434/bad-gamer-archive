@@ -19,14 +19,34 @@ export class Replies {
 	code: number;
 
 	/**
-	 * 게시글 코드
+	 * 상위 게시글 코드
 	 */
 	@Column({
 		type: "int",
 		unsigned: true,
 		nullable: false,
 	})
-	parentCode: number;
+	parentContentCode: number;
+
+	/**
+	 * 상위 댓글 코드
+	 */
+	@Column({
+		type: "int",
+		unsigned: true,
+		nullable: false,
+	})
+	parentReplyCode: number;
+
+	/**
+	 * 댓글 깊이(댓글, 대댓글...)
+	 */
+	@Column({
+		type: "smallint",
+		unsigned: true,
+		nullable: false,
+	})
+	level: number;
 
 	/**
 	 * 댓글 내용
