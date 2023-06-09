@@ -120,7 +120,7 @@ const BoardWriteAnonymous = () => {
 		setFailMessage(<>&nbsp;</>);
 
 		const sendData = {
-			writer: "",
+			code: contentCode,
 			password: contentPasswordElement.value,
 		};
 		
@@ -129,7 +129,7 @@ const BoardWriteAnonymous = () => {
 			, body: JSON.stringify(sendData)
 			, headers: {"Content-Type": "application/json",}
 		};
-		const jsonString = await fetch(`${process.env.REACT_APP_SERVER}/boards/check/password/${contentCode}`, fecthOption);
+		const jsonString = await fetch(`${process.env.REACT_APP_SERVER}/boards/content/anonymous/check/password`, fecthOption);
 		const jsonData = await parseStringToJson(jsonString);
 		console.log(`check: ${jsonData}`)
 
@@ -174,18 +174,23 @@ const BoardWriteAnonymous = () => {
 			password: passwordElement.value,
 			title: titleElement.value,
 			content: editorData.content,
+			hasImage: editorData.content.indexOf("<img") > -1 ? true : false,
 		});
 
 		console.log("saveEditorData", result);
 
-		if(result !== null){
-			navigate(`/lostark/board/anonymous/1`);
-		}
-		else{
-			alert("문제가 발생하여 게시글을 저장할 수 없습니다");
+		if(result === null){
+			alert("문제가 발생하여 게시글을 저장할 수 없습니다(1)");
 			setLoadingModalShow(false);
 			setLoadingModalMessage("");
-			// localStorage.setItem("tempContentData", contentData.content); //다시 작성하는 일이 생기지 않도록?
+		}
+		else if(result === undefined){
+			alert("문제가 발생하여 게시글을 저장할 수 없습니다(2)");
+			setLoadingModalShow(false);
+			setLoadingModalMessage("");
+		}
+		else{
+			navigate(`/lostark/board/anonymous/1`);
 		}
 	}, [createContent, navigate])
 
@@ -253,21 +258,19 @@ const BoardWriteAnonymous = () => {
 		if(writeMode === "new"){
 			setRenderData(
 				<>
-					* Board : 익명
-					<br />
-					* Mode : 신규
+					익명 게시판 / 신규
 					<Row className="g-2">
 						<Col>
-							<Form.Control id="writer" type="text" placeholder="작성자" defaultValue={"익명"} style={{marginBottom: "10px"}} readOnly />
+							<Form.Control id="writer" type="text" placeholder="작성자" defaultValue={"익명"} style={{marginBottom: "10px", fontSize: "0.8rem"}} readOnly />
 						</Col>
 						<Col>
-							<Form.Control id="contentPassword" type="password" placeholder="비밀번호" maxLength={20} style={{marginBottom: "10px"}} />
+							<Form.Control id="contentPassword" type="password" placeholder="비밀번호" maxLength={20} style={{marginBottom: "10px", fontSize: "0.8rem"}} />
 						</Col>
 					</Row>
-					<Form.Control id="title" type="text" placeholder="제목" style={{marginBottom: "10px"}} defaultValue={""} />
+					<Form.Control id="title" type="text" placeholder="제목" style={{marginBottom: "10px", fontSize: "0.8rem"}} defaultValue={""} />
 					<MyEditor savedData={""} writeMode={writeMode} saveFunction={(editorData) => {saveEditorData(editorData)}}></MyEditor>
 					&nbsp;
-					<button onClick={() => {if(window.confirm("작성한 내용을 전부 비우시겠습니까?") === true){console.log('clear')}}}>비우기</button>
+					<button onClick={() => {if(window.confirm("작성한 내용을 전부 비우시겠습니까?") === true){console.log('you need to make clear func!')}}}>비우기</button>
 					&nbsp;
 					<button onClick={() => {if(window.confirm("작성한 내용을 저장하지않고 나가시겠습니까?") === true){navigate("/lostark/board/anonymous/1")}}}>취소</button>
 				</>
@@ -321,9 +324,7 @@ const BoardWriteAnonymous = () => {
 				else{
 					setRenderData(
 						<>
-							* Board : 익명 / {contentPassword}
-							<br />
-							* Mode : 수정
+							익명 게시판 / 수정
 							<br />
 							<Form.Control id="title" type="text" placeholder="제목" style={{marginBottom: "10px"}} defaultValue={contentTitle} />
 							<MyEditor savedData={contentData} writeMode={writeMode} saveFunction={(editorData) => {editEditorData(editorData)}}></MyEditor>

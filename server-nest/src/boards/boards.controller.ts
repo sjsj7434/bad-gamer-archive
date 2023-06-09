@@ -1,9 +1,9 @@
 import { Param, Controller, Get, Post, Body, Ip, Req, Res, Delete, Patch, Query } from '@nestjs/common';
 import { BoardsService } from './boards.service';
 import { Boards } from './boards.entity';
-import { BoardsDTO } from './boards.dto';
 import { setInterval } from 'timers';
 import { Replies } from './replies.entity';
+import { CreateBoardsDTO, UpdateBoardsDTO, DeleteBoardsDTO } from './boards.dto';
 import { CreateRepliesDTO, UpdateRepliesDTO, DeleteRepliesDTO } from './replies.dto';
 
 const voteData: Map<number, Array<string>> = new Map();
@@ -56,80 +56,66 @@ export class BoardsController {
 		return { data: result };
 	}
 
-	@Post("check/password/:contentCode")
-	async checkContentPassword(@Param("contentCode") contentCode: number, @Body() boardData: BoardsDTO): Promise<{ data: boolean}> {
-		console.log("[Controller-boards-checkContentPassword]");
-
-		boardData.code = contentCode;
-
-		const result = await this.boardsService.checkContentPassword(boardData);
-
-		return { data: result };
-	}
-
 	//set cookies/headers 정도만 사용하고, 나머지는 프레임워크에 떠넘기는 식으로 @Res()를 사용하는 거라면 passthrough: true 옵션은 필수! 그렇지 않으면 fetch 요청이 마무리가 안됨
 	@Post("content/anonymous")
-	async createContentAnonymous(@Ip() ipData: string, @Param("category") category: string, @Body() boardData: BoardsDTO, @Req() request: Request, @Res({ passthrough: true }) response: Response): Promise<{ data: Boards | Boards }> {
+	async createContentAnonymous(@Ip() ipData: string, @Body() boardData: CreateBoardsDTO): Promise<{ data: Boards | Boards }> {
 		console.log("[Controller-boards-createContentAnonymous]");
-		if (["anonymous", "identified"].includes(category) === true) {
-			boardData.category = category;
-			boardData.writer = "";
-			// boardData.ip = ipData;
-			boardData.ip = Math.random().toString().substring(2, 5) + "." + Math.random().toString().substring(2, 5) + "." + Math.random().toString().substring(2, 5) + "." + Math.random().toString().substring(2, 5);
+		boardData.category = "anonymous";
+		boardData.writer = "";
+		// boardData.ip = ipData;
+		boardData.ip = Math.random().toString().substring(2, 5) + "." + Math.random().toString().substring(2, 5) + "." + Math.random().toString().substring(2, 5) + "." + Math.random().toString().substring(2, 5);
 
-			const createdContent = await this.boardsService.createContent(boardData);
+		const createdContent = await this.boardsService.createContent(boardData);
 
-			return { data: createdContent };
-		}
-		else {
-			return { data: null };
-		}
+		return { data: createdContent };
 	}
 
 	//set cookies/headers 정도만 사용하고, 나머지는 프레임워크에 떠넘기는 식으로 @Res()를 사용하는 거라면 passthrough: true 옵션은 필수! 그렇지 않으면 fetch 요청이 마무리가 안됨
 	@Post("content/identified")
-	async createContentIdentified(@Ip() ipData: string, @Param("category") category: string, @Body() boardData: BoardsDTO, @Req() request: Request, @Res({ passthrough: true }) response: Response): Promise<{ data: Boards | Boards }>{
+	async createContentIdentified(@Ip() ipData: string, @Body() boardData: CreateBoardsDTO): Promise<{ data: Boards | Boards }>{
 		console.log("[Controller-boards-createContentIdentified]");
-		if (["anonymous", "identified"].includes(category) === true){
-			boardData.category = category;
-			boardData.writer = "";
-			// boardData.ip = ipData;
-			boardData.ip = Math.random().toString().substring(2, 5) + "." + Math.random().toString().substring(2, 5) + "." + Math.random().toString().substring(2, 5) + "." + Math.random().toString().substring(2, 5);
-	
-			const createdContent = await this.boardsService.createContent(boardData);
+		boardData.category = "identified";
+		// boardData.ip = ipData;
+		boardData.ip = Math.random().toString().substring(2, 5) + "." + Math.random().toString().substring(2, 5) + "." + Math.random().toString().substring(2, 5) + "." + Math.random().toString().substring(2, 5);
 
-			return { data: createdContent };
-		}
-		else{
-			return { data: null };
-		}
+		const createdContent = await this.boardsService.createContent(boardData);
+
+		return { data: createdContent };
 	}
 
-	@Delete("content/:contentCode")
-	async deleteContent(@Param("contentCode") contentCode: number, @Body() boardData: BoardsDTO): Promise<{data: boolean}> {
+	@Post("content/anonymous/check/password")
+	async isAnonymousPasswordMatch(@Body() sendData: {code: number, password: string}): Promise<{ data: boolean }> {
+		console.log("[Controller-boards-isAnonymousPasswordMatch]");
+
+		const findContent = await this.boardsService.getContentByCode(sendData.code, "password");
+		
+		return { data: findContent.password === sendData.password };
+	}
+
+	@Delete("content")
+	async deleteContent(@Body() boardData: DeleteBoardsDTO): Promise<{data: boolean}> {
 		console.log("[Controller-boards-deleteContent]");
-		const isDeleted = await this.boardsService.softDeleteContent(contentCode, boardData.password);
+		const isDeleted = await this.boardsService.softDeleteContent(boardData);
 		return { data: isDeleted };
 	}
 
 	@Patch("anonymous")
-	async updateContentAnonymous(@Ip() ipData: string, @Body() boardData: BoardsDTO, @Req() request: Request, @Res({ passthrough: true }) response: Response): Promise<{ data: Boards | null }> {
+	async updateContentAnonymous(@Body() boardData: UpdateBoardsDTO): Promise<{ data: Boards | null }> {
 		console.log("[Controller-boards-updateContentAnonymous]" + boardData.password);
-		boardData.ip = ipData;
 
 		const updatedContent = await this.boardsService.updateContent(boardData);
 
 		return { data: updatedContent };
 	}
 
-	@Post("upvote/:contentCode")
-	async upvoteContent(@Ip() ipData: string, @Param("contentCode") contentCode: number, @Query("type") type: string, @Req() request: Request, @Res({ passthrough: true }) response: Response): Promise<{data: Boards | null}> {
+	@Post("content/upvote")
+	async upvoteContent(@Ip() ipData: string, @Body() sendData: { code: number }): Promise<{data: Boards | null}> {
 		console.log("[Controller-boards-upvoteContent]");
 
-		const isVotable: boolean = this.boardsService.isVotableContent(contentCode, ipData);
+		const isVotable: boolean = this.boardsService.isVotableContent(sendData.code, ipData);
 
 		if (isVotable === true){
-			const updatedContent = await this.boardsService.upvoteContent(contentCode, type);
+			const updatedContent = await this.boardsService.upvoteContent(sendData.code);
 
 			return { data: updatedContent }
 		}
@@ -138,14 +124,14 @@ export class BoardsController {
 		}
 	}
 
-	@Post("downvote/:contentCode")
-	async downvoteContent(@Ip() ipData: string, @Param("contentCode") contentCode: number, @Query("type") type: string): Promise<{ data: Boards | null }> {
+	@Post("content/downvote")
+	async downvoteContent(@Ip() ipData: string, @Body() sendData: { code: number }){
 		console.log("[Controller-boards-downvoteContent]");
 
-		const isVotable: boolean = this.boardsService.isVotableContent(contentCode, ipData);
+		const isVotable: boolean = this.boardsService.isVotableContent(sendData.code, ipData);
 
 		if (isVotable === true) {
-			const updatedContent = await this.boardsService.downvoteContent(contentCode, type);
+			const updatedContent = await this.boardsService.downvoteContent(sendData.code);
 
 			return { data: updatedContent }
 		}

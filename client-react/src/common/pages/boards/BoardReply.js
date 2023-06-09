@@ -48,14 +48,11 @@ const BoardReply = (props) => {
 		let timeLimit = 0;
 		const inter = setInterval(() => {
 			timeLimit++;
-			console.log("checking...");
 			if(document.querySelector("div[id^=reply_]") !== null){
-				console.log("clearInterval ok...");
 				document.querySelector("div[id^=reply_]").scrollIntoView({ behavior: "smooth", block: "center" });
 				clearInterval(inter);
 			}
 			if(timeLimit >= 30){
-				console.log("clearInterval limit...");
 				clearInterval(inter);
 			}
 		}, 100);
@@ -99,8 +96,6 @@ const BoardReply = (props) => {
 			const jsonString = await fetch(`${process.env.REACT_APP_SERVER}/boards/reply`, fecthOption);
 			const jsonData = await parseStringToJson(jsonString);
 
-			console.log("createdReply", jsonData)
-
 			if(jsonData === null){
 				alert("댓글 작성 중 오류가 발생하였습니다(1)");
 			}
@@ -117,7 +112,7 @@ const BoardReply = (props) => {
 	/**
 	 * 대댓글 작성
 	 */
-	const createRecursiveReply = useCallback(async (replyCode) => {
+	const createRecursiveReply = useCallback(async (replyCode, currentPage) => {
 		const formElement = document.querySelector(`#replyOfReplyForm_${replyCode}`);
 
 		if(formElement.password.value === ""){
@@ -150,8 +145,6 @@ const BoardReply = (props) => {
 		const jsonString = await fetch(`${process.env.REACT_APP_SERVER}/boards/reply`, fecthOption);
 		const jsonData = await parseStringToJson(jsonString);
 
-		console.log("createRecursiveReply", jsonData)
-
 		if(jsonData === null){
 			alert("답글 작성 중 오류가 발생하였습니다(1)");
 		}
@@ -161,14 +154,14 @@ const BoardReply = (props) => {
 		else{
 			formElement.reset();
 			formElement.style.display = "none";
-			getReplies(1);
+			getReplies(currentPage);
 		}
 	}, [props.contentCode])
 
 	/**
 	 * 댓글 삭제
 	 */
-	const deleteReply = async (replyCode) => {
+	const deleteReply = async (replyCode, currentPage) => {
 		const deletePassword = window.prompt("댓글을 삭제하시려면 비밀번호를 입력해주세요");
 
 		if(deletePassword === null){
@@ -195,8 +188,6 @@ const BoardReply = (props) => {
 				const jsonString = await fetch(`${process.env.REACT_APP_SERVER}/boards/reply`, fecthOption);
 				const jsonData = await parseStringToJson(jsonString);
 
-				console.log("deleteReply", jsonData)
-
 				if(jsonData === null){
 					alert("댓글 삭제 중 오류가 발생하였습니다(1)");
 				}
@@ -207,7 +198,7 @@ const BoardReply = (props) => {
 					alert("올바른 비밀번호가 아닙니다");
 				}
 				else{
-					getReplies(1);
+					getReplies(currentPage);
 				}
 			}
 		}
@@ -275,20 +266,16 @@ const BoardReply = (props) => {
 	/**
 	 * 댓글 가져오기
 	 */
-	const getReplies = useCallback(async (page) => {
+	const getReplies = useCallback(async (currentPage) => {
 		if(props.contentCode !== null){
-			console.log(`${process.env.REACT_APP_SERVER}/boards/reply/${props.contentCode}/${page}`)
 			const fecthOption = {
 				method: "GET"
 				, headers: {"Content-Type": "application/json",}
 				, credentials: "include", // Don't forget to specify this if you need cookies
 			};
 
-			const jsonString = await fetch(`${process.env.REACT_APP_SERVER}/boards/reply/${props.contentCode}/${page}`, fecthOption);
-			// const jsonString = await fetch(`${process.env.REACT_APP_SERVER}/boards/TEST`, fecthOption);
+			const jsonString = await fetch(`${process.env.REACT_APP_SERVER}/boards/reply/${props.contentCode}/${currentPage}`, fecthOption);
 			const jsonData = await parseStringToJson(jsonString);
-
-			console.log("getReplies", jsonData)
 
 			if(jsonData !== null){
 				if(jsonData[1] === 0){
@@ -321,7 +308,7 @@ const BoardReply = (props) => {
 											{
 												replyData.deletedAt === null ?
 												<>
-													<Button id={"deleteReply"} onClick={() => {deleteReply(replyData.code)}} variant="outline-danger" style={{padding: "2px", fontSize: "0.7rem"}}>
+													<Button id={"deleteReply"} onClick={() => {deleteReply(replyData.code, currentPage)}} variant="outline-danger" style={{padding: "2px", fontSize: "0.7rem"}}>
 														삭제
 													</Button>
 												</>
@@ -354,7 +341,7 @@ const BoardReply = (props) => {
 													</Col>
 												</Row>
 												<Form.Control name="content" as="textarea" rows={3} style={{fontSize: "0.8rem"}} />
-												<Button onClick={() => {createRecursiveReply(replyData.code)}} variant="primary" style={{width: "100%", marginTop: "10px", fontSize: "0.8rem"}}>
+												<Button onClick={() => {createRecursiveReply(replyData.code, currentPage)}} variant="primary" style={{width: "100%", marginTop: "10px", fontSize: "0.8rem"}}>
 													저장
 												</Button>
 											</Form.Group>
@@ -366,12 +353,12 @@ const BoardReply = (props) => {
 						else{
 							renderElement.push(
 								<>
-									<div style={{display: "flex", flexDirection: "row", alignItems: "baseline"}}>
+									<div id={`reply_${replyData.code}`} key={`reply_${replyData.code}`} style={{display: "flex", flexDirection: "row", alignItems: "baseline"}}>
 										<svg xmlns="http://www.w3.org/2000/svg" width="1.1rem" height="1.1rem" fill="currentColor" className="bi bi-arrow-return-right" viewBox="0 0 16 16">
 											<path fill-rule="evenodd" d="M1.5 1.5A.5.5 0 0 0 1 2v4.8a2.5 2.5 0 0 0 2.5 2.5h9.793l-3.347 3.346a.5.5 0 0 0 .708.708l4.2-4.2a.5.5 0 0 0 0-.708l-4-4a.5.5 0 0 0-.708.708L13.293 8.3H3.5A1.5 1.5 0 0 1 2 6.8V2a.5.5 0 0 0-.5-.5z"/>
 										</svg>
 										
-										<div id={`reply_${replyData.code}`} key={`reply_${replyData.code}`} style={{width: "100%", display: "flex", flexDirection: "column", marginLeft: "8px", paddingBottom: "5px", marginBottom: "5px", borderBottom: "1px solid lightgray"}}>
+										<div style={{width: "100%", display: "flex", flexDirection: "column", marginLeft: "8px", paddingBottom: "5px", marginBottom: "5px", borderBottom: "1px solid lightgray"}}>
 											<div style={{display: "flex", justifyContent: "space-between", alignItems: "center"}}>
 												<div>
 													<span style={{fontSize: "0.8rem", color: "black"}}>{replyData.writer === "" ? `익명(${replyData.ip})` : replyData.writer}</span>
@@ -382,7 +369,7 @@ const BoardReply = (props) => {
 													{
 														replyData.deletedAt === null ?
 														<>
-															<Button id={"deleteReply"} onClick={() => {deleteReply(replyData.code)}} variant="outline-danger" style={{padding: "2px", fontSize: "0.7rem"}}>
+															<Button id={"deleteReply"} onClick={() => {deleteReply(replyData.code, currentPage)}} variant="outline-danger" style={{padding: "2px", fontSize: "0.7rem"}}>
 																삭제
 															</Button>
 														</>
@@ -404,7 +391,7 @@ const BoardReply = (props) => {
 
 					renderElement.push(
 						<div style={{display: "flex", justifyContent: "center"}}>
-							<CustomPagination currentPage={page} contentPerPage={50} contentCount={jsonData[1]} howManyPages={4} pageMoveFunc={pageMoveFunc}/>
+							<CustomPagination currentPage={currentPage} contentPerPage={50} contentCount={jsonData[1]} howManyPages={4} pageMoveFunc={pageMoveFunc}/>
 						</div>
 					);
 					

@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Boards } from './boards.entity';
-import { BoardsDTO } from './boards.dto';
+import { CreateBoardsDTO, UpdateBoardsDTO, DeleteBoardsDTO } from './boards.dto';
 import { Replies } from './replies.entity';
 import { Cron } from '@nestjs/schedule';
 import { CreateRepliesDTO, UpdateRepliesDTO, DeleteRepliesDTO } from './replies.dto';
@@ -51,7 +51,15 @@ export class BoardsService {
 			skip: (page - 1) * 10, //시작 인덱스
 			take: 10, //페이지 당 갯수
 			select: {
-				code: true, title: true, view: true, upvote: true, downvote: true, writer: true, ip: true, createdAt: true
+				code: true,
+				title: true,
+				hasImage: true,
+				view: true,
+				upvote: true,
+				downvote: true,
+				writer: true,
+				ip: true,
+				createdAt: true
 			},
 			where: {
 				category: category,
@@ -71,46 +79,57 @@ export class BoardsService {
 			await this.boardsRepository.increment({code: contentCode}, "view", 1);
 		}
 
-		const contentData = await this.boardsRepository.findOne({
-			select: {
-				code: true, category: true, title: true, content: true, view: true, upvote: true, downvote: true, writer: true, ip: true, createdAt: true, updatedAt: true
-			},
-			where: {
-				code: contentCode,
-			},
-		});
+		if (type === "password") {
+			const contentData = await this.boardsRepository.findOne({
+				select: {
+					code: true,
+					category: true,
+					title: true,
+					content: true,
+					password: true,
+					view: true,
+					upvote: true,
+					downvote: true,
+					writer: true,
+					ip: true,
+					createdAt: true,
+					updatedAt: true
+				},
+				where: {
+					code: contentCode,
+				},
+			});
 
-		return contentData;
-	}
-
-	/**
-	 * code로 1개의 게시글을 찾는다
-	 */
-	async checkContentPassword(boardData: BoardsDTO): Promise<boolean> {
-		const contentData = await this.boardsRepository.findOne({
-			select: {
-				writer: true, password: true
-			},
-			where: {
-				code: boardData.code,
-			},
-		});
-
-		let isCorrect = false;
-
-		if (contentData !== null) {
-			if (contentData.password === boardData.password) {
-				isCorrect = true;
-			}
+			return contentData;
 		}
+		else{
+			const contentData = await this.boardsRepository.findOne({
+				select: {
+					code: true,
+					category: true,
+					title: true,
+					content: true,
+					view: true,
+					upvote: true,
+					downvote: true,
+					writer: true,
+					ip: true,
+					createdAt: true,
+					updatedAt: true
+				},
+				where: {
+					code: contentCode,
+				},
+			});
 
-		return isCorrect;
+			return contentData;
+		}
 	}
 
 	/**
 	 * 게시판에 게시글을 생성한다
 	 */
-	async createContent(contentData: BoardsDTO): Promise<Boards> {
+	async createContent(contentData: CreateBoardsDTO): Promise<Boards> {
 		console.log(`serviec Called : createContent`)
 		const createdContent = await this.boardsRepository.save(contentData);
 
@@ -120,7 +139,7 @@ export class BoardsService {
 	/**
 	 * 게시판에 게시글을 수정한다
 	 */
-	async updateContent(boardData: BoardsDTO) {
+	async updateContent(boardData: UpdateBoardsDTO) {
 		const contentData = await this.boardsRepository.findOne({
 			where: {
 				code: boardData.code,
@@ -142,17 +161,13 @@ export class BoardsService {
 	/**
 	 * 게시글을 softDelete한다
 	 */
-	async softDeleteContent(contentCode: number, contentPassword: string): Promise<boolean>{
+	async softDeleteContent(boardData: DeleteBoardsDTO): Promise<boolean>{
 		try {
-			const contentData = new Boards();
-			contentData.code = contentCode;
-			contentData.password = contentPassword;
+			const result = await this.boardsRepository.findOneBy({ code: boardData.code, password: boardData.password });
 
-			const result = await this.checkContentPassword(contentData);
-
-			if (result === true){
+			if (result !== null){
 				this.boardsRepository.softDelete({
-					code: contentCode
+					code: boardData.code
 				});
 
 				return true;
@@ -168,17 +183,13 @@ export class BoardsService {
 	/**
 	 * code로 1개의 게시글 upvote
 	 */
-	async upvoteContent(contentCode: number, type: string): Promise<Boards | null> {
-		if (type === "cancel") {
-			await this.boardsRepository.increment({ code: contentCode }, "upvote", -1);
-		}
-		else {
-			await this.boardsRepository.increment({ code: contentCode }, "upvote", 1);
-		}
+	async upvoteContent(contentCode: number): Promise<Boards | null> {
+		await this.boardsRepository.increment({ code: contentCode }, "upvote", 1);
 
 		const contentData = await this.boardsRepository.findOne({
 			select: {
-				upvote: true, downvote: true,
+				upvote: true,
+				downvote: true,
 			},
 			where: {
 				code: contentCode,
@@ -191,17 +202,13 @@ export class BoardsService {
 	/**
 	 * code로 1개의 게시글 downvote
 	 */
-	async downvoteContent(contentCode: number, type: string): Promise<Boards | null> {
-		if (type === "cancel") {
-			await this.boardsRepository.increment({ code: contentCode }, "downvote", -1);
-		}
-		else {
-			await this.boardsRepository.increment({ code: contentCode }, "downvote", 1);
-		}
+	async downvoteContent(contentCode: number): Promise<Boards | null> {
+		await this.boardsRepository.increment({ code: contentCode }, "downvote", 1);
 
 		const contentData = await this.boardsRepository.findOne({
 			select: {
-				upvote: true, downvote: true,
+				upvote: true,
+				downvote: true,
 			},
 			where: {
 				code: contentCode,
@@ -220,7 +227,16 @@ export class BoardsService {
 			skip: (page - 1) * perPage, //시작 인덱스
 			take: perPage, //페이지 당 갯수
 			select: {
-				code: true, parentReplyCode: true, level: true, content: true, upvote: true, downvote: true, writer: true, ip: true, createdAt: true, deletedAt: true
+				code: true,
+				parentReplyCode: true,
+				level: true,
+				content: true,
+				upvote: true,
+				downvote: true,
+				writer: true,
+				ip: true,
+				createdAt: true,
+				deletedAt: true
 			},
 			where: {
 				parentContentCode: contentCode,
@@ -229,26 +245,9 @@ export class BoardsService {
 				replyOrder: "DESC",
 				level: "ASC",
 				code: "ASC",
-				// parentReplyCode: "DESC",
-				// createdAt: "DESC",
 			},
 			withDeleted: true,
 		});
-
-		/*
-			SELECT
-				code, level, parentReplyCode
-			FROM game_agora.replies
-			WHERE parentContentCode = 21
-			ORDER BY
-				level ASC
-				, parentReplyCode DESC
-				, code DESC
-			#LIMIT 50 OFFSET 0
-			;
-
-			댓글 순서 번호를 추가할까?
-		*/
 	}
 
 	/**

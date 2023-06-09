@@ -128,13 +128,18 @@ const BoardView = () => {
 		upvoteButton.disabled = true;
 		downvoteButton.disabled = true;
 
+		const sendData = {
+			code: contentCode,
+		}
+
 		if(contentCode !== null){
 			const fecthOption = {
 				method: "POST"
+				, body: JSON.stringify(sendData)
 				, headers: {"Content-Type": "application/json",}
 				, credentials: "include", // Don't forget to specify this if you need cookies
 			};
-			const jsonString = await fetch(`${process.env.REACT_APP_SERVER}/boards/${type}/${contentCode}`, fecthOption);
+			const jsonString = await fetch(`${process.env.REACT_APP_SERVER}/boards/content/${type}`, fecthOption);
 			const jsonData = await parseStringToJson(jsonString);
 
 			if(jsonData === null){

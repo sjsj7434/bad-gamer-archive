@@ -107,7 +107,7 @@ const BoardList = () => {
 									>
 										<div style={{display: "flex", alignItems: "center", justifyContent: "space-between"}}>
 											<div style={{width: "90%"}}>
-												<div style={{fontSize: "0.95rem", fontWeight: "600", maxWidth: "95%", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap"}}>
+												<div style={{display: "flex", alignItems: "center", fontSize: "0.95rem", fontWeight: "600", maxWidth: "95%", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap"}}>
 													{
 														data.hasImage === true ?
 														<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="darkseagreen" className="bi bi-image" viewBox="0 0 16 16">
