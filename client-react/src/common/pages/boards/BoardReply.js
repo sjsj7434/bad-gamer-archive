@@ -297,7 +297,7 @@ const BoardReply = (props) => {
 					for (const replyData of jsonData[0]) {
 						if(replyData.level === 0){
 							renderElement.push(
-								<div id={`reply_${replyData.code}`} key={`reply_${replyData.code}`} style={{display: "flex", flexDirection: "column", paddingBottom: "5px", marginBottom: "5px", borderBottom: "1px solid lightgray"}}>
+								<div id={`reply_${replyData.code}`} key={`reply_${replyData.code}`} style={{display: "flex", flexDirection: "column", paddingBottom: "5px", marginBottom: "", borderBottom: "1px solid lightgray"}}>
 									<div style={{display: "flex", justifyContent: "space-between", alignItems: "center"}}>
 										<div>
 											<span style={{fontSize: "0.8rem", color: "black"}}>{replyData.writer === "" ? `익명(${replyData.ip})` : replyData.writer}</span>
@@ -308,9 +308,10 @@ const BoardReply = (props) => {
 											{
 												replyData.deletedAt === null ?
 												<>
-													<Button id={"deleteReply"} onClick={() => {deleteReply(replyData.code, currentPage)}} variant="outline-danger" style={{padding: "2px", fontSize: "0.7rem"}}>
-														삭제
-													</Button>
+													<svg onClick={() => {deleteReply(replyData.code, currentPage)}} xmlns="http://www.w3.org/2000/svg" width="1.2rem" height="1.2rem" fill="palevioletred" className="bi bi-x-circle" viewBox="0 0 16 16">
+														<path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+														<path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
+													</svg>
 												</>
 												:
 												<></>
@@ -328,10 +329,16 @@ const BoardReply = (props) => {
 										</Button>
 									</div>
 
-									<Form id={`replyOfReplyForm_${replyData.code}`} style={{display: "none", margin: "4px", backgroundColor: "#efefef"}}>
-										<div style={{padding: "12px"}}>
+									<Form id={`replyOfReplyForm_${replyData.code}`} style={{display: "none", marginTop: "5px", borderRadius: "8px", backgroundColor: "#f1f4ff"}}>
+										<div style={{padding: "8px"}}>
 											<Form.Group className="mb-3">
-												<Form.Label style={{fontSize: "0.8rem"}}>답글 작성</Form.Label>
+												<Form.Label style={{fontSize: "0.8rem"}}>
+													<svg xmlns="http://www.w3.org/2000/svg" width="1.0rem" height="1.0rem" fill="currentColor" className="bi bi-arrow-return-right" viewBox="0 0 16 16">
+														<path fillRule="evenodd" d="M1.5 1.5A.5.5 0 0 0 1 2v4.8a2.5 2.5 0 0 0 2.5 2.5h9.793l-3.347 3.346a.5.5 0 0 0 .708.708l4.2-4.2a.5.5 0 0 0 0-.708l-4-4a.5.5 0 0 0-.708.708L13.293 8.3H3.5A1.5 1.5 0 0 1 2 6.8V2a.5.5 0 0 0-.5-.5z"/>
+													</svg>
+													&nbsp;
+													<strong>답글 작성</strong>
+												</Form.Label>
 												<Row className="g-2">
 													<Col>
 														<Form.Control name="writer" type="text" placeholder="작성자" defaultValue={"익명"} style={{marginBottom: "10px", fontSize: "0.8rem"}} readOnly />
@@ -353,12 +360,12 @@ const BoardReply = (props) => {
 						else{
 							renderElement.push(
 								<>
-									<div id={`reply_${replyData.code}`} key={`reply_${replyData.code}`} style={{display: "flex", flexDirection: "row", alignItems: "baseline"}}>
+									<div id={`reply_${replyData.code}`} key={`reply_${replyData.code}`} style={{display: "flex", flexDirection: "row", alignItems: "baseline", backgroundColor: "#f1f4ff", padding: "2px", borderBottom: "1px solid lightgray"}}>
 										<svg xmlns="http://www.w3.org/2000/svg" width="1.1rem" height="1.1rem" fill="currentColor" className="bi bi-arrow-return-right" viewBox="0 0 16 16">
-											<path fill-rule="evenodd" d="M1.5 1.5A.5.5 0 0 0 1 2v4.8a2.5 2.5 0 0 0 2.5 2.5h9.793l-3.347 3.346a.5.5 0 0 0 .708.708l4.2-4.2a.5.5 0 0 0 0-.708l-4-4a.5.5 0 0 0-.708.708L13.293 8.3H3.5A1.5 1.5 0 0 1 2 6.8V2a.5.5 0 0 0-.5-.5z"/>
+											<path fillRule="evenodd" d="M1.5 1.5A.5.5 0 0 0 1 2v4.8a2.5 2.5 0 0 0 2.5 2.5h9.793l-3.347 3.346a.5.5 0 0 0 .708.708l4.2-4.2a.5.5 0 0 0 0-.708l-4-4a.5.5 0 0 0-.708.708L13.293 8.3H3.5A1.5 1.5 0 0 1 2 6.8V2a.5.5 0 0 0-.5-.5z"/>
 										</svg>
 										
-										<div style={{width: "100%", display: "flex", flexDirection: "column", marginLeft: "8px", paddingBottom: "5px", marginBottom: "5px", borderBottom: "1px solid lightgray"}}>
+										<div style={{width: "100%", display: "flex", flexDirection: "column", marginLeft: "8px", paddingBottom: "5px", marginBottom: "5px"}}>
 											<div style={{display: "flex", justifyContent: "space-between", alignItems: "center"}}>
 												<div>
 													<span style={{fontSize: "0.8rem", color: "black"}}>{replyData.writer === "" ? `익명(${replyData.ip})` : replyData.writer}</span>
@@ -369,9 +376,10 @@ const BoardReply = (props) => {
 													{
 														replyData.deletedAt === null ?
 														<>
-															<Button id={"deleteReply"} onClick={() => {deleteReply(replyData.code, currentPage)}} variant="outline-danger" style={{padding: "2px", fontSize: "0.7rem"}}>
-																삭제
-															</Button>
+															<svg onClick={() => {deleteReply(replyData.code, currentPage)}} xmlns="http://www.w3.org/2000/svg" width="1.2rem" height="1.2rem" fill="palevioletred" className="bi bi-x-circle" viewBox="0 0 16 16">
+																<path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+																<path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
+															</svg>
 														</>
 														:
 														<></>
@@ -390,8 +398,8 @@ const BoardReply = (props) => {
 					}
 
 					renderElement.push(
-						<div style={{display: "flex", justifyContent: "center"}}>
-							<CustomPagination currentPage={currentPage} contentPerPage={50} contentCount={jsonData[1]} howManyPages={4} pageMoveFunc={pageMoveFunc}/>
+						<div style={{display: "flex", justifyContent: "center", marginTop: "20px"}}>
+							<CustomPagination currentPage={currentPage} contentPerPage={50} contentCount={jsonData[1]} howManyPages={5} pageMoveFunc={pageMoveFunc}/>
 						</div>
 					);
 					
@@ -409,19 +417,19 @@ const BoardReply = (props) => {
 						<Form.Label>댓글 작성</Form.Label>
 						<Row className="g-2">
 							<Col>
-								<Form.Control id="writer" type="text" placeholder="작성자" defaultValue={"익명"} style={{marginBottom: "10px"}} readOnly />
+								<Form.Control id="writer" type="text" placeholder="작성자" defaultValue={"익명"} style={{marginBottom: "10px", fontSize: "0.8rem"}} readOnly />
 							</Col>
 							<Col>
-								<Form.Control id="replyPassword" type="password" placeholder="비밀번호" maxLength={20} style={{marginBottom: "10px"}} />
+								<Form.Control id="replyPassword" type="password" placeholder="비밀번호" maxLength={20} style={{marginBottom: "10px", fontSize: "0.8rem"}} />
 							</Col>
 						</Row>
-						<Form.Control id={"replyData"} as="textarea" rows={4} />
+						<Form.Control id={"replyData"} as="textarea" rows={4} style={{fontSize: "0.8rem"}} />
 					</Form.Group>
 				</Form>
 				<div style={{display: "flex", justifyContent: "flex-end"}}>
-					<Button onClick={() => {getReplies(1)}} variant="outline-primary" style={{width: "30%", maxWidth: "200px", padding: "1px"}}>
+					{/* <Button onClick={() => {getReplies(1)}} variant="outline-primary" style={{width: "30%", maxWidth: "200px", padding: "1px"}}>
 						<span style={{fontSize: "0.8rem"}}>Load</span>
-					</Button>&nbsp;
+					</Button>&nbsp; */}
 					<Button id={"createReply"} onClick={() => {createReply()}} variant="outline-primary" style={{width: "30%", maxWidth: "200px", padding: "1px"}}>
 						<span style={{fontSize: "0.8rem"}}>등록</span>
 					</Button>

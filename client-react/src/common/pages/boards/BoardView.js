@@ -5,6 +5,7 @@ import Placeholder from 'react-bootstrap/Placeholder';
 import Button from 'react-bootstrap/Button';
 import BoardReply from './BoardReply';
 import LoadingModal from '../common/LoadingModal';
+import '../../css/View.css';
 
 const BoardView = () => {
 	const [contentCode, setContentCode] = useState(null);
@@ -48,6 +49,9 @@ const BoardView = () => {
 		}
 	}
 
+	/**
+	 * code로 게시글 삭제
+	 */
 	const deleteContent = useCallback(async () => {
 		const password = prompt("삭제하시려면 게시글의 비밀번호를 입력해주세요");
 		if(password === null){
@@ -58,7 +62,8 @@ const BoardView = () => {
 		setLoadingModalMessage("게시글을 삭제 중입니다...");
 
 		const sendData = {
-			password: password
+			code: contentCode,
+			password: password,
 		};
 		
 		const fecthOption = {
@@ -66,7 +71,7 @@ const BoardView = () => {
 			, body: JSON.stringify(sendData)
 			, headers: {"Content-Type": "application/json",}
 		};
-		const jsonString = await fetch(`${process.env.REACT_APP_SERVER}/boards/${contentCode}`, fecthOption);
+		const jsonString = await fetch(`${process.env.REACT_APP_SERVER}/boards/content/anonymous`, fecthOption);
 		const jsonData = await parseStringToJson(jsonString);
 
 		console.log("deleteContent", jsonData);
@@ -122,7 +127,7 @@ const BoardView = () => {
 	/**
 	 * 게시글 upvote & downvote
 	 */
-	const voteContent = useCallback(async (type) => {
+	const voteContent = useCallback(async (voteType) => {
 		const downvoteButton = document.querySelector("#downvoteButton");
 		const upvoteButton = document.querySelector("#upvoteButton");
 		upvoteButton.disabled = true;
@@ -139,7 +144,7 @@ const BoardView = () => {
 				, headers: {"Content-Type": "application/json",}
 				, credentials: "include", // Don't forget to specify this if you need cookies
 			};
-			const jsonString = await fetch(`${process.env.REACT_APP_SERVER}/boards/content/${type}`, fecthOption);
+			const jsonString = await fetch(`${process.env.REACT_APP_SERVER}/boards/content/anonymous/${voteType}`, fecthOption);
 			const jsonData = await parseStringToJson(jsonString);
 
 			if(jsonData === null){
@@ -248,9 +253,9 @@ const BoardView = () => {
 						{/*
 							sanitizer libraries for HTML XSS Attacks : DOMPurify
 						*/}
-						<div dangerouslySetInnerHTML={{__html: contentData}} style={{overflowWrap: "anywhere", overflow: "auto"}}></div>
+						<div dangerouslySetInnerHTML={{__html: contentData}} style={{overflowWrap: "anywhere", overflow: "auto", fontSize: "0.8rem"}}></div>
 
-						<div style={{display: "flex", justifyContent: "center"}}>
+						<div style={{display: "flex", justifyContent: "center", marginTop: "30px"}}>
 							<Button id={"upvoteButton"} onClick={() => {voteContent("upvote")}} variant="outline-success" style={{width: "30%", maxWidth: "130px", padding: "2px"}}>
 								<span style={{fontWeight: "800", fontSize: "1.1rem"}}>{upvoteCount}</span>
 								<br/>
@@ -264,17 +269,16 @@ const BoardView = () => {
 							</Button>
 						</div>
 
-						<hr style={{border: "2px solid #5893ff"}} />
-						<BoardReply contentCode={contentCode}></BoardReply>
+						<div style={{display: "flex", flexDirection: "row-reverse", marginBottom: "15px", marginTop: "30px"}}>
+							<Button onClick={() => {navigate(`/lostark/board/${category}/1`)}} variant="outline-secondary" style={{padding: "2px", width: "8%", minWidth: "70px", maxWidth: "100px", fontSize: "0.8rem"}}>목록으로</Button>
+							&nbsp;
+							<Button onClick={() => {deleteContent()}} variant="outline-danger" style={{padding: "2px", width: "8%", minWidth: "60px", maxWidth: "100px", fontSize: "0.8rem"}}>삭제</Button>
+							&nbsp;
+							<Button onClick={() => {editContent()}} variant="outline-primary" style={{padding: "2px", width: "8%", minWidth: "60px", maxWidth: "100px", fontSize: "0.8rem"}}>수정</Button>
+						</div>
 
 						<hr style={{border: "2px solid #5893ff"}} />
-						<div style={{display: "flex", flexDirection: "row-reverse"}}>
-							<span onClick={() => {navigate(`/lostark/board/${category}/1`)}}>To List</span>
-							&nbsp;|&nbsp;
-							<span onClick={() => {deleteContent()}}>Delete</span>
-							&nbsp;|&nbsp;
-							<span onClick={() => {editContent()}}>Edit</span>
-						</div>
+						<BoardReply contentCode={contentCode}></BoardReply>
 					</div>
 				</>
 			);

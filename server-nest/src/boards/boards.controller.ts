@@ -6,18 +6,6 @@ import { Replies } from './replies.entity';
 import { CreateBoardsDTO, UpdateBoardsDTO, DeleteBoardsDTO } from './boards.dto';
 import { CreateRepliesDTO, UpdateRepliesDTO, DeleteRepliesDTO } from './replies.dto';
 
-const voteData: Map<number, Array<string>> = new Map();
-let dateOfVote: string = new Date().toLocaleDateString("sv-SE", { year: "numeric", month: "2-digit", day: "2-digit" });
-const clearVoteInterval = setInterval(() => {
-	//1분 마다 확인하여 날짜가 바뀌면 추천 중복 방지 데이터를 초기화
-	const dateOfNow: string = new Date().toLocaleDateString("sv-SE", { year: "numeric", month: "2-digit", day: "2-digit" });
-
-	if (dateOfVote !== dateOfNow) {
-		voteData.clear();
-		dateOfVote = dateOfNow;
-	}
-}, (1000 * 60));
-
 @Controller("boards")
 export class BoardsController {
 	constructor(private boardsService: BoardsService) { }
@@ -92,23 +80,23 @@ export class BoardsController {
 		return { data: findContent.password === sendData.password };
 	}
 
-	@Delete("content")
-	async deleteContent(@Body() boardData: DeleteBoardsDTO): Promise<{data: boolean}> {
+	@Delete("content/anonymous")
+	async deleteContent(@Body() deleteBoardsDTO: DeleteBoardsDTO): Promise<{data: boolean}> {
 		console.log("[Controller-boards-deleteContent]");
-		const isDeleted = await this.boardsService.softDeleteContent(boardData);
+		const isDeleted = await this.boardsService.softDeleteContent(deleteBoardsDTO);
 		return { data: isDeleted };
 	}
 
-	@Patch("anonymous")
-	async updateContentAnonymous(@Body() boardData: UpdateBoardsDTO): Promise<{ data: Boards | null }> {
-		console.log("[Controller-boards-updateContentAnonymous]" + boardData.password);
+	@Patch("content/anonymous")
+	async updateContentAnonymous(@Body() updateBoardsDTO: UpdateBoardsDTO): Promise<{ data: Boards | null }> {
+		console.log("[Controller-boards-updateContentAnonymous]");
 
-		const updatedContent = await this.boardsService.updateContent(boardData);
+		const updatedContent = await this.boardsService.updateContent(updateBoardsDTO);
 
 		return { data: updatedContent };
 	}
 
-	@Post("content/upvote")
+	@Post("content/anonymous/upvote")
 	async upvoteContent(@Ip() ipData: string, @Body() sendData: { code: number }): Promise<{data: Boards | null}> {
 		console.log("[Controller-boards-upvoteContent]");
 
@@ -124,7 +112,7 @@ export class BoardsController {
 		}
 	}
 
-	@Post("content/downvote")
+	@Post("content/anonymous/downvote")
 	async downvoteContent(@Ip() ipData: string, @Body() sendData: { code: number }){
 		console.log("[Controller-boards-downvoteContent]");
 

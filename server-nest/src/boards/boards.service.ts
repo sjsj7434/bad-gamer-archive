@@ -23,7 +23,7 @@ export class BoardsService {
 	})
 	resetVoteData() {
 		this.contentVoteData.clear();
-		console.log("[resetVoteData] Called every minute");
+		console.log("[resetVoteData] Called every day 00:00");
 	}
 
 	isVotableContent(contentCode: number, ipData: string): boolean{
@@ -129,9 +129,8 @@ export class BoardsService {
 	/**
 	 * 게시판에 게시글을 생성한다
 	 */
-	async createContent(contentData: CreateBoardsDTO): Promise<Boards> {
-		console.log(`serviec Called : createContent`)
-		const createdContent = await this.boardsRepository.save(contentData);
+	async createContent(createBoardsDTO: CreateBoardsDTO): Promise<Boards> {
+		const createdContent = await this.boardsRepository.save(createBoardsDTO);
 
 		return createdContent;
 	}
@@ -148,11 +147,9 @@ export class BoardsService {
 		});
 
 		if (contentData !== null){
-			contentData.title = boardData.title;
-			contentData.content = boardData.content;
-			contentData.updatedAt = new Date(); //기본 값을 NULL로 삽입하기
+			boardData.updatedAt = new Date();
 	
-			await this.boardsRepository.save(contentData);
+			await this.boardsRepository.save(boardData);
 		}
 
 		return contentData;
@@ -161,13 +158,13 @@ export class BoardsService {
 	/**
 	 * 게시글을 softDelete한다
 	 */
-	async softDeleteContent(boardData: DeleteBoardsDTO): Promise<boolean>{
+	async softDeleteContent(deleteBoardsDTO: DeleteBoardsDTO): Promise<boolean>{
 		try {
-			const result = await this.boardsRepository.findOneBy({ code: boardData.code, password: boardData.password });
+			const result = await this.boardsRepository.findOneBy({ code: deleteBoardsDTO.code, password: deleteBoardsDTO.password });
 
 			if (result !== null){
 				this.boardsRepository.softDelete({
-					code: boardData.code
+					code: deleteBoardsDTO.code
 				});
 
 				return true;

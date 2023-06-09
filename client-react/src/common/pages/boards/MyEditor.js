@@ -222,8 +222,8 @@ const MyEditor = (props) => {
 					// console.log("Focus", editor);
 				}}
 			/>
-			<div id="word-count"></div>
-			<div id="html-size"></div>
+			<div id="word-count" style={{fontSize: "0.8rem"}}></div>
+			<div id="html-size" style={{fontSize: "0.8rem"}}></div>
 
 			<button onClick={() => {props.saveFunction({
 					content: editorForOutside.getData()

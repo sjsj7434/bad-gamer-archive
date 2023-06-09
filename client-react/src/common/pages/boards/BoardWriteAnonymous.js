@@ -8,6 +8,7 @@ import Col from 'react-bootstrap/Col';
 import Placeholder from 'react-bootstrap/Placeholder';
 import InputGroup from 'react-bootstrap/InputGroup';
 import LoadingModal from '../common/LoadingModal';
+import '../../css/View.css';
 
 const BoardWriteAnonymous = () => {
 	const [writeMode, setWriteMode] = useState("");
@@ -97,7 +98,7 @@ const BoardWriteAnonymous = () => {
 			, headers: {"Content-Type": "application/json",}
 			, credentials: "include", // Don't forget to specify this if you need cookies
 		};
-		const jsonString = await fetch(`${process.env.REACT_APP_SERVER}/boards/anonymous`, fecthOption);
+		const jsonString = await fetch(`${process.env.REACT_APP_SERVER}/boards/content/anonymous`, fecthOption);
 		const jsonData = await parseStringToJson(jsonString);
 
 		return jsonData;
@@ -219,17 +220,23 @@ const BoardWriteAnonymous = () => {
 			password: contentPassword,
 			title: titleElement.value,
 			content: editorData.content,
+			hasImage: editorData.content.indexOf("<img") > -1 ? true : false,
+			writer: "",
 		});
 
-		if(result !== null){
-			//정상적으로 처리 성공
-			navigate(`/lostark/board/anonymous/view/${contentCode}`);
-		}
-		else{
-			alert("문제가 발생하여 게시글을 수정할 수 없습니다");
+		if(result === null){
+			alert("문제가 발생하여 게시글을 수정할 수 없습니다(1)");
 			setLoadingModalShow(false);
 			setLoadingModalMessage("");
-			// localStorage.setItem("tempContentData", contentData.content); //다시 작성하는 일이 생기지 않도록?
+		}
+		else if(result === undefined){
+			alert("문제가 발생하여 게시글을 수정할 수 없습니다(2)");
+			setLoadingModalShow(false);
+			setLoadingModalMessage("");
+		}
+		else{
+			//정상적으로 처리 성공
+			navigate(`/lostark/board/anonymous/view/${contentCode}`);
 		}
 	}, [contentCode, contentPassword, updateContent, navigate])
 
@@ -281,12 +288,12 @@ const BoardWriteAnonymous = () => {
 				setRenderData(
 					<>
 						<Form.Group as={Row} className="mb-3">
-							<Form.Label style={{fontWeight: "800"}}>
+							<Form.Label style={{fontWeight: "800", fontSize: "0.8rem"}}>
 								게시글 비밀번호를 입력해주세요
 							</Form.Label>
 							<Col>
 								<InputGroup>
-									<Form.Control id="contentPassword" maxLength={20} type="password" placeholder="게시글 비밀번호를 입력해주세요" autoComplete="off" />
+									<Form.Control id="contentPassword" maxLength={20} type="password" placeholder="게시글 비밀번호를 입력해주세요" autoComplete="off" style={{fontSize: "0.8rem"}} />
 								</InputGroup>
 								<Form.Text style={{color: "red"}}>
 									{failMessage}
@@ -326,7 +333,7 @@ const BoardWriteAnonymous = () => {
 						<>
 							익명 게시판 / 수정
 							<br />
-							<Form.Control id="title" type="text" placeholder="제목" style={{marginBottom: "10px"}} defaultValue={contentTitle} />
+							<Form.Control id="title" type="text" placeholder="제목" style={{marginBottom: "10px", fontSize: "0.8rem"}} defaultValue={contentTitle} />
 							<MyEditor savedData={contentData} writeMode={writeMode} saveFunction={(editorData) => {editEditorData(editorData)}}></MyEditor>
 							&nbsp;
 							<button onClick={() => {if(window.confirm("내용을 수정하지않고 나가시겠습니까?") === true){navigate(`/lostark/board/anonymous/view/${contentCode}`)}}}>취소</button>
