@@ -180,8 +180,6 @@ const editorConfiguration = {
 	}
 };
 
-let editorForOutside = null; //CKEditor 컴포넌트 외부에서도 호출할 수 있도록하는 변수
-
 const MyEditor = (props) => {
 	return (
 		<>
@@ -190,9 +188,9 @@ const MyEditor = (props) => {
 				editor={ClassicEditor}
 				data={props.savedData}
 				onReady={(editor) => {
+					props.setEditor(editor);
 					// You can store the "editor" and use when it is needed.
 					console.log("Editor is ready to use!", editor);
-					editorForOutside = editor;
 					// console.log(Array.from(editor.ui.componentFactory.names()).join(", "));
 
 					// const wordCountPlugin = editor.plugins.get("WordCount");
@@ -224,13 +222,6 @@ const MyEditor = (props) => {
 			/>
 			<div id="word-count" style={{fontSize: "0.8rem"}}></div>
 			<div id="html-size" style={{fontSize: "0.8rem"}}></div>
-
-			<button onClick={() => {props.saveFunction({
-					content: editorForOutside.getData()
-				})
-			}}>
-				{props.writeMode === "new" ? "저장" : "수정"}
-			</button>
 		</>
 	);
 }

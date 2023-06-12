@@ -1,4 +1,5 @@
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, DeleteDateColumn } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, DeleteDateColumn, OneToMany } from 'typeorm';
+import { Replies } from './replies.entity';
 
 // This will create following database table
 // If table is already exsists there could be error
@@ -9,6 +10,9 @@ import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, DeleteDateCol
 
 @Entity()
 export class Boards {
+	@OneToMany(() => Replies, (replies) => replies.boards)
+	replies: Replies[];
+
 	/**
 	 * 자동으로 생성되는 코드
 	 */

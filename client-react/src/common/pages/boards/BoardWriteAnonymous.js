@@ -7,6 +7,7 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Placeholder from 'react-bootstrap/Placeholder';
 import InputGroup from 'react-bootstrap/InputGroup';
+import Button from 'react-bootstrap/Button';
 import LoadingModal from '../common/LoadingModal';
 import '../../css/View.css';
 
@@ -23,6 +24,7 @@ const BoardWriteAnonymous = () => {
 	const [loadingModalMessage, setLoadingModalMessage] = useState("");
 	const params = useParams();
 	const navigate = useNavigate();
+	const [editorObject, setEditorObject] = useState(null);
 
 	/**
 	 * 자주 사용하는 fetch 템플릿
@@ -149,7 +151,7 @@ const BoardWriteAnonymous = () => {
 	/**
 	 * 신규 게시글 작성
 	 */
-	const saveEditorData = useCallback(async (editorData) => {
+	const saveEditorData = useCallback(async () => {
 		const passwordElement = document.querySelector("#contentPassword");
 		const titleElement = document.querySelector("#title");
 
@@ -171,14 +173,14 @@ const BoardWriteAnonymous = () => {
 		setLoadingModalShow(true);
 		setLoadingModalMessage("게시글을 저장 중입니다...");
 
+		const editorContet = editorObject.getData();
+
 		let result = await createContent({
 			password: passwordElement.value,
 			title: titleElement.value,
-			content: editorData.content,
-			hasImage: editorData.content.indexOf("<img") > -1 ? true : false,
+			content: editorContet,
+			hasImage: editorContet.indexOf("<img") > -1 ? true : false,
 		});
-
-		console.log("saveEditorData", result);
 
 		if(result === null){
 			alert("문제가 발생하여 게시글을 저장할 수 없습니다(1)");
@@ -193,12 +195,12 @@ const BoardWriteAnonymous = () => {
 		else{
 			navigate(`/lostark/board/anonymous/1`);
 		}
-	}, [createContent, navigate])
+	}, [editorObject, createContent, navigate])
 
 	/**
 	 * 게시글 수정
 	 */
-	const editEditorData = useCallback(async (editorData) => {
+	const editEditorData = useCallback(async () => {
 		const titleElement = document.querySelector("#title");
 
 		if(titleElement.value === ""){
@@ -215,12 +217,14 @@ const BoardWriteAnonymous = () => {
 		setLoadingModalShow(true);
 		setLoadingModalMessage("게시글을 수정 중입니다...");
 
+		const editorContet = editorObject.getData();
+
 		let result = await updateContent({
 			code: contentCode,
 			password: contentPassword,
 			title: titleElement.value,
-			content: editorData.content,
-			hasImage: editorData.content.indexOf("<img") > -1 ? true : false,
+			content: editorContet,
+			hasImage: editorContet.indexOf("<img") > -1 ? true : false,
 			writer: "",
 		});
 
@@ -238,7 +242,7 @@ const BoardWriteAnonymous = () => {
 			//정상적으로 처리 성공
 			navigate(`/lostark/board/anonymous/view/${contentCode}`);
 		}
-	}, [contentCode, contentPassword, updateContent, navigate])
+	}, [contentCode, contentPassword, editorObject, updateContent, navigate])
 
 	useEffect(() => {
 		console.log(`useEffect 3`)
@@ -275,11 +279,15 @@ const BoardWriteAnonymous = () => {
 						</Col>
 					</Row>
 					<Form.Control id="title" type="text" placeholder="제목" style={{marginBottom: "10px", fontSize: "0.8rem"}} defaultValue={""} />
-					<MyEditor savedData={""} writeMode={writeMode} saveFunction={(editorData) => {saveEditorData(editorData)}}></MyEditor>
-					&nbsp;
-					<button onClick={() => {if(window.confirm("작성한 내용을 전부 비우시겠습니까?") === true){console.log('you need to make clear func!')}}}>비우기</button>
-					&nbsp;
-					<button onClick={() => {if(window.confirm("작성한 내용을 저장하지않고 나가시겠습니까?") === true){navigate("/lostark/board/anonymous/1")}}}>취소</button>
+					<MyEditor savedData={""} writeMode={writeMode} setEditor={(editor) => {setEditorObject(editor)}}></MyEditor>
+
+					<div style={{display: "flex", justifyContent: "flex-end", marginBottom: "15px", marginTop: "30px"}}>
+						<Button onClick={() => {saveEditorData()}} variant="outline-primary" style={{width: "20%", minWidth: "60px", maxWidth: "200px", fontSize: "0.8rem"}}>저장</Button>
+						&nbsp;
+						<Button onClick={() => {if(window.confirm("작성한 내용을 전부 비우시겠습니까?") === true){editorObject.setData("")}}} variant="outline-danger" style={{width: "20%", minWidth: "60px", maxWidth: "200px", fontSize: "0.8rem"}}>비우기</Button>
+						&nbsp;
+						<Button onClick={() => {if(window.confirm("작성한 내용을 저장하지않고 나가시겠습니까?") === true){navigate("/lostark/board/anonymous/1")}}} variant="outline-secondary" style={{width: "20%", minWidth: "60px", maxWidth: "200px", fontSize: "0.8rem"}}>취소</Button>
+					</div>
 				</>
 			)
 		}
@@ -293,18 +301,22 @@ const BoardWriteAnonymous = () => {
 							</Form.Label>
 							<Col>
 								<InputGroup>
-									<Form.Control id="contentPassword" maxLength={20} type="password" placeholder="게시글 비밀번호를 입력해주세요" autoComplete="off" style={{fontSize: "0.8rem"}} />
+									<Form.Control id="contentPassword" maxLength={20} type="password" placeholder="게시글 비밀번호를 입력해주세요" onKeyDown={(event) => {if(event.key === "Enter"){checkBeforeEdit()}}} autoComplete="off" style={{fontSize: "0.8rem"}} />
 								</InputGroup>
-								<Form.Text style={{color: "red"}}>
+								<Form.Text style={{color: "red", fontSize: "0.8rem"}}>
 									{failMessage}
 								</Form.Text>
 							</Col>
 						</Form.Group>
 
-						&nbsp;
-						<button onClick={() => {checkBeforeEdit()}}>확인</button>
-						&nbsp;
-						<button onClick={() => {if(window.confirm("내용을 수정하지않고 나가시겠습니까?") === true){navigate(`/lostark/board/anonymous/view/${contentCode}`)}}}>취소</button>
+						<Row className="justify-content-md-center" xs={2} md={2}>
+							<Col>
+								<Button onClick={() => {checkBeforeEdit()}} variant="outline-primary" style={{width: "100%", minWidth: "60px", maxWidth: "500px", fontSize: "0.8rem"}}>확인</Button>
+							</Col>
+							<Col>
+								<Button onClick={() => {if(window.confirm("내용을 수정하지않고 나가시겠습니까?") === true){navigate(`/lostark/board/anonymous/view/${contentCode}`)}}} variant="outline-secondary" style={{width: "100%", minWidth: "60px", maxWidth: "500px", fontSize: "0.8rem"}}>취소</Button>
+							</Col>
+						</Row>
 					</>
 				);
 			}
@@ -334,15 +346,19 @@ const BoardWriteAnonymous = () => {
 							익명 게시판 / 수정
 							<br />
 							<Form.Control id="title" type="text" placeholder="제목" style={{marginBottom: "10px", fontSize: "0.8rem"}} defaultValue={contentTitle} />
-							<MyEditor savedData={contentData} writeMode={writeMode} saveFunction={(editorData) => {editEditorData(editorData)}}></MyEditor>
-							&nbsp;
-							<button onClick={() => {if(window.confirm("내용을 수정하지않고 나가시겠습니까?") === true){navigate(`/lostark/board/anonymous/view/${contentCode}`)}}}>취소</button>
+							<MyEditor savedData={contentData} setEditor={(editor) => {setEditorObject(editor)}}></MyEditor>
+
+							<div style={{display: "flex", justifyContent: "flex-end", marginBottom: "15px", marginTop: "30px"}}>
+								<Button onClick={() => {editEditorData()}} variant="outline-primary" style={{width: "20%", minWidth: "60px", maxWidth: "200px", fontSize: "0.8rem"}}>수정</Button>
+								&nbsp;
+								<Button onClick={() => {if(window.confirm("내용을 수정하지않고 나가시겠습니까?") === true){navigate(`/lostark/board/anonymous/view/${contentCode}`)}}} variant="outline-secondary" style={{width: "20%", minWidth: "60px", maxWidth: "200px", fontSize: "0.8rem"}}>취소</Button>
+							</div>
 						</>
 					);
 				}
 			}
 		}
-	}, [writeMode, contentTitle, contentData, identity, failMessage, saveEditorData, editEditorData])
+	}, [writeMode, contentTitle, contentData, identity, failMessage, editorObject, saveEditorData, editEditorData])
 	
 	return(
 		<Container style={{maxWidth: "1440px"}}>

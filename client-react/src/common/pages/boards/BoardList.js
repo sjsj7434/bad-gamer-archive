@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from "react-router-dom";
 import Container from 'react-bootstrap/Container';
+import Button from 'react-bootstrap/Button';
 import CustomPagination from './CustomPagination';
 
 const BoardList = () => {
@@ -151,13 +152,13 @@ const BoardList = () => {
 											</div>
 											<div style={{textAlign: "end"}}>
 												{
-													parseInt(Math.random() * 1693, 10) > 999 ?
+													data.replies.length > 999 ?
 													<span style={{fontSize: "0.85rem", color: "palevioletred"}}>
 														999+
 													</span>
 													:
 													<span style={{fontSize: "0.85rem", color: "darkseagreen"}}>
-														{parseInt(Math.random() * 1000, 10)}
+														{data.replies.length}
 													</span>
 												}
 											</div>
@@ -188,11 +189,10 @@ const BoardList = () => {
 									{contentListData}
 								</div>
 
-								<div style={{display: "flex", flexDirection: "row-reverse"}}>
-									<Link to={`/lostark/board/${contentCategory}/write`}>
-										Write
-									</Link>
-									{/* <span onClick={() => {navigate(`/lostark/board/${contentCategory}/write`)}}>Write</span> */}
+								<div style={{display: "flex", justifyContent: "flex-end"}}>
+									<Button id={"createReply"} onClick={() => {navigate(`/lostark/board/${contentCategory}/write`)}} variant="outline-primary" style={{width: "30%", maxWidth: "200px", padding: "1px"}}>
+										<span style={{fontSize: "0.8rem"}}>글쓰기</span>
+									</Button>
 								</div>
 							</div>
 

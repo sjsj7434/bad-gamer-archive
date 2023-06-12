@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { In, Repository, Not, IsNull } from 'typeorm';
 import { Boards } from './boards.entity';
 import { CreateBoardsDTO, UpdateBoardsDTO, DeleteBoardsDTO } from './boards.dto';
 import { Replies } from './replies.entity';
@@ -46,29 +46,57 @@ export class BoardsService {
 	/**
 	 * category에 해당하는 글 목록 가져오기
 	 */
-	getContentListByCategory(category: string, page: number): Promise<[Boards[], number]> {
-		return this.boardsRepository.findAndCount({
-			skip: (page - 1) * 10, //시작 인덱스
-			take: 10, //페이지 당 갯수
+	async getContentListByCategory(category: string, page: number): Promise<[Boards[], number]> {
+		const result = await this.boardsRepository.findAndCount({
+			relations: ["replies"], //댓글 정보 join
 			select: {
+				replies: {code: true},
 				code: true,
+				writer: true,
 				title: true,
-				hasImage: true,
 				view: true,
 				upvote: true,
 				downvote: true,
-				writer: true,
 				ip: true,
-				createdAt: true
+				hasImage: true,
+				createdAt: true,
 			},
 			where: {
 				category: category,
+				deletedAt: IsNull(),
 			},
 			order: {
-				createdAt: "DESC",
 				code: "DESC",
-			}
-		});
+			},
+			withDeleted: true,
+			skip: (page - 1) * 10,
+			take: 10,
+		})
+
+		// const result = await this.boardsRepository.findAndCount({
+		// 	skip: (page - 1) * 10, //시작 인덱스
+		// 	take: 10, //페이지 당 갯수
+		// 	select: {
+		// 		code: true,
+		// 		title: true,
+		// 		hasImage: true,
+		// 		view: true,
+		// 		upvote: true,
+		// 		downvote: true,
+		// 		writer: true,
+		// 		ip: true,
+		// 		createdAt: true,
+		// 	},
+		// 	where: {
+		// 		category: category,
+		// 	},
+		// 	order: {
+		// 		createdAt: "DESC",
+		// 		code: "DESC",
+		// 	}
+		// });
+
+		return result;
 	}
 
 	/**

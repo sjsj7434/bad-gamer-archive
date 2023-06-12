@@ -31,11 +31,9 @@ export class BoardsController {
 		console.log("[Controller-boards-getContentListByCategory]");
 
 		const result = await this.boardsService.getContentListByCategory(category, page);
+		// console.log(result)
 
-		if (result === null) {
-			console.log("getContentListByCategory is null");
-		}
-		else {
+		if (result !== null) {
 			for (let index: number = 0; index < result[0].length; index++){
 				result[0][index]["ip"] = result[0][index]["ip"].split(".")[0] + (result[0][index]["ip"].split(".")[1] !== undefined ? "." + result[0][index]["ip"].split(".")[1] : "");
 			}

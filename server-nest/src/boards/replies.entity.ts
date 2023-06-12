@@ -1,4 +1,5 @@
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, DeleteDateColumn } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, DeleteDateColumn, ManyToOne, JoinColumn } from 'typeorm';
+import { Boards } from './boards.entity';
 
 // This will create following database table
 // If table is already exsists there could be error
@@ -9,6 +10,10 @@ import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, DeleteDateCol
 
 @Entity()
 export class Replies {
+	@ManyToOne(() => Boards, (boards) => boards.replies)
+	@JoinColumn({ name: 'parentContentCode' })
+	boards: Boards;
+	
 	/**
 	 * 자동으로 생성되는 코드
 	 */

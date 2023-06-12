@@ -280,7 +280,7 @@ const BoardReply = (props) => {
 			if(jsonData !== null){
 				if(jsonData[1] === 0){
 					setRenderData(
-						<div style={{fontSize: "0.75rem", color: "lightgray"}}>
+						<div key={"replyTop"} id={"replyTop"} style={{fontSize: "0.75rem", color: "lightgray"}}>
 							* 등록된 댓글이 없습니다
 						</div>
 					);
@@ -289,7 +289,7 @@ const BoardReply = (props) => {
 					const renderElement = [];
 
 					renderElement.push(
-						<div id={"replyTop"} style={{display: "flex", justifyContent: "flex-start"}}>
+						<div key={"replyTop"} id={"replyTop"} style={{display: "flex", justifyContent: "flex-start"}}>
 							<p style={{fontSize: "0.8rem"}}>댓글 <strong>{jsonData[1]}</strong>개</p>
 						</div>
 					);
@@ -359,46 +359,44 @@ const BoardReply = (props) => {
 						}
 						else{
 							renderElement.push(
-								<>
-									<div id={`reply_${replyData.code}`} key={`reply_${replyData.code}`} style={{display: "flex", flexDirection: "row", alignItems: "baseline", backgroundColor: "#f1f4ff", padding: "2px", borderBottom: "1px solid lightgray"}}>
-										<svg xmlns="http://www.w3.org/2000/svg" width="1.1rem" height="1.1rem" fill="currentColor" className="bi bi-arrow-return-right" viewBox="0 0 16 16">
-											<path fillRule="evenodd" d="M1.5 1.5A.5.5 0 0 0 1 2v4.8a2.5 2.5 0 0 0 2.5 2.5h9.793l-3.347 3.346a.5.5 0 0 0 .708.708l4.2-4.2a.5.5 0 0 0 0-.708l-4-4a.5.5 0 0 0-.708.708L13.293 8.3H3.5A1.5 1.5 0 0 1 2 6.8V2a.5.5 0 0 0-.5-.5z"/>
-										</svg>
-										
-										<div style={{width: "100%", display: "flex", flexDirection: "column", marginLeft: "8px", paddingBottom: "5px", marginBottom: "5px"}}>
-											<div style={{display: "flex", justifyContent: "space-between", alignItems: "center"}}>
-												<div>
-													<span style={{fontSize: "0.8rem", color: "black"}}>{replyData.writer === "" ? `익명(${replyData.ip})` : replyData.writer}</span>
-													&nbsp;
-													<span style={{fontSize: "0.75rem", color: "lightgray"}}>{new Date(replyData.createdAt).toLocaleString("sv-SE")}</span>
-												</div>
-												<div>
-													{
-														replyData.deletedAt === null ?
-														<>
-															<svg onClick={() => {deleteReply(replyData.code, currentPage)}} xmlns="http://www.w3.org/2000/svg" width="1.2rem" height="1.2rem" fill="palevioletred" className="bi bi-x-circle" viewBox="0 0 16 16">
-																<path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
-																<path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
-															</svg>
-														</>
-														:
-														<></>
-													}
-												</div>
+								<div id={`reply_${replyData.code}`} key={`reply_${replyData.code}`} style={{display: "flex", flexDirection: "row", alignItems: "baseline", backgroundColor: "#f1f4ff", padding: "2px", borderBottom: "1px solid lightgray"}}>
+									<svg xmlns="http://www.w3.org/2000/svg" width="1.1rem" height="1.1rem" fill="currentColor" className="bi bi-arrow-return-right" viewBox="0 0 16 16">
+										<path fillRule="evenodd" d="M1.5 1.5A.5.5 0 0 0 1 2v4.8a2.5 2.5 0 0 0 2.5 2.5h9.793l-3.347 3.346a.5.5 0 0 0 .708.708l4.2-4.2a.5.5 0 0 0 0-.708l-4-4a.5.5 0 0 0-.708.708L13.293 8.3H3.5A1.5 1.5 0 0 1 2 6.8V2a.5.5 0 0 0-.5-.5z"/>
+									</svg>
+									
+									<div style={{width: "100%", display: "flex", flexDirection: "column", marginLeft: "8px", paddingBottom: "5px", marginBottom: "5px"}}>
+										<div style={{display: "flex", justifyContent: "space-between", alignItems: "center"}}>
+											<div>
+												<span style={{fontSize: "0.8rem", color: "black"}}>{replyData.writer === "" ? `익명(${replyData.ip})` : replyData.writer}</span>
+												&nbsp;
+												<span style={{fontSize: "0.75rem", color: "lightgray"}}>{new Date(replyData.createdAt).toLocaleString("sv-SE")}</span>
 											</div>
-
-											<div style={{fontSize: "0.75rem", marginTop: "5px", whiteSpace: "break-spaces"}}>
-												{replyData.deletedAt === null ? replyData.content : <span style={{color: "palevioletred"}}>{replyData.content}</span>}
+											<div>
+												{
+													replyData.deletedAt === null ?
+													<>
+														<svg onClick={() => {deleteReply(replyData.code, currentPage)}} xmlns="http://www.w3.org/2000/svg" width="1.2rem" height="1.2rem" fill="palevioletred" className="bi bi-x-circle" viewBox="0 0 16 16">
+															<path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+															<path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
+														</svg>
+													</>
+													:
+													<></>
+												}
 											</div>
 										</div>
+
+										<div style={{fontSize: "0.75rem", marginTop: "5px", whiteSpace: "break-spaces"}}>
+											{replyData.deletedAt === null ? replyData.content : <span style={{color: "palevioletred"}}>{replyData.content}</span>}
+										</div>
 									</div>
-								</>
+								</div>
 							);
 						}
 					}
 
 					renderElement.push(
-						<div style={{display: "flex", justifyContent: "center", marginTop: "20px"}}>
+						<div key={"pagination"} style={{display: "flex", justifyContent: "center", marginTop: "20px"}}>
 							<CustomPagination currentPage={currentPage} contentPerPage={50} contentCount={jsonData[1]} howManyPages={5} pageMoveFunc={pageMoveFunc}/>
 						</div>
 					);
@@ -427,9 +425,6 @@ const BoardReply = (props) => {
 					</Form.Group>
 				</Form>
 				<div style={{display: "flex", justifyContent: "flex-end"}}>
-					{/* <Button onClick={() => {getReplies(1)}} variant="outline-primary" style={{width: "30%", maxWidth: "200px", padding: "1px"}}>
-						<span style={{fontSize: "0.8rem"}}>Load</span>
-					</Button>&nbsp; */}
 					<Button id={"createReply"} onClick={() => {createReply()}} variant="outline-primary" style={{width: "30%", maxWidth: "200px", padding: "1px"}}>
 						<span style={{fontSize: "0.8rem"}}>등록</span>
 					</Button>
