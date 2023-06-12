@@ -11,7 +11,10 @@ import { Boards } from './boards.entity';
 @Entity()
 export class Replies {
 	@ManyToOne(() => Boards, (boards) => boards.replies)
-	@JoinColumn({ name: 'parentContentCode' })
+	@JoinColumn({ name: "parentContentCode", referencedColumnName: "code" }) //this code reference the boards.code column
+	// @JoinColumn() //this decorator is optional for @ManyToOne, This code will create a boardsCode column in the database
+	// By default your relation always refers to [the primary column] of the related entity
+	// https://typeorm.io/relations#joincolumn-options
 	boards: Boards;
 	
 	/**

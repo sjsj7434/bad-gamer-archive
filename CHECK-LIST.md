@@ -30,12 +30,12 @@ npm run start
 - <input type='checkbox' checked> 회원 비밀번호 암호화
 - <input type='checkbox' checked> 로그인 구현
 - <input type='checkbox' checked> 회원가입 후, 본캐 인증
-- <input type='checkbox'> ckEditor5 게시글 작성 기능(인증 필요없는 자유)
-- <input type='checkbox'> ckEditor5 게시글 작성 기능(인증 전용)
-- <input type='checkbox'> ckEditor5 게시글 수정 기능?(인증 전용)
-- <input type='checkbox'> 연관 게시글 링크 기능?(인증 전용)
 - <input type='checkbox'> ckEditor5 게시글 내 이미지 처리
-- <input type='checkbox'> 간단한 댓글 작성 기능
+- <input type='checkbox' checked> 댓글 작성 기능
+- <input type='checkbox' checked> ckEditor5 게시글 작성 기능(인증 필요없는 자유)
+- <input type='checkbox' checked> ckEditor5 게시글 수정 기능(인증 필요없는 자유)
+- <input type='checkbox'> ckEditor5 게시글 작성 기능(인증 전용)
+- <input type='checkbox'> ckEditor5 게시글 수정 기능(인증 전용)
 - <input type='checkbox'> 본캐 인증 정보 조회(마이페이지)
 - <input type='checkbox'> 비밀번호 변경
 - <input type='checkbox'> 비밀번호 찾기(초기화, 이메일 사용)
@@ -46,6 +46,7 @@ npm run start
 - <input type='checkbox'> 관리자 페이지(밴, 게시글 삭제...)
 - <input type='checkbox'> 관리자 페이지는 Django(Python)를 써볼까?
 - <input type='checkbox'> 관리자 페이지는 Strapi(JS)를 써볼까?
+- <input type='checkbox'> 연관 게시글 링크 기능?(인증 전용)
 
 ## 본캐 인증 절차(유저)
 ```bash
