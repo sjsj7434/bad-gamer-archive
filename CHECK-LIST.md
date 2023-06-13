@@ -12,7 +12,7 @@
 [할 일 목록]
 2023-05-25 : 익명 게시판 View, Pagination 입력값 예외처리, Get 방식이기 때문에 원치 않는 값이 들어올 수 있음
 2023-05-26 : URL 라우팅 고도화 필요
-2023-06-12 : entity OneToMany 이해가 안되네
+2023-06-13 : 회원정보 관련 400 error, 비밀번호 변경
 ```
 
 ```
@@ -30,18 +30,21 @@ npm run start
 - <input type='checkbox' checked> 회원 비밀번호 암호화
 - <input type='checkbox' checked> 로그인 구현
 - <input type='checkbox' checked> 회원가입 후, 본캐 인증
-- <input type='checkbox'> ckEditor5 게시글 내 이미지 처리
 - <input type='checkbox' checked> 댓글 작성 기능
 - <input type='checkbox' checked> ckEditor5 게시글 작성 기능(인증 필요없는 자유)
 - <input type='checkbox' checked> ckEditor5 게시글 수정 기능(인증 필요없는 자유)
+- <input type='checkbox'> 마이페이지 비밀번호 변경(기존 비밀번호 입력 후 변경)
+- <input type='checkbox'> 마이페이지 본캐 인증 정보 조회
+- <input type='checkbox'> 마이페이지 본캐 인증 정보 업데이트
+- <input type='checkbox'> 마이페이지 본캐 인증 정보 캐릭 변경
+- <input type='checkbox'> AWS SES(이메일 발송) 도입
+- <input type='checkbox'> 비밀번호 찾기(비번 초기화, 인증은 이메일 사용)
+- <input type='checkbox'> AWS S3(이미지서버) 도입
+- <input type='checkbox'> ckEditor5 게시글 내 이미지 처리
 - <input type='checkbox'> ckEditor5 게시글 작성 기능(인증 전용)
 - <input type='checkbox'> ckEditor5 게시글 수정 기능(인증 전용)
-- <input type='checkbox'> 본캐 인증 정보 조회(마이페이지)
-- <input type='checkbox'> 비밀번호 변경
-- <input type='checkbox'> 비밀번호 찾기(초기화, 이메일 사용)
-- <input type='checkbox'> 웹서버용 EC2 AWS 구매
-- <input type='checkbox'> DB용 EC2 AWS 구매(RDS 너무 비쌈)
-- <input type='checkbox'> 이미지서버용 S3 AWS 구매
+- <input type='checkbox'> AWS EC2(웹서버) 도입
+- <input type='checkbox'> AWS EC2(DB) 도입(RDS 너무 비쌈)
 - <input type='checkbox'> HTTPS 인증서
 - <input type='checkbox'> 관리자 페이지(밴, 게시글 삭제...)
 - <input type='checkbox'> 관리자 페이지는 Django(Python)를 써볼까?
