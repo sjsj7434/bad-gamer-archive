@@ -23,7 +23,7 @@ const SignUpForm = () => {
 	const [waitModalMessage, setWaitModalMessage] = useState("");
 	const navigate = useNavigate();
 
-	const handleSubmit = async (event) => {
+	const createAccount = async (event) => {
 		event.preventDefault();
 		event.stopPropagation();
 		const form = event.currentTarget;
@@ -65,8 +65,8 @@ const SignUpForm = () => {
 				nickname: form.nicknameInput.value,
 				email: form.emailInput.value,
 				password: form.passwordInput.value,
-				personalQuestion: "",
-				personalAnswer: "",
+				// personalQuestion: "",
+				// personalAnswer: "",
 			});
 
 			if(createResult === 4){
@@ -147,7 +147,7 @@ const SignUpForm = () => {
 
 	const isValidPassword = () => {
 		const passwordInput = document.querySelector("#passwordInput");
-		const passwordRegExp = new RegExp("^(?=.*[a-zA-Z])(?=.*[!@#$%^*+=-])(?=.*[0-9]).{8,20}$");
+		const passwordRegExp = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,20}$/;
 
 		if(passwordRegExp.test(passwordInput.value) === true){
 			setPasswordValid(2);
@@ -220,7 +220,7 @@ const SignUpForm = () => {
 				<div style={{ marginBottom: "30px" }}>
 					<h2>Sign Up</h2>
 				</div>
-				<Form noValidate onSubmit={handleSubmit}>
+				<Form noValidate onSubmit={createAccount}>
 					<Form.Group as={Row} className="mb-3">
 						<Form.Label style={{fontWeight: "800"}}>
 							ID

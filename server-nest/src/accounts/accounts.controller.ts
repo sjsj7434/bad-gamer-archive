@@ -1,6 +1,6 @@
 import { Param, Controller, Get, Post, Put, Delete, Body, Res, Req } from '@nestjs/common';
 import { AccountsService } from './accounts.service';
-import { AccountsDTO } from './accounts.dto';
+import { CreateAccountsDTO, DeleteAccountsDTO, UpdateAccountsDTO } from './accounts.dto';
 import { Request, Response } from 'express';
 import { Accounts } from './accounts.entity';
 import { LostarkAPIService } from '../lostark/api/lostark.api.service';
@@ -81,40 +81,40 @@ export class  AccountsController {
 	}
 
 	@Post()
-	async createAccount(@Body() body: AccountsDTO): Promise<{ data: number }> {
-		console.log("[Controller-user-createAccount] => ", body);
+	async createAccount(@Body() createAccountsDTO: CreateAccountsDTO): Promise<{ data: number }> {
+		console.log("[Controller-user-createAccount] => ", createAccountsDTO);
 
-		const result = await this.accountsService.createAccount(body);
+		const result = await this.accountsService.createAccount(createAccountsDTO);
 
 		return { data: result };
 	}
 
 	@Delete()
-	async deleteAccount(@Body() body: AccountsDTO): Promise<{data: string}> {
-		console.log("[Controller-user-deleteAccount] => ", body);
+	async deleteAccount(@Body() deleteAccountsDTO: DeleteAccountsDTO): Promise<{data: string}> {
+		console.log("[Controller-user-deleteAccount] => ", deleteAccountsDTO);
 
-		const result = await this.accountsService.deleteAccount(body);
+		const result = await this.accountsService.deleteAccount(deleteAccountsDTO);
 		console.log(result);
 
 		return { data: "soft-delete" };
 	}
 
 	@Put("lostark/character")
-	async updateLostarkMainCharacter(@Req() request: Request, @Body() body: AccountsDTO): Promise<{data: string}> {
-		console.log("[Controller-user-updateLostarkMainCharacter] => ", body);
+	async updateLostarkMainCharacter(@Req() request: Request, @Body() updateAccountsDTO: UpdateAccountsDTO): Promise<{data: string}> {
+		console.log("[Controller-user-updateLostarkMainCharacter] => ", updateAccountsDTO);
 
-		const result = await this.accountsService.updateLostarkMainCharacter(request, body);
+		const result = await this.accountsService.updateLostarkMainCharacter(request, updateAccountsDTO);
 		console.log(result);
 
 		return { data: "update lostark" };
 	}
 
 	@Post("signin")
-	async signInAccount(@Body() body: AccountsDTO, @Req() request: Request, @Res({ passthrough: true }) response: Response): Promise<{data: string}> {
-		console.log("[Controller-user-signInAccount] => ", body);
+	async signInAccount(@Body() updateAccountsDTO: UpdateAccountsDTO, @Req() request: Request, @Res({ passthrough: true }) response: Response): Promise<{data: string}> {
+		console.log("[Controller-user-signInAccount] => ", updateAccountsDTO);
 
 		const cookieCheck = await this.accountsService.checkSignInStatus(request, response);
-		const result = await this.accountsService.signInAccount(body, cookieCheck.status, request, response);
+		const result = await this.accountsService.signInAccount(updateAccountsDTO, cookieCheck.status, request, response);
 
 		return { data: result };
 	}

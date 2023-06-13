@@ -61,9 +61,9 @@ const CommonTopMenu = (props) => {
 						</Offcanvas.Header>
 						<Offcanvas.Body>
 							<Nav variant="pills" className="justify-content-start flex-grow-1 pe-3">
-								<Nav.Link active={false} eventKey="link-1" onClick={() => menuClick("/lostark")}>Main</Nav.Link>
-								<Nav.Link active={false} eventKey="link-2" onClick={() => menuClick("/lostark/board/anonymous/1")}>Anonymous Board</Nav.Link>
-								<Nav.Link active={false} eventKey="link-2" onClick={() => menuClick("/lostark/board/identified/1")}>Identified Board</Nav.Link>
+								<Nav.Link active={false} eventKey="link-1" onClick={() => menuClick("/lostark")}>메인</Nav.Link>
+								<Nav.Link active={false} eventKey="link-2" onClick={() => menuClick("/lostark/board/anonymous/1")}>익명</Nav.Link>
+								<Nav.Link active={false} eventKey="link-2" onClick={() => menuClick("/lostark/board/identified/1")}>인증</Nav.Link>
 
 								{/* 아직 오픈 계획 없음
 								<Nav.Link as={NavLink} href="#" to="/" style={({ isActive, isPending }) => isActive ? {color: "#89d4ff"} : isPending ? {color: "red"} : {color: "white"}}>
@@ -83,17 +83,17 @@ const CommonTopMenu = (props) => {
 										</Navbar.Text>
 										&nbsp;&nbsp;
 										
-										<Button variant="info" onClick={() => menuClick("/accounts/mypage")}>My Page</Button>
+										<Button variant="info" onClick={() => menuClick("/accounts/mypage")}>내 정보</Button>
 										&nbsp;&nbsp;
-										<Button variant="outline-warning" onClick={() => {signOut()}}>Logout</Button>
+										<Button variant="outline-warning" onClick={() => {signOut()}}>로그아웃</Button>
 									</Form>
 								)
 								:
 								(
 									<Form className="d-flex">
-										<Button variant="info" onClick={() => menuClick("/accounts/signup")}>Sign Up</Button>
+										<Button variant="secondary" onClick={() => menuClick("/accounts/signup")}>회원가입</Button>
 										&nbsp;
-										<Button variant="info" onClick={() => menuClick("/accounts/signin")}>Sign In</Button>
+										<Button variant="primary" onClick={() => menuClick("/accounts/signin")}>로그인</Button>
 									</Form>
 								)
 							}

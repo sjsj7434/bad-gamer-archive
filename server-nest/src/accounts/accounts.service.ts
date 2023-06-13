@@ -2,7 +2,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Accounts } from './accounts.entity';
-import { AccountsDTO } from './accounts.dto';
+import { CreateAccountsDTO, DeleteAccountsDTO, UpdateAccountsDTO } from './accounts.dto';
 import { randomBytes } from 'crypto';
 import puppeteer from 'puppeteer';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
@@ -196,9 +196,9 @@ export class AccountsService {
 	/**
 	 * 중복되는 정보가 있는지 확인 후 계정을 생성한다
 	 */
-	async createAccount(dto: AccountsDTO): Promise<number> {
-		const idCheck: object|null = await this.findWithID(dto.id);
-		const nicknameCheck: object | null = await this.findWithNickname(dto.nickname);
+	async createAccount(createAccountsDTO: CreateAccountsDTO): Promise<number> {
+		const idCheck: object|null = await this.findWithID(createAccountsDTO.id);
+		const nicknameCheck: object | null = await this.findWithNickname(createAccountsDTO.nickname);
 
 		if (idCheck !== null && nicknameCheck !== null) {
 			return 0; //이미 ID & Nickname 존재
@@ -211,7 +211,7 @@ export class AccountsService {
 		}
 		else{
 			const saltRounds: number = 10;
-			const password: string = dto.password;
+			const password: string = createAccountsDTO.password;
 			const encryptSalt: string = await bcrypt.genSalt(saltRounds);
 			const hash = await bcrypt.hash(password, encryptSalt);
 			const isMatch = await bcrypt.compare(password, hash);
@@ -220,9 +220,9 @@ export class AccountsService {
 				return 3; //비밀번호 암호화 도중 오류 발생
 			}
 			else {
-				dto.password = hash;
+				createAccountsDTO.password = hash;
 
-				await this.accountsRepository.save(dto);
+				await this.accountsRepository.save(createAccountsDTO);
 
 				return 4; //정상 처리
 			}
@@ -233,9 +233,10 @@ export class AccountsService {
 	 * code에 맞는 계정을 삭제(논리 삭제)
 	 * find > 정보 수정 > softDelete 처리
 	 */
-	async deleteAccount(dto: AccountsDTO) {
+	async deleteAccount(deleteAccountsDTO: DeleteAccountsDTO) {
 		await this.accountsRepository.softDelete({
-			code: dto.code
+			id: deleteAccountsDTO.id,
+			password: deleteAccountsDTO.password
 		});
 	}
 
@@ -314,10 +315,10 @@ export class AccountsService {
 	/**
 	 * 로그인
 	 */
-	async signInAccount(dto: AccountsDTO, cookieCheck: string, request: Request, response: Response): Promise<string> {
+	async signInAccount(updateAccountsDTO: UpdateAccountsDTO, cookieCheck: string, request: Request, response: Response): Promise<string> {
 		const account = await this.accountsRepository.findOne({
 			where: {
-				id: dto.id,
+				id: updateAccountsDTO.id,
 			}
 		});
 
@@ -338,7 +339,7 @@ export class AccountsService {
 			return "fail";
 		}
 		else {
-			const isMatch: boolean = await bcrypt.compare(dto.password, account.password);
+			const isMatch: boolean = await bcrypt.compare(updateAccountsDTO.password, account.password);
 
 			if (isMatch === false) { //로그인 실패
 				account.loginFailCount++; //로그인 실패 횟수 + 1
@@ -355,7 +356,7 @@ export class AccountsService {
 			}
 			else { //로그인 성공
 				for (const sessionData of SIGN_IN_SESSION) {
-					if (dto.id === sessionData[1]) { //같은 ID로 이미 세션이 존재하면
+					if (updateAccountsDTO.id === sessionData[1]) { //같은 ID로 이미 세션이 존재하면
 						console.log("[!] delete session");
 						SIGN_IN_SESSION.delete(sessionData[0]); //해당 세션을 삭제
 						break;
@@ -369,7 +370,7 @@ export class AccountsService {
 
 					await this.accountsRepository.save(account);
 
-					this.setSignInCookie(dto, request, response);
+					this.setSignInCookie(updateAccountsDTO, request, response);
 
 					return "success";
 				}
@@ -384,14 +385,14 @@ export class AccountsService {
 	 * ID에 맞는 계정을 수정한다
 	 * find > 정보 수정 > save 처리
 	 */
-	async updateLostarkMainCharacter(request: Request, dto: AccountsDTO) {
+	async updateLostarkMainCharacter(request: Request, updateAccountsDTO: UpdateAccountsDTO) {
 		const account = await this.accountsRepository.findOne({
 			where: {
 				id: SIGN_IN_SESSION.get(request.cookies["sessionCode"]),
 			}
 		});
 
-		account.lostarkMainCharacter = dto.lostarkMainCharacter;
+		account.lostarkMainCharacter = updateAccountsDTO.lostarkMainCharacter;
 
 		await this.accountsRepository.save(account);
 	}
@@ -399,7 +400,7 @@ export class AccountsService {
 	/**
 	 * 로그인 시 Cookie 설정
 	 */
-	setSignInCookie(dto: AccountsDTO, request: Request, response: Response) {
+	setSignInCookie(updateAccountsDTO: UpdateAccountsDTO, request: Request, response: Response) {
 		const saltRounds: number = 15;
 		const sessionCode: string = bcrypt.genSaltSync(saltRounds);
 
@@ -411,7 +412,7 @@ export class AccountsService {
 			response.clearCookie("sessionCode");
 		}
 
-		SIGN_IN_SESSION.set(sessionCode, dto.id);
+		SIGN_IN_SESSION.set(sessionCode, updateAccountsDTO.id);
 
 		response.cookie("sessionCode", sessionCode, { maxAge: LOGIN_COOKIE_TTL, httpOnly: true, secure: true });
 	}

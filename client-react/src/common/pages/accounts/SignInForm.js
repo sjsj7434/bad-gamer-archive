@@ -87,7 +87,7 @@ const SignInForm = (props) => {
 
 	const isValidPassword = () => {
 		const passwordInput = document.querySelector("#passwordInput");
-		const passwordRegExp = new RegExp("^(?=.*[a-zA-Z])(?=.*[!@#$%^*+=-])(?=.*[0-9]).{8,20}$");
+		const passwordRegExp = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,20}$/;
 
 		if(passwordRegExp.test(passwordInput.value) === true){
 			setPasswordValid(2);
@@ -133,14 +133,11 @@ const SignInForm = (props) => {
 				</Modal.Body>
 			</Modal>
 
-			<div style={{ marginTop: "30px" }}>
-				<div style={{ marginBottom: "30px" }}>
-					<h2>Sign In</h2>
-				</div>
+			<div style={{ marginTop: "60px" }}>
 				<Form noValidate onSubmit={handleSubmit}>
 					<Form.Group as={Row} className="mb-3">
 						<Form.Label style={{fontWeight: "800"}}>
-							ID
+							아이디 (ID)
 						</Form.Label>
 						<Col>
 							<InputGroup>
@@ -151,15 +148,14 @@ const SignInForm = (props) => {
 
 					<Form.Group as={Row} className="mb-3">
 						<Form.Label style={{fontWeight: "800"}}>
-							Password
+							비밀번호 (Password)
 						</Form.Label>
 						<Col>
 							<Form.Control className={statusParser(passwordValid)} id="passwordInput" maxLength={20} type="password" placeholder="password" onChange={() => {isValidPassword()}} />
 						</Col>
 					</Form.Group>
 
-					<br/>
-					<Button type="submit" variant="success" size="lg" style={{width: "100%"}}>Sign In</Button>
+					<Button type="submit" variant="success" size="lg" style={{width: "100%", marginTop: "16px"}}>로그인</Button>
 				</Form>
 			</div>
 		</Container>
