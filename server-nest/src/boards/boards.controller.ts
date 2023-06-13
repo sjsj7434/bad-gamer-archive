@@ -1,10 +1,12 @@
-import { Param, Controller, Get, Post, Body, Ip, Req, Res, Delete, Patch, Query } from '@nestjs/common';
+import { Param, Controller, Get, Post, Body, Ip, Req, Res, Delete, Patch, Query, UseInterceptors, UploadedFile } from '@nestjs/common';
 import { BoardsService } from './boards.service';
 import { Boards } from './boards.entity';
 import { setInterval } from 'timers';
 import { Replies } from './replies.entity';
 import { CreateBoardsDTO, UpdateBoardsDTO, DeleteBoardsDTO } from './boards.dto';
 import { CreateRepliesDTO, UpdateRepliesDTO, DeleteRepliesDTO } from './replies.dto';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { extname } from 'path';
 
 @Controller("boards")
 export class BoardsController {
@@ -164,5 +166,22 @@ export class BoardsController {
 
 		const deleteResult = await this.boardsService.deleteReply(deleteRepliesDTO);
 		return { data: deleteResult }
+	}
+
+	@Post("image")
+	@UseInterceptors(FileInterceptor("upload"))
+	uploadImage(@UploadedFile() file: Express.Multer.File): { url: string } | { error: {message: string} } {
+		// Multer is --save-dev option installed, same as -d option
+		// If the upload is successful, the server should return: An object containing [the url property] which points to the uploaded image on the server
+		const timeOfNow = new Date();
+		const timeString = timeOfNow.toLocaleDateString("sv-SE").replace(/-/g, "") + timeOfNow.toLocaleTimeString("sv-SE").replace(/:/g, "");
+		console.log(timeString);
+
+		const randomName = Array(10).fill(null).map(() => (Math.round(Math.random() * 16)).toString(16).substring(0, 1)).join("");
+		console.log("[Controller-boards-uploadImage]", timeString + "_" + randomName, extname(file.originalname));
+		console.log(file);
+		// return { "url": "https://docs.nestjs.com/assets/logo-small.svg" };
+		return { "url": "https://img-s-msn-com.akamaized.net/tenant/amp/entityid/AAZrqDW?w=300&h=157&q=60&m=6&f=jpg&u=t" };
+		// return { "error": { "message": "test error" } };
 	}
 }

@@ -1,7 +1,5 @@
-import { Param, Controller, Get, Post, UploadedFile, UseInterceptors } from '@nestjs/common';
+import { Param, Controller, Get } from '@nestjs/common';
 import { LostarkAPIService } from './lostark.api.service';
-import { FileInterceptor } from '@nestjs/platform-express';
-import { extname } from 'path';
 import { ConfigService } from '@nestjs/config';
 
 @Controller()
@@ -76,15 +74,5 @@ export class LostarkAPIController {
 		console.log('[Controller-get] characters => ' + decodeURIComponent(characterNickName));
 		const result = await this.lostarkAPIService.getCharacterList(characterNickName);
 		return result;
-	}
-
-	@Post('image')
-	@UseInterceptors(FileInterceptor('upload'))
-	uploadFile(@UploadedFile() file: Express.Multer.File): object {
-		//Multer is --save-dev option installed, same as -d option
-		const randomName = Array(32).fill(null).map(() => (Math.round(Math.random() * 16)).toString(16)).join('');
-		console.log('[Controller-post] image', randomName, extname(file.originalname));
-		console.log(file);
-		return { "url": "https://docs.nestjs.com/assets/logo-small.svg" };
 	}
 }
