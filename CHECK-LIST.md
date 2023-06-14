@@ -33,6 +33,7 @@ npm run start
 - <input type='checkbox' checked> 댓글 작성 기능
 - <input type='checkbox' checked> ckEditor5 게시글 작성 기능(인증 필요없는 자유)
 - <input type='checkbox' checked> ckEditor5 게시글 수정 기능(인증 필요없는 자유)
+- <input type='checkbox'> 가입할 때 이메일 인증? 아니면 가입하고 나서 인증?
 - <input type='checkbox'> 마이페이지 비밀번호 변경(기존 비밀번호 입력 후 변경)
 - <input type='checkbox'> 마이페이지 본캐 인증 정보 조회
 - <input type='checkbox'> 마이페이지 본캐 인증 정보 업데이트
