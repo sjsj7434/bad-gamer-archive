@@ -33,18 +33,18 @@ const SignInForm = (props) => {
 		const form = event.currentTarget;
 
 		if(idValid !== 2){
-			alert("Please check your ID");
+			alert("아이디 (ID)를 확인해주세요");
 			form.idInput.focus();
 			return false;
 		}
 		if(passwordValid !== 2){
-			alert("Please check your Password");
+			alert("비밀번호 (Password)를 확인해주세요");
 			form.passwordInput.focus();
 			return false;
 		}
 
 		setWaitModalShow(true);
-		setWaitModalMessage("Sign In...");
+		setWaitModalMessage("로그인 처리 중...");
 		// await asyncWaiter(1);
 		setWaitModalShow(false);
 
@@ -58,16 +58,16 @@ const SignInForm = (props) => {
 			navigate("/");
 		}
 		else if(signInResult === "fail"){
-			alert("login failed");
+			alert("로그인이 실패하였습니다");
 		}
 		else if(signInResult === "locked"){
-			alert("account is locked");
+			alert("해당 계정은 잠금상태입니다");
 		}
 		else if(signInResult === "wrong_cookie"){
-			alert("login failed");
+			alert("로그인 정보가 올바르지 않습니다");
 		}
 		else if(signInResult === "same_user"){
-			alert("login failed");
+			alert("누군가 이미 로그인하였습니다");
 		}
 	};
 
@@ -77,7 +77,7 @@ const SignInForm = (props) => {
 
 		idInput.value = idInput.value.toLowerCase();
 
-		if(idInput.value.replace(idRegExp, "") === "" && (5 <= idInput.value.length && idInput.value.length <= 20)){
+		if(idInput.value.replace(idRegExp, "") === "" && (4 <= idInput.value.length && idInput.value.length <= 20)){
 			setIdValid(2);
 		}
 		else{
@@ -136,22 +136,22 @@ const SignInForm = (props) => {
 			<div style={{ marginTop: "60px" }}>
 				<Form noValidate onSubmit={handleSubmit}>
 					<Form.Group as={Row} className="mb-3">
-						<Form.Label style={{fontWeight: "800"}}>
+						<Form.Label style={{fontWeight: "800", fontSize: "0.8rem"}}>
 							아이디 (ID)
 						</Form.Label>
 						<Col>
 							<InputGroup>
-								<Form.Control className={statusParser(idValid)} id="idInput" maxLength={20} type="text" placeholder="ID" isValid={false} isInvalid={false} onChange={() => {isValidID()}} autoComplete="off" />
+								<Form.Control className={statusParser(idValid)} id="idInput" maxLength={20} type="text" placeholder="아이디를 입력해주세요" isValid={false} isInvalid={false} onChange={() => {isValidID()}} autoComplete="off" style={{fontSize: "0.9rem"}} />
 							</InputGroup>
 						</Col>
 					</Form.Group>
 
 					<Form.Group as={Row} className="mb-3">
-						<Form.Label style={{fontWeight: "800"}}>
+						<Form.Label style={{fontWeight: "800", fontSize: "0.8rem"}}>
 							비밀번호 (Password)
 						</Form.Label>
 						<Col>
-							<Form.Control className={statusParser(passwordValid)} id="passwordInput" maxLength={20} type="password" placeholder="password" onChange={() => {isValidPassword()}} />
+							<Form.Control className={statusParser(passwordValid)} id="passwordInput" maxLength={20} type="password" placeholder="비밀번호를 입력해주세요" onChange={() => {isValidPassword()}} style={{fontSize: "0.9rem"}} />
 						</Col>
 					</Form.Group>
 

@@ -81,26 +81,6 @@ export class Accounts {
 	passwordChangeDate: Date | null;
 
 	/**
-	 * 유저 아이디 및 비밀번호 찾기 힌트 질문
-	 */
-	@Column({
-		type: "varchar"
-		, length: 200
-		, nullable: true
-	})
-	personalQuestion: string;
-
-	/**
-	 * 유저 아이디 및 비밀번호 찾기 힌트 질문에 대한 답변
-	 */
-	@Column({
-		type: "varchar"
-		, length: 100
-		, nullable: true
-	})
-	personalAnswer: string;
-
-	/**
 	 * 로그인 성공한 IP
 	 */
 	@Column({
@@ -167,9 +147,8 @@ export class Accounts {
 	createdAt!: Date;
 
 	/**
-	 * 유저 계정 변경일자(자동)
+	 * 유저 계정 변경일자(수동)
 	 */
-	@UpdateDateColumn()
 	updatedAt!: Date;
 
 	/**

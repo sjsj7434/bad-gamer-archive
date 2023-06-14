@@ -50,6 +50,7 @@ npm run start
 - <input type='checkbox'> 관리자 페이지는 Django(Python)를 써볼까?
 - <input type='checkbox'> 관리자 페이지는 Strapi(JS)를 써볼까?
 - <input type='checkbox'> 연관 게시글 링크 기능?(인증 전용)
+- <input type='checkbox'> Rate Limiting, protect applications from brute-force attacks
 
 ## 본캐 인증 절차(유저)
 ```bash
