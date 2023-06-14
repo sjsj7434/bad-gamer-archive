@@ -28,10 +28,13 @@ const CommonTopMenu = (props) => {
 	}
 
 	const signOut = async () => {
+		if(window.confirm("로그아웃 하시겠습니까?") === false){
+			return;
+		}
 		await accountsAction.setSignOut();
 		setShowOffcanvas(false);
 		props.renewLogin();
-		alert("LogOUT!");
+		alert("로그아웃 되었습니다");
 		navigate("/");
 	}
 

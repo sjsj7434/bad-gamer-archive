@@ -17,7 +17,7 @@ export class  AccountsController {
 
 	@Get("stove/:stoveURL")
 	async checkTokenMatch(@Req() request: Request, @Param("stoveURL") stoveURL: string): Promise<{ data: any }> {
-		console.log("[Controller-user-checkTokenMatch] => " + stoveURL);
+		console.log("[Controller-accounts-checkTokenMatch] => " + stoveURL);
 		const stoveURLWithOutProtocol: string = stoveURL.replace(/https:\/\/|http:\/\//g, "");
 		
 		if(isNaN(Number(stoveURLWithOutProtocol)) === false){
@@ -44,7 +44,7 @@ export class  AccountsController {
 
 	@Get("id/:accountID")
 	async findWithID(@Param("accountID") accountID: string): Promise<{ data: Accounts | null }> {
-		console.log("[Controller-user-findWithID]");
+		console.log("[Controller-accounts-findWithID]");
 		
 		const result = await this.accountsService.findWithID(accountID);
 		console.log(result);
@@ -58,7 +58,7 @@ export class  AccountsController {
 
 	@Get("nickname/:nickname")
 	async findWithNickname(@Param("nickname") nickname: string): Promise<{ data: Accounts | null }> {
-		console.log("[Controller-user-findWithNickname]");
+		console.log("[Controller-accounts-findWithNickname]");
 		
 		const result = await this.accountsService.findWithNickname(nickname);
 		console.log(result);
@@ -72,7 +72,7 @@ export class  AccountsController {
 
 	@Get()
 	async findAll(): Promise<Accounts[]> {
-		console.log("[Controller-user-findAll] => ");
+		console.log("[Controller-accounts-findAll] => ");
 
 		const result = await this.accountsService.findAll();
 		console.log(result);
@@ -82,7 +82,7 @@ export class  AccountsController {
 
 	@Post()
 	async createAccount(@Body() createAccountsDTO: CreateAccountsDTO): Promise<{ data: number }> {
-		console.log("[Controller-user-createAccount] => ", createAccountsDTO);
+		console.log("[Controller-accounts-createAccount] => ", createAccountsDTO);
 
 		const result = await this.accountsService.createAccount(createAccountsDTO);
 
@@ -91,7 +91,7 @@ export class  AccountsController {
 
 	@Delete()
 	async deleteAccount(@Body() deleteAccountsDTO: DeleteAccountsDTO): Promise<{data: string}> {
-		console.log("[Controller-user-deleteAccount] => ", deleteAccountsDTO);
+		console.log("[Controller-accounts-deleteAccount] => ", deleteAccountsDTO);
 
 		const result = await this.accountsService.deleteAccount(deleteAccountsDTO);
 		console.log(result);
@@ -101,7 +101,7 @@ export class  AccountsController {
 
 	@Put("lostark/character")
 	async updateLostarkMainCharacter(@Req() request: Request, @Body() updateAccountsDTO: UpdateAccountsDTO): Promise<{data: string}> {
-		console.log("[Controller-user-updateLostarkMainCharacter] => ", updateAccountsDTO);
+		console.log("[Controller-accounts-updateLostarkMainCharacter] => ", updateAccountsDTO);
 
 		const result = await this.accountsService.updateLostarkMainCharacter(request, updateAccountsDTO);
 		console.log(result);
@@ -111,7 +111,7 @@ export class  AccountsController {
 
 	@Post("signin")
 	async signInAccount(@Body() updateAccountsDTO: UpdateAccountsDTO, @Req() request: Request, @Res({ passthrough: true }) response: Response): Promise<{data: string}> {
-		console.log("[Controller-user-signInAccount] => ", updateAccountsDTO);
+		console.log("[Controller-accounts-signInAccount] => ", updateAccountsDTO);
 
 		const cookieCheck = await this.accountsService.checkSignInStatus(request, response);
 		const result = await this.accountsService.signInAccount(updateAccountsDTO, cookieCheck.status, request, response);
@@ -121,7 +121,7 @@ export class  AccountsController {
 
 	@Post("signin/status")
 	async getSignInStatus(@Req() request: Request, @Res({ passthrough: true }) response: Response): Promise<{ data: object }> {
-		console.log("[Controller-user-getSignInStatus] => ", request.ip);
+		console.log("[Controller-accounts-getSignInStatus] => ", request.ip);
 
 		const cookieCheck = await this.accountsService.checkSignInStatus(request, response);
 
@@ -130,8 +130,17 @@ export class  AccountsController {
 
 	@Post("signout")
 	async setSignOut(@Req() request: Request, @Res({ passthrough: true }) response: Response) {
-		console.log("[Controller-user-setSignOut]");
+		console.log("[Controller-accounts-setSignOut]");
 
 		this.accountsService.setSignOut(request, response);
+	}
+
+	@Get("information/my")
+	async getMyInfo(@Req() request: Request, @Res({ passthrough: true }) response: Response): Promise<{ data: Accounts }> {
+		console.log("[Controller-accounts-getMyInfo]", request.cookies);
+
+		const accountData = await this.accountsService.getMyInfo(request, response);
+		
+		return { data: accountData };
 	}
 }

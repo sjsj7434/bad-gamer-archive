@@ -430,4 +430,28 @@ export class AccountsService {
 			response.clearCookie("sessionCode");
 		}
 	}
+
+
+	/**
+	 * 내 정보 가져오기
+	 */
+	async getMyInfo(request: Request, response: Response): Promise<Accounts> {
+		const acctountData = await this.accountsRepository.findOne({
+			select: {
+				id: true,
+				nickname: true,
+				email: true,
+				lastLogin: true,
+				loginSuccessIP: true,
+				passwordChangeDate: true,
+				lostarkMainCharacter: true,
+			},
+			where: {
+				id: SIGN_IN_SESSION.get(request.cookies["sessionCode"]),
+			}
+		});
+		
+		console.log(acctountData)
+		return acctountData;
+	}
 }

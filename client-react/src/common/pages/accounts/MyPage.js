@@ -8,17 +8,24 @@ import Spinner from 'react-bootstrap/Spinner';
 import Table from 'react-bootstrap/Table';
 import Stack from 'react-bootstrap/Stack';
 
+import * as accountsAction from '../../../common/js/accountsAction.js'
+
 const MyPage = (props) => {
 	const [waitModalShow, setWaitModalShow] = useState(false);
+	const [accountData, setAccountData] = useState(null);
 	const navigate = useNavigate();
 	let mypageElements = <></>;
 	console.log("MyPage", props.accountData);
 
 	useEffect(() => {
-		console.log("let's get account info from server");
-	}, [])
+		const callMyInfo = async () => {
+			setAccountData(await accountsAction.getMyInfo());
+		}
 
-	if(props.accountData.status === "using"){
+		callMyInfo();
+	}, [props])
+
+	if(props.accountData.status === "using" && accountData !== null){
 		mypageElements = (
 			<>
 				<Modal
@@ -46,31 +53,32 @@ const MyPage = (props) => {
 							</colgroup>
 							<tbody>
 								<tr>
-									<th>현재 상태</th>
+									<th>[개발용] 로그인 상태</th>
 									<td><div className="vr"></div></td>
 									<td>{props.accountData.status}</td>
 								</tr>
 								<tr>
 									<th>아이디</th>
 									<td><div className="vr"></div></td>
-									<td>{props.accountData.id}</td>
+									<td>{accountData.id}</td>
 								</tr>
 								<tr>
 									<th>닉네임</th>
 									<td><div className="vr"></div></td>
-									<td>{props.accountData.nickname}</td>
+									<td>{accountData.nickname}</td>
 								</tr>
 								<tr>
 									<th>이메일</th>
 									<td><div className="vr"></div></td>
-									<td>{props.accountData.nickname}</td>
+									<td>{accountData.email}</td>
 								</tr>
 								<tr>
 									<th>LA</th>
 									<td><div className="vr"></div></td>
 									<td>
-										{props.accountData.lostarkMainCharacter === null ? "정보 없음" : props.accountData.lostarkMainCharacter}
-										<Button onClick={() => {navigate("lostark")}}>lostark</Button>
+										{accountData.lostarkMainCharacter === null ? "정보 없음" : accountData.lostarkMainCharacter}
+										&nbsp;&nbsp;
+										<Button onClick={() => {navigate("lostark")}} variant="outline-danger" style={{width: "30%", maxWidth: "130px", padding: "2px"}}>lostark</Button>
 									</td>
 								</tr>
 							</tbody>
@@ -93,7 +101,7 @@ const MyPage = (props) => {
 	else{
 		mypageElements = (
 			<>
-				<Navigate to="/accounts/signin" replace={true} />
+				{/* <Navigate to="/accounts/signin" replace={true} /> */}
 				You have to Login
 			</>
 		)

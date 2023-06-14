@@ -222,3 +222,21 @@ export const setLostarkMainCharacter = async (accountInfo) => {
 
 	return jsonData;
 }
+
+/**
+ * 내 정보 페이지에서 사용할 정보 가져오기
+ * @returns {object} 내 정보
+ */
+export const getMyInfo = async () => {
+	const fecthOption = {
+		method: "GET"
+		, headers: {"Content-Type": "application/json",}
+		, credentials: "include", // Don't forget to specify this if you need cookies
+	};
+	const jsonString = await fetch(`${process.env.REACT_APP_SERVER}/accounts/information/my`, fecthOption);
+	const jsonData = await parseStringToJson(jsonString);
+
+	console.log("setLostarkMainCharacter", jsonData);
+
+	return jsonData;
+}
