@@ -451,7 +451,6 @@ export class AccountsService {
 			}
 		});
 		
-		console.log(acctountData)
 		return acctountData;
 	}
 }

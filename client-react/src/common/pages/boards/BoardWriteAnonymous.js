@@ -104,49 +104,7 @@ const BoardWriteAnonymous = () => {
 		const jsonData = await parseStringToJson(jsonString);
 
 		return jsonData;
-	}, [contentCode])
-
-	/**
-	 * 수정 진입 전에 게시글 비밀번호 확인
-	 */
-	const checkBeforeEdit = async () => {
-		const contentPasswordElement = document.querySelector("#contentPassword");
-
-		if(contentPasswordElement.value === ""){
-			alert("비밀번호를 입력해주세요");
-			contentPasswordElement.focus();
-			return;
-		}
-
-		setLoadingModalShow(true);
-		setLoadingModalMessage("비밀번호 확인 중...");
-		setFailMessage(<>&nbsp;</>);
-
-		const sendData = {
-			code: contentCode,
-			password: contentPasswordElement.value,
-		};
-		
-		const fecthOption = {
-			method: "POST"
-			, body: JSON.stringify(sendData)
-			, headers: {"Content-Type": "application/json",}
-		};
-		const jsonString = await fetch(`${process.env.REACT_APP_SERVER}/boards/content/anonymous/check/password`, fecthOption);
-		const jsonData = await parseStringToJson(jsonString);
-		console.log(`check: ${jsonData}`)
-
-		if(jsonData === true){
-			setIdentity(true);
-			setContentPassword(contentPasswordElement.value);
-		}
-		else{
-			setFailMessage(<><b>[ ! ]</b> 올바른 비밀번호가 아닙니다</>);
-		}
-
-		setLoadingModalShow(false);
-		setLoadingModalMessage("");
-	}
+	}, [])
 
 	/**
 	 * 신규 게시글 작성
@@ -245,7 +203,6 @@ const BoardWriteAnonymous = () => {
 	}, [contentCode, contentPassword, editorObject, updateContent, navigate])
 
 	useEffect(() => {
-		console.log(`useEffect 3`)
 		if(params.contentCode !== undefined){
 			setContentCode(params.contentCode);
 			setWriteMode("edit");
@@ -258,13 +215,52 @@ const BoardWriteAnonymous = () => {
 
 	useEffect(() => {
 		if(contentCode !== null && identity === true){
-			console.log(`useEffect 2`)
 			readContent();
 		}
 	}, [contentCode, identity, readContent])
 
 	useEffect(() => {
-		console.log(`useEffect 1 : ${writeMode}`)
+		/**
+		 * 수정 진입 전에 게시글 비밀번호 확인
+		 */
+		const checkBeforeEdit = async () => {
+			const contentPasswordElement = document.querySelector("#contentPassword");
+
+			if(contentPasswordElement.value === ""){
+				alert("비밀번호를 입력해주세요");
+				contentPasswordElement.focus();
+				return;
+			}
+
+			setLoadingModalShow(true);
+			setLoadingModalMessage("비밀번호 확인 중...");
+			setFailMessage(<>&nbsp;</>);
+
+			const sendData = {
+				code: contentCode,
+				password: contentPasswordElement.value,
+			};
+			
+			const fecthOption = {
+				method: "POST"
+				, body: JSON.stringify(sendData)
+				, headers: {"Content-Type": "application/json",}
+			};
+			const jsonString = await fetch(`${process.env.REACT_APP_SERVER}/boards/content/anonymous/check/password`, fecthOption);
+			const jsonData = await parseStringToJson(jsonString);
+			console.log(`check: ${jsonData}`)
+
+			if(jsonData === true){
+				setIdentity(true);
+				setContentPassword(contentPasswordElement.value);
+			}
+			else{
+				setFailMessage(<><b>[ ! ]</b> 올바른 비밀번호가 아닙니다</>);
+			}
+
+			setLoadingModalShow(false);
+			setLoadingModalMessage("");
+		}
 
 		if(writeMode === "new"){
 			setRenderData(
@@ -358,7 +354,7 @@ const BoardWriteAnonymous = () => {
 				}
 			}
 		}
-	}, [writeMode, contentTitle, contentData, identity, failMessage, editorObject, saveEditorData, editEditorData])
+	}, [writeMode, contentCode, contentTitle, contentData, identity, failMessage, editorObject, saveEditorData, editEditorData, navigate])
 	
 	return(
 		<Container style={{maxWidth: "1440px"}}>

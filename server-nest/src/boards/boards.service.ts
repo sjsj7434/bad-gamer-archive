@@ -46,7 +46,7 @@ export class BoardsService {
 	/**
 	 * category에 해당하는 글 목록 가져오기
 	 */
-	async getContentListByCategory(category: string, page: number): Promise<[Boards[], number]> {
+	async getContentListByCategory(category: string, page: number, perPage: number): Promise<[Boards[], number]> {
 		const result = await this.boardsRepository.findAndCount({
 			relations: ["replies"], //댓글 정보 join
 			select: {
@@ -69,8 +69,8 @@ export class BoardsService {
 				code: "DESC",
 			},
 			withDeleted: true,
-			skip: (page - 1) * 10,
-			take: 10,
+			skip: (page - 1) * perPage,
+			take: perPage,
 		})
 
 		// const result = await this.boardsRepository.findAndCount({

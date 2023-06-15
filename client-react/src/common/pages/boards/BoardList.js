@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useParams, Link, useNavigate } from "react-router-dom";
+import { useParams, Link, useNavigate, NavLink } from "react-router-dom";
 import Container from 'react-bootstrap/Container';
 import Button from 'react-bootstrap/Button';
 import CustomPagination from './CustomPagination';
@@ -8,8 +8,12 @@ const BoardList = () => {
 	const [contentCategory, setContentCategory] = useState(null);
 	const [page, setPage] = useState(null);
 	const [renderData, setRenderData] = useState(<></>);
+	
+	const [contentCount, setContentCount] = useState(null);
+	const [paginationData, setPaginationData] = useState(<></>);
 	const navigate = useNavigate();
 	const params = useParams();
+	const perPage = 20;
 
 	/**
 	 * 자주 사용하는 fetch 템플릿
@@ -38,11 +42,6 @@ const BoardList = () => {
 			}
 		}
 	}
-
-	const pageMoveFunc = (pageIndex) => {
-		console.log(`page move to : /lostark/board/${contentCategory}/${pageIndex}`);
-		navigate(`/lostark/board/${contentCategory}/${pageIndex}`);
-	}
 	
 	useEffect(() => {
 		if(isNaN(params.page) === false){
@@ -70,7 +69,8 @@ const BoardList = () => {
 				const jsonData = await parseStringToJson(jsonString);
 
 				const contentJson = jsonData[0];
-				const contentCount = jsonData[1];
+				setContentCount(jsonData[1])
+
 				const contentListData = [];
 
 				console.log(contentJson)
@@ -185,19 +185,17 @@ const BoardList = () => {
 							</div>
 
 							<div key="contentListData">
-								<div style={{minHeight: "570px", margin: "10px"}}>
+								<div style={{margin: "10px"}}>
 									{contentListData}
 								</div>
 
 								<div style={{display: "flex", justifyContent: "flex-end"}}>
-									<Button id={"createReply"} onClick={() => {navigate(`/lostark/board/${contentCategory}/write`)}} variant="outline-primary" style={{width: "30%", maxWidth: "200px", padding: "1px"}}>
-										<span style={{fontSize: "0.8rem"}}>글쓰기</span>
-									</Button>
+									<NavLink to={`/lostark/board/${contentCategory}/write`} style={{width: "30%", maxWidth: "200px"}}>
+										<Button id={"createReply"} variant="outline-primary" style={{width: "100%", padding: "1px"}}>
+											<span style={{fontSize: "0.8rem"}}>글쓰기</span>
+										</Button>
+									</NavLink>
 								</div>
-							</div>
-
-							<div style={{display: "flex", justifyContent: "center"}} key="paginationData">
-								<CustomPagination currentPage={page} contentPerPage={10} contentCount={contentCount} moveURL={`/lostark/board/${contentCategory}`} howManyPages={4} pageMoveFunc={pageMoveFunc}/>
 							</div>
 						</>
 					);
@@ -206,13 +204,29 @@ const BoardList = () => {
 		}
 
 		if(contentCategory !== null && page !== null){
+			console.log('readContentList', contentCategory, page)
 			readContentList();
 		}
 	}, [contentCategory, page])
+
+	useEffect(() => {
+		const pageMoveFunc = (pageIndex) => {
+			document.querySelector("h5").scrollIntoView({ behavior: "smooth", block: "center" });
+			navigate(`/lostark/board/${contentCategory}/${pageIndex}`);
+		}
+
+		setPaginationData(
+			<div style={{display: "flex", justifyContent: "center"}} key="paginationData">
+				<CustomPagination currentPage={page} contentPerPage={perPage} contentCount={contentCount} howManyPages={5} pageMoveFunc={pageMoveFunc}/>
+			</div>
+		);
+	}, [page, contentCount, contentCategory, navigate])
 	
 	return(
 		<Container style={{maxWidth: "1440px"}}>
 			{renderData}
+
+			{paginationData}
 		</Container>
 	);
 }

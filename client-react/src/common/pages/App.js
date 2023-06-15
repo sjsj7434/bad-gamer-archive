@@ -12,6 +12,7 @@ import MyPage from './accounts/MyPage';
 import * as accountsAction from '../js/accountsAction.js'
 
 import 'bootstrap/dist/css/bootstrap.min.css';
+import ActivateLostark from './accounts/ActivateLostark';
 
 
 // index.js에서 StrictMode 존재하면 두번 랜더링, 개발 모드에서만 적용됩니다. 생명주기 메서드들은 프로덕션 모드에서 이중으로 호출되지 않습니다.
@@ -23,19 +24,19 @@ const App = () => {
 	
 	const checkSignIn = async () => {
 		const statusJSON = await accountsAction.checkSignInStatus();
-		console.log("App", statusJSON)
+		console.log("App-checkSignIn", statusJSON)
 		
 		if(statusJSON.status === "locked"){
-			alert("somebody keep trying to login your account, so it's locked now");
+			alert("반복된 로그인 시도로 계정이 잠금 상태로 변경되었습니다");
 		}
 		else if(statusJSON.status === "banned"){
-			alert("sorry, you are banned");
+			alert("해당 계정은 추방처리되었습니다");
 		}
 		else if(statusJSON.status === "lost"){
-			alert("this account is lost, how can you use this?");
+			alert("분실신고된 계정은 사용할 수 없습니다");
 		}
 		else if(statusJSON.status === "wrong_cookie"){
-			alert("can not read who you are");
+			alert("사용자 정보를 확인할 수 없습니다");
 		}
 
 		setAccountData(statusJSON);
@@ -55,29 +56,28 @@ const App = () => {
 					<>
 						<Routes>
 							{/* Top menu */}
-							<Route path="*" element={<CommonTopMenu accountData={accountData} renewLogin={checkSignIn} />}></Route>
+							<Route path="*" element={ <CommonTopMenu accountData={accountData} renewLogin={checkSignIn} /> }></Route>
 						</Routes>
 
 						<Routes>
 							{/* Contents */}
-							<Route path="/" element={<Navigate to="lostark" replace={true} />}></Route>
-							<Route path="lostark/*" element={<><LostarkRouter /></>}></Route>
+							<Route path="/" element={ <Navigate to="lostark" replace={true} /> }></Route>
+							<Route path="lostark/*" element={ <LostarkRouter /> }></Route>
 
 							<Route path="accounts">
-								<Route path="signup" element={<><SignUpForm /></>}>
-								</Route>
+								<Route path="signup" element={ <SignUpForm /> }></Route>
 
-								<Route path="signin" element={<><SignInForm accountData={accountData} renewLogin={checkSignIn} /></>}>
-								</Route>
-
-								<Route path="mypage/*" element={<><MyPage accountData={accountData} /></>}>
+								<Route path="signin" element={ <SignInForm accountData={accountData} renewLogin={checkSignIn} /> }></Route>
+								<Route path="mypage">
+									<Route path="" element={ <MyPage accountData={accountData} /> }></Route>
+									<Route path="lostark" element={ <ActivateLostark /> }></Route>
 								</Route>
 							</Route>
 
-							<Route path="/character/:characterName" element={<><CharacterInfo /></>}></Route>
+							<Route path="/character/:characterName" element={ <CharacterInfo /> }></Route>
 
 							{/* 상단에 위치하는 라우트들의 규칙을 모두 확인, 일치하는 라우트가 없는경우 처리 */}
-							<Route path="*" element={<><Error404 /></>}></Route>
+							<Route path="*" element={ <Error404 /> }></Route>
 						</Routes>
 					</>
 				}

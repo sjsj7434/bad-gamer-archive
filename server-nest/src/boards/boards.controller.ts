@@ -31,8 +31,9 @@ export class BoardsController {
 	@Get("list/:category/:page")
 	async getContentListByCategory(@Param("category") category: string, @Param("page") page: number): Promise<{ data: [Boards[], number] }> {
 		console.log("[Controller-boards-getContentListByCategory]");
+		const perPage = 20;
 
-		const result = await this.boardsService.getContentListByCategory(category, page);
+		const result = await this.boardsService.getContentListByCategory(category, page, perPage);
 		// console.log(result)
 
 		if (result !== null) {

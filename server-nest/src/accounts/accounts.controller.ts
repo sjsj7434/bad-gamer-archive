@@ -121,7 +121,7 @@ export class  AccountsController {
 
 	@Post("signin/status")
 	async getSignInStatus(@Req() request: Request, @Res({ passthrough: true }) response: Response): Promise<{ data: object }> {
-		console.log("[Controller-accounts-getSignInStatus] => ", request.ip);
+		console.log("[Controller-accounts-getSignInStatus]");
 
 		const cookieCheck = await this.accountsService.checkSignInStatus(request, response);
 
@@ -137,7 +137,7 @@ export class  AccountsController {
 
 	@Get("information/my")
 	async getMyInfo(@Req() request: Request, @Res({ passthrough: true }) response: Response): Promise<{ data: Accounts }> {
-		console.log("[Controller-accounts-getMyInfo]", request.cookies);
+		console.log("[Controller-accounts-getMyInfo]");
 
 		const accountData = await this.accountsService.getMyInfo(request, response);
 		

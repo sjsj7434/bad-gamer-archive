@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
-import { useNavigate } from "react-router-dom";
+import { useState } from 'react';
+import { Navigate, useNavigate } from "react-router-dom";
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Form from 'react-bootstrap/Form';
@@ -17,15 +17,6 @@ const SignInForm = (props) => {
 	const [waitModalShow, setWaitModalShow] = useState(false);
 	const [waitModalMessage, setWaitModalMessage] = useState("");
 	const navigate = useNavigate();
-
-	useEffect(() => {
-		console.log("SignInForm", props.accountData);
-
-		if(props.accountData.status === "using"){
-			alert("already login!");
-			navigate("/");
-		}
-	}, [props]); //처음 페이지 로딩 될때만
 
 	const handleSubmit = async (event) => {
 		event.preventDefault();
@@ -102,9 +93,9 @@ const SignInForm = (props) => {
 	 * @param {number} second 대기할 초
 	 * @returns 없음
 	 */
-	const asyncWaiter = async (second) => {
-		return new Promise((prom) => setTimeout(prom, second * 1000));
-	}
+	// const asyncWaiter = async (second) => {
+	// 	return new Promise((prom) => setTimeout(prom, second * 1000));
+	// }
 
 	const statusParser = (status) => {
 		if(status === 0){
@@ -118,48 +109,55 @@ const SignInForm = (props) => {
 		}
 	}
 
-	return (
-		<Container style={{maxWidth: "600px"}}>
-			<Modal
-				show={waitModalShow}
-				backdrop="static"
-				keyboard={false}
-				centered
-			>
-				<Modal.Body>
-					<div style={{display: "flex", flexDirection: "row", justifyContent: "center", marginTop: "50px", marginBottom: "50px"}}>
-						<Spinner animation="grow" variant="success" />&nbsp;&nbsp;<h4>{waitModalMessage}</h4>
-					</div>
-				</Modal.Body>
-			</Modal>
+	if(props.accountData.status === "using"){
+		return (
+			<Navigate to="/" />
+		);
+	}
+	else{
+		return (
+			<Container style={{maxWidth: "600px"}}>
+				<Modal
+					show={waitModalShow}
+					backdrop="static"
+					keyboard={false}
+					centered
+				>
+					<Modal.Body>
+						<div style={{display: "flex", flexDirection: "row", justifyContent: "center", marginTop: "50px", marginBottom: "50px"}}>
+							<Spinner animation="grow" variant="success" />&nbsp;&nbsp;<h4>{waitModalMessage}</h4>
+						</div>
+					</Modal.Body>
+				</Modal>
 
-			<div style={{ marginTop: "60px" }}>
-				<Form noValidate onSubmit={handleSubmit}>
-					<Form.Group as={Row} className="mb-3">
-						<Form.Label style={{fontWeight: "800", fontSize: "0.8rem"}}>
-							아이디 (ID)
-						</Form.Label>
-						<Col>
-							<InputGroup>
-								<Form.Control className={statusParser(idValid)} id="idInput" maxLength={20} type="text" placeholder="아이디를 입력해주세요" isValid={false} isInvalid={false} onChange={() => {isValidID()}} autoComplete="off" style={{fontSize: "0.9rem"}} />
-							</InputGroup>
-						</Col>
-					</Form.Group>
+				<div style={{ marginTop: "60px" }}>
+					<Form noValidate onSubmit={handleSubmit}>
+						<Form.Group as={Row} className="mb-3">
+							<Form.Label style={{fontWeight: "800", fontSize: "0.8rem"}}>
+								아이디 (ID)
+							</Form.Label>
+							<Col>
+								<InputGroup>
+									<Form.Control className={statusParser(idValid)} id="idInput" maxLength={20} type="text" placeholder="아이디를 입력해주세요" isValid={false} isInvalid={false} onChange={() => {isValidID()}} autoComplete="off" style={{fontSize: "0.9rem"}} />
+								</InputGroup>
+							</Col>
+						</Form.Group>
 
-					<Form.Group as={Row} className="mb-3">
-						<Form.Label style={{fontWeight: "800", fontSize: "0.8rem"}}>
-							비밀번호 (Password)
-						</Form.Label>
-						<Col>
-							<Form.Control className={statusParser(passwordValid)} id="passwordInput" maxLength={20} type="password" placeholder="비밀번호를 입력해주세요" onChange={() => {isValidPassword()}} style={{fontSize: "0.9rem"}} />
-						</Col>
-					</Form.Group>
+						<Form.Group as={Row} className="mb-3">
+							<Form.Label style={{fontWeight: "800", fontSize: "0.8rem"}}>
+								비밀번호 (Password)
+							</Form.Label>
+							<Col>
+								<Form.Control className={statusParser(passwordValid)} id="passwordInput" maxLength={20} type="password" placeholder="비밀번호를 입력해주세요" onChange={() => {isValidPassword()}} style={{fontSize: "0.9rem"}} />
+							</Col>
+						</Form.Group>
 
-					<Button type="submit" variant="success" size="lg" style={{width: "100%", marginTop: "16px"}}>로그인</Button>
-				</Form>
-			</div>
-		</Container>
-	);
+						<Button type="submit" variant="success" size="lg" style={{width: "100%", marginTop: "16px"}}>로그인</Button>
+					</Form>
+				</div>
+			</Container>
+		);
+	}
 }
 
 export default SignInForm;

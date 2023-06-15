@@ -186,8 +186,6 @@ export const checkSignInStatus = async () => {
 	const jsonString = await fetch(`${process.env.REACT_APP_SERVER}/accounts/signin/status`, fecthOption);
 	const jsonData = await parseStringToJson(jsonString);
 
-	console.log("checkSignInStatus", jsonData);
-
 	return jsonData;
 }
 

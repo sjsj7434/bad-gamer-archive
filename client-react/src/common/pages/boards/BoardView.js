@@ -10,8 +10,6 @@ import '../../css/View.css';
 const BoardView = () => {
 	const [contentCode, setContentCode] = useState(null);
 	const [category, setCategory] = useState(null);
-	const [contentTitle, setContentTitle] = useState("");
-	const [contentData, setContentData] = useState("");
 	const [upvoteCount, setUpvoteCount] = useState(0);
 	const [downvoteCount, setDownvoteCount] = useState(0);
 	const [contentJson, setContentJson] = useState(null);
@@ -50,52 +48,6 @@ const BoardView = () => {
 	}
 
 	/**
-	 * code로 게시글 삭제
-	 */
-	const deleteContent = useCallback(async () => {
-		const password = prompt("삭제하시려면 게시글의 비밀번호를 입력해주세요");
-		if(password === null){
-			return;
-		}
-
-		setLoadingModalShow(true);
-		setLoadingModalMessage("게시글을 삭제 중입니다...");
-
-		const sendData = {
-			code: contentCode,
-			password: password,
-		};
-		
-		const fecthOption = {
-			method: "DELETE"
-			, body: JSON.stringify(sendData)
-			, headers: {"Content-Type": "application/json",}
-		};
-		const jsonString = await fetch(`${process.env.REACT_APP_SERVER}/boards/content/anonymous`, fecthOption);
-		const jsonData = await parseStringToJson(jsonString);
-
-		console.log("deleteContent", jsonData);
-
-		if(jsonData === true){
-			navigate(`/lostark/board/${category}`);
-		}
-		else{
-			alert("게시글이 삭제되지 않았습니다\n올바른 게시글 비밀번호가 아닙니다");
-
-			setLoadingModalShow(false);
-			setLoadingModalMessage("");
-		}
-	}, [contentCode, category, navigate])
-
-	/**
-	 * 게시글 수정으로 이동 전 비밀번호 확인
-	 * 수정은 비밀번호 입력한 사람만 가능한데, 굳이 DB에서 다시 읽어와야하나?
-	 */
-	const editContent = async () => {
-		navigate(`/lostark/board/${category}/edit/${contentCode}`);
-	}
-
-	/**
 	 * code로 게시글 정보 가져오기
 	 */
 	const readContent = useCallback(async () => {
@@ -115,50 +67,12 @@ const BoardView = () => {
 				navigate(`/lostark/board/${category}/1`);
 			}
 			else{
-				setContentTitle(jsonData.title);
-				setContentData(jsonData.content);
 				setUpvoteCount(jsonData.upvote);
 				setDownvoteCount(jsonData.downvote);
 				setContentJson(jsonData);
 			}
 		}
-	}, [contentCode])
-
-	/**
-	 * 게시글 upvote & downvote
-	 */
-	const voteContent = useCallback(async (voteType) => {
-		const downvoteButton = document.querySelector("#downvoteButton");
-		const upvoteButton = document.querySelector("#upvoteButton");
-		upvoteButton.disabled = true;
-		downvoteButton.disabled = true;
-
-		const sendData = {
-			code: contentCode,
-		}
-
-		if(contentCode !== null){
-			const fecthOption = {
-				method: "POST"
-				, body: JSON.stringify(sendData)
-				, headers: {"Content-Type": "application/json",}
-				, credentials: "include", // Don't forget to specify this if you need cookies
-			};
-			const jsonString = await fetch(`${process.env.REACT_APP_SERVER}/boards/content/anonymous/${voteType}`, fecthOption);
-			const jsonData = await parseStringToJson(jsonString);
-
-			if(jsonData === null){
-				alert("오늘은 이미 해당 게시물에 추천, 비추천을 하였습니다");
-			}
-			else{
-				setUpvoteCount(jsonData.upvote);
-				setDownvoteCount(jsonData.downvote);
-			}
-			
-			upvoteButton.disabled = false;
-			downvoteButton.disabled = false;
-		}
-	}, [contentCode])
+	}, [category, contentCode, navigate])
 
 	useEffect(() => {
 		setContentCode(params.contentCode);
@@ -210,6 +124,88 @@ const BoardView = () => {
 			);
 		}
 		else{
+			/**
+			 * code로 게시글 삭제
+			 */
+			const deleteContent = async () => {
+				const password = prompt("삭제하시려면 게시글의 비밀번호를 입력해주세요");
+				if(password === null){
+					return;
+				}
+
+				setLoadingModalShow(true);
+				setLoadingModalMessage("게시글을 삭제 중입니다...");
+
+				const sendData = {
+					code: contentCode,
+					password: password,
+				};
+				
+				const fecthOption = {
+					method: "DELETE"
+					, body: JSON.stringify(sendData)
+					, headers: {"Content-Type": "application/json",}
+				};
+				const jsonString = await fetch(`${process.env.REACT_APP_SERVER}/boards/content/anonymous`, fecthOption);
+				const jsonData = await parseStringToJson(jsonString);
+
+				console.log("deleteContent", jsonData);
+
+				if(jsonData === true){
+					navigate(`/lostark/board/${category}`);
+				}
+				else{
+					alert("게시글이 삭제되지 않았습니다\n올바른 게시글 비밀번호가 아닙니다");
+
+					setLoadingModalShow(false);
+					setLoadingModalMessage("");
+				}
+			}
+
+			/**
+			 * 게시글 수정으로 이동 전 비밀번호 확인
+			 * 수정은 비밀번호 입력한 사람만 가능한데, 굳이 DB에서 다시 읽어와야하나?
+			 */
+			const editContent = async () => {
+				navigate(`/lostark/board/${category}/edit/${contentCode}`);
+			}
+
+			/**
+			 * 게시글 upvote & downvote
+			 */
+			const voteContent = async (voteType) => {
+				const downvoteButton = document.querySelector("#downvoteButton");
+				const upvoteButton = document.querySelector("#upvoteButton");
+				upvoteButton.disabled = true;
+				downvoteButton.disabled = true;
+
+				const sendData = {
+					code: contentCode,
+				}
+
+				if(contentCode !== null){
+					const fecthOption = {
+						method: "POST"
+						, body: JSON.stringify(sendData)
+						, headers: {"Content-Type": "application/json",}
+						, credentials: "include", // Don't forget to specify this if you need cookies
+					};
+					const jsonString = await fetch(`${process.env.REACT_APP_SERVER}/boards/content/anonymous/${voteType}`, fecthOption);
+					const jsonData = await parseStringToJson(jsonString);
+
+					if(jsonData === null){
+						alert("오늘은 이미 해당 게시물에 추천, 비추천을 하였습니다");
+					}
+					else{
+						setUpvoteCount(jsonData.upvote);
+						setDownvoteCount(jsonData.downvote);
+					}
+					
+					upvoteButton.disabled = false;
+					downvoteButton.disabled = false;
+				}
+			}
+
 			setRenderData(
 				<>
 					<div style={{margin: 10}}>
@@ -240,7 +236,7 @@ const BoardView = () => {
 									조회 {contentJson.view}
 								</span>
 								&nbsp;|&nbsp;
-								<span style={{color: "green"}}>↑{contentJson.upvote}</span> | ↓<span style={{color: "red"}}>{contentJson.downvote}</span>
+								<span style={{color: "green"}}>↑{upvoteCount}</span> | ↓<span style={{color: "red"}}>{downvoteCount}</span>
 							</div>
 							<div style={{fontWeight: "400", fontSize: "0.75rem", color: "orange"}}>
 								<span>
@@ -253,7 +249,7 @@ const BoardView = () => {
 						{/*
 							sanitizer libraries for HTML XSS Attacks : DOMPurify
 						*/}
-						<div dangerouslySetInnerHTML={{__html: contentData}} style={{overflowWrap: "anywhere", overflow: "auto", fontSize: "0.8rem"}}></div>
+						<div dangerouslySetInnerHTML={{__html: contentJson.content}} style={{minHeight: "150px", overflowWrap: "anywhere", overflow: "auto", fontSize: "0.8rem"}}></div>
 
 						<div style={{display: "flex", justifyContent: "center", marginTop: "30px"}}>
 							<Button id={"upvoteButton"} onClick={() => {voteContent("upvote")}} variant="outline-success" style={{width: "30%", maxWidth: "130px", padding: "2px"}}>
@@ -291,7 +287,7 @@ const BoardView = () => {
 				</>
 			);
 		}
-	}, [category, contentTitle, contentData, upvoteCount, downvoteCount]);
+	}, [category, contentCode, contentJson, upvoteCount, downvoteCount, navigate]);
 	
 	return(
 		<Container style={{maxWidth: "1440px"}}>
