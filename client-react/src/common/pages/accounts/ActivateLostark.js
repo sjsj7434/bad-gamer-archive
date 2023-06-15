@@ -9,14 +9,18 @@ import Modal from 'react-bootstrap/Modal';
 import ListGroup from 'react-bootstrap/ListGroup';
 import Tab from 'react-bootstrap/Tab';
 import { useNavigate } from "react-router-dom";
-
+import Stack from 'react-bootstrap/esm/Stack';
 import * as accountsAction from '../../js/accountsAction'
+import '../../css/ActivateLostark.css';
+import LoadingModal from '../common/LoadingModal';
 
 const ActivateLostark = (props) => {
 	const [characterModalShow, setCharacterModalShow] = useState(false);
 	const [characterList, setcharacterList] = useState([]);
 	const [startTime, setStartTime] = useState(null);
 	const [nowTime, setNowTime] = useState(null);
+	const [showLoadingModal, setShowLoadingModal] = useState(false);
+	const [loadingMessage, setLoadingMessage] = useState("");
 	const intervalRef = useRef(null);
 	const tokenStatus = useRef(null);
 	const TOKEN_TIME_LIMIT = 60 * 3; //sec
@@ -98,31 +102,32 @@ const ActivateLostark = (props) => {
 
 	const compareCodeWithStove = async () => {
 		if(tokenStatus.alive !== true){
-			alert('no token');
+			alert("인증 코드가 만료되었습니다");
 			return;
 		}
 
-		props.setWaitModalShow(true);
+		setShowLoadingModal(true);
+		setLoadingMessage("스토브 소개 정보를 확인 중입니다");
 		const stoveURL = document.querySelector("#stoveURL").value;
 		const matchResult = await accountsAction.checkTokenMatch(stoveURL);
 
 		if(matchResult === "code"){
-			alert("please check your stove code");
+			alert("스토브 코드를 다시 확인해주세요");
 			setCharacterModalShow(false);
 		}
 		else if(matchResult === "fail"){
-			alert("token is not correct");
+			alert("인증 코드가 올바르지 않습니다");
 			setCharacterModalShow(false);
 		}
 		else if(matchResult === "redo"){
-			alert("token is expired");
+			alert("인증 코드가 만료되었습니다");
 			setCharacterModalShow(false);
 
 			clearInterval(intervalRef.current);
 			controlActivateVerify("deactivate");
 		}
 		else if(matchResult.length === 0){
-			alert("No character data!");
+			alert("캐릭터 정보가 존재하지 않습니다");
 			setCharacterModalShow(false);
 		}
 		else{
@@ -143,7 +148,7 @@ const ActivateLostark = (props) => {
 			setCharacterModalShow(true);
 		}
 		
-		props.setWaitModalShow(false);
+		setShowLoadingModal(false);
 	}
 
 	const setCharacter = (characterInfo) => {
@@ -151,11 +156,12 @@ const ActivateLostark = (props) => {
 			setCharacterModalShow(false);
 			controlActivateVerify("done");
 			
-			props.setWaitModalShow(true);
+			setShowLoadingModal(true);
+			setLoadingMessage("캐릭터를 설정 중입니다");
 			accountsAction.setLostarkMainCharacter({
 				lostarkMainCharacter: characterInfo.CharacterName,
 			});
-			props.setWaitModalShow(false);
+			setShowLoadingModal(false);
 			navigate("/accounts/mypage")
 		}
 	}
@@ -184,9 +190,47 @@ const ActivateLostark = (props) => {
 		}
 	}
 
+	const moveToStoveTimeline = () => {
+		window.open("https://timeline.onstove.com");
+	}
+
+	const moveToStoveLogin = () => {
+		window.open("https://accounts.onstove.com/login");
+	}
+
+	const controlStoveFormShow = () => {
+		if(window.confirm("인증을 진행하기위해 스토브에 로그인하셨습니까?\n\n스토브에 로그인하지 않은 상태여도 인증 진행은 가능합니다\n[확인]을 누르시면 인증 절차를 시작합니다") === false){
+			document.querySelector("#stoveLoginSwitch").checked = false;
+			return;
+		}
+
+		if(document.querySelector("#stoveLoginSwitch").checked === true){
+			document.querySelector("#stoveForm").style.display = "";
+			document.querySelector("#stoveLoginSwitch").disabled = true;
+			document.querySelector("#stoveLoginButton").disabled = true;
+		}
+		else{
+			document.querySelector("#stoveForm").style.display = "none";
+		}
+	}
+
 	return (
 		<Container style={{maxWidth: "600px"}}>
-			<div style={{ marginTop: "20px" }}>
+			<LoadingModal showModal={showLoadingModal} message={loadingMessage}></LoadingModal>
+
+			<div style={{ marginTop: "20px", fontSize: "0.8rem", color: "black" }}>
+				<Form.Label style={{fontWeight: "800", fontSize: "0.8rem"}}>
+					원활한 인증을 위해 확인해주세요
+				</Form.Label>
+				<div style={{display: "flex", alignItems: "center", justifyContent: "space-between"}}>
+					<Form.Check type="switch" id="stoveLoginSwitch" label="스토브에 로그인하였습니다" onChange={() => {controlStoveFormShow()}} />
+					<Button id={"stoveLoginButton"} variant={"info"} style={{width: "35%", fontSize: "0.8rem"}} onClick={() => {moveToStoveLogin()}}>스토브 로그인하기</Button>
+				</div>
+
+				<hr />
+			</div>
+
+			<div id="stoveForm" style={{ marginTop: "20px", display: "none" }}>
 				<Form>
 					<Form.Group as={Row} className="mb-3">
 						<Col>
@@ -195,7 +239,7 @@ const ActivateLostark = (props) => {
 									스토브 코드 (Stove code)
 								</Form.Label>
 								<InputGroup>
-									<Form.Control className={statusParser(isValidStoveURL)} id="stoveURL" maxLength={20} defaultValue={"83359384"} placeholder={"자신의 스토브 코드를 적어주세요"} autoComplete={"off"} onChange={() => {checkStoveCodeValid()}} style={{fontSize: "0.9rem"}} />
+									<Form.Control className={statusParser(isValidStoveURL)} id="stoveURL" maxLength={20} defaultValue={"83359381"} placeholder={"자신의 스토브 코드를 적어주세요"} autoComplete={"off"} onChange={() => {checkStoveCodeValid()}} style={{fontSize: "0.9rem"}} />
 									<Button variant="outline-secondary" id="getCodeButton" onClick={() => {getVerificationCode()}} style={{fontSize: "0.8rem"}}>
 										인증 코드 받기
 									</Button>
@@ -225,7 +269,7 @@ const ActivateLostark = (props) => {
 
 							<Row className="mb-3">
 								<Col>
-									<Button size={"lg"} style={{width: "100%", marginTop: "15px", marginBottom: "15px", fontSize: "0.8rem"}} onClick={() => {moveToStovePage()}}>내 스토브 확인하기</Button>
+									<Button size={"lg"} style={{width: "100%", marginTop: "5px", marginBottom: "5px", fontSize: "0.8rem"}} onClick={() => {moveToStoveTimeline()}}>내 스토브 코드 확인하기</Button>
 								</Col>
 							</Row>
 
@@ -250,7 +294,7 @@ const ActivateLostark = (props) => {
 													<path d="m8.93 6.588-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533L8.93 6.588zM9 4.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0z"/>
 												</svg>
 												<span style={{marginLeft: "8px"}}>
-													인증 코드를 복사하여 본인의 스토브 자기소개에 적어주세요
+													인증 코드를 복사하여 본인의 스토브 <strong>소개</strong>에 적어주세요
 												</span>
 											</div>
 											{
@@ -274,15 +318,19 @@ const ActivateLostark = (props) => {
 								</Row>
 
 								<Row className="mb-3">
-									<Col>
-										<Button size={"lg"} style={{width: "100%", marginTop: "15px", marginBottom: "15px", fontSize: "0.8rem"}} onClick={() => {moveToStovePage()}}>내 스토브 설정으로 이동</Button>
-									</Col>
-								</Row>
-
-								<Row className="mb-3">
-									<Col>
-										<Button size={"lg"} variant={"success"} style={{width: "100%", marginTop: "15px", marginBottom: "15px", fontSize: "0.8rem"}} id="verifyButton" onClick={() => {compareCodeWithStove()}}>스토브 소유자 인증하기</Button>
-									</Col>
+									<Stack direction="horizontal" gap={2}>
+										<Button size={"lg"} variant={"primary"} style={{width: "100%", fontSize: "0.8rem"}} onClick={() => {moveToStovePage()}}>내 스토브 설정으로 이동</Button>
+										<Button size={"lg"} variant={"success"} id="verifyButton" onClick={() => {compareCodeWithStove()}} style={{width: "100%", fontSize: "0.8rem"}}>스토브 계정 인증하기</Button>
+									</Stack>
+									<div style={{display: "flex", alignItems: "center", marginTop: "5px", fontSize: "0.8rem", color: "gray"}}>
+										<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#6c757d" className="bi bi-info-circle" viewBox="0 0 16 16">
+											<path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+											<path d="m8.93 6.588-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533L8.93 6.588zM9 4.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0z"/>
+										</svg>
+										<span style={{marginLeft: "8px"}}>
+											인증 코드를 본인의 스토브 <strong>소개</strong>에 저장한 후 인증해주세요
+										</span>
+									</div>
 								</Row>
 							</div>
 						</Col>

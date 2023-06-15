@@ -13,6 +13,7 @@ import * as accountsAction from '../js/accountsAction.js'
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 import ActivateLostark from './accounts/ActivateLostark';
+import BlockNonLogin from './accounts/BlockNonLogin';
 
 
 // index.js에서 StrictMode 존재하면 두번 랜더링, 개발 모드에서만 적용됩니다. 생명주기 메서드들은 프로덕션 모드에서 이중으로 호출되지 않습니다.
@@ -58,7 +59,7 @@ const App = () => {
 							{/* Top menu */}
 							<Route path="*" element={ <CommonTopMenu accountData={accountData} renewLogin={checkSignIn} /> }></Route>
 						</Routes>
-
+						
 						<Routes>
 							{/* Contents */}
 							<Route path="/" element={ <Navigate to="lostark" replace={true} /> }></Route>
@@ -66,11 +67,10 @@ const App = () => {
 
 							<Route path="accounts">
 								<Route path="signup" element={ <SignUpForm /> }></Route>
-
 								<Route path="signin" element={ <SignInForm accountData={accountData} renewLogin={checkSignIn} /> }></Route>
 								<Route path="mypage">
-									<Route path="" element={ <MyPage accountData={accountData} /> }></Route>
-									<Route path="lostark" element={ <ActivateLostark /> }></Route>
+									<Route path="" element={ <BlockNonLogin accountData={accountData} ifLoginRender={<MyPage />} /> }></Route>
+									<Route path="lostark" element={ <BlockNonLogin accountData={accountData} ifLoginRender={<ActivateLostark />} /> }></Route>
 								</Route>
 							</Route>
 

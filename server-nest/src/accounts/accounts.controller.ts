@@ -24,9 +24,9 @@ export class  AccountsController {
 			const compareResult = await this.accountsService.compareStoveUserToken(request, stoveURLWithOutProtocol);
 
 			if (compareResult === "good"){
-				// const characterNames = await this.accountsService.getStoveUserCharacters_scrap(stoveURLWithOutProtocol);
-				const characterName = await this.accountsService.getStoveUserCharacters_api(stoveURLWithOutProtocol);
-				const characterNames = await this.apiService.getCharacterList(characterName);
+				const characterNames = await this.accountsService.getStoveUserCharacters_scrap(stoveURLWithOutProtocol);
+				// const characterName = await this.accountsService.getStoveUserCharacters_api(stoveURLWithOutProtocol);
+				// const characterNames = await this.apiService.getCharacterList(characterName);
 				
 				return {data: characterNames};
 			}

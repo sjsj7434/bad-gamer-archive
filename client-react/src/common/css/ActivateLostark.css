@@ -1,0 +1,10 @@
+#stoveLoginSwitch {
+    width: 5rem;
+    height: 1.5rem;
+    cursor: pointer;
+}
+.form-check-label {
+    margin-left: 10px;
+    vertical-align: sub;
+    cursor: pointer;
+}
