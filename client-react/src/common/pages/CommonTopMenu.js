@@ -10,7 +10,7 @@ import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import Offcanvas from 'react-bootstrap/Offcanvas';
 
-import * as accountsAction from '../js/accountsAction.js'
+import * as accountsFetch from '../js/accountsFetch.js'
 
 const CommonTopMenu = (props) => {
 	const [showOffcanvas, setShowOffcanvas] = useState(false);
@@ -28,7 +28,7 @@ const CommonTopMenu = (props) => {
 			if(window.confirm("로그아웃 하시겠습니까?") === false){
 				return;
 			}
-			await accountsAction.setSignOut();
+			await accountsFetch.setSignOut();
 			setShowOffcanvas(false);
 			props.renewLogin();
 			alert("로그아웃 되었습니다");

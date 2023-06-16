@@ -8,7 +8,7 @@ import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import Spinner from 'react-bootstrap/Spinner';
 
-import * as accountsAction from '../../js/accountsAction.js'
+import * as accountsFetch from '../../js/accountsFetch.js'
 
 const SignUpForm = () => {
 	const [idValid, setIdValid] = useState(0);
@@ -57,7 +57,7 @@ const SignUpForm = () => {
 			await asyncWaiter(1);
 			setWaitModalShow(false);
 
-			const createResult = await accountsAction.createAccount({
+			const createResult = await accountsFetch.createAccount({
 				id: form.idInput.value,
 				nickname: form.nicknameInput.value,
 				email: form.emailInput.value,

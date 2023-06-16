@@ -9,7 +9,7 @@ import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import Spinner from 'react-bootstrap/Spinner';
 
-import * as accountsAction from '../../../common/js/accountsAction.js'
+import * as accountsFetch from '../../../common/js/accountsFetch.js'
 
 const SignInForm = (props) => {
 	const [idValid, setIdValid] = useState(0);
@@ -39,7 +39,7 @@ const SignInForm = (props) => {
 		// await asyncWaiter(1);
 		setWaitModalShow(false);
 
-		const signInResult = await accountsAction.signInAccount({
+		const signInResult = await accountsFetch.signInAccount({
 			id: form.idInput.value,
 			password: form.passwordInput.value,
 		});

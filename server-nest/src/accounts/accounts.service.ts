@@ -25,17 +25,17 @@ export class AccountsService {
 	/**
 	 * 유저의 스토브 소개란에 적을 인증 코드(32글자)를 생성한다
 	 */
-	async publishUserToken(request: Request): Promise<object>{
+	async publishUserToken(request: Request): Promise<string>{
 		const verificationCode = randomBytes(16).toString("hex");
 		await this.cacheManager.set(request.cookies["sessionCode"] + "token", verificationCode, TOKEN_CACHE_TTL);
 
-		return {"data": verificationCode};
+		return verificationCode;
 	}
 
 	/**
 	 * 유저의 스토브 소개란에 적힌 인증 코드를 가져와 비교한다
 	 */
-	async compareStoveUserToken(request: Request, stoveCode: string): Promise<string>{
+	async isMatchStoveUserToken(request: Request, stoveCode: string): Promise<boolean>{
 		const browser = await puppeteer.launch({
 			headless: true,
 			waitForInitialPage: false,
@@ -51,16 +51,13 @@ export class AccountsService {
 		
 		const publishedToken = await this.cacheManager.get(request.cookies["sessionCode"] + "token");
 		
-		if (publishedToken === undefined) {
-			return "empty";
-		}
-		else if (publishedToken === stoveVerificationCode) {
+		if (publishedToken === stoveVerificationCode) {
 			this.cacheManager.del(request.cookies["sessionCode"] + "token");
 
-			return "good";
+			return true;
 		}
 		else{
-			return "bad";
+			return false;
 		}
 	}
 
@@ -99,7 +96,7 @@ export class AccountsService {
 	 * 유저의 스토브 ID로 로스트아크 캐릭터 이름 목록을 가져온다
 	 * 서버이름에 포함된 @를 이용해 반환 값을 split하여 사용
 	 */
-	async getStoveUserCharacters_scrap(stoveCode: string): Promise<object>{
+	async getStoveUserCharacters_scrap(stoveCode: string): Promise<Array<{ ServerName: string, CharacterName: string, ItemMaxLevel: string, CharacterClassName: string }>>{
 		const result: object = {
 			characterName: "",
 			serverName: ""
@@ -120,51 +117,71 @@ export class AccountsService {
 		
 		const targetElement = await newPage.$("#expand-character-list"); //소개
 
-		const characterNames = await newPage.evaluate((data) => {
-			const serverNameElements = data.querySelectorAll("strong");
-			const serverCharacterElements = data.querySelectorAll("ul");
-			const characterNameElements = data.querySelectorAll("ul > li > span > button > span");
-			const serverNames: Array<string> = [];
-			const serverCharacterCounts: Array<number> = [];
-			const characterNames: Array<string> = [];
+		const [serverNames, serverCharacterCounts, characterNames] = await newPage.evaluate((data): [Array<string>, Array<number>, Array<string>] => {
+			const serverNameElements: NodeListOf<HTMLElement> = data.querySelectorAll("strong");
+			const serverCharacterElements: NodeListOf<HTMLElement> = data.querySelectorAll("ul");
+			const characterNameElements: NodeListOf<HTMLElement> = data.querySelectorAll("ul > li > span > button > span");
+			const serverNamesBrowser: Array<string> = [];
+			const serverCharacterCountsBrowser: Array<number> = [];
+			const characterNamesBrowser: Array<string> = [];
 
-			console.log(serverNameElements);
-			console.log(serverCharacterElements);
-			console.log(characterNameElements);
+			// 여기 console.log는 브라우저에서 출력되는 코드
+			// console.log('serverNameElements', serverNameElements);
+			// console.log('serverCharacterElements', serverCharacterElements);
+			// console.log('characterNameElements', characterNameElements);
+			// {ServerName: string, CharacterName: string}
 			
 			for(const element of serverNameElements){
-				serverNames.push(element.textContent);
+				serverNamesBrowser.push(element.textContent);
 			}
 			for(const element of serverCharacterElements){
-				serverCharacterCounts.push(element.querySelectorAll("li").length);
+				serverCharacterCountsBrowser.push(element.querySelectorAll("li").length);
 			}
 
 			let serverIndex = 0;
 			let characterIndex = 0;
 			for(const element of characterNameElements){
-				if(characterIndex >= serverCharacterCounts[serverIndex]){
+				if(characterIndex >= serverCharacterCountsBrowser[serverIndex]){
 					characterIndex = 0;
 					serverIndex++;
 				}
-				characterNames.push(serverNames[serverIndex] + " => " + element.textContent);
+				characterNamesBrowser.push(serverNamesBrowser[serverIndex] + "|" + element.textContent + "|" + "9999.99" + "|" + "수육국밥");
 				characterIndex++;
 			}
 
-			return characterNames;
+			return [serverNamesBrowser, serverCharacterCountsBrowser, characterNamesBrowser];
 		}, targetElement);
-		
-		console.log(characterNames)
+
+		const characterArray: Array<{ ServerName: string, CharacterName: string, ItemMaxLevel: string, CharacterClassName: string }> = [];
+		characterNames.map((characterInfo) => {
+			const [server, character, level, className] = characterInfo.split("|");
+
+			return characterArray.push(
+				{
+					ServerName: server.replace("@", ""),
+					CharacterName: character,
+					ItemMaxLevel: level,
+					CharacterClassName: className,
+				}
+			);
+		});
+		// console.log('serverNames', serverNames)
+		// console.log('');
+		// console.log('serverCharacterCounts', serverCharacterCounts)
+		// console.log('');
+		// console.log('characterNames', characterNames)
+		// console.log('');
 
 		browser.close(); //창 종료
 
-		return characterNames;
+		return characterArray;
 	}
 
 	/**
 	 * ID로 1개의 계정을 찾는다
 	 */
-	findWithID(accountID: string): Promise<Accounts | null> {
-		return this.accountsRepository.findOne({
+	isExistsID(accountID: string): Promise<boolean> {
+		return this.accountsRepository.exist({
 			where: {
 				id: accountID,
 			},
@@ -174,8 +191,8 @@ export class AccountsService {
 	/**
 	 * Nickname으로 1개의 계정을 찾는다
 	 */
-	findWithNickname(nickname: string): Promise<Accounts | null> {
-		return this.accountsRepository.findOne({
+	isExistsNickname(nickname: string): Promise<boolean> {
+		return this.accountsRepository.exist({
 			where: {
 				nickname: nickname,
 			},
@@ -183,30 +200,19 @@ export class AccountsService {
 	}
 
 	/**
-	 * Controller에서 넘겨준 정보를 사용하여 계정을 전부 찾는다
-	 */
-	findAll(): Promise<Accounts[]> {
-		return this.accountsRepository.find({
-			// where: whereCondition,
-			// take, skip / it is for the pagination
-			// order
-		});
-	}
-
-	/**
 	 * 중복되는 정보가 있는지 확인 후 계정을 생성한다
 	 */
 	async createAccount(createAccountsDTO: CreateAccountsDTO): Promise<number> {
-		const idCheck: object|null = await this.findWithID(createAccountsDTO.id);
-		const nicknameCheck: object | null = await this.findWithNickname(createAccountsDTO.nickname);
+		const idExists: boolean = await this.isExistsID(createAccountsDTO.id);
+		const nicknameExists: boolean = await this.isExistsNickname(createAccountsDTO.nickname);
 
-		if (idCheck !== null && nicknameCheck !== null) {
+		if (idExists === true && nicknameExists === true) {
 			return 0; //이미 ID & Nickname 존재
 		}
-		else if (idCheck !== null) {
+		else if (idExists === true) {
 			return 1; //이미 ID 존재
 		}
-		else if (nicknameCheck !== null) {
+		else if (nicknameExists === true) {
 			return 2; //이미 Nickname 존재
 		}
 		else{
@@ -243,14 +249,13 @@ export class AccountsService {
 	/**
 	 * 중복 로그인 방지, 이미 해당 계정으로 로그인한 사람이 있는지 확인
 	 */
-	async checkSignInStatus(request: Request, response: Response): Promise<{ status: string, id: string, nickname: string, lostarkMainCharacter: string }> {
+	async checkSignInStatus(request: Request, response: Response): Promise<{ status: string, id: string, nickname: string }> {
 		if (request.cookies["sessionCode"] === undefined) {
 			console.log(SIGN_IN_SESSION)
 			return {
 				status: "no_cookie",
 				id: "",
 				nickname: "",
-				lostarkMainCharacter: "",
 			}
 		}
 		else if (SIGN_IN_SESSION.has(request.cookies["sessionCode"]) === true) { //해당 계정 세션이 이미 존재
@@ -267,7 +272,6 @@ export class AccountsService {
 					status: "locked",
 					id: "",
 					nickname: "",
-					lostarkMainCharacter: "",
 				}
 			}
 			else if (userData.isBanned === true) {
@@ -277,7 +281,6 @@ export class AccountsService {
 					status: "banned",
 					id: "",
 					nickname: "",
-					lostarkMainCharacter: "",
 				}
 			}
 			else if (userData.isLost === true) {
@@ -287,7 +290,6 @@ export class AccountsService {
 					status: "lost",
 					id: "",
 					nickname: "",
-					lostarkMainCharacter: "",
 				}
 			}
 			else{
@@ -297,7 +299,6 @@ export class AccountsService {
 					status: "using",
 					id: userData.id,
 					nickname: userData.nickname,
-					lostarkMainCharacter: userData.lostarkMainCharacter,
 				}
 			}
 		}
@@ -307,7 +308,6 @@ export class AccountsService {
 				status: "wrong_cookie",
 				id: "",
 				nickname: "",
-				lostarkMainCharacter: "",
 			}
 		}
 	}
@@ -385,14 +385,14 @@ export class AccountsService {
 	 * ID에 맞는 계정을 수정한다
 	 * find > 정보 수정 > save 처리
 	 */
-	async updateLostarkMainCharacter(request: Request, updateAccountsDTO: UpdateAccountsDTO) {
+	async updateLostarkMainCharacter(request: Request, body: { lostarkMainCharacter: string }) {
 		const account = await this.accountsRepository.findOne({
 			where: {
 				id: SIGN_IN_SESSION.get(request.cookies["sessionCode"]),
 			}
 		});
 
-		account.lostarkMainCharacter = updateAccountsDTO.lostarkMainCharacter;
+		account.lostarkMainCharacter = body.lostarkMainCharacter;
 
 		await this.accountsRepository.save(account);
 	}

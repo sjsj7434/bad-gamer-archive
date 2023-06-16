@@ -10,7 +10,7 @@ import ListGroup from 'react-bootstrap/ListGroup';
 import Tab from 'react-bootstrap/Tab';
 import { useNavigate } from "react-router-dom";
 import Stack from 'react-bootstrap/esm/Stack';
-import * as accountsAction from '../../js/accountsAction'
+import * as accountsFetch from '../../js/accountsFetch'
 import '../../css/ActivateLostark.css';
 import LoadingModal from '../common/LoadingModal';
 
@@ -71,13 +71,14 @@ const ActivateLostark = (props) => {
 		const stoveURL = document.querySelector("#stoveURL").value;
 		window.open(`https://timeline.onstove.com/${stoveURL}/setting`);
 	}
+
 	const getVerificationCode = async () => {
 		if(isValidStoveURL !== 2){
 			alert("입력하신 스토브 코드를 확인해주세요");;
 			document.querySelector("#stoveURL").focus();
 			return;
 		}
-		const verificationCode = await accountsAction.getVerificationCode();
+		const verificationCode = await accountsFetch.getVerificationCode();
 		document.querySelector("#verificationCode").value = verificationCode;
 		document.querySelector("#verificationArea").style.display = "";
 
@@ -109,7 +110,8 @@ const ActivateLostark = (props) => {
 		setShowLoadingModal(true);
 		setLoadingMessage("스토브 소개 정보를 확인 중입니다");
 		const stoveURL = document.querySelector("#stoveURL").value;
-		const matchResult = await accountsAction.checkTokenMatch(stoveURL);
+		const [matchResult, characterNames] = await accountsFetch.checkProfileTokenMatch(stoveURL);
+		console.log(matchResult, characterNames)
 
 		if(matchResult === "code"){
 			alert("스토브 코드를 다시 확인해주세요");
@@ -133,10 +135,8 @@ const ActivateLostark = (props) => {
 		else{
 			clearInterval(intervalRef.current);
 
-			console.log(matchResult)
-
 			const elements = [];
-			elements.push(matchResult.map((characterInfo) => {
+			elements.push(characterNames.map((characterInfo) => {
 				return (
 					<ListGroup.Item key={characterInfo.CharacterName} action onClick={() => {setCharacter(characterInfo)}}>
 						[{characterInfo.ServerName}] <b>{characterInfo.CharacterName}</b> / {characterInfo.ItemMaxLevel} / {characterInfo.CharacterClassName}
@@ -151,14 +151,14 @@ const ActivateLostark = (props) => {
 		setShowLoadingModal(false);
 	}
 
-	const setCharacter = (characterInfo) => {
+	const setCharacter = async (characterInfo) => {
 		if(window.confirm(`[${characterInfo.CharacterName} (Level.${characterInfo.ItemMaxLevel})] 캐릭터로 인증하시겠습니까?`)){
 			setCharacterModalShow(false);
 			controlActivateVerify("done");
 			
 			setShowLoadingModal(true);
 			setLoadingMessage("캐릭터를 설정 중입니다");
-			accountsAction.setLostarkMainCharacter({
+			await accountsFetch.setLostarkMainCharacter({
 				lostarkMainCharacter: characterInfo.CharacterName,
 			});
 			setShowLoadingModal(false);

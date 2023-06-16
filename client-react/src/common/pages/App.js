@@ -1,19 +1,19 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import Error404 from './errors/Error404';
 import { useState, useEffect } from 'react';
 import { Navigate } from "react-router-dom";
 
+import 'bootstrap/dist/css/bootstrap.min.css';
+
+import Error404 from './errors/Error404';
 import LostarkRouter from '../../lostark/pages/LostarkRouter';
 import CharacterInfo from '../../lostark/pages/character/CharacterInfo';
 import SignUpForm from './accounts/SignUpForm';
 import SignInForm from './accounts/SignInForm';
 import CommonTopMenu from './CommonTopMenu';
 import MyPage from './accounts/MyPage';
-import * as accountsAction from '../js/accountsAction.js'
-
-import 'bootstrap/dist/css/bootstrap.min.css';
 import ActivateLostark from './accounts/ActivateLostark';
 import BlockNonLogin from './accounts/BlockNonLogin';
+import * as accountsFetch from '../js/accountsFetch.js'
 
 
 // index.js에서 StrictMode 존재하면 두번 랜더링, 개발 모드에서만 적용됩니다. 생명주기 메서드들은 프로덕션 모드에서 이중으로 호출되지 않습니다.
@@ -24,22 +24,7 @@ const App = () => {
 	const [accountData, setAccountData] = useState(null);
 	
 	const checkSignIn = async () => {
-		const statusJSON = await accountsAction.checkSignInStatus();
-		console.log("App-checkSignIn", statusJSON)
-		
-		if(statusJSON.status === "locked"){
-			alert("반복된 로그인 시도로 계정이 잠금 상태로 변경되었습니다");
-		}
-		else if(statusJSON.status === "banned"){
-			alert("해당 계정은 추방처리되었습니다");
-		}
-		else if(statusJSON.status === "lost"){
-			alert("분실신고된 계정은 사용할 수 없습니다");
-		}
-		else if(statusJSON.status === "wrong_cookie"){
-			alert("사용자 정보를 확인할 수 없습니다");
-		}
-
+		const statusJSON = await accountsFetch.checkSignInStatus();
 		setAccountData(statusJSON);
 	}
 

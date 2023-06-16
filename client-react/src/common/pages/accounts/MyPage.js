@@ -5,20 +5,20 @@ import { useNavigate } from "react-router-dom";
 import Table from 'react-bootstrap/Table';
 import Stack from 'react-bootstrap/Stack';
 
-import * as accountsAction from '../../../common/js/accountsAction.js'
+import * as accountsFetch from '../../../common/js/accountsFetch.js'
 
-const MyPage = (props) => {
+const MyPage = () => {
 	const [accountData, setAccountData] = useState(null);
 	const [renderData, setRenderData] = useState(null);
 	const navigate = useNavigate();
 
 	useEffect(() => {
 		const callMyInfo = async () => {
-			setAccountData(await accountsAction.getMyInfo());
+			setAccountData(await accountsFetch.getMyInfo());
 		}
 
 		callMyInfo();
-	}, [props])
+	}, [])
 
 	useEffect(() => {
 		if(accountData !== null){
@@ -56,6 +56,8 @@ const MyPage = (props) => {
 										{accountData.lostarkMainCharacter === null ? "정보 없음" : accountData.lostarkMainCharacter}
 										&nbsp;&nbsp;
 										<Button onClick={() => { navigate("lostark") }} variant="outline-danger" style={{width: "30%", maxWidth: "130px", padding: "2px"}}>LA Get</Button>
+										<br/>
+										* 좀 더 다양한 정보를 저장하기 위해 테이블을 따로 구성해야 할 듯
 									</td>
 								</tr>
 							</tbody>
