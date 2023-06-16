@@ -5,7 +5,6 @@ import { Navigate } from "react-router-dom";
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 import Error404 from './errors/Error404';
-import LostarkRouter from '../../lostark/pages/LostarkRouter';
 import CharacterInfo from '../../lostark/pages/character/CharacterInfo';
 import SignUpForm from './accounts/SignUpForm';
 import SignInForm from './accounts/SignInForm';
@@ -14,6 +13,10 @@ import MyPage from './accounts/MyPage';
 import ActivateLostark from './accounts/ActivateLostark';
 import BlockNonLogin from './accounts/BlockNonLogin';
 import * as accountsFetch from '../js/accountsFetch.js'
+import LostarkMain from '../../lostark/pages/LostarkMain';
+import AnonymousBoard from './boards/AnonymousList';
+import AnonymousView from './boards/AnonymousView';
+import AnonymousWrite from './boards/AnonymousWrite';
 
 
 // index.js에서 StrictMode 존재하면 두번 랜더링, 개발 모드에서만 적용됩니다. 생명주기 메서드들은 프로덕션 모드에서 이중으로 호출되지 않습니다.
@@ -23,13 +26,13 @@ import * as accountsFetch from '../js/accountsFetch.js'
 const App = () => {
 	const [accountData, setAccountData] = useState(null);
 	
-	const checkSignIn = async () => {
+	const checkSignInStatus = async () => {
 		const statusJSON = await accountsFetch.checkSignInStatus();
 		setAccountData(statusJSON);
 	}
 
 	useEffect(() => {
-		checkSignIn();
+		checkSignInStatus();
 	}, []); //처음 페이지 로딩 될때만, useEffect 함수에 종속성이 없으면 무한 루프가 발생한다
 
 	return (
@@ -42,17 +45,29 @@ const App = () => {
 					<>
 						<Routes>
 							{/* Top menu */}
-							<Route path="*" element={ <CommonTopMenu accountData={accountData} renewLogin={checkSignIn} /> }></Route>
+							<Route path="*" element={ <CommonTopMenu accountData={accountData} checkSignInStatus={checkSignInStatus} /> }></Route>
 						</Routes>
 						
 						<Routes>
 							{/* Contents */}
 							<Route path="/" element={ <Navigate to="lostark" replace={true} /> }></Route>
-							<Route path="lostark/*" element={ <LostarkRouter /> }></Route>
+							<Route path="lostark">
+								<Route path="" element={<LostarkMain />}></Route>
+								
+								<Route path="board">
+									<Route path="anonymous/:page" element={<AnonymousBoard />}></Route>
+									<Route path=":category/view/:contentCode" element={<AnonymousView />}></Route>
+									<Route path="anonymous/write" element={<AnonymousWrite />}></Route>
+									<Route path="anonymous/edit/:contentCode" element={<AnonymousWrite />}></Route>
+
+									<Route path="identified/:page" element={<AnonymousBoard />}></Route>
+									<Route path="identified/write" element={<AnonymousWrite />}></Route>
+								</Route>
+							</Route>
 
 							<Route path="accounts">
 								<Route path="signup" element={ <SignUpForm /> }></Route>
-								<Route path="signin" element={ <SignInForm accountData={accountData} renewLogin={checkSignIn} /> }></Route>
+								<Route path="signin" element={ <SignInForm accountData={accountData} checkSignInStatus={checkSignInStatus} /> }></Route>
 								<Route path="mypage">
 									<Route path="" element={ <BlockNonLogin accountData={accountData} ifLoginRender={<MyPage />} /> }></Route>
 									<Route path="lostark" element={ <BlockNonLogin accountData={accountData} ifLoginRender={<ActivateLostark />} /> }></Route>

@@ -13,28 +13,24 @@ export class BoardsController {
 	constructor(private boardsService: BoardsService) { }
 
 	@Get("view/:contentCode")
-	async getContentByCode(@Param("contentCode") contentCode: number, @Query("type") type: string): Promise<{ data: Boards | null }> {
+	async getContentByCode(@Param("contentCode") contentCode: number, @Query("type") type: string): Promise<Boards | null> {
 		console.log("[Controller-boards-getContentByCode]" + type);
 
 		const result = await this.boardsService.getContentByCode(contentCode, type);
 
-		if (result === null) {
-			console.log("getContentByCode is null");
-		}
-		else{
+		if (result !== null) {
 			result.ip = result.ip.split(".")[0] + (result.ip.split(".")[1] !== undefined ? "." + result.ip.split(".")[1] : "");
 		}
 
-		return { data: result };
+		return result;
 	}
 
 	@Get("list/:category/:page")
-	async getContentListByCategory(@Param("category") category: string, @Param("page") page: number): Promise<{ data: [Boards[], number] }> {
+	async getContentListByCategory(@Param("category") category: string, @Param("page") page: number): Promise<[Boards[], number]> {
 		console.log("[Controller-boards-getContentListByCategory]");
 		const perPage = 20;
 
 		const result = await this.boardsService.getContentListByCategory(category, page, perPage);
-		// console.log(result)
 
 		if (result !== null) {
 			for (let index: number = 0; index < result[0].length; index++){
@@ -42,7 +38,7 @@ export class BoardsController {
 			}
 		}
 
-		return { data: result };
+		return result;
 	}
 
 	//set cookies/headers 정도만 사용하고, 나머지는 프레임워크에 떠넘기는 식으로 @Res()를 사용하는 거라면 passthrough: true 옵션은 필수! 그렇지 않으면 fetch 요청이 마무리가 안됨

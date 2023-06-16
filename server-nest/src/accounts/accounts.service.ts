@@ -153,6 +153,7 @@ export class AccountsService {
 		}, targetElement);
 
 		const characterArray: Array<{ ServerName: string, CharacterName: string, ItemMaxLevel: string, CharacterClassName: string }> = [];
+
 		characterNames.map((characterInfo) => {
 			const [server, character, level, className] = characterInfo.split("|");
 

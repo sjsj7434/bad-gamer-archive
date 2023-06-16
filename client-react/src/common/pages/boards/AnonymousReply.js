@@ -6,7 +6,7 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import CustomPagination from './CustomPagination';
 
-const BoardReply = (props) => {
+const AnonymousReply = (props) => {
 	// const [upvoteCount, setUpvoteCount] = useState(0);
 	// const [downvoteCount, setDownvoteCount] = useState(0);
 	const [renderData, setRenderData] = useState(<></>);
@@ -437,4 +437,4 @@ const BoardReply = (props) => {
 	);
 }
 
-export default BoardReply;
+export default AnonymousReply;

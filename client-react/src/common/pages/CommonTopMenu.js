@@ -18,7 +18,7 @@ const CommonTopMenu = (props) => {
 	const navigate = useNavigate();
 	
 	const menuClick = useCallback((url) => {
-		props.renewLogin();
+		props.checkSignInStatus();
 		setShowOffcanvas(false);
 		navigate(url);
 	}, [props, navigate])
@@ -30,7 +30,7 @@ const CommonTopMenu = (props) => {
 			}
 			await accountsFetch.setSignOut();
 			setShowOffcanvas(false);
-			props.renewLogin();
+			props.checkSignInStatus();
 			alert("로그아웃 되었습니다");
 			navigate("/");
 		}
@@ -64,7 +64,7 @@ const CommonTopMenu = (props) => {
 		<>
 			<Navbar collapseOnSelect bg="dark" variant="dark" expand="md" className="mb-3" sticky="top">
 				<Container style={{maxWidth: "1440px"}}>
-					<Navbar.Brand as={NavLink} to="/lostark" onClick={() => {props.renewLogin()}}>
+					<Navbar.Brand as={NavLink} to="/lostark" onClick={() => {props.checkSignInStatus()}}>
 						<img
 							alt=""
 							src={logo}

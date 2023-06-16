@@ -131,6 +131,16 @@ export class Accounts {
 	isLost: boolean;
 
 	/**
+	 * 휴면 계정
+	 */
+	@Column({
+		type: "boolean"
+		, nullable: false
+		, default: false
+	})
+	isSleep: boolean;
+
+	/**
 	 * 유저 계정 정지당함
 	 */
 	@Column({

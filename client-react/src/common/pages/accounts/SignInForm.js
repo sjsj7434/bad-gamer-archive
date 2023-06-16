@@ -45,7 +45,7 @@ const SignInForm = (props) => {
 		});
 
 		if(signInResult === "success"){
-			props.renewLogin();
+			props.checkSignInStatus();
 			navigate("/");
 		}
 		else if(signInResult === "fail"){

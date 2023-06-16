@@ -11,7 +11,7 @@ import Button from 'react-bootstrap/Button';
 import LoadingModal from '../common/LoadingModal';
 import '../../css/View.css';
 
-const BoardWriteAnonymous = () => {
+const AnonymousWrite = () => {
 	const [writeMode, setWriteMode] = useState("");
 	const [contentCode, setContentCode] = useState(null);
 	const [renderData, setRenderData] = useState(<></>);
@@ -364,4 +364,4 @@ const BoardWriteAnonymous = () => {
 	);
 }
 
-export default BoardWriteAnonymous;
+export default AnonymousWrite;

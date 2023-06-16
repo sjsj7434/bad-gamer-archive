@@ -14,7 +14,7 @@ const LoadingModal = (props) => {
 					<div style={{display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "center", marginTop: "50px", marginBottom: "50px"}}>
 						<Spinner animation="grow" variant="success" />
 						&nbsp;&nbsp;
-						<span style={{fontSize: "0.8rem"}}>{props.message}</span>
+						<span style={{fontSize: "0.85rem"}}>{props.message}</span>
 					</div>
 				</Modal.Body>
 			</Modal>

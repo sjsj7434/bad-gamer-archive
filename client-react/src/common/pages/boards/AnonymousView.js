@@ -1,13 +1,14 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from "react-router-dom";
 import Container from 'react-bootstrap/Container';
 import Placeholder from 'react-bootstrap/Placeholder';
 import Button from 'react-bootstrap/Button';
-import BoardReply from './BoardReply';
+import AnonymousReply from './AnonymousReply';
 import LoadingModal from '../common/LoadingModal';
+import * as boardsFetch from '../../js/boardsFetch';
 import '../../css/View.css';
 
-const BoardView = () => {
+const AnonymousView = () => {
 	const [contentCode, setContentCode] = useState(null);
 	const [category, setCategory] = useState(null);
 	const [upvoteCount, setUpvoteCount] = useState(0);
@@ -19,66 +20,31 @@ const BoardView = () => {
 	const navigate = useNavigate();
 	const params = useParams();
 
-	/**
-	 * 자주 사용하는 fetch 템플릿
-	 * @param {string} destination fetch url, 목적지
-	 * @returns {object} 가져온 정보 JSON
-	 */
-	const parseStringToJson = async (jsonString) => {
-		if(jsonString === null){
-			return null;
-		}
-		else if(jsonString.status === 500){
-			alert("Error!\nCan not get data");
-			return null;
-		}
-		else{
-			const jsonResult = await jsonString.json();
+	useEffect(() => {
+		/**
+		 * code로 게시글 정보 가져오기
+		 */
+		const readContent = async () => {
+			const contentData = await boardsFetch.readContent(contentCode);
 
-			if(jsonResult.statusCode === 500){
-				return null;
-			}
-			else if(jsonResult.data === null){
-				return null;
-			}
-			else{
-				return jsonResult.data;
-			}
-		}
-	}
-
-	/**
-	 * code로 게시글 정보 가져오기
-	 */
-	const readContent = useCallback(async () => {
-		if(contentCode !== null){
-			const fecthOption = {
-				method: "GET"
-				, headers: {"Content-Type": "application/json",}
-				, credentials: "include", // Don't forget to specify this if you need cookies
-			};
-			const jsonString = await fetch(`${process.env.REACT_APP_SERVER}/boards/view/${contentCode}?type=view`, fecthOption);
-			const jsonData = await parseStringToJson(jsonString);
-
-			console.log("readContent", jsonData);
-
-			if(jsonData === null){
+			if(contentData === null){
 				alert("존재하지 않는 게시물입니다");
 				navigate(`/lostark/board/${category}/1`);
 			}
 			else{
-				setUpvoteCount(jsonData.upvote);
-				setDownvoteCount(jsonData.downvote);
-				setContentJson(jsonData);
+				setUpvoteCount(contentData.upvote);
+				setDownvoteCount(contentData.downvote);
+				setContentJson(contentData);
 			}
 		}
-	}, [category, contentCode, navigate])
 
-	useEffect(() => {
 		setContentCode(params.contentCode);
-		setCategory(params.category)
-		readContent();
-	}, [readContent, params.contentCode, params.category]);
+		setCategory(params.category);
+
+		if(contentCode !== null){
+			readContent();
+		}
+	}, [params.contentCode, params.category]);
 
 	useEffect(() => {
 		if(contentJson === null){
@@ -282,7 +248,7 @@ const BoardView = () => {
 						</div>
 
 						<hr style={{border: "2px solid #5893ff"}} />
-						<BoardReply contentCode={contentCode}></BoardReply>
+						<AnonymousReply contentCode={contentCode}></AnonymousReply>
 					</div>
 				</>
 			);
@@ -297,4 +263,4 @@ const BoardView = () => {
 	);
 }
 
-export default BoardView;
+export default AnonymousView;
