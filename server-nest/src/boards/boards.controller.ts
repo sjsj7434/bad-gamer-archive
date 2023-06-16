@@ -78,10 +78,10 @@ export class BoardsController {
 	}
 
 	@Delete("content/anonymous")
-	async deleteContent(@Body() deleteBoardsDTO: DeleteBoardsDTO): Promise<{data: boolean}> {
+	async deleteContent(@Body() deleteBoardsDTO: DeleteBoardsDTO): Promise<boolean> {
 		console.log("[Controller-boards-deleteContent]");
 		const isDeleted = await this.boardsService.softDeleteContent(deleteBoardsDTO);
-		return { data: isDeleted };
+		return isDeleted;
 	}
 
 	@Patch("content/anonymous")
@@ -94,7 +94,7 @@ export class BoardsController {
 	}
 
 	@Post("content/anonymous/upvote")
-	async upvoteContent(@Ip() ipData: string, @Body() sendData: { code: number }): Promise<{data: Boards | null}> {
+	async upvoteContent(@Ip() ipData: string, @Body() sendData: { code: number }): Promise<Boards> {
 		console.log("[Controller-boards-upvoteContent]");
 
 		const isVotable: boolean = this.boardsService.isVotableContent(sendData.code, ipData);
@@ -102,15 +102,18 @@ export class BoardsController {
 		if (isVotable === true){
 			const updatedContent = await this.boardsService.upvoteContent(sendData.code);
 
-			return { data: updatedContent }
+			return updatedContent;
 		}
 		else{
-			return { data: null }
+			const emptyElement = new Boards();
+			emptyElement.upvote = null;
+			emptyElement.downvote = null;
+			return emptyElement;
 		}
 	}
 
 	@Post("content/anonymous/downvote")
-	async downvoteContent(@Ip() ipData: string, @Body() sendData: { code: number }){
+	async downvoteContent(@Ip() ipData: string, @Body() sendData: { code: number }): Promise<Boards> {
 		console.log("[Controller-boards-downvoteContent]");
 
 		const isVotable: boolean = this.boardsService.isVotableContent(sendData.code, ipData);
@@ -118,10 +121,13 @@ export class BoardsController {
 		if (isVotable === true) {
 			const updatedContent = await this.boardsService.downvoteContent(sendData.code);
 
-			return { data: updatedContent }
+			return updatedContent;
 		}
 		else {
-			return { data: null }
+			const emptyElement = new Boards();
+			emptyElement.upvote = null;
+			emptyElement.downvote = null;
+			return emptyElement;
 		}
 	}
 

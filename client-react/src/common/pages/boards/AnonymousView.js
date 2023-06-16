@@ -10,7 +10,6 @@ import '../../css/View.css';
 
 const AnonymousView = () => {
 	const [contentCode, setContentCode] = useState(null);
-	const [category, setCategory] = useState(null);
 	const [upvoteCount, setUpvoteCount] = useState(0);
 	const [downvoteCount, setDownvoteCount] = useState(0);
 	const [contentJson, setContentJson] = useState(null);
@@ -21,6 +20,10 @@ const AnonymousView = () => {
 	const params = useParams();
 
 	useEffect(() => {
+		setContentCode(params.contentCode);
+	}, [params.contentCode]);
+
+	useEffect(() => {
 		/**
 		 * code로 게시글 정보 가져오기
 		 */
@@ -29,7 +32,7 @@ const AnonymousView = () => {
 
 			if(contentData === null){
 				alert("존재하지 않는 게시물입니다");
-				navigate(`/lostark/board/${category}/1`);
+				navigate(`/lostark/board/anonymous/1`);
 			}
 			else{
 				setUpvoteCount(contentData.upvote);
@@ -38,13 +41,10 @@ const AnonymousView = () => {
 			}
 		}
 
-		setContentCode(params.contentCode);
-		setCategory(params.category);
-
 		if(contentCode !== null){
 			readContent();
 		}
-	}, [params.contentCode, params.category]);
+	}, [contentCode, navigate]);
 
 	useEffect(() => {
 		if(contentJson === null){
@@ -106,19 +106,11 @@ const AnonymousView = () => {
 					code: contentCode,
 					password: password,
 				};
-				
-				const fecthOption = {
-					method: "DELETE"
-					, body: JSON.stringify(sendData)
-					, headers: {"Content-Type": "application/json",}
-				};
-				const jsonString = await fetch(`${process.env.REACT_APP_SERVER}/boards/content/anonymous`, fecthOption);
-				const jsonData = await parseStringToJson(jsonString);
 
-				console.log("deleteContent", jsonData);
+				const deleteResult = await boardsFetch.deleteContent(sendData);
 
-				if(jsonData === true){
-					navigate(`/lostark/board/${category}`);
+				if(deleteResult === true){
+					navigate(`/lostark/board/anonymous/1`);
 				}
 				else{
 					alert("게시글이 삭제되지 않았습니다\n올바른 게시글 비밀번호가 아닙니다");
@@ -133,7 +125,7 @@ const AnonymousView = () => {
 			 * 수정은 비밀번호 입력한 사람만 가능한데, 굳이 DB에서 다시 읽어와야하나?
 			 */
 			const editContent = async () => {
-				navigate(`/lostark/board/${category}/edit/${contentCode}`);
+				navigate(`/lostark/board/anonymous/edit/${contentCode}`);
 			}
 
 			/**
@@ -150,21 +142,17 @@ const AnonymousView = () => {
 				}
 
 				if(contentCode !== null){
-					const fecthOption = {
-						method: "POST"
-						, body: JSON.stringify(sendData)
-						, headers: {"Content-Type": "application/json",}
-						, credentials: "include", // Don't forget to specify this if you need cookies
-					};
-					const jsonString = await fetch(`${process.env.REACT_APP_SERVER}/boards/content/anonymous/${voteType}`, fecthOption);
-					const jsonData = await parseStringToJson(jsonString);
+					const voteResult = await boardsFetch.voteContent(voteType, sendData);
 
-					if(jsonData === null){
+					if(voteResult === null){
+						alert("오늘은 이미 해당 게시물에 추천, 비추천을 하였습니다");
+					}
+					else if(voteResult.upvote === null || voteResult.downvote === null){
 						alert("오늘은 이미 해당 게시물에 추천, 비추천을 하였습니다");
 					}
 					else{
-						setUpvoteCount(jsonData.upvote);
-						setDownvoteCount(jsonData.downvote);
+						setUpvoteCount(voteResult.upvote);
+						setDownvoteCount(voteResult.downvote);
 					}
 					
 					upvoteButton.disabled = false;
@@ -244,7 +232,7 @@ const AnonymousView = () => {
 							&nbsp;
 							<Button onClick={() => {deleteContent()}} variant="outline-danger" style={{padding: "2px", width: "8%", minWidth: "60px", maxWidth: "100px", fontSize: "0.8rem"}}>삭제</Button>
 							&nbsp;
-							<Button onClick={() => {navigate(`/lostark/board/${category}/1`)}} variant="outline-secondary" style={{padding: "2px", width: "8%", minWidth: "70px", maxWidth: "100px", fontSize: "0.8rem"}}>목록으로</Button>
+							<Button onClick={() => {navigate(`/lostark/board/anonymous/1`)}} variant="outline-secondary" style={{padding: "2px", width: "8%", minWidth: "70px", maxWidth: "100px", fontSize: "0.8rem"}}>목록으로</Button>
 						</div>
 
 						<hr style={{border: "2px solid #5893ff"}} />
@@ -253,7 +241,7 @@ const AnonymousView = () => {
 				</>
 			);
 		}
-	}, [category, contentCode, contentJson, upvoteCount, downvoteCount, navigate]);
+	}, [contentCode, contentJson, upvoteCount, downvoteCount, navigate]);
 	
 	return(
 		<Container style={{maxWidth: "1440px"}}>
