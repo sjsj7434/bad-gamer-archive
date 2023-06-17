@@ -8,7 +8,9 @@ import Col from 'react-bootstrap/Col';
 import Placeholder from 'react-bootstrap/Placeholder';
 import InputGroup from 'react-bootstrap/InputGroup';
 import Button from 'react-bootstrap/Button';
+import ProgressBar from 'react-bootstrap/ProgressBar';
 import LoadingModal from '../common/LoadingModal';
+import * as boardsFetch from '../../js/boardsFetch';
 import '../../css/View.css';
 
 const AnonymousWrite = () => {
@@ -20,91 +22,14 @@ const AnonymousWrite = () => {
 	const [contentPassword, setContentPassword] = useState("");
 	const [identity, setIdentity] = useState(false);
 	const [failMessage, setFailMessage] = useState(<>&nbsp;</>);
+	const [editorSizeByte, setEditorSizeByte] = useState(0);
 	const [loadingModalShow, setLoadingModalShow] = useState(false);
 	const [loadingModalMessage, setLoadingModalMessage] = useState("");
 	const params = useParams();
 	const navigate = useNavigate();
 	const [editorObject, setEditorObject] = useState(null);
 
-	/**
-	 * 자주 사용하는 fetch 템플릿
-	 * @param {string} destination fetch url, 목적지
-	 * @returns {object} 가져온 정보 JSON
-	 */
-	const parseStringToJson = async (jsonString) => {
-		if(jsonString === null){
-			return null;
-		}
-		else if(jsonString.status === 500){
-			alert("Error!\nCan not get data");
-			return null;
-		}
-		else{
-			const jsonResult = await jsonString.json();
-
-			if(jsonResult.statusCode === 500){
-				return null;
-			}
-			else if(jsonResult.data === null){
-				return null;
-			}
-			else{
-				return jsonResult.data;
-			}
-		}
-	}
-
-	/**
-	 * 게시글 생성
-	 */
-	const createContent = useCallback(async (sendData) => {
-		const fecthOption = {
-			method: "POST"
-			, body: JSON.stringify(sendData)
-			, headers: {"Content-Type": "application/json",}
-			, credentials: "include", // Don't forget to specify this if you need cookies
-		};
-		const jsonString = await fetch(`${process.env.REACT_APP_SERVER}/boards/content/anonymous`, fecthOption);
-		const jsonData = await parseStringToJson(jsonString);
-
-		return jsonData;
-	}, [])
-
-	/**
-	 * 게시글 정보 가져오기
-	 */
-	const readContent = useCallback(async () => {
-		if(contentCode !== null){
-			const fecthOption = {
-				method: "GET"
-				, headers: {"Content-Type": "application/json",}
-				, credentials: "include", // Don't forget to specify this if you need cookies
-			};
-			const jsonString = await fetch(`${process.env.REACT_APP_SERVER}/boards/view/${contentCode}?type=edit`, fecthOption);
-			const jsonData = await parseStringToJson(jsonString);
-
-			console.log("readContent", jsonData);
-
-			setContentTitle(jsonData.title);
-			setContentData(jsonData.content);
-		}
-	}, [contentCode])
-
-	/**
-	 * 게시글 수정
-	 */
-	const updateContent = useCallback(async (sendData) => {
-		const fecthOption = {
-			method: "PATCH"
-			, body: JSON.stringify(sendData)
-			, headers: {"Content-Type": "application/json",}
-			, credentials: "include", // Don't forget to specify this if you need cookies
-		};
-		const jsonString = await fetch(`${process.env.REACT_APP_SERVER}/boards/content/anonymous`, fecthOption);
-		const jsonData = await parseStringToJson(jsonString);
-
-		return jsonData;
-	}, [])
+	const editorMaxKB = 30;
 
 	/**
 	 * 신규 게시글 작성
@@ -124,6 +49,12 @@ const AnonymousWrite = () => {
 			return;
 		}
 
+		console.log(editorSizeByte, editorMaxKB, editorSizeByte >= editorMaxKB);
+		if(editorSizeByte >= editorMaxKB){
+			alert("작성된 글의 용량이 너무 큽니다");
+			return;
+		}
+
 		if(window.confirm("게시글을 저장하시겠습니까?") === false){
 			return;
 		}
@@ -133,19 +64,21 @@ const AnonymousWrite = () => {
 
 		const editorContet = editorObject.getData();
 
-		let result = await createContent({
+		const sendData = {
 			password: passwordElement.value,
 			title: titleElement.value,
 			content: editorContet,
 			hasImage: editorContet.indexOf("<img") > -1 ? true : false,
-		});
+		};
 
-		if(result === null){
+		let createResult = await boardsFetch.createContent(sendData);
+
+		if(createResult === null){
 			alert("문제가 발생하여 게시글을 저장할 수 없습니다(1)");
 			setLoadingModalShow(false);
 			setLoadingModalMessage("");
 		}
-		else if(result === undefined){
+		else if(createResult === undefined){
 			alert("문제가 발생하여 게시글을 저장할 수 없습니다(2)");
 			setLoadingModalShow(false);
 			setLoadingModalMessage("");
@@ -153,7 +86,7 @@ const AnonymousWrite = () => {
 		else{
 			navigate(`/lostark/board/anonymous/1`);
 		}
-	}, [editorObject, createContent, navigate])
+	}, [editorObject, editorSizeByte, editorMaxKB, navigate])
 
 	/**
 	 * 게시글 수정
@@ -167,7 +100,12 @@ const AnonymousWrite = () => {
 			return;
 		}
 
-		console.log("contentPassword : " + contentPassword)
+		console.log(editorSizeByte, editorMaxKB, editorSizeByte >= editorMaxKB);
+		if(editorSizeByte >= editorMaxKB){
+			alert("작성된 글의 용량이 너무 큽니다");
+			return;
+		}
+
 		if(window.confirm("게시글을 수정하시겠습니까?") === false){
 			return;
 		}
@@ -177,14 +115,16 @@ const AnonymousWrite = () => {
 
 		const editorContet = editorObject.getData();
 
-		let result = await updateContent({
+		const sendData = {
 			code: contentCode,
 			password: contentPassword,
 			title: titleElement.value,
 			content: editorContet,
 			hasImage: editorContet.indexOf("<img") > -1 ? true : false,
 			writer: "",
-		});
+		};
+
+		let result = await boardsFetch.updateContent(sendData);
 
 		if(result === null){
 			alert("문제가 발생하여 게시글을 수정할 수 없습니다(1)");
@@ -200,7 +140,7 @@ const AnonymousWrite = () => {
 			//정상적으로 처리 성공
 			navigate(`/lostark/board/anonymous/view/${contentCode}`);
 		}
-	}, [contentCode, contentPassword, editorObject, updateContent, navigate])
+	}, [contentCode, contentPassword, editorObject, editorSizeByte, editorMaxKB, navigate])
 
 	useEffect(() => {
 		if(params.contentCode !== undefined){
@@ -214,10 +154,20 @@ const AnonymousWrite = () => {
 	}, [params.contentCode])
 
 	useEffect(() => {
+		/**
+		 * 게시글 정보 가져오기
+		 */
+		const readContent = async () => {
+			const readResult = await boardsFetch.readContent(contentCode, "edit");
+	
+			setContentTitle(readResult.title);
+			setContentData(readResult.content);
+		}
+
 		if(contentCode !== null && identity === true){
 			readContent();
 		}
-	}, [contentCode, identity, readContent])
+	}, [contentCode, identity])
 
 	useEffect(() => {
 		/**
@@ -241,16 +191,9 @@ const AnonymousWrite = () => {
 				password: contentPasswordElement.value,
 			};
 			
-			const fecthOption = {
-				method: "POST"
-				, body: JSON.stringify(sendData)
-				, headers: {"Content-Type": "application/json",}
-			};
-			const jsonString = await fetch(`${process.env.REACT_APP_SERVER}/boards/content/anonymous/check/password`, fecthOption);
-			const jsonData = await parseStringToJson(jsonString);
-			console.log(`check: ${jsonData}`)
+			const checkResult = await boardsFetch.checkBeforeEdit(sendData)
 
-			if(jsonData === true){
+			if(checkResult === true){
 				setIdentity(true);
 				setContentPassword(contentPasswordElement.value);
 			}
@@ -275,7 +218,20 @@ const AnonymousWrite = () => {
 						</Col>
 					</Row>
 					<Form.Control id="title" type="text" placeholder="제목" style={{marginBottom: "10px", fontSize: "0.8rem"}} defaultValue={""} />
-					<MyEditor savedData={""} writeMode={writeMode} setEditor={(editor) => {setEditorObject(editor)}}></MyEditor>
+					
+					<MyEditor
+						writeMode={writeMode}
+						savedData={""}
+						editorMaxKB={editorMaxKB}
+						setEditor={(editor) => {setEditorObject(editor)}}
+						setEditorSizeByte={(size) => {setEditorSizeByte(size)}}
+					/>
+
+					<ProgressBar
+						now={parseInt((editorSizeByte / editorMaxKB) * 100, 10)} label={`${parseInt((editorSizeByte / editorMaxKB) * 100, 10)} %`}
+						variant="success"
+						style={{ height: "2.5rem", fontSize: "1rem", backgroundColor: "lightgray" }}
+					/>
 
 					<div style={{display: "flex", justifyContent: "flex-end", marginBottom: "15px", marginTop: "30px"}}>
 						<Button onClick={() => {saveEditorData()}} variant="outline-primary" style={{width: "20%", minWidth: "60px", maxWidth: "200px", fontSize: "0.8rem"}}>저장</Button>
@@ -290,7 +246,7 @@ const AnonymousWrite = () => {
 		else if(writeMode === "edit"){
 			if(identity !== true){
 				setRenderData(
-					<>
+					<Container style={{maxWidth: "600px"}}>
 						<Form.Group as={Row} className="mb-3">
 							<Form.Label style={{fontWeight: "800", fontSize: "0.8rem"}}>
 								게시글 비밀번호를 입력해주세요
@@ -305,15 +261,24 @@ const AnonymousWrite = () => {
 							</Col>
 						</Form.Group>
 
-						<Row className="justify-content-md-center" xs={2} md={2}>
-							<Col>
-								<Button onClick={() => {checkBeforeEdit()}} variant="outline-primary" style={{width: "100%", minWidth: "60px", maxWidth: "500px", fontSize: "0.8rem"}}>확인</Button>
-							</Col>
-							<Col>
-								<Button onClick={() => {if(window.confirm("내용을 수정하지않고 나가시겠습니까?") === true){navigate(`/lostark/board/anonymous/view/${contentCode}`)}}} variant="outline-secondary" style={{width: "100%", minWidth: "60px", maxWidth: "500px", fontSize: "0.8rem"}}>취소</Button>
-							</Col>
-						</Row>
-					</>
+						<div style={{display: "flex", justifyContent: "flex-end", marginBottom: "15px", marginTop: "30px"}}>
+							<Button
+								onClick={() => {checkBeforeEdit()}}
+								variant="outline-primary"
+								style={{width: "20%", minWidth: "60px", maxWidth: "200px", fontSize: "0.8rem"}}
+							>
+								확인
+							</Button>
+							&nbsp;
+							<Button
+								onClick={() => {if(window.confirm("내용을 수정하지않고 나가시겠습니까?") === true){navigate(`/lostark/board/anonymous/view/${contentCode}`)}}}
+								variant="outline-secondary"
+								style={{width: "20%", minWidth: "60px", maxWidth: "200px", fontSize: "0.8rem"}}
+							>
+								취소
+							</Button>
+						</div>
+					</Container>
 				);
 			}
 			else{
@@ -342,22 +307,47 @@ const AnonymousWrite = () => {
 							익명 게시판 / 수정
 							<br />
 							<Form.Control id="title" type="text" placeholder="제목" style={{marginBottom: "10px", fontSize: "0.8rem"}} defaultValue={contentTitle} />
-							<MyEditor savedData={contentData} setEditor={(editor) => {setEditorObject(editor)}}></MyEditor>
+
+							<MyEditor
+								writeMode={writeMode}
+								savedData={contentData}
+								editorMaxKB={editorMaxKB}
+								setEditor={(editor) => {setEditorObject(editor)}}
+								setEditorSizeByte={(size) => {setEditorSizeByte(size)}}
+							/>
+
+							<ProgressBar
+								now={parseInt((editorSizeByte / editorMaxKB) * 100, 10)} label={`${parseInt((editorSizeByte / editorMaxKB) * 100, 10)} %`}
+								variant="success"
+								style={{ height: "2.5rem", fontSize: "1rem", backgroundColor: "lightgray" }}
+							/>
 
 							<div style={{display: "flex", justifyContent: "flex-end", marginBottom: "15px", marginTop: "30px"}}>
-								<Button onClick={() => {editEditorData()}} variant="outline-primary" style={{width: "20%", minWidth: "60px", maxWidth: "200px", fontSize: "0.8rem"}}>수정</Button>
+								<Button
+									onClick={() => {editEditorData()}}
+									variant="outline-primary"
+									style={{width: "20%", minWidth: "60px", maxWidth: "200px", fontSize: "0.8rem"}}
+								>
+									수정
+								</Button>
 								&nbsp;
-								<Button onClick={() => {if(window.confirm("내용을 수정하지않고 나가시겠습니까?") === true){navigate(`/lostark/board/anonymous/view/${contentCode}`)}}} variant="outline-secondary" style={{width: "20%", minWidth: "60px", maxWidth: "200px", fontSize: "0.8rem"}}>취소</Button>
+								<Button
+									onClick={() => {if(window.confirm("내용을 수정하지않고 나가시겠습니까?") === true){navigate(`/lostark/board/anonymous/view/${contentCode}`)}}}
+									variant="outline-secondary"
+									style={{width: "20%", minWidth: "60px", maxWidth: "200px", fontSize: "0.8rem"}}
+								>
+									취소
+								</Button>
 							</div>
 						</>
 					);
 				}
 			}
 		}
-	}, [writeMode, contentCode, contentTitle, contentData, identity, failMessage, editorObject, saveEditorData, editEditorData, navigate])
+	}, [writeMode, contentCode, contentTitle, contentData, identity, failMessage, editorObject, editorSizeByte, saveEditorData, editEditorData, navigate])
 	
 	return(
-		<Container style={{maxWidth: "1440px"}}>
+		<Container style={{maxWidth: "1000px"}}>
 			{renderData}
 			<LoadingModal showModal={loadingModalShow} message={loadingModalMessage}/>
 		</Container>

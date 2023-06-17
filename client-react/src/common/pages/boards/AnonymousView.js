@@ -28,7 +28,7 @@ const AnonymousView = () => {
 		 * code로 게시글 정보 가져오기
 		 */
 		const readContent = async () => {
-			const contentData = await boardsFetch.readContent(contentCode);
+			const contentData = await boardsFetch.readContent(contentCode, "view");
 
 			if(contentData === null){
 				alert("존재하지 않는 게시물입니다");

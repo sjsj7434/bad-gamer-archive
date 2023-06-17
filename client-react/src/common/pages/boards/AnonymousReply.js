@@ -5,39 +5,12 @@ import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import CustomPagination from './CustomPagination';
+import * as repliesFetch from '../../js/repliesFetch';
 
 const AnonymousReply = (props) => {
 	// const [upvoteCount, setUpvoteCount] = useState(0);
 	// const [downvoteCount, setDownvoteCount] = useState(0);
 	const [renderData, setRenderData] = useState(<></>);
-
-	/**
-	 * 자주 사용하는 fetch 템플릿
-	 * @param {string} destination fetch url, 목적지
-	 * @returns {object} 가져온 정보 JSON
-	 */
-	const parseStringToJson = async (jsonString) => {
-		if(jsonString === null){
-			return null;
-		}
-		else if(jsonString.status === 500){
-			alert("Error!\nCan not get data");
-			return null;
-		}
-		else{
-			const jsonResult = await jsonString.json();
-
-			if(jsonResult.statusCode === 500){
-				return null;
-			}
-			else if(jsonResult.data === null){
-				return null;
-			}
-			else{
-				return jsonResult.data;
-			}
-		}
-	}
 
 	/**
 	 * 댓글 가져오기
@@ -75,29 +48,22 @@ const AnonymousReply = (props) => {
 				return;
 			}
 			else{
-				const sendData = {
-					code: replyCode,
-					password: deletePassword,
-					writer: "",
-				}
-
 				if(props.contentCode !== null){
-					const fecthOption = {
-						method: "DELETE"
-						, body: JSON.stringify(sendData)
-						, headers: {"Content-Type": "application/json",}
-						, credentials: "include", // Don't forget to specify this if you need cookies
-					};
-					const jsonString = await fetch(`${process.env.REACT_APP_SERVER}/boards/reply`, fecthOption);
-					const jsonData = await parseStringToJson(jsonString);
+					const sendData = {
+						code: replyCode,
+						password: deletePassword,
+						writer: "",
+					}
 
-					if(jsonData === null){
+					const deleteResult = await repliesFetch.deleteReply(sendData);
+
+					if(deleteResult === null){
 						alert("댓글 삭제 중 오류가 발생하였습니다(1)");
 					}
-					else if(jsonData === undefined){
+					else if(deleteResult === undefined){
 						alert("댓글 삭제 중 오류가 발생하였습니다(2)");
 					}
-					else if(jsonData === false){
+					else if(deleteResult === false){
 						alert("올바른 비밀번호가 아닙니다");
 					}
 					else{
@@ -134,19 +100,12 @@ const AnonymousReply = (props) => {
 				writer: "",
 			}
 
-			const fecthOption = {
-				method: "POST"
-				, body: JSON.stringify(sendData)
-				, headers: {"Content-Type": "application/json",}
-				, credentials: "include", // Don't forget to specify this if you need cookies
-			};
-			const jsonString = await fetch(`${process.env.REACT_APP_SERVER}/boards/reply`, fecthOption);
-			const jsonData = await parseStringToJson(jsonString);
+			const createResult = await repliesFetch.createRecursiveReply(sendData);
 
-			if(jsonData === null){
+			if(createResult === null){
 				alert("답글 작성 중 오류가 발생하였습니다(1)");
 			}
-			else if(jsonData === undefined){
+			else if(createResult === undefined){
 				alert("답글 작성 중 오류가 발생하였습니다(2)");
 			}
 			else{
@@ -157,17 +116,10 @@ const AnonymousReply = (props) => {
 		}
 
 		if(props.contentCode !== null){
-			const fecthOption = {
-				method: "GET"
-				, headers: {"Content-Type": "application/json",}
-				, credentials: "include", // Don't forget to specify this if you need cookies
-			};
+			const replyArray = await repliesFetch.getReplies(props.contentCode, currentPage);
 
-			const jsonString = await fetch(`${process.env.REACT_APP_SERVER}/boards/reply/${props.contentCode}/${currentPage}`, fecthOption);
-			const jsonData = await parseStringToJson(jsonString);
-
-			if(jsonData !== null){
-				if(jsonData[1] === 0){
+			if(replyArray !== null){
+				if(replyArray[1] === 0){
 					setRenderData(
 						<div key={"replyTop"} id={"replyTop"} style={{fontSize: "0.75rem", color: "lightgray"}}>
 							* 등록된 댓글이 없습니다
@@ -179,11 +131,11 @@ const AnonymousReply = (props) => {
 
 					renderElement.push(
 						<div key={"replyTop"} id={"replyTop"} style={{display: "flex", justifyContent: "flex-start"}}>
-							<p style={{fontSize: "0.8rem"}}>댓글 <strong>{jsonData[1]}</strong>개</p>
+							<p style={{fontSize: "0.8rem"}}>댓글 <strong>{replyArray[1]}</strong>개</p>
 						</div>
 					);
 
-					for (const replyData of jsonData[0]) {
+					for (const replyData of replyArray[0]) {
 						if(replyData.level === 0){
 							renderElement.push(
 								<div id={`reply_${replyData.code}`} key={`reply_${replyData.code}`} style={{display: "flex", flexDirection: "column", paddingBottom: "5px", marginBottom: "", borderBottom: "1px solid lightgray"}}>
@@ -286,7 +238,7 @@ const AnonymousReply = (props) => {
 
 					renderElement.push(
 						<div key={"pagination"} style={{display: "flex", justifyContent: "center", marginTop: "20px"}}>
-							<CustomPagination currentPage={currentPage} contentPerPage={50} contentCount={jsonData[1]} howManyPages={5} pageMoveFunc={pageMoveFunc}/>
+							<CustomPagination currentPage={currentPage} contentPerPage={50} contentCount={replyArray[1]} howManyPages={5} pageMoveFunc={pageMoveFunc}/>
 						</div>
 					);
 					
@@ -314,30 +266,22 @@ const AnonymousReply = (props) => {
 			return;
 		}
 
-		const sendData = {
-			parentContentCode: props.contentCode,
-			parentReplyCode: 0,
-			content: replyDataElement.value,
-			password: replyPasswordElement.value,
-			replyOrder: 0,
-			level: 0,
-			writer: "",
-		}
-
 		if(props.contentCode !== null){
-			const fecthOption = {
-				method: "POST"
-				, body: JSON.stringify(sendData)
-				, headers: {"Content-Type": "application/json",}
-				, credentials: "include", // Don't forget to specify this if you need cookies
-			};
-			const jsonString = await fetch(`${process.env.REACT_APP_SERVER}/boards/reply`, fecthOption);
-			const jsonData = await parseStringToJson(jsonString);
+			const sendData = {
+				parentContentCode: props.contentCode,
+				parentReplyCode: 0,
+				content: replyDataElement.value,
+				password: replyPasswordElement.value,
+				replyOrder: 0,
+				level: 0,
+				writer: "",
+			}
+			const createResult = await repliesFetch.createReply(sendData);
 
-			if(jsonData === null){
+			if(createResult === null){
 				alert("댓글 작성 중 오류가 발생하였습니다(1)");
 			}
-			else if(jsonData === undefined){
+			else if(createResult === undefined){
 				alert("댓글 작성 중 오류가 발생하였습니다(2)");
 			}
 			else{

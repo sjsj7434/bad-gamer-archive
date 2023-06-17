@@ -3,7 +3,6 @@ import ClassicEditor from 'ckeditor5-custom-build/build/ckeditor'; //online-buil
 // https://stackoverflow.com/questions/62243323/reactjs-import-ckeditor-5-from-online-build
 import '../../css/MyEditor.css'
 
-const editorMaxKB = 50; //에디터 HTML 최대 Byte
 const editorConfiguration = {
 	toolbar: [
 		"heading",
@@ -153,16 +152,16 @@ const editorConfiguration = {
 			40,
 		],
 	},
-	wordCount: {
-		onUpdate: (stats) => {
-			// Prints the current content statistics.
-			// console.log(`Characters: ${stats.characters}\nWords: ${stats.words}`, stats);
+	// wordCount: {
+	// 	onUpdate: (stats) => {
+	// 		// Prints the current content statistics.
+	// 		// console.log(`Characters: ${stats.characters}\nWords: ${stats.words}`, stats);
 
-			const wordCountWrapper = document.getElementById("word-count");
-			wordCountWrapper.textContent = `글자 수 => ${stats.characters}`;
-			wordCountWrapper.classList.toggle("demo-update__limit-close", false);
-		}
-	},
+	// 		const wordCountWrapper = document.querySelector("#word-count");
+	// 		wordCountWrapper.textContent = `글자 수 => ${stats.characters}`;
+	// 		wordCountWrapper.classList.toggle("demo-update__limit-close", false);
+	// 	}
+	// },
 	simpleUpload: {
 		// https://ckeditor.com/docs/ckeditor5/latest/framework/deep-dive/upload-adapter.html
 		
@@ -181,6 +180,35 @@ const editorConfiguration = {
 };
 
 const MyEditor = (props) => {
+	/**
+	 * 에디터 내용 kilobyte(1000) 계산하여 반환, kibibyte(1024)아님
+	 */
+	const getKiloByteSize = (stringData) => {
+		const encoder = new TextEncoder();
+		const encoded = encoder.encode(stringData);
+		const kilobyte = (encoded.byteLength / 1000).toFixed(2);
+		return kilobyte;
+	}
+	
+	/**
+	 * 에디터 내용 kilobyte(1000) 계산하여 텍스트 표시
+	 */
+	const setEditorSizeText = (data) => {
+		const htmlSizeWrapper = document.querySelector("#html-size");
+	
+		const editorKB = getKiloByteSize(data);
+		props.setEditorSizeByte(editorKB);
+	
+		htmlSizeWrapper.textContent = `작성된 글 용량 : ${editorKB} KB / ${props.editorMaxKB} KB`;
+	
+		if(editorKB >= props.editorMaxKB){
+			htmlSizeWrapper.style.color = "red";
+		}
+		else{
+			htmlSizeWrapper.style.color = "";
+		}
+	}
+
 	return (
 		<>
 			<CKEditor
@@ -189,29 +217,22 @@ const MyEditor = (props) => {
 				data={props.savedData}
 				onReady={(editor) => {
 					props.setEditor(editor);
+					
+					const data = editor.getData();
+					setEditorSizeText(data);
 					// You can store the "editor" and use when it is needed.
-					console.log("Editor is ready to use!", editor);
-					// console.log(Array.from(editor.ui.componentFactory.names()).join(", "));
+					// console.log("Editor is ready to use!", editor);
 
+					// 기본 탑재 wordCounter view
 					// const wordCountPlugin = editor.plugins.get("WordCount");
-					// const wordCountWrapper = document.getElementById("word-count");
-					// wordCountWrapper.appendChild(wordCountPlugin.wordCountContainer); //기본 view
+					// const wordCountWrapper = document.querySelector("#word-count");
+					// wordCountWrapper.appendChild(wordCountPlugin.wordCountContainer);
 				}}
 				onChange={(event, editor) => {
+					// KB, 1000, 십진법, 킬로바이트
+					// KiB, 1024, 이진법, 키비바이트
 					const data = editor.getData();
-					const wordCountWrapper = document.getElementById("html-size");
-
-					const stringByteLength = (
-						function(s, b, i, c){
-							for(b = i = 0; (c = s.charCodeAt(i ++)); b += c >> 11 ? 3 : (c >> 7 ? 2 : 1));
-							return b;
-						}
-					)(data);
-
-					const editorKB = (stringByteLength / 1024).toFixed(3);
-
-					wordCountWrapper.textContent = `editorKB => ${editorKB} KB / ${editorMaxKB} KB`;
-					wordCountWrapper.classList.toggle("demo-update__limit-close", false)
+					setEditorSizeText(data);
 				}}
 				onBlur={(event, editor) => {
 					// console.log("Blur", editor);
@@ -220,8 +241,10 @@ const MyEditor = (props) => {
 					// console.log("Focus", editor);
 				}}
 			/>
-			<div id="word-count" style={{fontSize: "0.8rem"}}></div>
-			<div id="html-size" style={{fontSize: "0.8rem"}}></div>
+			{/* <div id="word-count" style={{fontSize: "0.8rem"}}></div> */}
+			<div id="html-size" style={{fontSize: "0.8rem", marginTop: "10px", marginBottom: "5px"}}>
+				작성된 글 용량 : {"0.00"} KB / {props.editorMaxKB} KB
+			</div>
 		</>
 	);
 }

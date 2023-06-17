@@ -43,7 +43,7 @@ export class BoardsController {
 
 	//set cookies/headers 정도만 사용하고, 나머지는 프레임워크에 떠넘기는 식으로 @Res()를 사용하는 거라면 passthrough: true 옵션은 필수! 그렇지 않으면 fetch 요청이 마무리가 안됨
 	@Post("content/anonymous")
-	async createContentAnonymous(@Ip() ipData: string, @Body() boardData: CreateBoardsDTO): Promise<{ data: Boards | Boards }> {
+	async createContentAnonymous(@Ip() ipData: string, @Body() boardData: CreateBoardsDTO): Promise<Boards> {
 		console.log("[Controller-boards-createContentAnonymous]");
 		boardData.category = "anonymous";
 		boardData.writer = "";
@@ -52,12 +52,12 @@ export class BoardsController {
 
 		const createdContent = await this.boardsService.createContent(boardData);
 
-		return { data: createdContent };
+		return createdContent;
 	}
 
 	//set cookies/headers 정도만 사용하고, 나머지는 프레임워크에 떠넘기는 식으로 @Res()를 사용하는 거라면 passthrough: true 옵션은 필수! 그렇지 않으면 fetch 요청이 마무리가 안됨
 	@Post("content/identified")
-	async createContentIdentified(@Ip() ipData: string, @Body() boardData: CreateBoardsDTO): Promise<{ data: Boards | Boards }>{
+	async createContentIdentified(@Ip() ipData: string, @Body() boardData: CreateBoardsDTO): Promise<Boards>{
 		console.log("[Controller-boards-createContentIdentified]");
 		boardData.category = "identified";
 		// boardData.ip = ipData;
@@ -65,16 +65,16 @@ export class BoardsController {
 
 		const createdContent = await this.boardsService.createContent(boardData);
 
-		return { data: createdContent };
+		return createdContent;
 	}
 
 	@Post("content/anonymous/check/password")
-	async isAnonymousPasswordMatch(@Body() sendData: {code: number, password: string}): Promise<{ data: boolean }> {
+	async isAnonymousPasswordMatch(@Body() sendData: {code: number, password: string}): Promise<boolean> {
 		console.log("[Controller-boards-isAnonymousPasswordMatch]");
 
 		const findContent = await this.boardsService.getContentByCode(sendData.code, "password");
 		
-		return { data: findContent.password === sendData.password };
+		return findContent.password === sendData.password;
 	}
 
 	@Delete("content/anonymous")
@@ -85,12 +85,12 @@ export class BoardsController {
 	}
 
 	@Patch("content/anonymous")
-	async updateContentAnonymous(@Body() updateBoardsDTO: UpdateBoardsDTO): Promise<{ data: Boards | null }> {
+	async updateContentAnonymous(@Body() updateBoardsDTO: UpdateBoardsDTO): Promise<Boards | null> {
 		console.log("[Controller-boards-updateContentAnonymous]");
 
 		const updatedContent = await this.boardsService.updateContent(updateBoardsDTO);
 
-		return { data: updatedContent };
+		return updatedContent;
 	}
 
 	@Post("content/anonymous/upvote")
@@ -132,7 +132,7 @@ export class BoardsController {
 	}
 
 	@Get("reply/:contentCode/:page")
-	async getReplies(@Param("contentCode") contentCode: number, @Param("page") page: number): Promise<{ data: [Replies[], number] }> {
+	async getReplies(@Param("contentCode") contentCode: number, @Param("page") page: number): Promise<[Replies[], number]> {
 		console.log("[Controller-boards-getReplies]");
 
 		const repliesData = await this.boardsService.getReplies(contentCode, page);
@@ -150,30 +150,30 @@ export class BoardsController {
 			}
 		}
 
-		return { data: repliesData }
+		return repliesData;
 	}
 
 	@Post("reply")
-	async createReply(@Ip() ipData: string, @Body() createRepliesDTO: CreateRepliesDTO): Promise<{ data: Replies | null }> {
+	async createReply(@Ip() ipData: string, @Body() createRepliesDTO: CreateRepliesDTO): Promise<Replies | null> {
 		console.log("[Controller-boards-createReply]");
 		// createRepliesDTO.ip = ipData;
 		createRepliesDTO.ip = Math.random().toString().substring(2, 5) + "." + Math.random().toString().substring(2, 5) + "." + Math.random().toString().substring(2, 5) + "." + Math.random().toString().substring(2, 5);
 
 		const createdReply = await this.boardsService.createReply(createRepliesDTO);
-		return { data: createdReply }
+		return createdReply;
 	}
 
 	@Delete("reply")
-	async deleteReply(@Body() deleteRepliesDTO: DeleteRepliesDTO): Promise<{ data: boolean }> {
+	async deleteReply(@Body() deleteRepliesDTO: DeleteRepliesDTO): Promise<boolean> {
 		console.log("[Controller-boards-deleteReply]");
 
 		const deleteResult = await this.boardsService.deleteReply(deleteRepliesDTO);
-		return { data: deleteResult }
+		return deleteResult;
 	}
 
 	@Post("image")
 	@UseInterceptors(FileInterceptor("upload"))
-	uploadImage(@UploadedFile() file: Express.Multer.File): { url: string } | { error: {message: string} } {
+	uploadImage(@UploadedFile() file: Express.Multer.File): { url: string } | { error: { message: string } } {
 		// Multer is --save-dev option installed, same as -d option
 		// If the upload is successful, the server should return: An object containing [the url property] which points to the uploaded image on the server
 		const timeOfNow = new Date();
