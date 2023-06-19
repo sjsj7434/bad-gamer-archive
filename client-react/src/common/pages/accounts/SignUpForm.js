@@ -5,10 +5,9 @@ import Col from 'react-bootstrap/Col';
 import Form from 'react-bootstrap/Form';
 import Container from 'react-bootstrap/Container';
 import Button from 'react-bootstrap/Button';
-import Modal from 'react-bootstrap/Modal';
-import Spinner from 'react-bootstrap/Spinner';
 
 import * as accountsFetch from '../../js/accountsFetch.js'
+import LoadingModal from '../common/LoadingModal.js';
 
 const SignUpForm = () => {
 	const [idValid, setIdValid] = useState(0);
@@ -16,8 +15,8 @@ const SignUpForm = () => {
 	const [emailValid, setEmailValid] = useState(0);
 	const [passwordValid, setPasswordValid] = useState(0);
 	const [rePasswordValid, setRePasswordValid] = useState(0);
-	const [waitModalShow, setWaitModalShow] = useState(false);
-	const [waitModalMessage, setWaitModalMessage] = useState("");
+	const [showLoadingModal, setShowLoadingModal] = useState(false);
+	const [loadingMessage, setLoadingMessage] = useState("");
 	const navigate = useNavigate();
 
 	const createAccount = async (event) => {
@@ -52,10 +51,10 @@ const SignUpForm = () => {
 		}
 
 		if(window.confirm("회원가입을 진행하시겠습니까?")){
-			setWaitModalShow(true);
-			setWaitModalMessage("회원가입을 진행 중입니다...");
+			setShowLoadingModal(true);
+			setLoadingMessage("회원가입을 진행 중입니다...");
 			await asyncWaiter(1);
-			setWaitModalShow(false);
+			setShowLoadingModal(false);
 
 			const createResult = await accountsFetch.createAccount({
 				id: form.idInput.value,
@@ -183,18 +182,7 @@ const SignUpForm = () => {
 
 	return (
 		<Container style={{maxWidth: "600px"}}>
-			<Modal
-				show={waitModalShow}
-				backdrop="static"
-				keyboard={false}
-				centered
-			>
-				<Modal.Body>
-					<div style={{display: "flex", flexDirection: "row", justifyContent: "center", marginTop: "50px", marginBottom: "50px"}}>
-						<Spinner animation="grow" variant="success" />&nbsp;&nbsp;<h4>{waitModalMessage}</h4>
-					</div>
-				</Modal.Body>
-			</Modal>
+			<LoadingModal showModal={showLoadingModal} message={loadingMessage}></LoadingModal>
 
 			<div style={{ marginTop: "30px" }}>
 				<div style={{ marginBottom: "30px" }}>

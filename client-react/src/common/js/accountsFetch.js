@@ -52,7 +52,6 @@ export const checkProfileTokenMatch = async (stoveCode) => {
 
 /**
  * 이미 존재하는 ID인지 확인
- * @returns {object} 가져온 stove 소개란 인증코드
  */
 export const isDuplicatedID = async (id) => {
 	const fecthOption = {
@@ -78,7 +77,6 @@ export const isDuplicatedID = async (id) => {
 
 /**
  * 이미 존재하는 닉네임인지 확인
- * @returns {object} 가져온 stove 소개란 인증코드
  */
 export const isDuplicatedNickname = async (nickname) => {
 	const fecthOption = {
@@ -140,7 +138,7 @@ export const signInAccount = async (accountInfo) => {
 		, credentials: "include", // Don't forget to specify this if you need cookies
 	};
 	const fetchResponse = await fetch(`${process.env.REACT_APP_SERVER}/accounts/signin`, fecthOption);
-	const [isStatusGood, checkMessage] = isFetchStatusGood(fetchResponse);
+	const [isStatusGood] = isFetchStatusGood(fetchResponse);
 
 	if(isStatusGood === true){
 		const fetchData = await getFetchText(fetchResponse);
@@ -149,7 +147,8 @@ export const signInAccount = async (accountInfo) => {
 		return fetchData;
 	}
 	else{
-		alert(checkMessage);
+		// alert(checkMessage);
+		alert("로그인이 실패하였습니다");
 
 		return null;
 	}
@@ -181,7 +180,6 @@ export const checkSignInStatus = async () => {
 
 /**
  * 로그아웃, sign out
- * @returns {object} 로그아웃 처리 결과
  */
 export const setSignOut = async () => {
 	const fecthOption = {
@@ -220,7 +218,6 @@ export const setLostarkMainCharacter = async (accountInfo) => {
 
 /**
  * 내 정보 페이지에서 사용할 정보 가져오기
- * @returns {object} 내 정보
  */
 export const getMyInfo = async () => {
 	const fecthOption = {
@@ -234,6 +231,31 @@ export const getMyInfo = async () => {
 	if(isStatusGood === true){
 		const fetchData = await getFetchJson(fetchResponse);
 		console.log('getMyInfo =>', fetchData)
+
+		return fetchData;
+	}
+	else{
+		alert(checkMessage);
+
+		return null;
+	}
+}
+
+/**
+ * 비밀번호 변경
+ */
+export const updatePassword = async () => {
+	const fecthOption = {
+		method: "PATCH"
+		, headers: {"Content-Type": "application/json",}
+		, credentials: "include", // Don't forget to specify this if you need cookies
+	};
+	const fetchResponse = await fetch(`${process.env.REACT_APP_SERVER}/accounts/information/my`, fecthOption);
+	const [isStatusGood, checkMessage] = isFetchStatusGood(fetchResponse);
+
+	if(isStatusGood === true){
+		const fetchData = await getFetchJson(fetchResponse);
+		console.log('updatePassword =>', fetchData)
 
 		return fetchData;
 	}

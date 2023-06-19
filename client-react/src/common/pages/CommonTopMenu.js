@@ -1,4 +1,3 @@
-import { NavLink } from 'react-router-dom';
 import { useNavigate } from "react-router-dom";
 import { useCallback, useEffect, useState } from 'react';
 import logo from '../images/logo192.png';
@@ -15,9 +14,11 @@ import * as accountsFetch from '../js/accountsFetch.js'
 const CommonTopMenu = (props) => {
 	const [showOffcanvas, setShowOffcanvas] = useState(false);
 	const [renderData, setRenderData] = useState(null);
+	const [activeMenu, setActiveMenu] = useState("");
 	const navigate = useNavigate();
 	
-	const menuClick = useCallback((url) => {
+	const menuClick = useCallback((url, activeMenuId) => {
+		setActiveMenu(activeMenuId)
 		props.checkSignInStatus();
 		setShowOffcanvas(false);
 		navigate(url);
@@ -31,7 +32,6 @@ const CommonTopMenu = (props) => {
 			await accountsFetch.setSignOut();
 			setShowOffcanvas(false);
 			props.checkSignInStatus();
-			alert("로그아웃 되었습니다");
 			navigate("/");
 		}
 
@@ -43,18 +43,18 @@ const CommonTopMenu = (props) => {
 					</Navbar.Text>
 					&nbsp;&nbsp;
 					
-					<Button variant="info" onClick={() => menuClick("/accounts/mypage")}>내 정보</Button>
+					<Button variant="info" onClick={() => menuClick("/accounts/mypage", "")} style={{fontSize: "0.8rem", padding: "4px"}}>내 정보</Button>
 					&nbsp;&nbsp;
-					<Button variant="outline-warning" onClick={() => {signOut()}}>로그아웃</Button>
+					<Button variant="outline-warning" onClick={() => {signOut()}} style={{fontSize: "0.8rem", padding: "4px"}}>로그아웃</Button>
 				</Form>
 			)
 		}
 		else{
 			setRenderData(
 				<Form className="d-flex">
-					<Button variant="secondary" onClick={() => menuClick("/accounts/signup")}>회원가입</Button>
+					<Button variant="secondary" onClick={() => menuClick("/accounts/signup", "")} style={{fontSize: "0.8rem", padding: "4px"}}>회원가입</Button>
 					&nbsp;
-					<Button variant="primary" onClick={() => menuClick("/accounts/signin")}>로그인</Button>
+					<Button variant="primary" onClick={() => menuClick("/accounts/signin", "")} style={{fontSize: "0.8rem", padding: "4px"}}>로그인</Button>
 				</Form>
 			)
 		}
@@ -64,7 +64,7 @@ const CommonTopMenu = (props) => {
 		<>
 			<Navbar collapseOnSelect bg="dark" variant="dark" expand="md" className="mb-3" sticky="top">
 				<Container style={{maxWidth: "1440px"}}>
-					<Navbar.Brand as={NavLink} to="/lostark" onClick={() => {props.checkSignInStatus()}}>
+					<Navbar.Brand onClick={() => menuClick("/lostark", "menu-1")} style={{cursor: "pointer"}}>
 						<img
 							alt=""
 							src={logo}
@@ -73,7 +73,7 @@ const CommonTopMenu = (props) => {
 							className="d-inline-block align-top"
 						/>
 						&nbsp;
-						Common-TOP-MENU
+						TOP-MENU
 					</Navbar.Brand>
 
 					<Navbar.Toggle onClick={() => setShowOffcanvas(true)}/>
@@ -84,12 +84,13 @@ const CommonTopMenu = (props) => {
 								<b>Menu</b>
 							</Offcanvas.Title>
 						</Offcanvas.Header>
-						<Offcanvas.Body>
-							<Nav variant="pills" className="justify-content-start flex-grow-1 pe-3">
-								<Nav.Link active={false} eventKey="link-1" onClick={() => menuClick("/lostark")}>메인</Nav.Link>
-								<Nav.Link active={false} eventKey="link-2" onClick={() => menuClick("/lostark/board/anonymous/1")}>익명</Nav.Link>
-								<Nav.Link active={false} eventKey="link-2" onClick={() => menuClick("/lostark/board/identified/1")}>인증</Nav.Link>
-								<Nav.Link active={false} eventKey="link-2" onClick={() => menuClick("/lostark/board/identified/1")}>도구 모음</Nav.Link>
+						<Offcanvas.Body style={{fontSize: "0.8rem"}}>
+							<Nav variant="underline" className="justify-content-start flex-grow-1 pe-3" style={{overflow: "", width: "fit-content"}}>
+								{/* <div className="vr" style={{color: "white", padding: "1px", marginTop: "7px", marginBottom: "7px"}}></div> */}
+								<Nav.Link active={activeMenu === "menu-1" ? true : false} onClick={() => menuClick("/lostark", "menu-1")}>메인</Nav.Link>
+								<Nav.Link active={activeMenu === "menu-2" ? true : false} onClick={() => menuClick("/lostark/board/anonymous/1", "menu-2")}>익명 게시판</Nav.Link>
+								<Nav.Link active={activeMenu === "menu-3" ? true : false} onClick={() => menuClick("/lostark/board/identified/1", "menu-3")}>인증 게시판</Nav.Link>
+								<Nav.Link active={activeMenu === "menu-4" ? true : false} onClick={() => menuClick("/lostark/useful", "menu-4")}>유용한 사이트</Nav.Link>
 							</Nav>
 
 							{renderData}
