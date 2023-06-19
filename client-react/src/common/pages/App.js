@@ -10,14 +10,14 @@ import SignUpForm from './accounts/SignUpForm';
 import SignInForm from './accounts/SignInForm';
 import CommonTopMenu from './CommonTopMenu';
 import MyPage from './accounts/MyPage';
-import ActivateLostark from './accounts/ActivateLostark';
+import ActivateLostarkScrap from './accounts/ActivateLostarkScrap';
 import BlockNonLogin from './accounts/BlockNonLogin';
 import * as accountsFetch from '../js/accountsFetch.js'
 import LostarkMain from '../../lostark/pages/LostarkMain';
 import AnonymousBoard from './boards/AnonymousList';
 import AnonymousView from './boards/AnonymousView';
 import AnonymousWrite from './boards/AnonymousWrite';
-import UsefulSites from './common/UsefulSites';
+import UsefulSitesLostark from './common/UsefulSitesLostark';
 import PasswordChangeForm from './accounts/PasswordChangeForm';
 
 // index.js에서 StrictMode 존재하면 두번 랜더링, 개발 모드에서만 적용됩니다. 생명주기 메서드들은 프로덕션 모드에서 이중으로 호출되지 않습니다.
@@ -55,7 +55,7 @@ const App = () => {
 							<Route path="lostark">
 								<Route path="" element={<LostarkMain />}></Route>
 
-								<Route path="useful" element={ <UsefulSites></UsefulSites> }></Route>
+								<Route path="useful" element={ <UsefulSitesLostark /> }></Route>
 								
 								<Route path="board">
 									<Route path="anonymous/:page" element={<AnonymousBoard />}></Route>
@@ -73,7 +73,7 @@ const App = () => {
 								<Route path="signin" element={ <SignInForm accountData={accountData} checkSignInStatus={checkSignInStatus} /> }></Route>
 								<Route path="mypage">
 									<Route path="" element={ <BlockNonLogin accountData={accountData} ifLoginRender={<MyPage />} /> }></Route>
-									<Route path="activate/lostark" element={ <BlockNonLogin accountData={accountData} ifLoginRender={<ActivateLostark />} /> }></Route>
+									<Route path="activate/lostark" element={ <BlockNonLogin accountData={accountData} ifLoginRender={<ActivateLostarkScrap />} /> }></Route>
 									<Route path="change/password" element={ <BlockNonLogin accountData={accountData} ifLoginRender={<PasswordChangeForm />} /> }></Route>
 								</Route>
 							</Route>

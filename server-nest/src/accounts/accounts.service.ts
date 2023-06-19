@@ -97,10 +97,6 @@ export class AccountsService {
 	 * 서버이름에 포함된 @를 이용해 반환 값을 split하여 사용
 	 */
 	async getStoveUserCharacters_scrap(stoveCode: string): Promise<Array<{ ServerName: string, CharacterName: string, ItemMaxLevel: string, CharacterClassName: string }>>{
-		const result: object = {
-			characterName: "",
-			serverName: ""
-		};
 		const browser = await puppeteer.launch({
 			headless: true,
 			waitForInitialPage: false,
@@ -176,6 +172,74 @@ export class AccountsService {
 		browser.close(); //창 종료
 
 		return characterArray;
+	}
+
+	/**
+	 * 유저가 선택한 캐릭터의 이름으로 데이터를 가져온다
+	 */
+	async getCharacterInfo_scrap(characterName: string): Promise<object>{
+		const browser = await puppeteer.launch({
+			headless: true,
+			waitForInitialPage: false,
+		});
+		const page = await browser.newPage();
+		// await page.setViewport({width: 1080, height: 800}); //화면 크기 설정, headless: false 여야 확인 가능
+		await page.goto(`https://lostark.game.onstove.com/Profile/Character/${encodeURIComponent(characterName)}`, {timeout: 10000, waitUntil: "networkidle2"});
+
+		const targetElement = await page.$("#lostark-wrapper > div > main > div > div.profile-ingame > div.profile-info"); //소개
+
+		const characterInfo = await page.evaluate((data): any => {
+			const characterName: HTMLElement = document.querySelector("#lostark-wrapper > div > main > div > div.profile-character-info > span.profile-character-info__name");
+			const characterImage: HTMLElement = document.querySelector("#profile-equipment > div.profile-equipment__character > img");
+			const expeditionLevel: HTMLElement = data.querySelector("div.level-info > div.level-info__expedition > span:nth-child(2)");
+			const combatLevel: HTMLElement = data.querySelector("div.level-info > div.level-info__item > span:nth-child(2)");
+			const maxItemLevel: HTMLElement = data.querySelector("div.level-info2 > div.level-info2__item > span:nth-child(2)");
+			const title: HTMLElement = data.querySelector("div.game-info > div.game-info__title > span:nth-child(2)");
+			const guildName: HTMLElement = data.querySelector("div.game-info > div.game-info__guild > span:nth-child(2)");
+			const pvpGrade: HTMLElement = data.querySelector("div.game-info > div.level-info__pvp > span:nth-child(2)");
+			const stringholdLevel: HTMLElement = data.querySelector("div.game-info > div.game-info__wisdom > span:nth-child(2)");
+			const stringholdName: HTMLElement = data.querySelector("div.game-info > div.game-info__wisdom > span:nth-child(3)");
+			const collectibles: NodeListOf<HTMLElement> = document.querySelectorAll("#tab1 > div.lui-tab__menu > a");
+			const cardEffects: NodeListOf<HTMLElement> = document.querySelectorAll("#cardSetList > li");
+			const lifeSkills: NodeListOf<HTMLElement> = document.querySelectorAll("#profile-skill > div.profile-skill-life > ul > li");
+
+			const collectiblesString = [];
+			for(const element of collectibles){
+				collectiblesString.push(element.textContent);
+			}
+
+			const cardEffectsString = [];
+			for(const element of cardEffects){
+				cardEffectsString.push(element.querySelector("div.card-effect__title").textContent);
+			}
+
+			const lifeSkillsString = [];
+			for(const element of lifeSkills){
+				lifeSkillsString.push(element.textContent);
+			}
+			
+			const characterInformation: object = {
+				characterName: characterName.textContent,
+				characterImage: characterImage.getAttribute("src"),
+				expeditionLevel: expeditionLevel.textContent,
+				combatLevel: combatLevel.textContent,
+				maxItemLevel: maxItemLevel.textContent,
+				title: title.textContent,
+				guildName: guildName.textContent,
+				pvpGrade: pvpGrade.textContent,
+				stringholdLevel: stringholdLevel.textContent,
+				stringholdName: stringholdName.textContent,
+				collectibles: collectiblesString,
+				cardEffects: cardEffectsString,
+				lifeSkills: lifeSkillsString,
+			};
+
+			return characterInformation;
+		}, targetElement);
+
+		browser.close(); //창 종료
+
+		return characterInfo;
 	}
 
 	/**

@@ -19,19 +19,18 @@ export class  AccountsController {
 		return userProfileToken;
 	}
 
-	@Get("stove/profile/:stoveURL")
-	async checkProfileTokenMatch(@Req() request: Request, @Param("stoveURL") stoveURL: string): Promise<[string, Array<{ ServerName: string, CharacterName: string, ItemMaxLevel: string, CharacterClassName: string }>]> {
-		console.log("[Controller-accounts-checkProfileTokenMatch] => " + stoveURL);
+	@Get("stove/profile/api/:stoveURL")
+	async checkProfileTokenMatchAPI(@Req() request: Request, @Param("stoveURL") stoveURL: string): Promise<[string, object]> {
+		console.log("[Controller-accounts-checkProfileTokenMatchAPI] => " + stoveURL);
 		const stoveURLWithOutProtocol: string = stoveURL.replace(/https:\/\/|http:\/\//g, "");
 		
 		if(isNaN(Number(stoveURLWithOutProtocol)) === false){
-			const compareResult: boolean = await this.accountsService.isMatchStoveUserToken(request, stoveURLWithOutProtocol);
+			// const compareResult: boolean = await this.accountsService.isMatchStoveUserToken(request, stoveURLWithOutProtocol);
+			const compareResult: boolean = true;
 
 			if (compareResult === true){
-				const characterNames = await this.accountsService.getStoveUserCharacters_scrap(stoveURLWithOutProtocol);
-
-				// const characterName = await this.accountsService.getStoveUserCharacters_api(stoveURLWithOutProtocol);
-				// const characterNames = await this.apiService.getCharacterList(characterName);
+				const characterName = await this.accountsService.getStoveUserCharacters_api(stoveURLWithOutProtocol);
+				const characterNames = await this.apiService.getCharacterList(characterName); // { CharacterClassName: string, CharacterName: number, ItemAvgLevel: string, ItemMaxLevel: string, ServerName: string }
 				
 				return ["success", characterNames];
 			}
@@ -42,6 +41,38 @@ export class  AccountsController {
 		else{
 			return ["codeError", []];
 		}
+	}
+
+	@Get("stove/profile/scrap/:stoveURL")
+	async checkProfileTokenMatchScrap(@Req() request: Request, @Param("stoveURL") stoveURL: string): Promise<[string, object]> {
+		console.log("[Controller-accounts-checkProfileTokenMatchScrap] => " + stoveURL);
+		const stoveURLWithOutProtocol: string = stoveURL.replace(/https:\/\/|http:\/\//g, "");
+		
+		if(isNaN(Number(stoveURLWithOutProtocol)) === false){
+			// const compareResult: boolean = await this.accountsService.isMatchStoveUserToken(request, stoveURLWithOutProtocol);
+			const compareResult: boolean = true;
+
+			if (compareResult === true){
+				const characterNames = await this.accountsService.getStoveUserCharacters_scrap(stoveURLWithOutProtocol);
+
+				return ["success", characterNames];
+			}
+			else {
+				return ["fail", []];
+			}
+		}
+		else{
+			return ["codeError", []];
+		}
+	}
+
+	@Get("stove/character/scrap/:characterName")
+	async getCharacterInfoScrap(@Req() request: Request, @Param("characterName") characterName: string): Promise<object> {
+		console.log("[Controller-accounts-getCharacterInfoScrap] => " + characterName);
+		
+		const characterInfo: object = await this.accountsService.getCharacterInfo_scrap(characterName);
+
+		return characterInfo;
 	}
 
 	/**

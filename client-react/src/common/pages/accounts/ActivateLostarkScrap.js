@@ -8,15 +8,19 @@ import Container from 'react-bootstrap/Container';
 import Modal from 'react-bootstrap/Modal';
 import ListGroup from 'react-bootstrap/ListGroup';
 import Tab from 'react-bootstrap/Tab';
+import Card from 'react-bootstrap/Card';
+import Table from 'react-bootstrap/Table';
 import { useNavigate } from "react-router-dom";
 import Stack from 'react-bootstrap/esm/Stack';
 import * as accountsFetch from '../../js/accountsFetch'
 import '../../css/ActivateLostark.css';
 import LoadingModal from '../common/LoadingModal';
 
-const ActivateLostark = (props) => {
+const ActivateLostarkScrap = (props) => {
 	const [characterModalShow, setCharacterModalShow] = useState(false);
-	const [characterList, setcharacterList] = useState([]);
+	const [characterInfoModalShow, setCharacterInfoModalShow] = useState(false);
+	const [characterList, setCharacterList] = useState([]);
+	const [characterInfo, setCharacterInfo] = useState(null);
 	const [startTime, setStartTime] = useState(null);
 	const [nowTime, setNowTime] = useState(null);
 	const [showLoadingModal, setShowLoadingModal] = useState(false);
@@ -110,7 +114,7 @@ const ActivateLostark = (props) => {
 		setShowLoadingModal(true);
 		setLoadingMessage("스토브 소개 정보를 확인 중입니다");
 		const stoveURL = document.querySelector("#stoveURL").value;
-		const [matchResult, characterNames] = await accountsFetch.checkProfileTokenMatch(stoveURL);
+		const [matchResult, characterNames] = await accountsFetch.checkProfileTokenMatchScrap(stoveURL);
 		console.log(matchResult, characterNames)
 
 		if(matchResult === "code"){
@@ -138,31 +142,114 @@ const ActivateLostark = (props) => {
 			const elements = [];
 			elements.push(characterNames.map((characterInfo) => {
 				return (
-					<ListGroup.Item key={characterInfo.CharacterName} action onClick={() => {setCharacter(characterInfo)}}>
-						[{characterInfo.ServerName}] <b>{characterInfo.CharacterName}</b> / {characterInfo.ItemMaxLevel} / {characterInfo.CharacterClassName}
+					<ListGroup.Item key={characterInfo.CharacterName} action onClick={() => {setCharacter(characterInfo)}} style={{fontSize: "0.8rem"}}>
+						[{characterInfo.ServerName}] <b>{characterInfo.CharacterName}</b>
 					</ListGroup.Item>
 				)
 			}));
+			elements.push(
+				<ListGroup.Item key={"noCharacter"} action onClick={() => {noCharacter()}} style={{color: "red", fontSize: "0.8rem"}}>
+					[!] 인증하지않고 종료하기
+				</ListGroup.Item>
+			);
 
-			setcharacterList(elements);
+			setCharacterList(elements);
 			setCharacterModalShow(true);
 		}
 		
 		setShowLoadingModal(false);
 	}
 
+	const noCharacter = async () => {
+		if(window.confirm("인증하지 않고 종료하시겠습니까?")){
+			navigate("/accounts/mypage");
+		}
+	}
+
 	const setCharacter = async (characterInfo) => {
-		if(window.confirm(`[${characterInfo.CharacterName} (Level.${characterInfo.ItemMaxLevel})] 캐릭터로 인증하시겠습니까?`)){
+		if(window.confirm(`[${characterInfo.ServerName} - ${characterInfo.CharacterName}] 캐릭터로 인증을 진행하시겠습니까?`)){
 			setCharacterModalShow(false);
 			controlActivateVerify("done");
 			
 			setShowLoadingModal(true);
 			setLoadingMessage("캐릭터를 설정 중입니다");
-			await accountsFetch.setLostarkMainCharacter({
-				lostarkMainCharacter: characterInfo.CharacterName,
-			});
+			
+			const characterData = await accountsFetch.getCharacterInfoScrap(characterInfo.CharacterName);
+			const elements = [];
+			
+			elements.push(
+				<Card style={{ width: "100%", fontSize: "0.8rem" }}>
+					<Card.Img variant="top" src={characterData.characterImage} />
+					<Card.Body>
+						<Card.Title>{characterData.characterName}</Card.Title>
+						<Card.Text>
+							-카드<br />
+							{characterData.cardEffects.map((element) => {
+								return(
+									<div>
+										{element}
+									</div>
+								)
+							})}
+							<br />
+							-생활<br />
+							{characterData.lifeSkills.map((element) => {
+								return(
+									<div>
+										{element}
+									</div>
+								)
+							})}
+						</Card.Text>
+					</Card.Body>
+					<ListGroup className="list-group-flush">
+						<ListGroup.Item>
+							<Table striped>
+								<colgroup>
+									<col width="30%" />
+									<col width="*" />
+								</colgroup>
+								<tbody>
+									<tr>
+										<td>원정대</td>
+										<td>{characterData.expeditionLevel}</td>
+									</tr>
+									<tr>
+										<td>전투 레벨</td>
+										<td>{characterData.combatLevel}</td>
+									</tr>
+									<tr>
+										<td>아이템 레벨</td>
+										<td>{characterData.maxItemLevel}</td>
+									</tr>
+									<tr>
+										<td>영지</td>
+										<td>{characterData.stringholdName} {characterData.stringholdLevel}</td>
+									</tr>
+								</tbody>
+							</Table>
+							<div style={{display: "flex", justifyContent: "space-evenly"}}>
+								<Button variant={"success"} onClick={() => {noCharacter()}} style={{fontSize: "0.8rem", width: "45%"}}>인증 완료하기</Button>
+								<Button variant={"danger"} onClick={() => {noCharacter()}} style={{fontSize: "0.8rem", width: "45%"}}>인증하지않기</Button>
+							</div>
+						</ListGroup.Item>
+					</ListGroup>
+					<Card.Body>
+						Card.BodyCard.BodyCard.BodyCard.BodyCard.Body<br />
+						Card.BodyCard.BodyCard.BodyCard.BodyCard.Body
+					</Card.Body>
+				</Card>
+			);
+
+			setCharacterInfo(elements);
 			setShowLoadingModal(false);
-			navigate("/accounts/mypage")
+			setCharacterInfoModalShow(true);
+			document.querySelector("#verifyButton").disabled = false;
+
+			// await accountsFetch.setLostarkMainCharacter({
+			// 	lostarkMainCharacter: characterInfo.CharacterName,
+			// });
+			// navigate("/accounts/mypage");
 		}
 	}
 
@@ -235,6 +322,12 @@ const ActivateLostark = (props) => {
 					<Form.Group as={Row} className="mb-3">
 						<Col>
 							<Row className="mb-3">
+								<Col>
+									<Button size={"lg"} style={{width: "100%", marginTop: "5px", marginBottom: "5px", fontSize: "0.8rem"}} onClick={() => {moveToStoveTimeline()}}>내 스토브 코드 확인하기</Button>
+								</Col>
+							</Row>
+							
+							<Row className="mb-3">
 								<Form.Label style={{fontWeight: "800", fontSize: "0.8rem"}}>
 									스토브 코드 (Stove code)
 								</Form.Label>
@@ -265,12 +358,6 @@ const ActivateLostark = (props) => {
 										</span>
 									</div>
 								</Form.Text>
-							</Row>
-
-							<Row className="mb-3">
-								<Col>
-									<Button size={"lg"} style={{width: "100%", marginTop: "5px", marginBottom: "5px", fontSize: "0.8rem"}} onClick={() => {moveToStoveTimeline()}}>내 스토브 코드 확인하기</Button>
-								</Col>
 							</Row>
 
 							<div id="verificationArea" style={{display: "none"}}>
@@ -338,7 +425,7 @@ const ActivateLostark = (props) => {
 					
 					<Modal show={characterModalShow} onHide={() => {setCharacterModalShow(false)}} animation={true} backdrop="static" keyboard={false} centered>
 						<Modal.Header>
-							<Modal.Title>Choose one</Modal.Title>
+							<Modal.Title>선택해주세요</Modal.Title>
 						</Modal.Header>
 						<Modal.Body>
 							<Tab.Container id="list-group-tabs-example" defaultActiveKey="#link1">
@@ -352,10 +439,27 @@ const ActivateLostark = (props) => {
 							</Tab.Container>
 						</Modal.Body>
 					</Modal>
+					
+					<Modal show={characterInfoModalShow} onHide={() => {setCharacterInfoModalShow(false)}} animation={true} backdrop="static" keyboard={false} centered>
+						<Modal.Header>
+							<Modal.Title>확인해주세요</Modal.Title>
+						</Modal.Header>
+						<Modal.Body>
+							<Tab.Container id="list-group-tabs-example" defaultActiveKey="#link1">
+								<Row>
+									<Col>
+										<ListGroup variant="flush">
+											{characterInfo}
+										</ListGroup>
+									</Col>
+								</Row>
+							</Tab.Container>
+						</Modal.Body>
+					</Modal>
 				</Form>
 			</div>
 		</Container>
 	);
 }
 
-export default ActivateLostark;
+export default ActivateLostarkScrap;

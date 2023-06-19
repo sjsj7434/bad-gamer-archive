@@ -26,20 +26,45 @@ export const getVerificationCode = async () => {
 }
 
 /**
- * stove 계정 소개란에 적어놓은 인증코드와 비교
+ * stove 계정 소개란에 적어놓은 인증코드와 비교(공식 API 사용)
  */
-export const checkProfileTokenMatch = async (stoveCode) => {
+export const checkProfileTokenMatchAPI = async (stoveCode) => {
 	const fecthOption = {
 		method: "GET"
 		, headers: {"Content-Type": "application/json",}
 		, credentials: "include", // Don't forget to specify this if you need cookies
 	};
-	const fetchResponse = await fetch(`${process.env.REACT_APP_SERVER}/accounts/stove/profile/${stoveCode}`, fecthOption);
+	const fetchResponse = await fetch(`${process.env.REACT_APP_SERVER}/accounts/stove/profile/api/${stoveCode}`, fecthOption);
 	const [isStatusGood, checkMessage] = isFetchStatusGood(fetchResponse);
 
 	if(isStatusGood === true){
 		const fetchData = await getFetchJson(fetchResponse);
-		console.log('checkProfileTokenMatch =>', fetchData)
+		console.log('checkProfileTokenMatchAPI =>', fetchData)
+
+		return fetchData;
+	}
+	else{
+		alert(checkMessage);
+
+		return null;
+	}
+}
+
+/**
+ * stove 계정 소개란에 적어놓은 인증코드와 비교(웹 페이지 스크랩한 데이터 사용)
+ */
+export const checkProfileTokenMatchScrap = async (stoveCode) => {
+	const fecthOption = {
+		method: "GET"
+		, headers: {"Content-Type": "application/json",}
+		, credentials: "include", // Don't forget to specify this if you need cookies
+	};
+	const fetchResponse = await fetch(`${process.env.REACT_APP_SERVER}/accounts/stove/profile/scrap/${stoveCode}`, fecthOption);
+	const [isStatusGood, checkMessage] = isFetchStatusGood(fetchResponse);
+
+	if(isStatusGood === true){
+		const fetchData = await getFetchJson(fetchResponse);
+		console.log('checkProfileTokenMatchScrap =>', fetchData)
 
 		return fetchData;
 	}
@@ -187,6 +212,31 @@ export const setSignOut = async () => {
 		, credentials: "include", // Don't forget to specify this if you need cookies
 	};
 	await fetch(`${process.env.REACT_APP_SERVER}/accounts/signout`, fecthOption);
+}
+
+/**
+ * lostark 캐릭터 정보 가져오기
+ */
+export const getCharacterInfoScrap = async (characterName) => {
+	const fecthOption = {
+		method: "GET"
+		, headers: {"Content-Type": "application/json",}
+		, credentials: "include", // Don't forget to specify this if you need cookies
+	};
+	const fetchResponse = await fetch(`${process.env.REACT_APP_SERVER}/accounts/stove/character/scrap/${characterName}`, fecthOption);
+	const [isStatusGood, checkMessage] = isFetchStatusGood(fetchResponse);
+
+	if(isStatusGood === true){
+		const fetchData = await getFetchJson(fetchResponse);
+		console.log('getCharacterInfoScrap =>', fetchData)
+
+		return fetchData;
+	}
+	else{
+		alert(checkMessage);
+
+		return null;
+	}
 }
 
 /**
