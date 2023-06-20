@@ -496,7 +496,6 @@ export class AccountsService {
 		}
 	}
 
-
 	/**
 	 * 내 정보 가져오기
 	 */
@@ -515,7 +514,64 @@ export class AccountsService {
 				id: SIGN_IN_SESSION.get(request.cookies["sessionCode"]),
 			}
 		});
-		
+
 		return acctountData;
+	}
+
+	/**
+	 * 비밀번호 변경
+	 */
+	async updatePassword(request: Request, response: Response, body: { oldPassword: string, newPassword: string }): Promise<number> {
+		const acctountData = await this.accountsRepository.findOne({
+			select: {
+				id: true,
+				password: true,
+			},
+			where: {
+				id: SIGN_IN_SESSION.get(request.cookies["sessionCode"]),
+			}
+		});
+
+		console.log(SIGN_IN_SESSION.get(request.cookies["sessionCode"]) , body.oldPassword, acctountData)
+
+		if (acctountData !== null){
+			const isMatch: boolean = await bcrypt.compare(body.oldPassword, acctountData.password);
+
+			if (body.oldPassword === body.newPassword) {
+				return 0;
+			}
+			else if (isMatch === true) {
+				const saltRounds: number = 10;
+				const password: string = body.newPassword;
+				const encryptSalt: string = await bcrypt.genSalt(saltRounds);
+				const hash = await bcrypt.hash(password, encryptSalt);
+				const isRight = await bcrypt.compare(password, hash);
+
+				if (isRight === true){
+					await this.accountsRepository.update(
+						{
+							id: acctountData.id
+						},
+						{
+							password: hash,
+							passwordChangeDate: new Date()
+						}
+					)
+
+					this.setSignOut(request, response);
+					
+					return 1;
+				}
+				else {
+					return 3;
+				}
+			}
+			else {
+				return 2;
+			}
+		}
+		else{
+			return 3;
+		}
 	}
 }

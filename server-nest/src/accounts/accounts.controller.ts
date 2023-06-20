@@ -1,4 +1,4 @@
-import { Param, Controller, Get, Post, Put, Delete, Body, Res, Req } from '@nestjs/common';
+import { Param, Controller, Get, Post, Put, Delete, Body, Res, Req, Patch } from '@nestjs/common';
 import { AccountsService } from './accounts.service';
 import { CreateAccountsDTO, DeleteAccountsDTO, UpdateAccountsDTO } from './accounts.dto';
 import { Request, Response } from 'express';
@@ -159,7 +159,16 @@ export class  AccountsController {
 		console.log("[Controller-accounts-getMyInfo]");
 
 		const accountData = await this.accountsService.getMyInfo(request, response);
-		
+
 		return accountData;
+	}
+
+	@Patch("password")
+	async updatePassword(@Req() request: Request, @Res({ passthrough: true }) response: Response, @Body() body: { oldPassword: string, newPassword: string }): Promise<number> {
+		console.log("[Controller-accounts-updatePassword]", body);
+
+		const updateResult = await this.accountsService.updatePassword(request, response, body);
+
+		return updateResult;
 	}
 }

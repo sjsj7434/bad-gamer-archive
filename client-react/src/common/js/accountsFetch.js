@@ -294,13 +294,14 @@ export const getMyInfo = async () => {
 /**
  * 비밀번호 변경
  */
-export const updatePassword = async () => {
+export const updatePassword = async (sendData) => {
 	const fecthOption = {
 		method: "PATCH"
+		, body: JSON.stringify(sendData)
 		, headers: {"Content-Type": "application/json",}
 		, credentials: "include", // Don't forget to specify this if you need cookies
 	};
-	const fetchResponse = await fetch(`${process.env.REACT_APP_SERVER}/accounts/information/my`, fecthOption);
+	const fetchResponse = await fetch(`${process.env.REACT_APP_SERVER}/accounts/password`, fecthOption);
 	const [isStatusGood, checkMessage] = isFetchStatusGood(fetchResponse);
 
 	if(isStatusGood === true){

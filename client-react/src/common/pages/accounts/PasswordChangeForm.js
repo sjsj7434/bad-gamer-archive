@@ -36,6 +36,11 @@ const PasswordChangeForm = () => {
 			form.reNewPasswordInput.focus();
 			return false;
 		}
+		if(form.oldPasswordInput.value === form.newPasswordInput.value){
+			alert("동일한 비밀번호는 사용할 수 없습니다");
+			form.newPasswordInput.focus();
+			return false;
+		}
 
 		if(window.confirm("비밀번호 변경을 진행하시겠습니까?")){
 			setShowLoadingModal(true);
@@ -47,30 +52,25 @@ const PasswordChangeForm = () => {
 				oldPassword: form.oldPasswordInput.value,
 				newPassword: form.newPasswordInput.value,
 			});
-
-			if(updateResult === 4){
-				alert("비밀번호가 변경되었습니다\n비밀번호가 변경되었으니 다시 로그인해주세요");
-				navigate("/accounts/signin");
-			}
-			else if(updateResult === 0){
+			
+			if(updateResult === 0){
 				alert("똑같은 비밀번호로 변경할 수 없습니다");
 
 				form.newPasswordInput.value = "";
 				form.reNewPasswordInput.value = "";
 			}
 			else if(updateResult === 1){
+				alert("비밀번호가 변경되었습니다\n비밀번호가 변경되었으니 다시 로그인해주세요");
+
+				navigate("/accounts/signin");
+			}
+			else if(updateResult === 2){
 				alert("입력하신 현재 비밀번호가 올바르지 않습니다");
 
 				form.oldPasswordInput.value = "";
 			}
-			else if(updateResult === 2){
-				alert("최근 비밀번호를 다시 사용할 수 없습니다");
-
-				form.newPasswordInput.value = "";
-				form.reNewPasswordInput.value = "";
-			}
 			else if(updateResult === 3){
-				alert("비밀번호 변경 처리 중 오류가 발생하였습니다");
+				alert("오류가 발생하여 비밀번호를 변경할 수 없습니다");
 
 				form.newPasswordInput.value = "";
 				form.reNewPasswordInput.value = "";
@@ -130,8 +130,12 @@ const PasswordChangeForm = () => {
 			<LoadingModal showModal={showLoadingModal} message={loadingMessage}></LoadingModal>
 
 			<div style={{ marginTop: "30px" }}>
-				<div style={{ marginBottom: "30px" }}>
-					<h2>비밀번호 변경</h2>
+				<div style={{ display: "flex", alignItems: "center", marginBottom: "20px", paddingBottom: "10px", borderBottom: "2px solid lightgray" }}>
+					<svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="gray" className="bi bi-file-lock2" viewBox="0 0 16 16">
+						<path d="M8 5a1 1 0 0 1 1 1v1H7V6a1 1 0 0 1 1-1zm2 2.076V6a2 2 0 1 0-4 0v1.076c-.54.166-1 .597-1 1.224v2.4c0 .816.781 1.3 1.5 1.3h3c.719 0 1.5-.484 1.5-1.3V8.3c0-.627-.46-1.058-1-1.224z"/>
+						<path d="M4 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H4zm0 1h8a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1z"/>
+					</svg>
+					<span style={{fontSize: "1.2rem", marginLeft: "12px"}}>비밀번호 변경</span>
 				</div>
 				<Form noValidate onSubmit={updatePassword}>
 					<Form.Group as={Row} className="mb-3">
@@ -139,7 +143,13 @@ const PasswordChangeForm = () => {
 							현재 비밀번호 (Password)
 						</Form.Label>
 						<Col>
-							<Form.Control id="oldPasswordInput" maxLength={20} type="password" placeholder="비밀번호를 입력해주세요" style={{fontSize: "0.9rem"}} />
+							<Form.Control
+								id="oldPasswordInput"
+								maxLength={20}
+								type="password"
+								placeholder="비밀번호를 입력해주세요"
+								style={{fontSize: "0.9rem"}}
+							/>
 							<Form.Text muted style={{fontSize: "0.8rem"}}>
 								<div style={{display: "flex", alignItems: "center", marginTop: "5px"}}>
 									<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#6c757d" className="bi bi-info-circle" viewBox="0 0 16 16">
@@ -156,7 +166,14 @@ const PasswordChangeForm = () => {
 							새 비밀번호 (New password)
 						</Form.Label>
 						<Col>
-							<Form.Control className={statusParser(passwordValid)} id="newPasswordInput" maxLength={20} type="password" placeholder="비밀번호를 입력해주세요" onChange={() => {isValidPassword()}} style={{fontSize: "0.9rem"}} />
+							<Form.Control
+								className={statusParser(passwordValid)}
+								id="newPasswordInput"
+								maxLength={20}
+								type="password"
+								placeholder="비밀번호를 입력해주세요"
+								onChange={() => {isValidPassword()}} style={{fontSize: "0.9rem"}}
+							/>
 							<Form.Text muted style={{fontSize: "0.8rem"}}>
 								<div style={{display: "flex", alignItems: "center", marginTop: "5px"}}>
 									<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#6c757d" className="bi bi-info-circle" viewBox="0 0 16 16">
@@ -191,7 +208,14 @@ const PasswordChangeForm = () => {
 							비밀번호 확인 (New password check)
 						</Form.Label>
 						<Col>
-							<Form.Control className={statusParser(rePasswordValid)} id="reNewPasswordInput" maxLength={20} type="password" placeholder="비밀번호를 한번 더 입력해주세요" onChange={() => {checkRePassword()}} style={{fontSize: "0.9rem"}} />
+							<Form.Control 
+								className={statusParser(rePasswordValid)}
+								id="reNewPasswordInput"
+								maxLength={20}
+								type="password"
+								placeholder="비밀번호를 한번 더 입력해주세요"
+								onChange={() => {checkRePassword()}} style={{fontSize: "0.9rem"}}
+							/>
 							<Form.Text muted style={{fontSize: "0.8rem"}}>
 								<div style={{display: "flex", alignItems: "center", marginTop: "5px"}}>
 									<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#6c757d" className="bi bi-info-circle" viewBox="0 0 16 16">
