@@ -35,7 +35,7 @@ const CommonTopMenu = (props) => {
 			navigate("/");
 		}
 
-		if(props.accountData.status === "using"){
+		if(props.accountData.status === "signin"){
 			setRenderData(
 				<Form className="d-flex">
 					<Navbar.Text>

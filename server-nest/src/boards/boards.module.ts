@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Boards } from './boards.entity';
-import { BoardsController } from './boards.controller';
-import { BoardsService } from './boards.service';
+import { AnonymousController } from './anonymous.controller';
+import { AnonymousService } from './anonymous.service';
 import { Replies } from './replies.entity';
 
 @Module({
@@ -11,7 +11,7 @@ import { Replies } from './replies.entity';
 			Boards, Replies
 		]),
 	],
-	controllers: [BoardsController],
-	providers: [BoardsService],
+	controllers: [AnonymousController],
+	providers: [AnonymousService],
 })
 export class BoardsModule {}

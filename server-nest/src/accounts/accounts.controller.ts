@@ -75,30 +75,6 @@ export class  AccountsController {
 		return characterInfo;
 	}
 
-	/**
-	 * 가입할 때 중복확인을 위해
-	 */
-	@Get("exists/id/:accountID")
-	async isExistsID(@Param("accountID") accountID: string): Promise<boolean> {
-		console.log("[Controller-accounts-isExistsID]");
-		
-		const result = await this.accountsService.isExistsID(accountID);
-
-		return result;
-	}
-
-	/**
-	 * 가입할 때 중복확인을 위해
-	 */
-	@Get("exists/nickname/:nickname")
-	async isExistsNickname(@Param("nickname") nickname: string): Promise<boolean> {
-		console.log("[Controller-accounts-isExistsNickname]");
-		
-		const result = await this.accountsService.isExistsNickname(nickname);
-
-		return result;
-	}
-
 	@Post()
 	async createAccount(@Body() createAccountsDTO: CreateAccountsDTO): Promise<number> {
 		console.log("[Controller-accounts-createAccount] => ", createAccountsDTO);
@@ -129,13 +105,30 @@ export class  AccountsController {
 	}
 
 	@Post("signin")
-	async signInAccount(@Body() updateAccountsDTO: UpdateAccountsDTO, @Req() request: Request, @Res({ passthrough: true }) response: Response): Promise<string> {
-		console.log("[Controller-accounts-signInAccount] => ", updateAccountsDTO);
+	async signInAccount(@Body() body: { email: string, password: string }, @Req() request: Request, @Res({ passthrough: true }) response: Response): Promise<string> {
+		console.log("[Controller-accounts-signInAccount] => ", body);
 
 		const cookieCheck = await this.accountsService.checkSignInStatus(request, response);
-		const result = await this.accountsService.signInAccount(updateAccountsDTO, cookieCheck.status, request, response);
 
-		return result;
+		if (cookieCheck.status === "empty") { //로그인을 시도하지 않은 상태
+			const result = await this.accountsService.signInAccount(body, request, response);
+
+			return result;
+		}
+		else {
+			if (cookieCheck.status === "error") {
+				return "fail";
+			}
+			else if (cookieCheck.status === "locked") {
+				return "locked";
+			}
+			else if (cookieCheck.status === "banned") {
+				return "banned";
+			}
+			else{
+				return "already";
+			}
+		}
 	}
 
 	@Post("signout")
@@ -146,7 +139,7 @@ export class  AccountsController {
 	}
 
 	@Get("signin/status")
-	async getSignInStatus(@Req() request: Request, @Res({ passthrough: true }) response: Response): Promise<{ status: string, id: string, nickname: string }> {
+	async getSignInStatus(@Req() request: Request, @Res({ passthrough: true }) response: Response): Promise<{ status: string, email: string, nickname: string }> {
 		console.log("[Controller-accounts-getSignInStatus]");
 
 		const cookieCheck = await this.accountsService.checkSignInStatus(request, response);

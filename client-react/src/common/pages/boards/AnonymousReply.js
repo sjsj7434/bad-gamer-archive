@@ -5,7 +5,7 @@ import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import CustomPagination from './CustomPagination';
-import * as repliesFetch from '../../js/repliesFetch';
+import * as anonymousRepliesFetch from '../../js/anonymousRepliesFetch';
 
 const AnonymousReply = (props) => {
 	// const [upvoteCount, setUpvoteCount] = useState(0);
@@ -55,7 +55,7 @@ const AnonymousReply = (props) => {
 						writer: "",
 					}
 
-					const deleteResult = await repliesFetch.deleteReply(sendData);
+					const deleteResult = await anonymousRepliesFetch.deleteReply(sendData);
 
 					if(deleteResult === null){
 						alert("댓글 삭제 중 오류가 발생하였습니다(1)");
@@ -100,7 +100,7 @@ const AnonymousReply = (props) => {
 				writer: "",
 			}
 
-			const createResult = await repliesFetch.createRecursiveReply(sendData);
+			const createResult = await anonymousRepliesFetch.createRecursiveReply(sendData);
 
 			if(createResult === null){
 				alert("답글 작성 중 오류가 발생하였습니다(1)");
@@ -116,7 +116,7 @@ const AnonymousReply = (props) => {
 		}
 
 		if(props.contentCode !== null){
-			const replyArray = await repliesFetch.getReplies(props.contentCode, currentPage);
+			const replyArray = await anonymousRepliesFetch.getReplies(props.contentCode, currentPage);
 
 			if(replyArray !== null){
 				if(replyArray[1] === 0){
@@ -276,7 +276,7 @@ const AnonymousReply = (props) => {
 				level: 0,
 				writer: "",
 			}
-			const createResult = await repliesFetch.createReply(sendData);
+			const createResult = await anonymousRepliesFetch.createReply(sendData);
 
 			if(createResult === null){
 				alert("댓글 작성 중 오류가 발생하였습니다(1)");

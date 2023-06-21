@@ -85,8 +85,6 @@ export class AccountsService {
 			return data.getAttribute("title");
 		}, targetElement);
 		
-		console.log("i found => ", characterName);
-
 		browser.close(); //창 종료
 
 		return characterName;
@@ -243,23 +241,52 @@ export class AccountsService {
 	}
 
 	/**
-	 * ID로 1개의 계정을 찾는다
+	 * unique uuid를 생성함, 10번의 시도 내에 생성하지 못하면 빈값 반환
 	 */
-	isExistsID(accountID: string): Promise<boolean> {
+	async getUniqueUUID(): Promise<string> {
+		let uuidExists: boolean = true;
+		let randomString: string = ""; //uuid
+		let currentLoop: number = 0; //현재 시도 횟수
+		const maxLoop: number = 10; //최대 시도 횟수
+
+		while (uuidExists === true) {
+			currentLoop++;
+			randomString = randomBytes(20).toString("hex");
+
+			uuidExists = await this.accountsRepository.exist({
+				where: {
+					uuid: randomString,
+				},
+			});
+
+			if (maxLoop < currentLoop) {
+				//10번의 시도내에 unique uuid 생성 실패
+				randomString = "";
+				break;
+			}
+		}
+
+		return randomString;
+	}
+
+	/**
+	 * 이미 존재하는 email인지 확인
+	 */
+	isExistsEmail(accountEmail: string): Promise<boolean> {
 		return this.accountsRepository.exist({
 			where: {
-				id: accountID,
+				email: accountEmail,
 			},
 		});
 	}
 
 	/**
-	 * Nickname으로 1개의 계정을 찾는다
+	 * 이미 존재하는 nickname인지 확인
 	 */
-	isExistsNickname(nickname: string): Promise<boolean> {
+	isExistsNickname(accountNickname: string): Promise<boolean> {
 		return this.accountsRepository.exist({
 			where: {
-				nickname: nickname,
+				nickname: accountNickname,
 			},
 		});
 	}
@@ -268,17 +295,20 @@ export class AccountsService {
 	 * 중복되는 정보가 있는지 확인 후 계정을 생성한다
 	 */
 	async createAccount(createAccountsDTO: CreateAccountsDTO): Promise<number> {
-		const idExists: boolean = await this.isExistsID(createAccountsDTO.id);
+		const uniqueUUID: string = await this.getUniqueUUID();
+		const emailExists: boolean = await this.isExistsEmail(createAccountsDTO.email);
 		const nicknameExists: boolean = await this.isExistsNickname(createAccountsDTO.nickname);
-
-		if (idExists === true && nicknameExists === true) {
-			return 0; //이미 ID & Nickname 존재
+		if (emailExists === true && nicknameExists === true) {
+			return 0; //이미 Email & Nickname 존재
 		}
-		else if (idExists === true) {
-			return 1; //이미 ID 존재
+		else if (emailExists === true) {
+			return 1; //이미 Email 존재
 		}
 		else if (nicknameExists === true) {
 			return 2; //이미 Nickname 존재
+		}
+		else if (uniqueUUID === ""){
+			return 5; //unique uuid를 생성할 수 없음
 		}
 		else{
 			const saltRounds: number = 10;
@@ -291,6 +321,7 @@ export class AccountsService {
 				return 3; //비밀번호 암호화 도중 오류 발생
 			}
 			else {
+				createAccountsDTO.uuid = uniqueUUID;
 				createAccountsDTO.password = hash;
 
 				await this.accountsRepository.save(createAccountsDTO);
@@ -306,72 +337,78 @@ export class AccountsService {
 	 */
 	async deleteAccount(deleteAccountsDTO: DeleteAccountsDTO) {
 		await this.accountsRepository.softDelete({
-			id: deleteAccountsDTO.id,
+			email: deleteAccountsDTO.email,
 			password: deleteAccountsDTO.password
 		});
 	}
 
 	/**
 	 * 중복 로그인 방지, 이미 해당 계정으로 로그인한 사람이 있는지 확인
+	 * 
+	 * empty: 로그인을 시도하지 않은 상태
+	 * locked: 잠금 상태
+	 * banned: 밴 상태
+	 * signin: 정상적인 상태
+	 * error: 오류
 	 */
-	async checkSignInStatus(request: Request, response: Response): Promise<{ status: string, id: string, nickname: string }> {
-		if (request.cookies["sessionCode"] === undefined) {
-			console.log(SIGN_IN_SESSION)
+	async checkSignInStatus(request: Request, response: Response): Promise<{ status: string, email: string, nickname: string }> {
+		if (request.cookies["sessionCode"] === undefined) { //로그인을 시도하지 않은 상태
 			return {
-				status: "no_cookie",
-				id: "",
+				status: "empty",
+				email: "",
 				nickname: "",
 			}
 		}
-		else if (SIGN_IN_SESSION.has(request.cookies["sessionCode"]) === true) { //해당 계정 세션이 이미 존재
-			const userData: Accounts = await this.accountsRepository.findOne({
+		else if (SIGN_IN_SESSION.has(request.cookies["sessionCode"]) === true) { //정상적으로 로그인한 쿠키가 있다
+			const account = await this.accountsRepository.findOne({
 				where: {
-					id: SIGN_IN_SESSION.get(request.cookies["sessionCode"]),
+					uuid: SIGN_IN_SESSION.get(request.cookies["sessionCode"]),
 				},
 			});
 
-			if (userData.isLocked === true) {
+			if (account === null) { //확인해보니 로그인 쿠키 정보와 맞는 계정이 DB에 없다
+				this.setSignOut(request, response);
+
+				return {
+					status: "error",
+					email: "",
+					nickname: "",
+				}
+			}
+			else if (account.isLocked === true) { //확인해보니 해당 계정이 잠금 상태
 				this.setSignOut(request, response);
 
 				return {
 					status: "locked",
-					id: "",
+					email: "",
 					nickname: "",
 				}
 			}
-			else if (userData.isBanned === true) {
+			else if (account.isBanned === true) { //확인해보니 해당 계정이 밴 상태
 				this.setSignOut(request, response);
 
 				return {
 					status: "banned",
-					id: "",
+					email: "",
 					nickname: "",
 				}
 			}
-			else if (userData.isLost === true) {
-				this.setSignOut(request, response);
-
-				return {
-					status: "lost",
-					id: "",
-					nickname: "",
-				}
-			}
-			else{
+			else{ //정상적인 상태
 				response.cookie("sessionCode", request.cookies["sessionCode"], { maxAge: LOGIN_COOKIE_TTL, httpOnly: true, secure: true }); //expire 갱신
 
 				return {
-					status: "using",
-					id: userData.id,
-					nickname: userData.nickname,
+					status: "signin",
+					email: account.email,
+					nickname: account.nickname,
 				}
 			}
 		}
-		else { //잘못된 쿠키 값
-			response.clearCookie("sessionCode"); //쿠키 값 삭제 처리
+		else { //로그인 쿠키는 있지만 서버에서 확인할 수 없는 쿠키
+			this.setSignOut(request, response);
+
 			return {
-				status: "wrong_cookie",
-				id: "",
+				status: "error",
+				email: "",
 				nickname: "",
 			}
 		}
@@ -380,94 +417,84 @@ export class AccountsService {
 	/**
 	 * 로그인
 	 */
-	async signInAccount(updateAccountsDTO: UpdateAccountsDTO, cookieCheck: string, request: Request, response: Response): Promise<string> {
+	async signInAccount(body: { email: string, password: string }, request: Request, response: Response): Promise<string> {
 		const account = await this.accountsRepository.findOne({
 			where: {
-				id: updateAccountsDTO.id,
+				email: body.email,
+				isBanned: false,
 			}
 		});
 
-		if (account === null) {
-			// no account
+		if (account === null){ //로그인하려는 계정이 존재하지 않음
 			return "fail";
 		}
 		else if (account.isLocked === true) {
-			// login isLocked
 			return "locked";
 		}
-		else if (account.isBanned === true) {
-			// login isBanned
-			return "fail";
-		}
-		else if (account.isLost === true) {
-			// login isLost
-			return "fail";
-		}
-		else {
-			const isMatch: boolean = await bcrypt.compare(updateAccountsDTO.password, account.password);
+		else{
+			const isMatch: boolean = await bcrypt.compare(body.password, account.password);
 
 			if (isMatch === false) { //로그인 실패
-				account.loginFailCount++; //로그인 실패 횟수 + 1
+				const failCount = account.loginFailCount + 1; //로그인 실패 횟수 + 1
 
-				if (account.loginFailCount >= LOGIN_FAIL_LIMIT) { //실패 제한에 걸리면 계정 잠금 처리
-					account.isLocked = true;
+				await this.accountsRepository.update(
+					{ //조건
+						uuid: account.uuid,
+					},
+					{ //변경 값
+						loginFailIP: request.ip,
+						loginFailCount: failCount,
+						isLocked: (failCount >= LOGIN_FAIL_LIMIT), //실패 제한에 걸리면 계정 잠금 처리
+					},
+				);
+
+				if (failCount === (LOGIN_FAIL_LIMIT - 1)){
+					return "fail_limit"; //한번 더 실패할 경우 계정이 잠깁니다, 비밀번호 찾기로 잠김 해제 가능
 				}
-
-				account.loginFailIP = request.ip; //로그인 실패한 IP
-
-				await this.accountsRepository.save(account);
-
-				return "fail";
+				else if (failCount >= LOGIN_FAIL_LIMIT) {
+					return "locked";
+				}
+				else{
+					return "fail";
+				}
 			}
 			else { //로그인 성공
-				for (const sessionData of SIGN_IN_SESSION) {
-					if (updateAccountsDTO.id === sessionData[1]) { //같은 ID로 이미 세션이 존재하면
-						console.log("[!] delete session");
-						SIGN_IN_SESSION.delete(sessionData[0]); //해당 세션을 삭제
-						break;
-					}
+				if (account.isSleep === true) {
+					return "sleep";
 				}
+				else{
+					await this.accountsRepository.update(
+						{ //조건
+							uuid: account.uuid,
+						},
+						{ //변경 값
+							loginSuccessIP: request.ip,
+							loginFailCount: 0,
+							lastLogin: new Date(),
+						},
+					);
 
-				if (cookieCheck === "no_cookie" || cookieCheck === "using") {
-					account.loginFailCount = 0;
-					account.lastLogin = new Date();
-					account.loginSuccessIP = request.ip; //로그인 성공한 IP
-
-					await this.accountsRepository.save(account);
-
-					this.setSignInCookie(updateAccountsDTO, request, response);
+					this.setSignInCookie(account, request, response);
 
 					return "success";
 				}
-				else if (cookieCheck === "wrong_cookie") { //잘못된 쿠키 값, 쿠키 값 삭제 처리
-					return "wrong_cookie";
-				}
 			}
 		}
-	}
-
-	/**
-	 * ID에 맞는 계정을 수정한다
-	 * find > 정보 수정 > save 처리
-	 */
-	async updateLostarkMainCharacter(request: Request, body: { lostarkMainCharacter: string }) {
-		const account = await this.accountsRepository.findOne({
-			where: {
-				id: SIGN_IN_SESSION.get(request.cookies["sessionCode"]),
-			}
-		});
-
-		account.lostarkMainCharacter = body.lostarkMainCharacter;
-
-		await this.accountsRepository.save(account);
 	}
 
 	/**
 	 * 로그인 시 Cookie 설정
 	 */
-	setSignInCookie(updateAccountsDTO: UpdateAccountsDTO, request: Request, response: Response) {
+	setSignInCookie(account: Accounts, request: Request, response: Response) {
 		const saltRounds: number = 15;
 		const sessionCode: string = bcrypt.genSaltSync(saltRounds);
+
+		for (const sessionData of SIGN_IN_SESSION) {
+			if (account.uuid === sessionData[1]) { //같은 uuid 세션이 존재하면
+				SIGN_IN_SESSION.delete(sessionData[0]); //해당 세션을 삭제
+				break;
+			}
+		}
 
 		if (SIGN_IN_SESSION.has(request.cookies["sessionCode"]) === true) { //초기화
 			SIGN_IN_SESSION.delete(request.cookies["sessionCode"]);
@@ -477,7 +504,7 @@ export class AccountsService {
 			response.clearCookie("sessionCode");
 		}
 
-		SIGN_IN_SESSION.set(sessionCode, updateAccountsDTO.id);
+		SIGN_IN_SESSION.set(sessionCode, account.uuid);
 
 		response.cookie("sessionCode", sessionCode, { maxAge: LOGIN_COOKIE_TTL, httpOnly: true, secure: true });
 	}
@@ -486,13 +513,12 @@ export class AccountsService {
 	 * 로그아웃 Cookie 설정
 	 */
 	setSignOut(request: Request, response: Response) {
-		console.log("[!] setSignOut => " + request.cookies["sessionCode"]);
-		if (SIGN_IN_SESSION.has(request.cookies["sessionCode"]) === true) { //초기화
-			SIGN_IN_SESSION.delete(request.cookies["sessionCode"]);
+		if (SIGN_IN_SESSION.has(request.cookies["sessionCode"]) === true) {
+			SIGN_IN_SESSION.delete(request.cookies["sessionCode"]); //서버의 로그인 데이터에서 삭제
 		}
 
-		if (request.cookies["sessionCode"] !== undefined) { //초기화
-			response.clearCookie("sessionCode");
+		if (request.cookies["sessionCode"] !== undefined) {
+			response.clearCookie("sessionCode"); //사용자의 쿠키 값 삭제
 		}
 	}
 
@@ -502,16 +528,15 @@ export class AccountsService {
 	async getMyInfo(request: Request, response: Response): Promise<Accounts> {
 		const acctountData = await this.accountsRepository.findOne({
 			select: {
-				id: true,
-				nickname: true,
 				email: true,
+				nickname: true,
 				lastLogin: true,
 				loginSuccessIP: true,
 				passwordChangeDate: true,
 				lostarkMainCharacter: true,
 			},
 			where: {
-				id: SIGN_IN_SESSION.get(request.cookies["sessionCode"]),
+				uuid: SIGN_IN_SESSION.get(request.cookies["sessionCode"]),
 			}
 		});
 
@@ -524,15 +549,14 @@ export class AccountsService {
 	async updatePassword(request: Request, response: Response, body: { oldPassword: string, newPassword: string }): Promise<number> {
 		const acctountData = await this.accountsRepository.findOne({
 			select: {
-				id: true,
+				email: true,
 				password: true,
 			},
 			where: {
-				id: SIGN_IN_SESSION.get(request.cookies["sessionCode"]),
+				uuid: SIGN_IN_SESSION.get(request.cookies["sessionCode"]),
+				isVerifiedEmail: true,
 			}
 		});
-
-		console.log(SIGN_IN_SESSION.get(request.cookies["sessionCode"]) , body.oldPassword, acctountData)
 
 		if (acctountData !== null){
 			const isMatch: boolean = await bcrypt.compare(body.oldPassword, acctountData.password);
@@ -549,10 +573,10 @@ export class AccountsService {
 
 				if (isRight === true){
 					await this.accountsRepository.update(
-						{
-							id: acctountData.id
+						{ //조건
+							email: acctountData.email
 						},
-						{
+						{ //변경 값
 							password: hash,
 							passwordChangeDate: new Date()
 						}
@@ -573,5 +597,21 @@ export class AccountsService {
 		else{
 			return 3;
 		}
+	}
+
+	/**
+	 * ID에 맞는 계정을 수정한다
+	 * find > 정보 수정 > save 처리
+	 */
+	async updateLostarkMainCharacter(request: Request, body: { lostarkMainCharacter: string }) {
+		const account = await this.accountsRepository.findOne({
+			where: {
+				uuid: SIGN_IN_SESSION.get(request.cookies["sessionCode"]),
+			}
+		});
+
+		account.lostarkMainCharacter = body.lostarkMainCharacter;
+
+		await this.accountsRepository.save(account);
 	}
 }

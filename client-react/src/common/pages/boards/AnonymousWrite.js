@@ -10,7 +10,7 @@ import InputGroup from 'react-bootstrap/InputGroup';
 import Button from 'react-bootstrap/Button';
 import ProgressBar from 'react-bootstrap/ProgressBar';
 import LoadingModal from '../common/LoadingModal';
-import * as boardsFetch from '../../js/boardsFetch';
+import * as anonymousBoardsFetch from '../../js/anonymousBoardsFetch';
 import '../../css/View.css';
 
 const AnonymousWrite = () => {
@@ -49,7 +49,6 @@ const AnonymousWrite = () => {
 			return;
 		}
 
-		console.log(editorSizeByte, editorMaxKB, editorSizeByte >= editorMaxKB);
 		if(editorSizeByte >= editorMaxKB){
 			alert("작성된 글의 용량이 너무 큽니다");
 			return;
@@ -71,7 +70,7 @@ const AnonymousWrite = () => {
 			hasImage: editorContet.indexOf("<img") > -1 ? true : false,
 		};
 
-		let createResult = await boardsFetch.createContent(sendData);
+		let createResult = await anonymousBoardsFetch.createContent(sendData);
 
 		if(createResult === null){
 			alert("문제가 발생하여 게시글을 저장할 수 없습니다(1)");
@@ -124,7 +123,7 @@ const AnonymousWrite = () => {
 			writer: "",
 		};
 
-		let result = await boardsFetch.updateContent(sendData);
+		let result = await anonymousBoardsFetch.updateContent(sendData);
 
 		if(result === null){
 			alert("문제가 발생하여 게시글을 수정할 수 없습니다(1)");
@@ -158,7 +157,7 @@ const AnonymousWrite = () => {
 		 * 게시글 정보 가져오기
 		 */
 		const readContent = async () => {
-			const readResult = await boardsFetch.readContent(contentCode, "edit");
+			const readResult = await anonymousBoardsFetch.readContent(contentCode, "edit");
 	
 			setContentTitle(readResult.title);
 			setContentData(readResult.content);
@@ -191,7 +190,7 @@ const AnonymousWrite = () => {
 				password: contentPasswordElement.value,
 			};
 			
-			const checkResult = await boardsFetch.checkBeforeEdit(sendData)
+			const checkResult = await anonymousBoardsFetch.checkBeforeEdit(sendData)
 
 			if(checkResult === true){
 				setIdentity(true);

@@ -1,4 +1,4 @@
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, DeleteDateColumn } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, DeleteDateColumn } from 'typeorm';
 
 // This will create following database table
 // If table is already exsists there could be error
@@ -11,7 +11,7 @@ export class Accounts {
 	code: number;
 
 	/**
-	 * 유저 ID
+	 * 유저 uuid, 서버에서 랜덤 생성값을 부여함, 사용자에게 공개하지 않는 것이 중요
 	 */
 	@Column({
 		type: "varchar"
@@ -19,7 +19,28 @@ export class Accounts {
 		, nullable: false
 		, unique: true
 	})
-	id: string;
+	uuid: string;
+
+	/**
+	 * 유저 이메일 / 이메일을 아이디로 사용하여 로그인
+	 */
+	@Column({
+		type: "varchar"
+		, length: 100
+		, nullable: false
+		, unique: true
+	})
+	email: string;
+
+	/**
+	 * 인증된 이메일인가
+	 */
+	@Column({
+		type: "boolean"
+		, nullable: false
+		, default: false
+	})
+	isVerifiedEmail: boolean;
 
 	/**
 	 * 유저 닉네임
@@ -33,14 +54,15 @@ export class Accounts {
 	nickname: string;
 
 	/**
-	 * 유저 이메일 / 이메일을 아이디로 사용하여 로그인한다? 왜냐면 비밀번호 찾기할 때 그냥 갖다 쓰니까
+	 * 유저 경험치
 	 */
 	@Column({
-		type: "varchar"
-		, length: 100
+		type: "int"
+		, unsigned: true
 		, nullable: false
+		, default: 0
 	})
-	email: string;
+	exp: number;
 
 	/**
 	 * 유저 비밀번호(암호화), Salt는 암호화된 비밀번호에 포함되어있으니 따로 저장할 필요 없음
@@ -119,16 +141,6 @@ export class Accounts {
 		, default: false
 	})
 	isLocked: boolean;
-
-	/**
-	 * 유저 계정 잃어버림
-	 */
-	@Column({
-		type: "boolean"
-		, nullable: false
-		, default: false
-	})
-	isLost: boolean;
 
 	/**
 	 * 휴면 계정

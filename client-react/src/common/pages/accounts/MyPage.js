@@ -33,19 +33,14 @@ const MyPage = () => {
 							</colgroup>
 							<tbody>
 								<tr>
-									<th>아이디</th>
+									<th>이메일</th>
 									<td><div className="vr"></div></td>
-									<td>{accountData.id}</td>
+									<td>{accountData.email}</td>
 								</tr>
 								<tr>
 									<th>닉네임</th>
 									<td><div className="vr"></div></td>
 									<td>{accountData.nickname}</td>
-								</tr>
-								<tr>
-									<th>이메일</th>
-									<td><div className="vr"></div></td>
-									<td>{accountData.email}</td>
 								</tr>
 								<tr>
 									<th>LA</th>
@@ -64,10 +59,14 @@ const MyPage = () => {
 						<Stack direction="horizontal" gap={3}>
 							<Button variant={"outline-primary"} onClick={() => {navigate("change/password")}} style={{width: "30%", maxWidth: "130px", padding: "2px", fontSize: "0.8rem"}}>비밀번호 변경</Button>
 							<Button variant={"outline-primary"} onClick={() => {navigate("lostark")}} style={{width: "30%", maxWidth: "130px", padding: "2px", fontSize: "0.8rem"}}>닉네임 변경</Button>
+							<Button variant={"outline-warning"} onClick={() => {navigate("lostark")}} style={{width: "30%", maxWidth: "130px", padding: "2px", fontSize: "0.8rem"}}>회원탈퇴</Button>
 						</Stack>
 					</div>
 				</Container>
 			);
+		}
+		else{
+			setRenderData(1231231)
 		}
 	}, [accountData, navigate])
 

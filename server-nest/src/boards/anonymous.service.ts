@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { In, Repository, Not, IsNull } from 'typeorm';
+import { Repository, IsNull } from 'typeorm';
 import { Boards } from './boards.entity';
 import { CreateBoardsDTO, UpdateBoardsDTO, DeleteBoardsDTO } from './boards.dto';
 import { Replies } from './replies.entity';
@@ -8,7 +8,7 @@ import { Cron } from '@nestjs/schedule';
 import { CreateRepliesDTO, UpdateRepliesDTO, DeleteRepliesDTO } from './replies.dto';
 
 @Injectable()
-export class BoardsService {
+export class AnonymousService {
 	constructor(
 		@InjectRepository(Boards) private boardsRepository: Repository<Boards>,
 		@InjectRepository(Replies) private repliesRepository: Repository<Replies>,
@@ -16,14 +16,14 @@ export class BoardsService {
 
 	contentVoteData: Map<number, Array<string>> = new Map();
 
-	//매일 00:00이 되면 데이터 비우기
+	//서울 시간 기준으로 [매일 00:00]에 데이터 초기화
 	@Cron("0 0 0 * * *", {
-		name: "resetVoteData",
+		name: "resetAnonymousVoteData",
 		timeZone: "Asia/Seoul",
 	})
-	resetVoteData() {
+	resetAnonymousVoteData() {
 		this.contentVoteData.clear();
-		console.log("[resetVoteData] Called every day 00:00");
+		console.log("[resetAnonymousVoteData] Reset data every day at 00:00");
 	}
 
 	isVotableContent(contentCode: number, ipData: string): boolean{
@@ -44,9 +44,9 @@ export class BoardsService {
 	}
 
 	/**
-	 * category에 해당하는 글 목록 가져오기
+	 * 글 목록 가져오기
 	 */
-	async getContentListByCategory(category: string, page: number, perPage: number): Promise<[Boards[], number]> {
+	async getContentList(category: string, page: number, perPage: number): Promise<[Boards[], number]> {
 		const result = await this.boardsRepository.findAndCount({
 			relations: ["replies"], //댓글 정보 join
 			select: {
@@ -102,7 +102,7 @@ export class BoardsService {
 	/**
 	 * code로 1개의 게시글을 찾는다
 	 */
-	async getContentByCode(contentCode: number, type: string): Promise<Boards | null> {
+	async getContent(contentCode: number, type: string): Promise<Boards | null> {
 		if (type === "view"){
 			await this.boardsRepository.increment({code: contentCode}, "view", 1);
 		}

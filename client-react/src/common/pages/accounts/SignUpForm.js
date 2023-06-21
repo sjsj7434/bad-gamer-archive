@@ -10,9 +10,8 @@ import * as accountsFetch from '../../js/accountsFetch.js'
 import LoadingModal from '../common/LoadingModal.js';
 
 const SignUpForm = () => {
-	const [idValid, setIdValid] = useState(0);
-	const [nicknameValid, setNicknameValid] = useState(0);
 	const [emailValid, setEmailValid] = useState(0);
+	const [nicknameValid, setNicknameValid] = useState(0);
 	const [passwordValid, setPasswordValid] = useState(0);
 	const [rePasswordValid, setRePasswordValid] = useState(0);
 	const [showLoadingModal, setShowLoadingModal] = useState(false);
@@ -24,19 +23,14 @@ const SignUpForm = () => {
 		event.stopPropagation();
 		const form = event.currentTarget;
 
-		if(idValid !== 2){
-			alert("아이디를 확인해주세요");
-			form.idInput.focus();
+		if(emailValid !== 2){
+			alert("이메일을 확인해주세요");
+			form.emailInput.focus();
 			return false;
 		}
 		if(nicknameValid !== 2){
 			alert("닉네임을 확인해주세요");
 			form.nicknameInput.focus();
-			return false;
-		}
-		if(emailValid !== 2){
-			alert("이메일을 확인해주세요");
-			form.emailInput.focus();
 			return false;
 		}
 		if(passwordValid !== 2){
@@ -57,7 +51,6 @@ const SignUpForm = () => {
 			setShowLoadingModal(false);
 
 			const createResult = await accountsFetch.createAccount({
-				id: form.idInput.value,
 				nickname: form.nicknameInput.value,
 				email: form.emailInput.value,
 				password: form.passwordInput.value,
@@ -68,19 +61,19 @@ const SignUpForm = () => {
 				navigate("/accounts/signin");
 			}
 			else if(createResult === 0){
-				alert("이미 사용 중인 아이디와 닉네임입니다");
+				alert("이미 사용 중인 이메일과 닉네임입니다");
 
-				setIdValid(1);
-				form.idInput.value = "";
+				setEmailValid(1);
+				form.emailInput.value = "";
 
 				setNicknameValid(1);
 				form.nicknameInput.value = "";
 			}
 			else if(createResult === 1){
-				alert("이미 사용 중인 아이디입니다");
+				alert("이미 사용 중인 이메일입니다");
 
-				setIdValid(1);
-				form.idInput.value = "";
+				setEmailValid(1);
+				form.emailInput.value = "";
 			}
 			else if(createResult === 2){
 				alert("이미 사용 중인 닉네임입니다");
@@ -88,25 +81,11 @@ const SignUpForm = () => {
 				setNicknameValid(1);
 				form.nicknameInput.value = "";
 			}
-			else if(createResult === 3){
+			else if(createResult === 3 || createResult === 5){
 				alert("회원가입 처리 중 오류가 발생하였습니다");
 			}
 		}
 	};
-
-	const isValidID = () => {
-		const idInput = document.querySelector("#idInput");
-		const idRegExp = new RegExp("[a-z0-9]", "g");
-
-		idInput.value = idInput.value.toLowerCase();
-
-		if(idInput.value.replace(idRegExp, "") === "" && (4 <= idInput.value.length && idInput.value.length <= 20)){
-			setIdValid(2);
-		}
-		else{
-			setIdValid(1);
-		}
-	}
 
 	const isValidNickname = () => {
 		const nicknameInput = document.querySelector("#nicknameInput");
@@ -195,90 +174,12 @@ const SignUpForm = () => {
 				<Form noValidate onSubmit={createAccount}>
 					<Form.Group as={Row} className="mb-3">
 						<Form.Label style={{fontWeight: "800", fontSize: "0.8rem"}}>
-							아이디 (ID)
-						</Form.Label>
-						<Col>
-							<Form.Control className={statusParser(idValid)} id="idInput" maxLength={20} type="text" placeholder="아이디를 입력해주세요" isValid={false} isInvalid={false} onChange={() => {isValidID()}} autoComplete="off" style={{fontSize: "0.9rem"}} />
-							<Form.Text muted style={{fontSize: "0.8rem"}}>
-								<div style={{display: "flex", alignItems: "center", marginTop: "5px"}}>
-									<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#6c757d" className="bi bi-info-circle" viewBox="0 0 16 16">
-										<path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
-										<path d="m8.93 6.588-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533L8.93 6.588zM9 4.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0z"/>
-									</svg>
-									<span style={{marginLeft: "8px"}}>아이디는 4~20글자 제한이며 숫자와 알파벳만 사용 가능합니다</span>
-								</div>
-							</Form.Text>
-							<Form.Control.Feedback type="valid" style={{fontSize: "0.8rem"}}>
-								<div style={{display: "flex", alignItems: "center", marginTop: "5px"}}>
-									<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-check-circle" viewBox="0 0 16 16">
-										<path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
-										<path d="M10.97 4.97a.235.235 0 0 0-.02.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-1.071-1.05z"/>
-									</svg>
-									<span style={{marginLeft: "8px"}}>올바른 아이디입니다</span>
-								</div>
-							</Form.Control.Feedback>
-							<Form.Control.Feedback type="invalid" style={{fontSize: "0.8rem"}}>
-								<div style={{display: "flex", alignItems: "center", marginTop: "5px"}}>
-									<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-exclamation-circle" viewBox="0 0 16 16">
-										<path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
-										<path d="M7.002 11a1 1 0 1 1 2 0 1 1 0 0 1-2 0zM7.1 4.995a.905.905 0 1 1 1.8 0l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 4.995z"/>
-									</svg>
-									<span style={{marginLeft: "8px"}}>올바른 아이디가 아닙니다</span>
-								</div>
-							</Form.Control.Feedback>
-						</Col>
-					</Form.Group>
-
-					<Form.Group as={Row} className="mb-3">
-						<Form.Label style={{fontWeight: "800", fontSize: "0.8rem"}}>
-							닉네임 (Nickname)
-						</Form.Label>
-						<Col>
-							<Form.Control className={statusParser(nicknameValid)} id="nicknameInput" maxLength={20} type="text" placeholder="닉네임을 입력해주세요" onChange={() => {isValidNickname()}} autoComplete="off" style={{fontSize: "0.9rem"}} />
-							<Form.Text muted style={{fontSize: "0.8rem"}}>
-								<div style={{display: "flex", alignItems: "center", marginTop: "5px"}}>
-									<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#6c757d" className="bi bi-info-circle" viewBox="0 0 16 16">
-										<path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
-										<path d="m8.93 6.588-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533L8.93 6.588zM9 4.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0z"/>
-									</svg>
-									<span style={{marginLeft: "8px"}}>닉네임은 1~20글자 제한이며 특수문자와 띄어쓰기는 사용 불가능합니다</span>
-								</div>
-							</Form.Text>
-							<Form.Control.Feedback type="valid" style={{fontSize: "0.8rem"}}>
-								<div style={{display: "flex", alignItems: "center", marginTop: "5px"}}>
-									<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-check-circle" viewBox="0 0 16 16">
-										<path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
-										<path d="M10.97 4.97a.235.235 0 0 0-.02.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-1.071-1.05z"/>
-									</svg>
-									<span style={{marginLeft: "8px"}}>올바른 닉네임입니다</span>
-								</div>
-							</Form.Control.Feedback>
-							<Form.Control.Feedback type="invalid" style={{fontSize: "0.8rem"}}>
-								<div style={{display: "flex", alignItems: "center", marginTop: "5px"}}>
-									<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-exclamation-circle" viewBox="0 0 16 16">
-										<path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
-										<path d="M7.002 11a1 1 0 1 1 2 0 1 1 0 0 1-2 0zM7.1 4.995a.905.905 0 1 1 1.8 0l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 4.995z"/>
-									</svg>
-									<span style={{marginLeft: "8px"}}>올바른 닉네임이 아닙니다</span>
-								</div>
-							</Form.Control.Feedback>
-						</Col>
-					</Form.Group>
-
-					<Form.Group as={Row} className="mb-3">
-						<Form.Label style={{fontWeight: "800", fontSize: "0.8rem"}}>
 							이메일 (Email)
 						</Form.Label>
 						<Col>
 							<Form.Control className={statusParser(emailValid)} id="emailInput" maxLength={50} type="email" placeholder="이메일을 입력해주세요" onChange={() => {isValidEmail()}} autoComplete="off" style={{fontSize: "0.9rem"}} />
-							<Form.Text muted style={{fontSize: "0.8rem"}}>
-								<div style={{display: "flex", alignItems: "center", marginTop: "5px"}}>
-									<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#6c757d" className="bi bi-info-circle" viewBox="0 0 16 16">
-										<path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
-										<path d="m8.93 6.588-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533L8.93 6.588zM9 4.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0z"/>
-									</svg>
-									<span style={{marginLeft: "8px"}}>이메일은 비밀번호 찾기에 이용됩니다</span>
-								</div>
+							<Form.Text muted style={{fontSize: "0.72rem"}}>
+								가입 후 적어주신 이메일로 계정 인증 메일이 발송됩니다
 							</Form.Text>
 							<Form.Control.Feedback type="valid" style={{fontSize: "0.8rem"}}>
 								<div style={{display: "flex", alignItems: "center", marginTop: "5px"}}>
@@ -303,18 +204,42 @@ const SignUpForm = () => {
 
 					<Form.Group as={Row} className="mb-3">
 						<Form.Label style={{fontWeight: "800", fontSize: "0.8rem"}}>
+							닉네임 (Nickname)
+						</Form.Label>
+						<Col>
+							<Form.Control className={statusParser(nicknameValid)} id="nicknameInput" maxLength={20} type="text" placeholder="닉네임을 입력해주세요" onChange={() => {isValidNickname()}} autoComplete="off" style={{fontSize: "0.9rem"}} />
+							<Form.Text muted style={{fontSize: "0.72rem"}}>
+								닉네임은 1~20글자 제한이며 특수문자와 띄어쓰기는 사용 불가능합니다
+							</Form.Text>
+							<Form.Control.Feedback type="valid" style={{fontSize: "0.8rem"}}>
+								<div style={{display: "flex", alignItems: "center", marginTop: "5px"}}>
+									<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-check-circle" viewBox="0 0 16 16">
+										<path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+										<path d="M10.97 4.97a.235.235 0 0 0-.02.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-1.071-1.05z"/>
+									</svg>
+									<span style={{marginLeft: "8px"}}>올바른 닉네임입니다</span>
+								</div>
+							</Form.Control.Feedback>
+							<Form.Control.Feedback type="invalid" style={{fontSize: "0.8rem"}}>
+								<div style={{display: "flex", alignItems: "center", marginTop: "5px"}}>
+									<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-exclamation-circle" viewBox="0 0 16 16">
+										<path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+										<path d="M7.002 11a1 1 0 1 1 2 0 1 1 0 0 1-2 0zM7.1 4.995a.905.905 0 1 1 1.8 0l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 4.995z"/>
+									</svg>
+									<span style={{marginLeft: "8px"}}>올바른 닉네임이 아닙니다</span>
+								</div>
+							</Form.Control.Feedback>
+						</Col>
+					</Form.Group>
+
+					<Form.Group as={Row} className="mb-3">
+						<Form.Label style={{fontWeight: "800", fontSize: "0.8rem"}}>
 							비밀번호 (Password)
 						</Form.Label>
 						<Col>
 							<Form.Control className={statusParser(passwordValid)} id="passwordInput" maxLength={20} type="password" placeholder="비밀번호를 입력해주세요" onChange={() => {isValidPassword()}} style={{fontSize: "0.9rem"}} />
-							<Form.Text muted style={{fontSize: "0.8rem"}}>
-								<div style={{display: "flex", alignItems: "center", marginTop: "5px"}}>
-									<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#6c757d" className="bi bi-info-circle" viewBox="0 0 16 16">
-										<path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
-										<path d="m8.93 6.588-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533L8.93 6.588zM9 4.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0z"/>
-									</svg>
-									<span style={{marginLeft: "8px"}}>비밀번호는 8~20글자 제한이며 알파벳 대문자와 소문자, 숫자, 특수문자를 조합해주세요</span>
-								</div>
+							<Form.Text muted style={{fontSize: "0.72rem"}}>
+								알파벳 대문자와 소문자, 숫자, 특수문자를 조합하여 8~20자로 생성해주세요
 							</Form.Text>
 							<Form.Control.Feedback type="valid" style={{fontSize: "0.8rem"}}>
 								<div style={{display: "flex", alignItems: "center", marginTop: "5px"}}>
@@ -342,14 +267,8 @@ const SignUpForm = () => {
 						</Form.Label>
 						<Col>
 							<Form.Control className={statusParser(rePasswordValid)} id="rePasswordInput" maxLength={20} type="password" placeholder="비밀번호를 한번 더 입력해주세요" onChange={() => {checkRePassword()}} style={{fontSize: "0.9rem"}} />
-							<Form.Text muted style={{fontSize: "0.8rem"}}>
-								<div style={{display: "flex", alignItems: "center", marginTop: "5px"}}>
-									<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#6c757d" className="bi bi-info-circle" viewBox="0 0 16 16">
-										<path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
-										<path d="m8.93 6.588-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533L8.93 6.588zM9 4.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0z"/>
-									</svg>
-									<span style={{marginLeft: "8px"}}>확인을 위해 비밀번호를 한번 더 입력해주세요</span>
-								</div>
+							<Form.Text muted style={{fontSize: "0.72rem"}}>
+								확인을 위해 비밀번호를 한번 더 입력해주세요
 							</Form.Text>
 							<Form.Control.Feedback type="valid" style={{fontSize: "0.8rem"}}>
 								<div style={{display: "flex", alignItems: "center", marginTop: "5px"}}>

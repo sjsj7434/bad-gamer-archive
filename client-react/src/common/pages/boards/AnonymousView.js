@@ -5,7 +5,7 @@ import Placeholder from 'react-bootstrap/Placeholder';
 import Button from 'react-bootstrap/Button';
 import AnonymousReply from './AnonymousReply';
 import LoadingModal from '../common/LoadingModal';
-import * as boardsFetch from '../../js/boardsFetch';
+import * as anonymousBoardsFetch from '../../js/anonymousBoardsFetch';
 import '../../css/View.css';
 
 const AnonymousView = () => {
@@ -28,7 +28,7 @@ const AnonymousView = () => {
 		 * code로 게시글 정보 가져오기
 		 */
 		const readContent = async () => {
-			const contentData = await boardsFetch.readContent(contentCode, "view");
+			const contentData = await anonymousBoardsFetch.readContent(contentCode, "view");
 
 			if(contentData === null){
 				alert("존재하지 않는 게시물입니다");
@@ -107,7 +107,7 @@ const AnonymousView = () => {
 					password: password,
 				};
 
-				const deleteResult = await boardsFetch.deleteContent(sendData);
+				const deleteResult = await anonymousBoardsFetch.deleteContent(sendData);
 
 				if(deleteResult === true){
 					navigate(`/lostark/board/anonymous/1`);
@@ -142,7 +142,7 @@ const AnonymousView = () => {
 				}
 
 				if(contentCode !== null){
-					const voteResult = await boardsFetch.voteContent(voteType, sendData);
+					const voteResult = await anonymousBoardsFetch.voteContent(voteType, sendData);
 
 					if(voteResult === null){
 						alert("오늘은 이미 해당 게시물에 추천, 비추천을 하였습니다");

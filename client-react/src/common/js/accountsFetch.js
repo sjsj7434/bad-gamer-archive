@@ -143,7 +143,12 @@ export const createAccount = async (accountInfo) => {
 		const fetchData = await getFetchText(fetchResponse);
 		console.log('createAccount =>', fetchData)
 
-		return fetchData;
+		if(isNaN(fetchData) === true){
+			return null;
+		}
+		else{
+			return parseInt(fetchData, 10);
+		}
 	}
 	else{
 		alert(checkMessage);

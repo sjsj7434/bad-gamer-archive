@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { Navigate, useNavigate } from "react-router-dom";
 import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
 import Form from 'react-bootstrap/Form';
 import Container from 'react-bootstrap/Container';
 import InputGroup from 'react-bootstrap/InputGroup';
@@ -20,9 +19,9 @@ const SignInForm = (props) => {
 		event.stopPropagation();
 		const form = event.currentTarget;
 
-		if(form.idInput.value === ""){
-			alert("아이디 (ID)를 확인해주세요");
-			form.idInput.focus();
+		if(form.emailInput.value === ""){
+			alert("이메일 (Email)을 확인해주세요");
+			form.emailInput.focus();
 			return false;
 		}
 		if(form.passwordInput.value === ""){
@@ -37,7 +36,7 @@ const SignInForm = (props) => {
 		setShowLoadingModal(false);
 
 		const signInResult = await accountsFetch.signInAccount({
-			id: form.idInput.value,
+			email: form.emailInput.value,
 			password: form.passwordInput.value,
 		});
 
@@ -46,15 +45,21 @@ const SignInForm = (props) => {
 			navigate("/");
 		}
 		else if(signInResult === "fail"){
-			alert("로그인이 실패하였습니다");
+			alert("이메일이나 비밀번호가 올바르지 않습니다");
+		}
+		else if(signInResult === "fail_limit"){
+			alert("===== 경고 =====\n\n이메일이나 비밀번호가 올바르지 않습니다\n한번 더 실패할 경우 해당 계정은 잠금 처리됩니다");
 		}
 		else if(signInResult === "locked"){
-			alert("해당 계정은 잠금상태입니다");
+			alert("===== 경고 =====\n\n지속된 로그인 실패로 계정이 잠금상태가 되었습니다\n[비밀번호 찾기]를 이용해주세요");
 		}
-		else if(signInResult === "wrong_cookie"){
-			alert("로그인 정보가 올바르지 않습니다");
+		else if(signInResult === "sleep"){
+			alert("계정이 휴면상태입니다");
 		}
-		else if(signInResult === "same_user"){
+		else if(signInResult === "error"){
+			alert("로그인에 실패하였습니다");
+		}
+		else if(signInResult === "already"){
 			alert("누군가 이미 로그인하였습니다");
 		}
 	};
@@ -68,7 +73,7 @@ const SignInForm = (props) => {
 	// 	return new Promise((prom) => setTimeout(prom, second * 1000));
 	// }
 
-	if(props.accountData.status === "using"){
+	if(props.accountData.status === "signin"){
 		return (
 			<Navigate to="/" />
 		);
@@ -89,26 +94,31 @@ const SignInForm = (props) => {
 					<Form noValidate onSubmit={handleSubmit}>
 						<Form.Group as={Row} className="mb-3">
 							<Form.Label style={{fontWeight: "800", fontSize: "0.8rem"}}>
-								아이디 (ID)
+								이메일 (Email)
 							</Form.Label>
-							<Col>
-								<InputGroup>
-									<Form.Control id="idInput" maxLength={20} type="text" placeholder="아이디를 입력해주세요" isValid={false} isInvalid={false} autoComplete="off" style={{fontSize: "0.9rem"}} />
-								</InputGroup>
-							</Col>
+							<InputGroup>
+								<Form.Control id="emailInput" maxLength={20} type="text" placeholder="이메일을 입력해주세요" style={{fontSize: "0.9rem"}} />
+							</InputGroup>
 						</Form.Group>
 
 						<Form.Group as={Row} className="mb-3">
 							<Form.Label style={{fontWeight: "800", fontSize: "0.8rem"}}>
 								비밀번호 (Password)
 							</Form.Label>
-							<Col>
+							<InputGroup>
 								<Form.Control id="passwordInput" maxLength={20} type="password" placeholder="비밀번호를 입력해주세요" style={{fontSize: "0.9rem"}} />
-							</Col>
+							</InputGroup>
+							<Form.Text muted style={{fontSize: "0.72rem"}}>
+								5번 이상 로그인에 실패할 경우 계정이 <span style={{color: "orangered", fontWeight: "600"}}>잠금 상태</span>가 됩니다
+								<br />
+								<span style={{color: "orangered", fontWeight: "600"}}>잠금 상태</span>가 되면 아래의 <span style={{color: "#0d6efd", fontWeight: "600"}}>비밀번호 찾기</span>를 이용해주세요
+							</Form.Text>
 						</Form.Group>
 
-						<Button type="submit" variant="success" size="lg" style={{width: "100%", marginTop: "16px"}}>로그인</Button>
+						<Button type="submit" variant="success" size="lg" style={{width: "100%", marginTop: "10px", fontSize: "0.95rem"}}>로그인</Button>
 					</Form>
+
+					<Button variant="outline-primary" size="lg" style={{width: "100%", marginTop: "10px", fontSize: "0.95rem"}}>비밀번호 찾기</Button>
 				</div>
 			</Container>
 		);

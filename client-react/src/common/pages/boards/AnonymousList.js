@@ -3,7 +3,7 @@ import { useParams, Link, useNavigate, NavLink } from "react-router-dom";
 import Container from 'react-bootstrap/Container';
 import Button from 'react-bootstrap/Button';
 import CustomPagination from './CustomPagination';
-import * as boardsFetch from '../../js/boardsFetch';
+import * as anonymousBoardsFetch from '../../js/anonymousBoardsFetch';
 
 const AnonymousList = () => {
 	const [page, setPage] = useState(null);
@@ -28,7 +28,7 @@ const AnonymousList = () => {
 
 	useEffect(() => {
 		const readContentList = async () => {
-			const contentListData = await boardsFetch.readContentList("anonymous", page);
+			const contentListData = await anonymousBoardsFetch.readContentList(page);
 
 			setContentList(contentListData[0]);
 			setContentCount(contentListData[1]);

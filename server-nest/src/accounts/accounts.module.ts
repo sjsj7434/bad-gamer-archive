@@ -4,6 +4,7 @@ import { Accounts } from './accounts.entity';
 import { AccountsController } from './accounts.controller';
 import { AccountsService } from './accounts.service';
 import { CacheModule } from '@nestjs/cache-manager';
+import { Level } from './level.entity';
 
 import { LostarkModule } from '../lostark/api/lostark.module';
 
@@ -12,7 +13,7 @@ import { LostarkModule } from '../lostark/api/lostark.module';
 		LostarkModule,
 
 		TypeOrmModule.forFeature([
-			Accounts
+			Accounts, Level
 		]),
 		CacheModule.register(),
 	],
