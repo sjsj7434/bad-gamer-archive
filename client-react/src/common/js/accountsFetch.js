@@ -321,3 +321,28 @@ export const updatePassword = async (sendData) => {
 		return null;
 	}
 }
+
+/**
+ * 이메일 인증 요청
+ */
+export const requestVerifyEmail = async () => {
+	const fecthOption = {
+		method: "POST"
+		, headers: {"Content-Type": "application/json",}
+		, credentials: "include", // Don't forget to specify this if you need cookies
+	};
+	const fetchResponse = await fetch(`${process.env.REACT_APP_SERVER}/accounts/verify/send/email`, fecthOption);
+	const [isStatusGood, checkMessage] = isFetchStatusGood(fetchResponse);
+
+	if(isStatusGood === true){
+		const fetchData = await getFetchText(fetchResponse);
+		console.log('requestVerifyEmail =>', fetchData)
+
+		return fetchData;
+	}
+	else{
+		alert(checkMessage);
+
+		return null;
+	}
+}

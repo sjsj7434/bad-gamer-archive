@@ -1,4 +1,4 @@
-import { Param, Controller, Get, Post, Put, Delete, Body, Res, Req, Patch } from '@nestjs/common';
+import { Param, Controller, Get, Post, Put, Delete, Body, Res, Req, Patch, Query } from '@nestjs/common';
 import { AccountsService } from './accounts.service';
 import { CreateAccountsDTO, DeleteAccountsDTO, UpdateAccountsDTO } from './accounts.dto';
 import { Request, Response } from 'express';
@@ -163,5 +163,23 @@ export class  AccountsController {
 		const updateResult = await this.accountsService.updatePassword(request, response, body);
 
 		return updateResult;
+	}
+
+	@Post("verify/send/email")
+	async setVerifyEmailTokenLater(@Req() request: Request, @Res({ passthrough: true }) response: Response): Promise<string> {
+		console.log("[Controller-accounts-setVerifyEmailTokenLater]");
+
+		const verifyResult = await this.accountsService.setVerifyEmailTokenLater(request);
+
+		return verifyResult;
+	}
+
+	@Get("verify/email/:verificationCode")
+	async verifyEmail(@Req() request: Request, @Res({ passthrough: true }) response: Response, @Param("verificationCode") verificationCode: string): Promise<boolean> {
+		console.log("[Controller-accounts-verifyEmail]", verificationCode);
+
+		const verifyResult = await this.accountsService.verifyEmail(verificationCode);
+
+		return verifyResult;
 	}
 }

@@ -12,8 +12,9 @@ import { Request, Response } from 'express';
 
 const LOGIN_FAIL_LIMIT: number = 5; //로그인 최대 실패
 const SIGN_IN_SESSION: Map<string, string> = new Map(); //로그인 세션
-const LOGIN_COOKIE_TTL = 1000 * 60 * 60; //로그인 쿠키 유지 기간 : 1 Hour
-const TOKEN_CACHE_TTL = 1000 * 60 * 3; //인증 토큰 캐시 유지 기간 : 3 Minutes
+const LOGIN_COOKIE_TTL = 1000 * 60 * 60 * 2; //로그인 쿠키 유지 기간 : 2 Hours
+const TOKEN_CACHE_TTL = 1000 * 60 * 3; //스토브 인증 토큰 캐시 유지 기간 : 3 Minutes
+const EMAIL_CACHE_TTL = 1000 * 60 * 60; //이메일 인증 토큰 캐시 유지 기간 : 1 Hour
 
 @Injectable()
 export class AccountsService {
@@ -326,6 +327,9 @@ export class AccountsService {
 
 				await this.accountsRepository.save(createAccountsDTO);
 
+				const verifyCode = await this.setVerifyEmailTokenEarly(uniqueUUID);
+				console.log(`email verify early => http://localhost:3001/accounts/verify/email/${verifyCode}`);
+
 				return 4; //정상 처리
 			}
 		}
@@ -613,5 +617,54 @@ export class AccountsService {
 		account.lostarkMainCharacter = body.lostarkMainCharacter;
 
 		await this.accountsRepository.save(account);
+	}
+
+	/**
+	 * 회원가입할 때 계정 이메일 인증 토큰 발급
+	 */
+	async setVerifyEmailTokenEarly(uuid: string): Promise<string>{
+		const verificationCode = randomBytes(16).toString("hex");
+
+		await this.cacheManager.set(verificationCode, uuid, EMAIL_CACHE_TTL);
+		
+		return verificationCode;
+	}
+
+	/**
+	 * 회원가입 후 계정 이메일 인증 토큰 발급
+	 */
+	async setVerifyEmailTokenLater(request: Request): Promise<string>{
+		const verificationCode = randomBytes(16).toString("hex");
+		const uuid = SIGN_IN_SESSION.get(request.cookies["sessionCode"]);
+
+		console.log(`email verify later => http://localhost:3001/accounts/verify/email/${verificationCode}`);
+
+		await this.cacheManager.set(verificationCode, uuid, EMAIL_CACHE_TTL);
+		
+		return verificationCode;
+	}
+
+	/**
+	 * 계정 이메일 인증
+	 */
+	async verifyEmail(verificationCode: string): Promise<boolean>{
+		const uuid: string = await this.cacheManager.get(verificationCode);
+		console.log(`verifyEmail: ${uuid}`)
+
+		if(uuid !== null && uuid !== undefined && uuid !== ""){
+			this.accountsRepository.update(
+				{
+					uuid: uuid,
+				},
+				{
+					isVerifiedEmail: true,
+				},
+			);
+
+			return true;
+		}
+		else{
+			return false;
+		}
 	}
 }

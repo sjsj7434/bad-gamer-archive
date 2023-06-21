@@ -20,6 +20,10 @@ const MyPage = () => {
 		callMyInfo();
 	}, [])
 
+	const clickREQ = async () => {
+		await accountsFetch.requestVerifyEmail();
+	}
+
 	useEffect(() => {
 		if(accountData !== null){
 			setRenderData(
@@ -35,7 +39,13 @@ const MyPage = () => {
 								<tr>
 									<th>이메일</th>
 									<td><div className="vr"></div></td>
-									<td>{accountData.email}</td>
+									<td>
+										<div style={{ display: "flex", alignItems: "center" }}>
+											{accountData.email}
+											&nbsp;&nbsp;
+											<Button onClick={() => { clickREQ() }} variant="outline-success" style={{ width: "30%", maxWidth: "130px", padding: "2px", fontSize: "0.8rem" }}>인증하기</Button>
+										</div>
+									</td>
 								</tr>
 								<tr>
 									<th>닉네임</th>
@@ -46,10 +56,17 @@ const MyPage = () => {
 									<th>LA</th>
 									<td><div className="vr"></div></td>
 									<td>
-										{accountData.lostarkMainCharacter === null ? "정보 없음" : accountData.lostarkMainCharacter}
-										&nbsp;&nbsp;
-										<Button onClick={() => { navigate("activate/lostark") }} variant="outline-danger" style={{width: "30%", maxWidth: "130px", padding: "2px", fontSize: "0.8rem"}}>LA Get</Button>
-										<br/>
+										<div style={{ display: "flex", alignItems: "center" }}>
+											{accountData.lostarkMainCharacter === null ? "정보 없음" : accountData.lostarkMainCharacter}
+											&nbsp;&nbsp;
+											{
+												accountData.lostarkMainCharacter === null ? 
+												<Button onClick={() => { navigate("activate/lostark") }} variant="outline-danger" style={{ width: "30%", maxWidth: "130px", padding: "2px", fontSize: "0.8rem" }}>설정하기</Button>
+												:
+												<Button onClick={() => { navigate("activate/lostark") }} variant="outline-danger" style={{ width: "30%", maxWidth: "130px", padding: "2px", fontSize: "0.8rem" }}>변경하기</Button>
+											}
+											
+										</div>
 										* 더 다양한 정보를 저장하기 위해 테이블을 따로 구성해야 할 듯
 									</td>
 								</tr>
@@ -64,9 +81,6 @@ const MyPage = () => {
 					</div>
 				</Container>
 			);
-		}
-		else{
-			setRenderData(1231231)
 		}
 	}, [accountData, navigate])
 
