@@ -4,58 +4,46 @@ import { CreateAccountsDTO, DeleteAccountsDTO, UpdateAccountsDTO } from './accou
 import { Request, Response } from 'express';
 import { Accounts } from './accounts.entity';
 import { LostarkAPIService } from '../lostark/api/lostark.api.service';
+import { UpdateResult } from 'typeorm';
 
 @Controller("accounts")
 export class  AccountsController {
 	constructor(private accountsService: AccountsService, private apiService: LostarkAPIService) { }
 
 	/**
-	 * 마이페이지 > LA 인증 > 토큰 발급
+	 * 마이페이지 > stove 계정 인증 코드 발급
 	 */
-	@Get("publish/token")
-	async publishUserToken(@Req() request: Request): Promise<string> {
-		console.log("[Controller-accounts-publishUserToken]");
-		const userProfileToken = await this.accountsService.publishUserToken(request);
-		return userProfileToken;
+	@Get("stove/verification/code")
+	async createStoveVerificationCode(@Req() request: Request): Promise<string> {
+		console.log("[Controller-accounts-createStoveVerificationCode]");
+		const stoveVerificationCode = await this.accountsService.createStoveVerificationCode(request);
+		return stoveVerificationCode;
 	}
 
-	@Get("stove/profile/api/:stoveURL")
-	async checkProfileTokenMatchAPI(@Req() request: Request, @Param("stoveURL") stoveURL: string): Promise<[string, object]> {
-		console.log("[Controller-accounts-checkProfileTokenMatchAPI] => " + stoveURL);
+	@Get("stove/verification/:method/:stoveURL")
+	async executeStoveVerification(@Req() request: Request, @Param("method") method: string, @Param("stoveURL") stoveURL: string): Promise<[string, object]> {
+		console.log("[Controller-accounts-executeStoveVerification] => " + stoveURL);
 		const stoveURLWithOutProtocol: string = stoveURL.replace(/https:\/\/|http:\/\//g, "");
 		
 		if(isNaN(Number(stoveURLWithOutProtocol)) === false){
-			// const compareResult: boolean = await this.accountsService.isMatchStoveUserToken(request, stoveURLWithOutProtocol);
-			const compareResult: boolean = true;
+			// const compareResult = await this.accountsService.compareStoveVerificationCode(request, stoveURLWithOutProtocol);
+			const compareResult = true; //인증 테스트를 위해서 확인 절차 건너뛰는 중
 
 			if (compareResult === true){
-				const characterName = await this.accountsService.getStoveUserCharacters_api(stoveURLWithOutProtocol);
-				const characterNames = await this.apiService.getCharacterList(characterName); // { CharacterClassName: string, CharacterName: number, ItemAvgLevel: string, ItemMaxLevel: string, ServerName: string }
-				
-				return ["success", characterNames];
-			}
-			else {
-				return ["fail", []];
-			}
-		}
-		else{
-			return ["codeError", []];
-		}
-	}
+				if(method === "api"){ //공식 API 사용
+					const characterName = await this.accountsService.getStoveUserCharacters_api(stoveURLWithOutProtocol);
+					const characterNames = await this.apiService.getCharacterList(characterName); // { CharacterClassName: string, CharacterName: number, ItemAvgLevel: string, ItemMaxLevel: string, ServerName: string }
 
-	@Get("stove/profile/scrap/:stoveURL")
-	async checkProfileTokenMatchScrap(@Req() request: Request, @Param("stoveURL") stoveURL: string): Promise<[string, object]> {
-		console.log("[Controller-accounts-checkProfileTokenMatchScrap] => " + stoveURL);
-		const stoveURLWithOutProtocol: string = stoveURL.replace(/https:\/\/|http:\/\//g, "");
-		
-		if(isNaN(Number(stoveURLWithOutProtocol)) === false){
-			// const compareResult: boolean = await this.accountsService.isMatchStoveUserToken(request, stoveURLWithOutProtocol);
-			const compareResult: boolean = true;
+					return ["success", characterNames];
+				}
+				else if(method === "scrap"){ //전투정보실 웹 페이지 정보 스크랩
+					const characterNames = await this.accountsService.getStoveUserCharacters_scrap(stoveURLWithOutProtocol);
 
-			if (compareResult === true){
-				const characterNames = await this.accountsService.getStoveUserCharacters_scrap(stoveURLWithOutProtocol);
-
-				return ["success", characterNames];
+					return ["success", characterNames];
+				}
+				else{
+					return ["fail", []];
+				}
 			}
 			else {
 				return ["fail", []];
@@ -175,10 +163,37 @@ export class  AccountsController {
 	}
 
 	@Get("verify/email/:verificationCode")
-	async verifyEmail(@Req() request: Request, @Res({ passthrough: true }) response: Response, @Param("verificationCode") verificationCode: string): Promise<boolean> {
+	async verifyEmail(@Param("verificationCode") verificationCode: string): Promise<boolean> {
 		console.log("[Controller-accounts-verifyEmail]", verificationCode);
 
 		const verifyResult = await this.accountsService.verifyEmail(verificationCode);
+
+		return verifyResult;
+	}
+
+	@Post("reset/password/request")
+	async requestResetPassword(@Body() body: { email: string }): Promise<string> {
+		console.log("[Controller-accounts-requestResetPassword]");
+
+		const verifyResult = await this.accountsService.beforeResetPassword(body);
+
+		return verifyResult;
+	}
+
+	@Post("verify/reset/password/code")
+	async checkResetEmail(@Body() body: { verificationCode: string }): Promise<string> {
+		console.log("[Controller-accounts-checkResetEmail]", body);
+
+		const verifyResult = await this.accountsService.checkResetEmail(body.verificationCode);
+
+		return verifyResult;
+	}
+
+	@Patch("reset/password/execute")
+	async resetPassword(@Body() body: { newPassword: string, verificationCode: string }): Promise<string> {
+		console.log("[Controller-accounts-resetPassword]", body);
+
+		const verifyResult = await this.accountsService.resetPassword(body);
 
 		return verifyResult;
 	}

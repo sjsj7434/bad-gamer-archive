@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, UpdateResult } from 'typeorm';
 import { Accounts } from './accounts.entity';
 import { CreateAccountsDTO, DeleteAccountsDTO, UpdateAccountsDTO } from './accounts.dto';
 import { randomBytes } from 'crypto';
@@ -13,8 +13,8 @@ import { Request, Response } from 'express';
 const LOGIN_FAIL_LIMIT: number = 5; //로그인 최대 실패
 const SIGN_IN_SESSION: Map<string, string> = new Map(); //로그인 세션
 const LOGIN_COOKIE_TTL = 1000 * 60 * 60 * 2; //로그인 쿠키 유지 기간 : 2 Hours
-const TOKEN_CACHE_TTL = 1000 * 60 * 3; //스토브 인증 토큰 캐시 유지 기간 : 3 Minutes
-const EMAIL_CACHE_TTL = 1000 * 60 * 60; //이메일 인증 토큰 캐시 유지 기간 : 1 Hour
+const STOVE_CODE_TTL = 1000 * 60 * 3; //스토브 인증 코드 캐시 유지 기간 : 3 Minutes
+const EMAIL_CODE_TTL = 1000 * 60 * 60; //이메일 인증 코드 캐시 유지 기간 : 1 Hour
 
 @Injectable()
 export class AccountsService {
@@ -24,19 +24,19 @@ export class AccountsService {
 	) { }
 
 	/**
-	 * 유저의 스토브 소개란에 적을 인증 코드(32글자)를 생성한다
+	 * 스토브 소개란에 적을 인증 코드(32글자)를 생성한다
 	 */
-	async publishUserToken(request: Request): Promise<string>{
-		const verificationCode = randomBytes(16).toString("hex");
-		await this.cacheManager.set(request.cookies["sessionCode"] + "token", verificationCode, TOKEN_CACHE_TTL);
+	async createStoveVerificationCode(request: Request): Promise<string>{
+		const stoveVerificationCode = randomBytes(16).toString("hex");
+		await this.cacheManager.set("STOVE_" + request.cookies["sessionCode"], stoveVerificationCode, STOVE_CODE_TTL);
 
-		return verificationCode;
+		return stoveVerificationCode;
 	}
 
 	/**
-	 * 유저의 스토브 소개란에 적힌 인증 코드를 가져와 비교한다
+	 * 스토브 소개란에 적힌 인증 코드를 가져와 비교한다
 	 */
-	async isMatchStoveUserToken(request: Request, stoveCode: string): Promise<boolean>{
+	async compareStoveVerificationCode(request: Request, stoveCode: string): Promise<boolean>{
 		const browser = await puppeteer.launch({
 			headless: true,
 			waitForInitialPage: false,
@@ -50,10 +50,10 @@ export class AccountsService {
 		}, targetElement);
 		browser.close(); //창 종료
 		
-		const publishedToken = await this.cacheManager.get(request.cookies["sessionCode"] + "token");
+		const publishedToken = await this.cacheManager.get("STOVE_" + request.cookies["sessionCode"]);
 		
 		if (publishedToken === stoveVerificationCode) {
-			this.cacheManager.del(request.cookies["sessionCode"] + "token");
+			this.cacheManager.del("STOVE_" + request.cookies["sessionCode"]);
 
 			return true;
 		}
@@ -558,7 +558,6 @@ export class AccountsService {
 			},
 			where: {
 				uuid: SIGN_IN_SESSION.get(request.cookies["sessionCode"]),
-				isVerifiedEmail: true,
 			}
 		});
 
@@ -625,7 +624,7 @@ export class AccountsService {
 	async setVerifyEmailTokenEarly(uuid: string): Promise<string>{
 		const verificationCode = randomBytes(16).toString("hex");
 
-		await this.cacheManager.set(verificationCode, uuid, EMAIL_CACHE_TTL);
+		await this.cacheManager.set("EMAIL_" + verificationCode, uuid, EMAIL_CODE_TTL);
 		
 		return verificationCode;
 	}
@@ -639,7 +638,7 @@ export class AccountsService {
 
 		console.log(`email verify later => http://localhost:3001/accounts/verify/email/${verificationCode}`);
 
-		await this.cacheManager.set(verificationCode, uuid, EMAIL_CACHE_TTL);
+		await this.cacheManager.set("EMAIL_" + verificationCode, uuid, EMAIL_CODE_TTL);
 		
 		return verificationCode;
 	}
@@ -647,11 +646,10 @@ export class AccountsService {
 	/**
 	 * 계정 이메일 인증
 	 */
-	async verifyEmail(verificationCode: string): Promise<boolean>{
+	async verifyEmail(verificationCode: string): Promise<boolean> {
 		const uuid: string = await this.cacheManager.get(verificationCode);
-		console.log(`verifyEmail: ${uuid}`)
 
-		if(uuid !== null && uuid !== undefined && uuid !== ""){
+		if (uuid !== null && uuid !== undefined && uuid !== "") {
 			this.accountsRepository.update(
 				{
 					uuid: uuid,
@@ -663,8 +661,128 @@ export class AccountsService {
 
 			return true;
 		}
-		else{
+		else {
 			return false;
+		}
+	}
+
+	/**
+	 * 비밀번호를 잊어버려 비밀번호 초기화하기 전 확인
+	 */
+	async beforeResetPassword(body: { email: string }): Promise<string> {
+		const account = await this.accountsRepository.findOne({
+			where: {
+				email: body.email,
+				isBanned: false,
+			},
+		});
+
+		if (account === null){
+			return "no_user";
+		}
+		else {
+			const verificationCode = randomBytes(16).toString("hex");
+			await this.cacheManager.set("PASSWORD_" + verificationCode, account.uuid, EMAIL_CODE_TTL);
+
+			this.sendEmail(account.email, "your password trying reset", `hi, ${account.nickname}<br/>your password will be reset, if you click below<br/>please visit here: http://localhost:3001/accounts/reset/password?verificationCode=${verificationCode}`);
+			return "email_sent";
+		}
+	}
+
+	/**
+	 * 메일 발송
+	 */
+	async sendEmail(toWho: string, mailTitle: string, mailContent: string): Promise<boolean> {
+		console.log(`
+[메일 발송하는 척~]
+
+발송인 : www.test-agora.com
+발송시각 : ${new Date()}
+수취인 : ${toWho}
+제목 : ${mailTitle}
+--------------------------------------------
+${mailContent}
+--------------------------------------------
+발신 전용 메일입니다
+		`)
+
+		return true;
+	}
+
+	/**
+	 * 메일로 전달한 링크의 값을 확인
+	 */
+	async checkResetEmail(verificationCode: string): Promise<string> {
+		const uuid: string = await this.cacheManager.get("PASSWORD_" + verificationCode);
+
+		if (uuid === undefined){
+			return "no_user";
+		}
+		else{
+			const account = await this.accountsRepository.findOne({
+				where: {
+					uuid: uuid,
+				},
+			});
+	
+			if (account === null) {
+				return "no_user";
+			}
+			else {
+				return "verified";
+			}
+		}
+	}
+
+	/**
+	 * 메일로 전달한 링크를 클릭하여 비밀번호 초기화
+	 */
+	async resetPassword(body: { newPassword: string, verificationCode: string }): Promise<string> {
+		const uuid: string = await this.cacheManager.get("PASSWORD_" + body.verificationCode);
+
+		if (uuid === undefined) {
+			return "no_user";
+		}
+		else {
+			const saltRounds: number = 10;
+			const password: string = body.newPassword;
+			const encryptSalt: string = await bcrypt.genSalt(saltRounds);
+
+			const account = await this.accountsRepository.findOne({
+				where: {
+					uuid: uuid,
+				}
+			})
+			const isSame = await bcrypt.compare(password, account.password);
+
+			if (isSame === false){
+				const hash = await bcrypt.hash(password, encryptSalt);
+				const isMatch = await bcrypt.compare(password, hash);
+
+				if (isMatch === true) {
+					await this.accountsRepository.update(
+						{
+							uuid: uuid
+						},
+						{
+							isLocked: false,
+							loginFailCount: 0,
+							password: hash,
+							passwordChangeDate: new Date(),
+						}
+					)
+
+					this.cacheManager.del("PASSWORD_" + body.verificationCode);
+
+					return "reset";
+				}
+				else {
+					return "error";
+				}
+			}
+			else{
+				return "same";
+			}
 		}
 	}
 }

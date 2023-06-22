@@ -11,7 +11,7 @@ import SignInForm from './accounts/SignInForm';
 import CommonTopMenu from './CommonTopMenu';
 import MyPage from './accounts/MyPage';
 import ActivateLostarkScrap from './accounts/ActivateLostarkScrap';
-import BlockNonLogin from './accounts/BlockNonLogin';
+import BlockNoSignin from './accounts/BlockNoSignin';
 import * as accountsFetch from '../js/accountsFetch.js'
 import LostarkMain from '../../lostark/pages/LostarkMain';
 import AnonymousBoard from './boards/AnonymousList';
@@ -19,6 +19,9 @@ import AnonymousView from './boards/AnonymousView';
 import AnonymousWrite from './boards/AnonymousWrite';
 import UsefulSitesLostark from './common/UsefulSitesLostark';
 import PasswordChangeForm from './accounts/PasswordChangeForm';
+import ForgotPasswordForm from './accounts/ForgotPasswordForm';
+import BlockYesSignin from './accounts/BlockYesSignin';
+import ResetPasswordForm from './accounts/ResetPasswordForm';
 
 // index.js에서 StrictMode 존재하면 두번 랜더링, 개발 모드에서만 적용됩니다. 생명주기 메서드들은 프로덕션 모드에서 이중으로 호출되지 않습니다.
 	// get Login info here and give props to child
@@ -69,12 +72,15 @@ const App = () => {
 							</Route>
 
 							<Route path="accounts">
-								<Route path="signup" element={ <SignUpForm /> }></Route>
-								<Route path="signin" element={ <SignInForm accountData={accountData} checkSignInStatus={checkSignInStatus} /> }></Route>
+								<Route path="signup" element={ <BlockYesSignin accountData={accountData} ifAllow={<SignUpForm />} /> }></Route>
+								<Route path="signin" element={ <BlockYesSignin accountData={accountData} ifAllow={<SignInForm checkSignInStatus={checkSignInStatus} />} /> }></Route>
+								<Route path="find/password" element={ <BlockYesSignin accountData={accountData} ifAllow={<ForgotPasswordForm />} /> }></Route>
+								<Route path="reset/password" element={ <BlockYesSignin accountData={accountData} ifAllow={<ResetPasswordForm />} /> }></Route>
+								
 								<Route path="mypage">
-									<Route path="" element={ <BlockNonLogin accountData={accountData} ifLoginRender={<MyPage />} /> }></Route>
-									<Route path="activate/lostark" element={ <BlockNonLogin accountData={accountData} ifLoginRender={<ActivateLostarkScrap />} /> }></Route>
-									<Route path="change/password" element={ <BlockNonLogin accountData={accountData} ifLoginRender={<PasswordChangeForm />} /> }></Route>
+									<Route path="" element={ <BlockNoSignin accountData={accountData} ifAllow={<MyPage />} /> }></Route>
+									<Route path="activate/lostark" element={ <BlockNoSignin accountData={accountData} ifAllow={<ActivateLostarkScrap />} /> }></Route>
+									<Route path="change/password" element={ <BlockNoSignin accountData={accountData} ifAllow={<PasswordChangeForm />} /> }></Route>
 								</Route>
 							</Route>
 
