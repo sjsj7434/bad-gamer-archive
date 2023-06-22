@@ -75,7 +75,7 @@ const ResetPasswordForm = () => {
 			else if(updateResult === "reset"){
 				alert("비밀번호가 변경되었습니다\n비밀번호가 변경되었으니 다시 로그인해주세요");
 
-				// navigate("/accounts/signin");
+				navigate("/accounts/signin");
 			}
 			else if(updateResult === "no_user"){
 				alert("사용자를 확인할 수 없습니다");

@@ -18,8 +18,8 @@ const CommonTopMenu = (props) => {
 	const navigate = useNavigate();
 	
 	const menuClick = useCallback((url, activeMenuId) => {
-		setActiveMenu(activeMenuId)
-		props.checkSignInStatus();
+		setActiveMenu(activeMenuId);
+		// props.checkSignInStatus();
 		setShowOffcanvas(false);
 		navigate(url);
 	}, [props, navigate])

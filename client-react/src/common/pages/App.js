@@ -22,6 +22,7 @@ import PasswordChangeForm from './accounts/PasswordChangeForm';
 import ForgotPasswordForm from './accounts/ForgotPasswordForm';
 import BlockYesSignin from './accounts/BlockYesSignin';
 import ResetPasswordForm from './accounts/ResetPasswordForm';
+import CommonInclude from './CommonInclude';
 
 // index.js에서 StrictMode 존재하면 두번 랜더링, 개발 모드에서만 적용됩니다. 생명주기 메서드들은 프로덕션 모드에서 이중으로 호출되지 않습니다.
 	// get Login info here and give props to child
@@ -47,6 +48,11 @@ const App = () => {
 					<></>
 					:
 					<>
+						<Routes>
+							{/* Common include */}
+							<Route path="*" element={ <CommonInclude checkSignInStatus={checkSignInStatus} /> }></Route>
+						</Routes>
+
 						<Routes>
 							{/* Top menu */}
 							<Route path="*" element={ <CommonTopMenu accountData={accountData} checkSignInStatus={checkSignInStatus} /> }></Route>
