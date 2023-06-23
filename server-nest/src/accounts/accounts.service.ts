@@ -273,10 +273,10 @@ export class AccountsService {
 	/**
 	 * 이미 존재하는 email인지 확인
 	 */
-	isExistsEmail(accountEmail: string): Promise<boolean> {
+	isExistsID(accountID: string): Promise<boolean> {
 		return this.accountsRepository.exist({
 			where: {
-				email: accountEmail,
+				id: accountID,
 			},
 		});
 	}
@@ -297,13 +297,13 @@ export class AccountsService {
 	 */
 	async createAccount(createAccountsDTO: CreateAccountsDTO): Promise<number> {
 		const uniqueUUID: string = await this.getUniqueUUID();
-		const emailExists: boolean = await this.isExistsEmail(createAccountsDTO.email);
+		const idExists: boolean = await this.isExistsID(createAccountsDTO.id);
 		const nicknameExists: boolean = await this.isExistsNickname(createAccountsDTO.nickname);
-		if (emailExists === true && nicknameExists === true) {
-			return 0; //이미 Email & Nickname 존재
+		if (idExists === true && nicknameExists === true) {
+			return 0; //이미 ID & Nickname 존재
 		}
-		else if (emailExists === true) {
-			return 1; //이미 Email 존재
+		else if (idExists === true) {
+			return 1; //이미 ID 존재
 		}
 		else if (nicknameExists === true) {
 			return 2; //이미 Nickname 존재
@@ -327,9 +327,6 @@ export class AccountsService {
 
 				await this.accountsRepository.save(createAccountsDTO);
 
-				const verifyCode = await this.setVerifyEmailTokenEarly(uniqueUUID);
-				console.log(`email verify early => http://localhost:3001/accounts/verify/email/${verifyCode}`);
-
 				return 4; //정상 처리
 			}
 		}
@@ -341,7 +338,7 @@ export class AccountsService {
 	 */
 	async deleteAccount(deleteAccountsDTO: DeleteAccountsDTO) {
 		await this.accountsRepository.softDelete({
-			email: deleteAccountsDTO.email,
+			id: deleteAccountsDTO.id,
 			password: deleteAccountsDTO.password
 		});
 	}
@@ -355,11 +352,11 @@ export class AccountsService {
 	 * signin: 정상적인 상태
 	 * error: 오류
 	 */
-	async checkSignInStatus(request: Request, response: Response): Promise<{ status: string, email: string, nickname: string }> {
+	async checkSignInStatus(request: Request, response: Response): Promise<{ status: string, id: string, nickname: string }> {
 		if (request.cookies["sessionCode"] === undefined) { //로그인을 시도하지 않은 상태
 			return {
 				status: "empty",
-				email: "",
+				id: "",
 				nickname: "",
 			}
 		}
@@ -375,7 +372,7 @@ export class AccountsService {
 
 				return {
 					status: "error",
-					email: "",
+					id: "",
 					nickname: "",
 				}
 			}
@@ -384,7 +381,7 @@ export class AccountsService {
 
 				return {
 					status: "locked",
-					email: "",
+					id: "",
 					nickname: "",
 				}
 			}
@@ -393,7 +390,7 @@ export class AccountsService {
 
 				return {
 					status: "banned",
-					email: "",
+					id: "",
 					nickname: "",
 				}
 			}
@@ -402,7 +399,7 @@ export class AccountsService {
 
 				return {
 					status: "signin",
-					email: account.email,
+					id: account.id,
 					nickname: account.nickname,
 				}
 			}
@@ -412,7 +409,7 @@ export class AccountsService {
 
 			return {
 				status: "error",
-				email: "",
+				id: "",
 				nickname: "",
 			}
 		}
@@ -421,10 +418,10 @@ export class AccountsService {
 	/**
 	 * 로그인
 	 */
-	async signInAccount(body: { email: string, password: string }, request: Request, response: Response): Promise<string> {
+	async signInAccount(body: { id: string, password: string }, request: Request, response: Response): Promise<string> {
 		const account = await this.accountsRepository.findOne({
 			where: {
-				email: body.email,
+				id: body.id,
 				isBanned: false,
 			}
 		});
@@ -532,7 +529,7 @@ export class AccountsService {
 	async getMyInfo(request: Request, response: Response): Promise<Accounts> {
 		const acctountData = await this.accountsRepository.findOne({
 			select: {
-				email: true,
+				id: true,
 				nickname: true,
 				lastLogin: true,
 				loginSuccessIP: true,
@@ -553,7 +550,7 @@ export class AccountsService {
 	async updatePassword(request: Request, response: Response, body: { oldPassword: string, newPassword: string }): Promise<number> {
 		const acctountData = await this.accountsRepository.findOne({
 			select: {
-				email: true,
+				id: true,
 				password: true,
 			},
 			where: {
@@ -577,7 +574,7 @@ export class AccountsService {
 				if (isRight === true){
 					await this.accountsRepository.update(
 						{ //조건
-							email: acctountData.email
+							id: acctountData.id
 						},
 						{ //변경 값
 							password: hash,
@@ -619,60 +616,12 @@ export class AccountsService {
 	}
 
 	/**
-	 * 회원가입할 때 계정 이메일 인증 토큰 발급
-	 */
-	async setVerifyEmailTokenEarly(uuid: string): Promise<string>{
-		const verificationCode = randomBytes(16).toString("hex");
-
-		await this.cacheManager.set("EMAIL_" + verificationCode, uuid, EMAIL_CODE_TTL);
-		
-		return verificationCode;
-	}
-
-	/**
-	 * 회원가입 후 계정 이메일 인증 토큰 발급
-	 */
-	async setVerifyEmailTokenLater(request: Request): Promise<string>{
-		const verificationCode = randomBytes(16).toString("hex");
-		const uuid = SIGN_IN_SESSION.get(request.cookies["sessionCode"]);
-
-		console.log(`email verify later => http://localhost:3001/accounts/verify/email/${verificationCode}`);
-
-		await this.cacheManager.set("EMAIL_" + verificationCode, uuid, EMAIL_CODE_TTL);
-		
-		return verificationCode;
-	}
-
-	/**
-	 * 계정 이메일 인증
-	 */
-	async verifyEmail(verificationCode: string): Promise<boolean> {
-		const uuid: string = await this.cacheManager.get(verificationCode);
-
-		if (uuid !== null && uuid !== undefined && uuid !== "") {
-			this.accountsRepository.update(
-				{
-					uuid: uuid,
-				},
-				{
-					isVerifiedEmail: true,
-				},
-			);
-
-			return true;
-		}
-		else {
-			return false;
-		}
-	}
-
-	/**
 	 * 비밀번호를 잊어버려 비밀번호 초기화하기 전 확인
 	 */
-	async beforeResetPassword(body: { email: string }): Promise<string> {
+	async beforeResetPassword(body: { id: string }): Promise<string> {
 		const account = await this.accountsRepository.findOne({
 			where: {
-				email: body.email,
+				id: body.id,
 				isBanned: false,
 			},
 		});
@@ -684,29 +633,8 @@ export class AccountsService {
 			const verificationCode = randomBytes(16).toString("hex");
 			await this.cacheManager.set("PASSWORD_" + verificationCode, account.uuid, EMAIL_CODE_TTL);
 
-			this.sendEmail(account.email, "your password trying reset", `hi, ${account.nickname}<br/>your password will be reset, if you click below<br/>please visit here: http://localhost:3001/accounts/reset/password?verificationCode=${verificationCode}`);
 			return "email_sent";
 		}
-	}
-
-	/**
-	 * 메일 발송
-	 */
-	async sendEmail(toWho: string, mailTitle: string, mailContent: string): Promise<boolean> {
-		console.log(`
-[메일 발송하는 척~]
-
-발송인 : www.test-agora.com
-발송시각 : ${new Date()}
-수취인 : ${toWho}
-제목 : ${mailTitle}
---------------------------------------------
-${mailContent}
---------------------------------------------
-발신 전용 메일입니다
-		`)
-
-		return true;
 	}
 
 	/**

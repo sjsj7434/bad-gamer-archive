@@ -1,13 +1,13 @@
 import { PartialType, PickType } from "@nestjs/mapped-types";
 import { Accounts } from "./accounts.entity";
-import { IsEmail, IsString, IsStrongPassword } from 'class-validator';
+import { IsString, IsStrongPassword } from 'class-validator';
 
 //Entity 클래스는 실제 테이블과 매핑되어 만일 변경되게 되면 여러 다른 클래스에 영향을 끼치고, DTO 클래스는 View와 통신하며 자주 변경되므로 분리
-export class CreateAccountsDTO extends PickType(Accounts, ["uuid", "email", "password", "nickname"] as const) {
+export class CreateAccountsDTO extends PickType(Accounts, ["uuid", "id", "password", "nickname"] as const) {
 	uuid: string;
 	
-	@IsEmail()
-	email: string;
+	@IsString()
+	id: string;
 	@IsStrongPassword()
 	password: string;
 	@IsString()
@@ -17,17 +17,17 @@ export class CreateAccountsDTO extends PickType(Accounts, ["uuid", "email", "pas
 export class UpdateAccountsDTO extends PartialType(Accounts) {
 	@IsString()
 	uuid?: string;
-	@IsEmail()
-	email?: string;
+	@IsString()
+	id?: string;
 	@IsStrongPassword()
 	password?: string;
 }
 
-export class DeleteAccountsDTO extends PickType(Accounts, ["uuid", "email", "password"] as const) {
+export class DeleteAccountsDTO extends PickType(Accounts, ["uuid", "id", "password"] as const) {
 	@IsString()
 	uuid: string;
-	@IsEmail()
-	email: string;
+	@IsString()
+	id: string;
 	@IsString()
 	password: string;
 }

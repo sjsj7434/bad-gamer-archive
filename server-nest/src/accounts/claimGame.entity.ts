@@ -3,7 +3,7 @@ import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, DeleteDateCol
 // This will create following database table
 // If table is already exsists there could be error
 @Entity()
-export class Accounts {
+export class GameAuthentication {
 	/**
 	 * 자동으로 생성되는 코드
 	 */
@@ -133,15 +133,6 @@ export class Accounts {
 	isLocked: boolean;
 
 	/**
-	 * 잠긴 날짜
-	 */
-	@Column({
-		type: "datetime"
-		, nullable: true
-	})
-	lockedAt!: Date;
-
-	/**
 	 * 휴면 계정
 	 */
 	@Column({
@@ -150,15 +141,6 @@ export class Accounts {
 		, default: false
 	})
 	isSleep: boolean;
-
-	/**
-	 * 휴면 날짜
-	 */
-	@Column({
-		type: "datetime"
-		, nullable: true
-	})
-	sleepdAt!: Date;
 
 	/**
 	 * 유저 계정 정지당함
@@ -171,22 +153,13 @@ export class Accounts {
 	isBanned: boolean;
 
 	/**
-	 * 정지 날짜
-	 */
-	@Column({
-		type: "datetime"
-		, nullable: true
-	})
-	banneddAt!: Date;
-
-	/**
 	 * 유저 계정 생성일자(자동)
 	 */
 	@CreateDateColumn()
 	createdAt!: Date;
 
 	/**
-	 * 유저 계정 탈퇴일자(자동), soft delete
+	 * 유저 계정 삭제일자(자동), soft delete
 	 */
 	@DeleteDateColumn()
 	deletedAt!: Date | null;

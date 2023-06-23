@@ -10,7 +10,7 @@ import * as accountsFetch from '../../js/accountsFetch.js'
 import LoadingModal from '../common/LoadingModal.js';
 
 const SignUpForm = () => {
-	const [emailValid, setEmailValid] = useState(0);
+	const [idValid, setIdValid] = useState(0);
 	const [nicknameValid, setNicknameValid] = useState(0);
 	const [passwordValid, setPasswordValid] = useState(0);
 	const [rePasswordValid, setRePasswordValid] = useState(0);
@@ -23,9 +23,9 @@ const SignUpForm = () => {
 		event.stopPropagation();
 		const form = event.currentTarget;
 
-		if(emailValid !== 2){
-			alert("이메일을 확인해주세요");
-			form.emailInput.focus();
+		if(idValid !== 2){
+			alert("아이디를 확인해주세요");
+			form.idInput.focus();
 			return false;
 		}
 		if(nicknameValid !== 2){
@@ -52,7 +52,6 @@ const SignUpForm = () => {
 
 			const createResult = await accountsFetch.createAccount({
 				nickname: form.nicknameInput.value,
-				email: form.emailInput.value,
 				password: form.passwordInput.value,
 			});
 
@@ -61,19 +60,19 @@ const SignUpForm = () => {
 				navigate("/accounts/signin");
 			}
 			else if(createResult === 0){
-				alert("이미 사용 중인 이메일과 닉네임입니다");
+				alert("이미 사용 중인 아이디와 닉네임입니다");
 
-				setEmailValid(1);
-				form.emailInput.value = "";
+				setIdValid(1);
+				form.idInput.value = "";
 
 				setNicknameValid(1);
 				form.nicknameInput.value = "";
 			}
 			else if(createResult === 1){
-				alert("이미 사용 중인 이메일입니다");
+				alert("이미 사용 중인 아이디입니다");
 
-				setEmailValid(1);
-				form.emailInput.value = "";
+				setIdValid(1);
+				form.idInput.value = "";
 			}
 			else if(createResult === 2){
 				alert("이미 사용 중인 닉네임입니다");
@@ -86,6 +85,18 @@ const SignUpForm = () => {
 			}
 		}
 	};
+	
+	const isValidID = () => {
+		const idRegex = /^[a-zA-Z0-9]{4,20}$/;
+		const idInput = document.querySelector("#idInput");
+
+		if(idInput.value.replace(idRegex, "") === "" && (4 <= idInput.value.length && idInput.value.length <= 20)){
+			setIdValid(2);
+		}
+		else{
+			setIdValid(1);
+		}
+	}
 
 	const isValidNickname = () => {
 		const nicknameInput = document.querySelector("#nicknameInput");
@@ -96,18 +107,6 @@ const SignUpForm = () => {
 		}
 		else{
 			setNicknameValid(1);
-		}
-	}
-
-	const isValidEmail = () => {
-		const emailInput = document.querySelector("#emailInput");
-		const emailRegExp = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
-
-		if(emailRegExp.test(emailInput.value) === true){
-			setEmailValid(2);
-		}
-		else{
-			setEmailValid(1);
 		}
 	}
 
@@ -176,9 +175,9 @@ const SignUpForm = () => {
 							아이디 (ID)
 						</Form.Label>
 						<Col>
-							<Form.Control className={statusParser(emailValid)} id="idInput" maxLength={20} type="id" placeholder="이메일을 입력해주세요" onChange={() => {isValidEmail()}} autoComplete="off" style={{fontSize: "0.9rem"}} />
+							<Form.Control className={statusParser(idValid)} id="idInput" maxLength={20} type="id" placeholder="아이디를 입력해주세요" onChange={() => {isValidID()}} autoComplete="off" style={{fontSize: "0.9rem"}} />
 							<Form.Text muted style={{fontSize: "0.72rem"}}>
-								가입 후 적어주신 이메일로 계정 인증 메일이 발송됩니다
+								로그인할 때 사용할 아이디를 적어주세요
 							</Form.Text>
 							<Form.Control.Feedback type="valid" style={{fontSize: "0.8rem"}}>
 								<div style={{display: "flex", alignItems: "center", marginTop: "5px"}}>
@@ -186,7 +185,7 @@ const SignUpForm = () => {
 										<path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
 										<path d="M10.97 4.97a.235.235 0 0 0-.02.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-1.071-1.05z"/>
 									</svg>
-									<span style={{marginLeft: "8px"}}>올바른 이메일입니다</span>
+									<span style={{marginLeft: "8px"}}>올바른 아이디입니다</span>
 								</div>
 							</Form.Control.Feedback>
 							<Form.Control.Feedback type="invalid" style={{fontSize: "0.8rem"}}>
@@ -195,37 +194,7 @@ const SignUpForm = () => {
 										<path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
 										<path d="M7.002 11a1 1 0 1 1 2 0 1 1 0 0 1-2 0zM7.1 4.995a.905.905 0 1 1 1.8 0l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 4.995z"/>
 									</svg>
-									<span style={{marginLeft: "8px"}}>올바른 이메일이 아닙니다</span>
-								</div>
-							</Form.Control.Feedback>
-						</Col>
-					</Form.Group>
-
-					<Form.Group as={Row} className="mb-3">
-						<Form.Label style={{fontWeight: "800", fontSize: "0.8rem"}}>
-							이메일 (Email) 선택사항입니다
-						</Form.Label>
-						<Col>
-							<Form.Control className={statusParser(emailValid)} id="emailInput" maxLength={50} type="email" placeholder="이메일을 입력해주세요" onChange={() => {isValidEmail()}} autoComplete="off" style={{fontSize: "0.9rem"}} />
-							<Form.Text muted style={{fontSize: "0.72rem"}}>
-								가입 후 적어주신 이메일로 계정 인증 메일이 발송됩니다
-							</Form.Text>
-							<Form.Control.Feedback type="valid" style={{fontSize: "0.8rem"}}>
-								<div style={{display: "flex", alignItems: "center", marginTop: "5px"}}>
-									<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-check-circle" viewBox="0 0 16 16">
-										<path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
-										<path d="M10.97 4.97a.235.235 0 0 0-.02.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-1.071-1.05z"/>
-									</svg>
-									<span style={{marginLeft: "8px"}}>올바른 이메일입니다</span>
-								</div>
-							</Form.Control.Feedback>
-							<Form.Control.Feedback type="invalid" style={{fontSize: "0.8rem"}}>
-								<div style={{display: "flex", alignItems: "center", marginTop: "5px"}}>
-									<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-exclamation-circle" viewBox="0 0 16 16">
-										<path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
-										<path d="M7.002 11a1 1 0 1 1 2 0 1 1 0 0 1-2 0zM7.1 4.995a.905.905 0 1 1 1.8 0l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 4.995z"/>
-									</svg>
-									<span style={{marginLeft: "8px"}}>올바른 이메일이 아닙니다</span>
+									<span style={{marginLeft: "8px"}}>올바른 아이디가 아닙니다</span>
 								</div>
 							</Form.Control.Feedback>
 						</Col>
@@ -321,6 +290,11 @@ const SignUpForm = () => {
 					</Form.Group>
 
 					<Button type="submit" variant="success" size="lg" style={{width: "100%", marginTop: "20px"}}>가입하기</Button>
+					<span style={{fontSize: "0.75rem"}}>
+						사용자의 비밀번호는 <strong>단방향 암호화</strong> 되어 보관됩니다
+						<br />
+						관리자가 사용자의 비밀번호를 알아낼 수 없습니다
+					</span>
 				</Form>
 			</div>
 		</Container>
