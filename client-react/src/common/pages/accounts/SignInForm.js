@@ -9,7 +9,7 @@ import LoadingModal from '../common/LoadingModal.js';
 
 import * as accountsFetch from '../../../common/js/accountsFetch.js'
 
-const SignInForm = (props) => {
+const SignInForm = () => {
 	const [showLoadingModal, setShowLoadingModal] = useState(false);
 	const [loadingMessage, setLoadingMessage] = useState("");
 	const navigate = useNavigate();
@@ -41,7 +41,6 @@ const SignInForm = (props) => {
 		});
 
 		if(signInResult === "success"){
-			props.checkSignInStatus();
 			navigate("/");
 		}
 		else if(signInResult === "fail"){
