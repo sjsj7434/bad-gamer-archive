@@ -93,7 +93,7 @@ export class  AccountsController {
 	}
 
 	@Post("signin")
-	async signInAccount(@Body() body: { email: string, password: string }, @Req() request: Request, @Res({ passthrough: true }) response: Response): Promise<string> {
+	async signInAccount(@Body() body: { id: string, password: string }, @Req() request: Request, @Res({ passthrough: true }) response: Response): Promise<string> {
 		console.log("[Controller-accounts-signInAccount] => ", body);
 
 		const cookieCheck = await this.accountsService.checkSignInStatus(request, response);

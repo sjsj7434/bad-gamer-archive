@@ -534,7 +534,8 @@ export class AccountsService {
 				lastLogin: true,
 				loginSuccessIP: true,
 				passwordChangeDate: true,
-				lostarkMainCharacter: true,
+				// lostarkMainCharacter: true,
+				// 게임 계정 인증 테이블 분리 작업 중 / 2023-07-30
 			},
 			where: {
 				uuid: SIGN_IN_SESSION.get(request.cookies["sessionCode"]),
@@ -610,7 +611,8 @@ export class AccountsService {
 			}
 		});
 
-		account.lostarkMainCharacter = body.lostarkMainCharacter;
+		// account.lostarkMainCharacter = body.lostarkMainCharacter;
+		// 게임 계정 인증 테이블 분리 작업 중 / 2023-07-30
 
 		await this.accountsRepository.save(account);
 	}

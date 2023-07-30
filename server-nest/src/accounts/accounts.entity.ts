@@ -22,7 +22,7 @@ export class Accounts {
 	uuid: string;
 
 	/**
-	 * 유저 이메일 / 이메일을 아이디로 사용하여 로그인
+	 * 유저 아이디 / 아이디로 로그인
 	 */
 	@Column({
 		type: "varchar"
@@ -31,6 +31,17 @@ export class Accounts {
 		, unique: true
 	})
 	id: string;
+
+	/**
+	 * 유저 이메일
+	 */
+	@Column({
+		type: "varchar"
+		, length: 50
+		, nullable: false
+		, unique: true
+	})
+	email: string;
 
 	/**
 	 * 유저 닉네임
