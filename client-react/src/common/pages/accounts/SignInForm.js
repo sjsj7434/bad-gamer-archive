@@ -19,9 +19,9 @@ const SignInForm = () => {
 		event.stopPropagation();
 		const form = event.currentTarget;
 
-		if(form.emailInput.value === ""){
-			alert("이메일 (Email)을 확인해주세요");
-			form.emailInput.focus();
+		if(form.idInput.value === ""){
+			alert("아이디(ID)을 확인해주세요");
+			form.idInput.focus();
 			return false;
 		}
 		if(form.passwordInput.value === ""){
@@ -36,7 +36,7 @@ const SignInForm = () => {
 		setShowLoadingModal(false);
 
 		const signInResult = await accountsFetch.signInAccount({
-			email: form.emailInput.value,
+			id: form.idInput.value,
 			password: form.passwordInput.value,
 		});
 
@@ -44,10 +44,10 @@ const SignInForm = () => {
 			navigate("/");
 		}
 		else if(signInResult === "fail"){
-			alert("이메일이나 비밀번호가 올바르지 않습니다");
+			alert("아이디나 비밀번호가 올바르지 않습니다");
 		}
 		else if(signInResult === "fail_limit"){
-			alert("이메일이나 비밀번호가 올바르지 않습니다\n\n한번 더 실패할 경우 해당 계정은 잠금 처리됩니다");
+			alert("아이디나 비밀번호가 올바르지 않습니다\n\n한번 더 실패할 경우 해당 계정은 잠금 처리됩니다");
 		}
 		else if(signInResult === "locked"){
 			if(window.confirm("지속된 로그인 실패로 계정이 잠금상태가 되었습니다\n\n해당 계정의 비밀번호를 잊으셨나요?") === true){
@@ -89,10 +89,10 @@ const SignInForm = () => {
 				<Form noValidate onSubmit={handleSubmit}>
 					<Form.Group as={Row} className="mb-3">
 						<Form.Label style={{fontWeight: "800", fontSize: "0.8rem"}}>
-							이메일 (Email)
+							아이디 (ID)
 						</Form.Label>
 						<InputGroup>
-							<Form.Control id="emailInput" maxLength={20} type="text" placeholder="이메일을 입력해주세요" style={{fontSize: "0.9rem"}} />
+							<Form.Control id="idInput" maxLength={20} type="text" placeholder="아이디를 입력해주세요" style={{fontSize: "0.9rem"}} />
 						</InputGroup>
 					</Form.Group>
 

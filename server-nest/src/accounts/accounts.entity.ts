@@ -39,7 +39,6 @@ export class Accounts {
 		type: "varchar"
 		, length: 50
 		, nullable: false
-		, unique: true
 	})
 	email: string;
 

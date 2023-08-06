@@ -12,6 +12,7 @@ import LoadingModal from '../common/LoadingModal.js';
 const SignUpForm = () => {
 	const [idValid, setIdValid] = useState(0);
 	const [nicknameValid, setNicknameValid] = useState(0);
+	const [emailValid, setEmailValid] = useState(0);
 	const [passwordValid, setPasswordValid] = useState(0);
 	const [rePasswordValid, setRePasswordValid] = useState(0);
 	const [showLoadingModal, setShowLoadingModal] = useState(false);
@@ -28,17 +29,22 @@ const SignUpForm = () => {
 			form.idInput.focus();
 			return false;
 		}
-		if(nicknameValid !== 2){
+		else if(nicknameValid !== 2){
 			alert("닉네임을 확인해주세요");
 			form.nicknameInput.focus();
 			return false;
 		}
-		if(passwordValid !== 2){
+		else if(emailValid !== 2){
+			alert("이메일을 확인해주세요");
+			form.nicknameInput.focus();
+			return false;
+		}
+		else if(passwordValid !== 2){
 			alert("비밀번호를 확인해주세요");
 			form.passwordInput.focus();
 			return false;
 		}
-		if(rePasswordValid !== 2){
+		else if(rePasswordValid !== 2){
 			alert("다시 입력한 비밀번호를 확인해주세요");
 			form.rePasswordInput.focus();
 			return false;
@@ -51,7 +57,9 @@ const SignUpForm = () => {
 			setShowLoadingModal(false);
 
 			const createResult = await accountsFetch.createAccount({
+				id: form.idInput.value,
 				nickname: form.nicknameInput.value,
+				email: form.emailInput.value,
 				password: form.passwordInput.value,
 			});
 
@@ -107,6 +115,18 @@ const SignUpForm = () => {
 		}
 		else{
 			setNicknameValid(1);
+		}
+	}
+
+	const isValidEmail = () => {
+		const emailInput = document.querySelector("#emailInput");
+		const emailRegExp = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
+
+		if(emailRegExp.test(emailInput.value) === true){
+			setEmailValid(2);
+		}
+		else{
+			setEmailValid(1);
 		}
 	}
 
@@ -225,6 +245,36 @@ const SignUpForm = () => {
 										<path d="M7.002 11a1 1 0 1 1 2 0 1 1 0 0 1-2 0zM7.1 4.995a.905.905 0 1 1 1.8 0l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 4.995z"/>
 									</svg>
 									<span style={{marginLeft: "8px"}}>올바른 닉네임이 아닙니다</span>
+								</div>
+							</Form.Control.Feedback>
+						</Col>
+					</Form.Group>
+
+					<Form.Group as={Row} className="mb-3">
+						<Form.Label style={{fontWeight: "800", fontSize: "0.8rem"}}>
+							이메일 (Email)
+						</Form.Label>
+						<Col>
+							<Form.Control className={statusParser(emailValid)} id="emailInput" maxLength={20} type="text" placeholder="이메일을 입력해주세요" onChange={() => {isValidEmail()}} autoComplete="off" style={{fontSize: "0.9rem"}} />
+							<Form.Text muted style={{fontSize: "0.72rem"}}>
+								비밀번호를 찾을 때 사용됩니다
+							</Form.Text>
+							<Form.Control.Feedback type="valid" style={{fontSize: "0.8rem"}}>
+								<div style={{display: "flex", alignItems: "center", marginTop: "5px"}}>
+									<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-check-circle" viewBox="0 0 16 16">
+										<path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+										<path d="M10.97 4.97a.235.235 0 0 0-.02.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-1.071-1.05z"/>
+									</svg>
+									<span style={{marginLeft: "8px"}}>올바른 이메일입니다</span>
+								</div>
+							</Form.Control.Feedback>
+							<Form.Control.Feedback type="invalid" style={{fontSize: "0.8rem"}}>
+								<div style={{display: "flex", alignItems: "center", marginTop: "5px"}}>
+									<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-exclamation-circle" viewBox="0 0 16 16">
+										<path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+										<path d="M7.002 11a1 1 0 1 1 2 0 1 1 0 0 1-2 0zM7.1 4.995a.905.905 0 1 1 1.8 0l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 4.995z"/>
+									</svg>
+									<span style={{marginLeft: "8px"}}>올바른 이메일이 아닙니다</span>
 								</div>
 							</Form.Control.Feedback>
 						</Col>
