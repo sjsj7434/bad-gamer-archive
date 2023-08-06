@@ -127,7 +127,7 @@ export class  AccountsController {
 	}
 
 	@Get("signin/status")
-	async getSignInStatus(@Req() request: Request, @Res({ passthrough: true }) response: Response): Promise<{ status: string, email: string, nickname: string }> {
+	async getSignInStatus(@Req() request: Request, @Res({ passthrough: true }) response: Response): Promise<{ status: string, id: string, nickname: string }> {
 		console.log("[Controller-accounts-getSignInStatus]");
 
 		const cookieCheck = await this.accountsService.checkSignInStatus(request, response);
@@ -153,26 +153,26 @@ export class  AccountsController {
 		return updateResult;
 	}
 
-	@Post("verify/send/email")
-	async setVerifyEmailTokenLater(@Req() request: Request, @Res({ passthrough: true }) response: Response): Promise<string> {
-		console.log("[Controller-accounts-setVerifyEmailTokenLater]");
+	// @Post("verify/send/email")
+	// async setVerifyEmailTokenLater(@Req() request: Request, @Res({ passthrough: true }) response: Response): Promise<string> {
+	// 	console.log("[Controller-accounts-setVerifyEmailTokenLater]");
 
-		const verifyResult = await this.accountsService.setVerifyEmailTokenLater(request);
+	// 	const verifyResult = await this.accountsService.setVerifyEmailTokenLater(request);
 
-		return verifyResult;
-	}
+	// 	return verifyResult;
+	// }
 
-	@Get("verify/email/:verificationCode")
-	async verifyEmail(@Param("verificationCode") verificationCode: string): Promise<boolean> {
-		console.log("[Controller-accounts-verifyEmail]", verificationCode);
+	// @Get("verify/email/:verificationCode")
+	// async verifyEmail(@Param("verificationCode") verificationCode: string): Promise<boolean> {
+	// 	console.log("[Controller-accounts-verifyEmail]", verificationCode);
 
-		const verifyResult = await this.accountsService.verifyEmail(verificationCode);
+	// 	const verifyResult = await this.accountsService.verifyEmail(verificationCode);
 
-		return verifyResult;
-	}
+	// 	return verifyResult;
+	// }
 
 	@Post("reset/password/request")
-	async requestResetPassword(@Body() body: { email: string }): Promise<string> {
+	async requestResetPassword(@Body() body: { id: string }): Promise<string> {
 		console.log("[Controller-accounts-requestResetPassword]");
 
 		const verifyResult = await this.accountsService.beforeResetPassword(body);
