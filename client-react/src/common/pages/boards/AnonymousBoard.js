@@ -5,7 +5,7 @@ import Button from 'react-bootstrap/Button';
 import CustomPagination from './CustomPagination';
 import * as anonymousBoardsFetch from '../../js/anonymousBoardsFetch';
 
-const AnonymousList = () => {
+const AnonymousBoard = () => {
 	const [page, setPage] = useState(null);
 	const [renderData, setRenderData] = useState(<></>);
 	
@@ -149,7 +149,7 @@ const AnonymousList = () => {
 	}, [page, contentCount, navigate])
 	
 	return(
-		<Container style={{maxWidth: "1440px"}}>
+		<Container style={{maxWidth: "1200px"}}>
 			<div style={{margin: "10px"}}>
 				<h5>
 					<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-bar-chart-steps" viewBox="0 0 16 16">
@@ -180,4 +180,4 @@ const AnonymousList = () => {
 	);
 }
 
-export default AnonymousList;
+export default AnonymousBoard;

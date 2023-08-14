@@ -4,6 +4,7 @@ import { Boards } from './boards.entity';
 import { AnonymousController } from './anonymous.controller';
 import { AnonymousService } from './anonymous.service';
 import { Replies } from './replies.entity';
+import { UserBoardController } from './userBoard.controller';
 
 @Module({
 	imports: [
@@ -11,7 +12,7 @@ import { Replies } from './replies.entity';
 			Boards, Replies
 		]),
 	],
-	controllers: [AnonymousController],
+	controllers: [AnonymousController, UserBoardController],
 	providers: [AnonymousService],
 })
 export class BoardsModule {}

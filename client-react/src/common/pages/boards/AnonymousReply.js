@@ -351,7 +351,7 @@ const AnonymousReply = (props) => {
 	}, [props.contentCode, getReplies])
 
 	return(
-		<Container style={{maxWidth: "1440px"}}>
+		<Container style={{maxWidth: "1200px"}}>
 			<div>
 				<Form id={"replyForm"}>
 					<Form.Group className="mb-3">

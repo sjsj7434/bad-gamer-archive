@@ -10,7 +10,7 @@ const LostarkMain = () => {
 	}
 
 	return(
-		<Container style={{maxWidth: "1440px"}}>
+		<Container style={{maxWidth: "1200px"}}>
 			<Routes>
 				<Route path="*" element={<>
 					<Tabs

@@ -13,7 +13,7 @@ import ActivateLostarkScrap from './accounts/ActivateLostarkScrap';
 import BlockNoSignin from './accounts/BlockNoSignin';
 import * as accountsFetch from '../js/accountsFetch.js'
 import LostarkMain from '../../lostark/pages/LostarkMain';
-import AnonymousBoard from './boards/AnonymousList';
+import AnonymousBoard from './boards/AnonymousBoard';
 import AnonymousView from './boards/AnonymousView';
 import AnonymousWrite from './boards/AnonymousWrite';
 import UsefulSitesLostark from './common/UsefulSitesLostark';
@@ -21,6 +21,7 @@ import PasswordChangeForm from './accounts/PasswordChangeForm';
 import ForgotPasswordForm from './accounts/ForgotPasswordForm';
 import BlockYesSignin from './accounts/BlockYesSignin';
 import ResetPasswordForm from './accounts/ResetPasswordForm';
+import UserBoard from './boards/UserBoard';
 // import CharacterInfo from '../../lostark/pages/character/CharacterInfo';
 
 // index.js에서 StrictMode 존재하면 두번 랜더링, 개발 모드에서만 적용됩니다. 생명주기 메서드들은 프로덕션 모드에서 이중으로 호출되지 않습니다.
@@ -64,9 +65,9 @@ const RoutesWrapper = () => {
 								<Route path="write" element={ <AnonymousWrite /> } />
 								<Route path="edit/:contentCode" element={ <AnonymousWrite /> } />
 							</Route>
-							<Route path="identified">
+							<Route path="user">
 								<Route path="" element={ <Navigate to="1" replace={true} /> } />
-								<Route path=":page" element={ <AnonymousBoard /> } />
+								<Route path=":page" element={ <UserBoard /> } />
 								<Route path="view/:contentCode" element={ <AnonymousView /> } />
 								<Route path="write" element={ <AnonymousWrite /> } />
 								<Route path="edit/:contentCode" element={ <AnonymousWrite /> } />

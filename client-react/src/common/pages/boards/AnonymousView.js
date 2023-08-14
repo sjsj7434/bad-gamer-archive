@@ -244,7 +244,7 @@ const AnonymousView = () => {
 	}, [contentCode, contentJson, upvoteCount, downvoteCount, navigate]);
 	
 	return(
-		<Container style={{maxWidth: "1440px"}}>
+		<Container style={{maxWidth: "1200px"}}>
 			{renderData}
 			<LoadingModal showModal={loadingModalShow} message={loadingModalMessage}/>
 		</Container>
