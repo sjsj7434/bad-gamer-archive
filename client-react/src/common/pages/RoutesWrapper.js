@@ -22,6 +22,7 @@ import ForgotPasswordForm from './accounts/ForgotPasswordForm';
 import BlockYesSignin from './accounts/BlockYesSignin';
 import ResetPasswordForm from './accounts/ResetPasswordForm';
 import UserBoard from './boards/UserBoard';
+import UserBoardWrite from './boards/UserBoardWrite';
 // import CharacterInfo from '../../lostark/pages/character/CharacterInfo';
 
 // index.js에서 StrictMode 존재하면 두번 랜더링, 개발 모드에서만 적용됩니다. 생명주기 메서드들은 프로덕션 모드에서 이중으로 호출되지 않습니다.
@@ -69,8 +70,8 @@ const RoutesWrapper = () => {
 								<Route path="" element={ <Navigate to="1" replace={true} /> } />
 								<Route path=":page" element={ <UserBoard /> } />
 								<Route path="view/:contentCode" element={ <AnonymousView /> } />
-								<Route path="write" element={ <AnonymousWrite /> } />
-								<Route path="edit/:contentCode" element={ <AnonymousWrite /> } />
+								<Route path="write" element={ <BlockNoSignin accountData={accountData} ifAllow={<UserBoardWrite />} /> } />
+								<Route path="edit/:contentCode" element={ <BlockNoSignin accountData={accountData} ifAllow={<UserBoardWrite />} /> } />
 							</Route>
 						</Route>
 					</Route>

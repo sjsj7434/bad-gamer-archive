@@ -8,7 +8,7 @@ import { Cron } from '@nestjs/schedule';
 import { CreateRepliesDTO, UpdateRepliesDTO, DeleteRepliesDTO } from './replies.dto';
 
 @Injectable()
-export class AnonymousService {
+export class UserBoardService {
 	constructor(
 		@InjectRepository(Boards) private boardsRepository: Repository<Boards>,
 		@InjectRepository(Replies) private repliesRepository: Repository<Replies>,

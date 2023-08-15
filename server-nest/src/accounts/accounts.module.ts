@@ -19,5 +19,6 @@ import { LostarkModule } from '../lostark/api/lostark.module';
 	],
 	controllers: [AccountsController,],
 	providers: [AccountsService,],
+	exports: [AccountsService],
 })
 export class AccountsModule {}

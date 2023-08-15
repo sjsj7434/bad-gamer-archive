@@ -1,5 +1,5 @@
 import { Param, Controller, Get, Post, Body, Ip, Req, Res, Delete, Patch, Query, UseInterceptors, UploadedFile } from '@nestjs/common';
-import { AnonymousService } from './anonymous.service';
+import { AnonymousBoardService } from './anonymousBoard.service';
 import { Boards } from './boards.entity';
 import { Replies } from './replies.entity';
 import { CreateBoardsDTO, UpdateBoardsDTO, DeleteBoardsDTO } from './boards.dto';
@@ -11,16 +11,16 @@ import { extname } from 'path';
  * 익명 게시판 컨트롤러
  */
 @Controller("boards/anonymous")
-export class AnonymousController {
-	constructor(private anonymousService: AnonymousService) { }
+export class AnonymousBoardController {
+	constructor(private anonymousBoardService: AnonymousBoardService) { }
 
 	//게시글 목록, page 값이 number가 아니면 호출되지 않음
 	@Get("list/:page")
-	async getContentList(@Param("category") category: string, @Param("page") page: number): Promise<[Boards[], number]> {
-		console.log("[Controller-boards-getContentList]");
+	async getContentList(@Param("page") page: number): Promise<[Boards[], number]> {
+		console.log("[AnonymousBoardController-boards-getContentList]");
 		const perPage = 20;
 
-		const result = await this.anonymousService.getContentList(category, page, perPage);
+		const result = await this.anonymousBoardService.getContentList("anonymous", page, perPage);
 
 		if (result !== null) {
 			for (let index: number = 0; index < result[0].length; index++) {
@@ -42,7 +42,7 @@ export class AnonymousController {
 		// boardData.ip = ipData;
 		boardData.ip = Math.random().toString().substring(2, 5) + "." + Math.random().toString().substring(2, 5) + "." + Math.random().toString().substring(2, 5) + "." + Math.random().toString().substring(2, 5);
 
-		const createdContent = await this.anonymousService.createContent(boardData);
+		const createdContent = await this.anonymousBoardService.createContent(boardData);
 
 		return createdContent;
 	}
@@ -56,7 +56,7 @@ export class AnonymousController {
 			return null;
 		}
 
-		const result = await this.anonymousService.getContent(contentCode, type);
+		const result = await this.anonymousBoardService.getContent(contentCode, type);
 
 		if (result !== null) {
 			result.ip = result.ip.split(".")[0] + (result.ip.split(".")[1] !== undefined ? "." + result.ip.split(".")[1] : "");
@@ -70,7 +70,7 @@ export class AnonymousController {
 	async updateContentAnonymous(@Body() updateBoardsDTO: UpdateBoardsDTO): Promise<Boards | null> {
 		console.log("[Controller-boards-updateContentAnonymous]");
 
-		const updatedContent = await this.anonymousService.updateContent(updateBoardsDTO);
+		const updatedContent = await this.anonymousBoardService.updateContent(updateBoardsDTO);
 
 		return updatedContent;
 	}
@@ -79,7 +79,7 @@ export class AnonymousController {
 	@Delete("content")
 	async deleteContent(@Body() deleteBoardsDTO: DeleteBoardsDTO): Promise<boolean> {
 		console.log("[Controller-boards-deleteContent]");
-		const isDeleted = await this.anonymousService.softDeleteContent(deleteBoardsDTO);
+		const isDeleted = await this.anonymousBoardService.softDeleteContent(deleteBoardsDTO);
 		return isDeleted;
 	}
 
@@ -106,7 +106,7 @@ export class AnonymousController {
 	async isAnonymousPasswordMatch(@Body() sendData: { code: number, password: string }): Promise<boolean> {
 		console.log("[Controller-boards-isAnonymousPasswordMatch]");
 
-		const findContent = await this.anonymousService.getContent(sendData.code, "password");
+		const findContent = await this.anonymousBoardService.getContent(sendData.code, "password");
 
 		return findContent.password === sendData.password;
 	}
@@ -116,10 +116,10 @@ export class AnonymousController {
 	async upvoteContent(@Ip() ipData: string, @Body() sendData: { code: number }): Promise<Boards> {
 		console.log("[Controller-boards-upvoteContent]");
 
-		const isVotable: boolean = this.anonymousService.isVotableContent(sendData.code, ipData);
+		const isVotable: boolean = this.anonymousBoardService.isVotableContent(sendData.code, ipData);
 
 		if (isVotable === true) {
-			const updatedContent = await this.anonymousService.upvoteContent(sendData.code);
+			const updatedContent = await this.anonymousBoardService.upvoteContent(sendData.code);
 
 			return updatedContent;
 		}
@@ -136,10 +136,10 @@ export class AnonymousController {
 	async downvoteContent(@Ip() ipData: string, @Body() sendData: { code: number }): Promise<Boards> {
 		console.log("[Controller-boards-downvoteContent]");
 
-		const isVotable: boolean = this.anonymousService.isVotableContent(sendData.code, ipData);
+		const isVotable: boolean = this.anonymousBoardService.isVotableContent(sendData.code, ipData);
 
 		if (isVotable === true) {
-			const updatedContent = await this.anonymousService.downvoteContent(sendData.code);
+			const updatedContent = await this.anonymousBoardService.downvoteContent(sendData.code);
 
 			return updatedContent;
 		}
@@ -156,7 +156,7 @@ export class AnonymousController {
 	async getReplies(@Param("contentCode") contentCode: number, @Param("page") page: number): Promise<[Replies[], number]> {
 		console.log("[Controller-boards-getReplies]");
 
-		const repliesData = await this.anonymousService.getReplies(contentCode, page);
+		const repliesData = await this.anonymousBoardService.getReplies(contentCode, page);
 
 		if (repliesData[1] === 0) {
 			console.log("getReplies is nothing");
@@ -181,7 +181,7 @@ export class AnonymousController {
 		// createRepliesDTO.ip = ipData;
 		createRepliesDTO.ip = Math.random().toString().substring(2, 5) + "." + Math.random().toString().substring(2, 5) + "." + Math.random().toString().substring(2, 5) + "." + Math.random().toString().substring(2, 5);
 
-		const createdReply = await this.anonymousService.createReply(createRepliesDTO);
+		const createdReply = await this.anonymousBoardService.createReply(createRepliesDTO);
 		return createdReply;
 	}
 
@@ -190,7 +190,7 @@ export class AnonymousController {
 	async deleteReply(@Body() deleteRepliesDTO: DeleteRepliesDTO): Promise<boolean> {
 		console.log("[Controller-boards-deleteReply]");
 
-		const deleteResult = await this.anonymousService.deleteReply(deleteRepliesDTO);
+		const deleteResult = await this.anonymousBoardService.deleteReply(deleteRepliesDTO);
 		return deleteResult;
 	}
 }

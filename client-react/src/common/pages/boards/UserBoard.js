@@ -167,7 +167,7 @@ const UserBoard = () => {
 				</div>
 
 				<div style={{display: "flex", justifyContent: "flex-end"}}>
-					<NavLink to={`/lostark/board/anonymous/write`} style={{width: "30%", maxWidth: "200px"}}>
+					<NavLink to={`/lostark/board/user/write`} style={{width: "30%", maxWidth: "200px"}}>
 						<Button id={"createReply"} variant="outline-primary" style={{width: "100%", padding: "1px"}}>
 							<span style={{fontSize: "0.8rem"}}>글쓰기</span>
 						</Button>
