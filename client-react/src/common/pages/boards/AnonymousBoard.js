@@ -100,7 +100,7 @@ const AnonymousBoard = () => {
 												</div>
 											</div>
 											<div style={{fontSize: "0.75rem", color: "#5a5a5a", maxWidth: "95%", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap"}}>
-												<span>{data.writer === "" ? "익명" : data.writer} ({data.ip})</span>
+												<span>익명 ({data.ip})</span>
 												&nbsp;|&nbsp;
 												<span>{new Date(data.createdAt).toLocaleDateString("sv-SE").replace(/-/g, ".")}</span>
 												&nbsp;

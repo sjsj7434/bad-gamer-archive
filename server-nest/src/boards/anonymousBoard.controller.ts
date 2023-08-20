@@ -38,7 +38,8 @@ export class AnonymousBoardController {
 
 		console.log("[Controller-boards-createContentAnonymous]");
 		boardData.category = "anonymous";
-		boardData.writer = "";
+		boardData.writerID = "";
+		boardData.writerNickname = "";
 		// boardData.ip = ipData;
 		boardData.ip = Math.random().toString().substring(2, 5) + "." + Math.random().toString().substring(2, 5) + "." + Math.random().toString().substring(2, 5) + "." + Math.random().toString().substring(2, 5);
 

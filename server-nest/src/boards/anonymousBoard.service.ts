@@ -52,7 +52,7 @@ export class AnonymousBoardService {
 			select: {
 				replies: {code: true},
 				code: true,
-				writer: true,
+				writerID: true,
 				title: true,
 				view: true,
 				upvote: true,
@@ -118,7 +118,8 @@ export class AnonymousBoardService {
 					view: true,
 					upvote: true,
 					downvote: true,
-					writer: true,
+					writerID: true,
+					writerNickname: true,
 					ip: true,
 					createdAt: true,
 					updatedAt: true
@@ -140,7 +141,8 @@ export class AnonymousBoardService {
 					view: true,
 					upvote: true,
 					downvote: true,
-					writer: true,
+					writerID: true,
+					writerNickname: true,
 					ip: true,
 					createdAt: true,
 					updatedAt: true

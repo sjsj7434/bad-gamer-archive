@@ -13,7 +13,7 @@ import LoadingModal from '../common/LoadingModal';
 import * as userBoardsFetch from '../../js/userBoardsFetch';
 import '../../css/View.css';
 
-const UserBoardWrite = () => {
+const UserBoardWrite = (props) => {
 	const [writeMode, setWriteMode] = useState("");
 	const [contentCode, setContentCode] = useState(null);
 	const [renderData, setRenderData] = useState(<></>);
@@ -21,7 +21,6 @@ const UserBoardWrite = () => {
 	const [contentData, setContentData] = useState("");
 	const [contentPassword, setContentPassword] = useState("");
 	const [identity, setIdentity] = useState(false);
-	const [failMessage, setFailMessage] = useState(<>&nbsp;</>);
 	const [editorSizeByte, setEditorSizeByte] = useState(0);
 	const [loadingModalShow, setLoadingModalShow] = useState(false);
 	const [loadingModalMessage, setLoadingModalMessage] = useState("");
@@ -112,7 +111,7 @@ const UserBoardWrite = () => {
 			title: titleElement.value,
 			content: editorContet,
 			hasImage: editorContet.indexOf("<img") > -1 ? true : false,
-			writer: "",
+			writerID: props.accountData.id,
 		};
 
 		let result = await userBoardsFetch.updateContent(sendData);
@@ -129,7 +128,7 @@ const UserBoardWrite = () => {
 		}
 		else{
 			//정상적으로 처리 성공
-			navigate(`/lostark/board/anonymous/view/${contentCode}`);
+			navigate(`/lostark/board/user/view/${contentCode}`);
 		}
 	}, [contentCode, contentPassword, editorObject, editorSizeByte, editorMaxKB, navigate])
 
@@ -162,34 +161,26 @@ const UserBoardWrite = () => {
 
 	useEffect(() => {
 		/**
-		 * 수정 진입 전에 게시글 비밀번호 확인
+		 * 수정 진입 전에 게시글 작성자 정보 확인
 		 */
 		const checkBeforeEdit = async () => {
-			const contentPasswordElement = document.querySelector("#contentPassword");
-
-			if(contentPasswordElement.value === ""){
-				alert("비밀번호를 입력해주세요");
-				contentPasswordElement.focus();
-				return;
-			}
-
 			setLoadingModalShow(true);
-			setLoadingModalMessage("비밀번호 확인 중...");
-			setFailMessage(<>&nbsp;</>);
+			setLoadingModalMessage("작성자 정보 확인 중...");
 
 			const sendData = {
 				code: contentCode,
-				password: contentPasswordElement.value,
+				id: props.accountData.id,
 			};
 			
 			const checkResult = await userBoardsFetch.checkBeforeEdit(sendData)
 
 			if(checkResult === true){
 				setIdentity(true);
-				setContentPassword(contentPasswordElement.value);
+				setContentPassword(props.accountData.id);
 			}
 			else{
-				setFailMessage(<><b>[ ! ]</b> 올바른 비밀번호가 아닙니다</>);
+				alert("작성자가 아닙니다");
+				window.history.back();
 			}
 
 			setLoadingModalShow(false);
@@ -221,48 +212,15 @@ const UserBoardWrite = () => {
 						&nbsp;
 						<Button onClick={() => {if(window.confirm("작성한 내용을 전부 비우시겠습니까?") === true){editorObject.setData("")}}} variant="outline-danger" style={{width: "20%", minWidth: "60px", maxWidth: "200px", fontSize: "0.8rem"}}>비우기</Button>
 						&nbsp;
-						<Button onClick={() => {if(window.confirm("작성한 내용을 저장하지않고 나가시겠습니까?") === true){navigate("/lostark/board/anonymous/1")}}} variant="outline-secondary" style={{width: "20%", minWidth: "60px", maxWidth: "200px", fontSize: "0.8rem"}}>취소</Button>
+						<Button onClick={() => {if(window.confirm("작성한 내용을 저장하지않고 나가시겠습니까?") === true){navigate("/lostark/board/user/1")}}} variant="outline-secondary" style={{width: "20%", minWidth: "60px", maxWidth: "200px", fontSize: "0.8rem"}}>취소</Button>
 					</div>
 				</>
 			)
 		}
 		else if(writeMode === "edit"){
 			if(identity !== true){
-				setRenderData(
-					<Container style={{maxWidth: "600px"}}>
-						<Form.Group as={Row} className="mb-3">
-							<Form.Label style={{fontWeight: "800", fontSize: "0.8rem"}}>
-								게시글 비밀번호를 입력해주세요
-							</Form.Label>
-							<Col>
-								<InputGroup>
-									<Form.Control id="contentPassword" maxLength={20} type="password" placeholder="게시글 비밀번호를 입력해주세요" onKeyDown={(event) => {if(event.key === "Enter"){checkBeforeEdit()}}} autoComplete="off" style={{fontSize: "0.8rem"}} />
-								</InputGroup>
-								<Form.Text style={{color: "red", fontSize: "0.8rem"}}>
-									{failMessage}
-								</Form.Text>
-							</Col>
-						</Form.Group>
-
-						<div style={{display: "flex", justifyContent: "flex-end", marginBottom: "15px", marginTop: "30px"}}>
-							<Button
-								onClick={() => {checkBeforeEdit()}}
-								variant="outline-primary"
-								style={{width: "20%", minWidth: "60px", maxWidth: "200px", fontSize: "0.8rem"}}
-							>
-								확인
-							</Button>
-							&nbsp;
-							<Button
-								onClick={() => {if(window.confirm("내용을 수정하지않고 나가시겠습니까?") === true){navigate(`/lostark/board/anonymous/view/${contentCode}`)}}}
-								variant="outline-secondary"
-								style={{width: "20%", minWidth: "60px", maxWidth: "200px", fontSize: "0.8rem"}}
-							>
-								취소
-							</Button>
-						</div>
-					</Container>
-				);
+				console.log('checkBeforeEdit!!')
+				checkBeforeEdit()
 			}
 			else{
 				if(contentData === "" && contentTitle === ""){
@@ -287,7 +245,7 @@ const UserBoardWrite = () => {
 				else{
 					setRenderData(
 						<>
-							익명 게시판 / 수정
+							유저 게시판 / 수정
 							<br />
 							<Form.Control id="title" type="text" placeholder="제목" style={{marginBottom: "10px", fontSize: "0.8rem"}} defaultValue={contentTitle} />
 
@@ -315,7 +273,7 @@ const UserBoardWrite = () => {
 								</Button>
 								&nbsp;
 								<Button
-									onClick={() => {if(window.confirm("내용을 수정하지않고 나가시겠습니까?") === true){navigate(`/lostark/board/anonymous/view/${contentCode}`)}}}
+									onClick={() => {if(window.confirm("내용을 수정하지않고 나가시겠습니까?") === true){navigate(`/lostark/board/user/view/${contentCode}`)}}}
 									variant="outline-secondary"
 									style={{width: "20%", minWidth: "60px", maxWidth: "200px", fontSize: "0.8rem"}}
 								>
@@ -327,7 +285,7 @@ const UserBoardWrite = () => {
 				}
 			}
 		}
-	}, [writeMode, contentCode, contentTitle, contentData, identity, failMessage, editorObject, editorSizeByte, saveEditorData, editEditorData, navigate])
+	}, [writeMode, contentCode, contentTitle, contentData, identity, editorObject, editorSizeByte, saveEditorData, editEditorData, navigate])
 	
 	return(
 		<Container style={{maxWidth: "1000px"}}>

@@ -56,7 +56,7 @@ const UserBoard = () => {
 						return(
 							<Link
 								key={"content" + data.code}
-								to={`/lostark/board/anonymous/view/${data.code}`}
+								to={`/lostark/board/user/view/${data.code}`}
 								style={{
 									textDecoration: "none",
 								}}
@@ -100,7 +100,7 @@ const UserBoard = () => {
 												</div>
 											</div>
 											<div style={{fontSize: "0.75rem", color: "#5a5a5a", maxWidth: "95%", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap"}}>
-												<span>{data.writer === "" ? "익명" : data.writer} ({data.ip})</span>
+												<span>{data.writerNickname}</span>
 												&nbsp;|&nbsp;
 												<span>{new Date(data.createdAt).toLocaleDateString("sv-SE").replace(/-/g, ".")}</span>
 												&nbsp;
@@ -138,7 +138,7 @@ const UserBoard = () => {
 	useEffect(() => {
 		const pageMoveFunc = (pageIndex) => {
 			document.querySelector("h5").scrollIntoView({ behavior: "smooth", block: "center" });
-			navigate(`/lostark/board/anonymous/${pageIndex}`);
+			navigate(`/lostark/board/user/${pageIndex}`);
 		}
 
 		setPaginationData(

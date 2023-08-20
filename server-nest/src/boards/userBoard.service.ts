@@ -52,7 +52,7 @@ export class UserBoardService {
 			select: {
 				replies: {code: true},
 				code: true,
-				writer: true,
+				writerNickname: true,
 				title: true,
 				view: true,
 				upvote: true,
@@ -107,7 +107,7 @@ export class UserBoardService {
 			await this.boardsRepository.increment({code: contentCode}, "view", 1);
 		}
 
-		if (type === "password") {
+		if (type === "id") {
 			const contentData = await this.boardsRepository.findOne({
 				select: {
 					code: true,
@@ -118,7 +118,8 @@ export class UserBoardService {
 					view: true,
 					upvote: true,
 					downvote: true,
-					writer: true,
+					writerID: true,
+					writerNickname: true,
 					ip: true,
 					createdAt: true,
 					updatedAt: true
@@ -140,7 +141,8 @@ export class UserBoardService {
 					view: true,
 					upvote: true,
 					downvote: true,
-					writer: true,
+					writerID: true,
+					writerNickname: true,
 					ip: true,
 					createdAt: true,
 					updatedAt: true
@@ -170,7 +172,7 @@ export class UserBoardService {
 		const contentData = await this.boardsRepository.findOne({
 			where: {
 				code: boardData.code,
-				password: boardData.password,
+				writerID: boardData.writerID,
 			}
 		});
 

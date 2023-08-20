@@ -26,7 +26,7 @@ export class UpdateBoardsDTO extends PartialType(Boards) {
 	@IsBoolean()
 	hasImage?: boolean;
 	@IsString()
-	writer?: string;
+	writerID?: string;
 }
 
 export class DeleteBoardsDTO extends PickType(Boards, ["code", "password"] as const) {

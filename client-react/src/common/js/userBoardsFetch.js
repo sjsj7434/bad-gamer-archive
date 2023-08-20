@@ -165,7 +165,7 @@ export const checkBeforeEdit = async (sendData) => {
 		, headers: {"Content-Type": "application/json",}
 		, credentials: "include", // Don't forget to specify this if you need cookies
 	};
-	const fetchResponse = await fetch(`${process.env.REACT_APP_SERVER}/boards/user/content/check/password`, fecthOption);
+	const fetchResponse = await fetch(`${process.env.REACT_APP_SERVER}/boards/user/content/check/writer`, fecthOption);
 	const [isStatusGood, checkMessage] = isFetchStatusGood(fetchResponse);
 
 	if(isStatusGood === true){

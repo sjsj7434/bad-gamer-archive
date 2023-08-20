@@ -41,7 +41,8 @@ export class UserBoardController {
 		const cookieCheck = await this.accountsService.checkSignInStatus(request, response);
 
 		boardData.category = "user";
-		boardData.writer = cookieCheck.nickname;
+		boardData.writerID = cookieCheck.id;
+		boardData.writerNickname = cookieCheck.nickname;
 		// boardData.ip = ipData;
 		boardData.ip = Math.random().toString().substring(2, 5) + "." + Math.random().toString().substring(2, 5) + "." + Math.random().toString().substring(2, 5) + "." + Math.random().toString().substring(2, 5);
 		
@@ -104,14 +105,16 @@ export class UserBoardController {
 		// return { "error": { "message": "test error" } };
 	}
 
-	//게시글 수정 진입 시 비밀번호 확인
-	@Post("content/check/password")
-	async isAnonymousPasswordMatch(@Body() sendData: { code: number, password: string }): Promise<boolean> {
-		console.log("[UserBoardController-boards-isAnonymousPasswordMatch]");
+	//게시글 수정 진입 시 작성자 확인
+	@Post("content/check/writer")
+	async isAnonymousIDMatch(@Body() sendData: { code: number, id: string }): Promise<boolean> {
+		console.log("[UserBoardController-boards-isAnonymousIDMatch]");
 
-		const findContent = await this.userBoardService.getContent(sendData.code, "password");
+		const findContent = await this.userBoardService.getContent(sendData.code, "id");
 
-		return findContent.password === sendData.password;
+		console.log(findContent.writerID, sendData.id, findContent.writerID === sendData.id)
+
+		return findContent.writerID === sendData.id;
 	}
 
 	//게시글 추천
