@@ -13,17 +13,15 @@ import ActivateLostarkScrap from './accounts/ActivateLostarkScrap';
 import BlockNoSignin from './accounts/BlockNoSignin';
 import * as accountsFetch from '../js/accountsFetch.js'
 import LostarkMain from '../../lostark/pages/LostarkMain';
-import AnonymousBoard from './boards/AnonymousBoard';
-import AnonymousView from './boards/AnonymousView';
-import AnonymousWrite from './boards/AnonymousWrite';
+import ContentBoard from './board/ContentBoard';
+import ContentView from './board/ContentView';
+import ContentWriteAnonymous from './board/ContentWriteAnonymous';
 import UsefulSitesLostark from './common/UsefulSitesLostark';
 import PasswordChangeForm from './accounts/PasswordChangeForm';
 import ForgotPasswordForm from './accounts/ForgotPasswordForm';
 import BlockYesSignin from './accounts/BlockYesSignin';
 import ResetPasswordForm from './accounts/ResetPasswordForm';
-import UserBoard from './boards/UserBoard';
-import UserBoardWrite from './boards/UserBoardWrite';
-import UserView from './boards/UserView';
+import ContentWriteUser from './board/ContentWriteUser';
 // import CharacterInfo from '../../lostark/pages/character/CharacterInfo';
 
 // index.js에서 StrictMode 존재하면 두번 랜더링, 개발 모드에서만 적용됩니다. 생명주기 메서드들은 프로덕션 모드에서 이중으로 호출되지 않습니다.
@@ -62,17 +60,17 @@ const RoutesWrapper = () => {
 						<Route path="board">
 							<Route path="anonymous">
 								<Route path="" element={ <Navigate to="1" replace={true} /> } />
-								<Route path=":page" element={ <AnonymousBoard /> } />
-								<Route path="view/:contentCode" element={ <AnonymousView /> } />
-								<Route path="write" element={ <AnonymousWrite /> } />
-								<Route path="edit/:contentCode" element={ <AnonymousWrite /> } />
+								<Route path=":page" element={ <ContentBoard boardType="anonymous" boardTitle="익명" /> } />
+								<Route path="view/:contentCode" element={ <ContentView boardType="anonymous" accountData={accountData} /> } />
+								<Route path="write" element={ <ContentWriteAnonymous boardType="anonymous" /> } />
+								<Route path="edit/:contentCode" element={ <ContentWriteAnonymous boardType="anonymous" /> } />
 							</Route>
 							<Route path="user">
 								<Route path="" element={ <Navigate to="1" replace={true} /> } />
-								<Route path=":page" element={ <UserBoard /> } />
-								<Route path="view/:contentCode" element={ <UserView /> } />
-								<Route path="write" element={ <BlockNoSignin accountData={accountData} ifAllow={<UserBoardWrite accountData={accountData} />} /> } />
-								<Route path="edit/:contentCode" element={ <BlockNoSignin accountData={accountData} ifAllow={<UserBoardWrite accountData={accountData} />} /> } />
+								<Route path=":page" element={ <ContentBoard boardType="user" boardTitle="유저" /> } />
+								<Route path="view/:contentCode" element={ <ContentView boardType="user" accountData={accountData} /> } />
+								<Route path="write" element={ <BlockNoSignin accountData={accountData} ifAllow={<ContentWriteUser boardType="user" accountData={accountData} />} /> } />
+								<Route path="edit/:contentCode" element={ <BlockNoSignin accountData={accountData} ifAllow={<ContentWriteUser boardType="user" accountData={accountData} />} /> } />
 							</Route>
 						</Route>
 					</Route>

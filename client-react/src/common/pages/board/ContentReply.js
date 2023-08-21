@@ -7,10 +7,41 @@ import Col from 'react-bootstrap/Col';
 import CustomPagination from './CustomPagination';
 import * as anonymousRepliesFetch from '../../js/anonymousRepliesFetch';
 
-const AnonymousReply = (props) => {
+const ContentReply = (props) => {
 	// const [upvoteCount, setUpvoteCount] = useState(0);
 	// const [downvoteCount, setDownvoteCount] = useState(0);
 	const [renderData, setRenderData] = useState(<></>);
+
+	/**
+	 * 게시글 upvote & downvote
+	 */
+	// const voteReply = useCallback(async (type) => {
+	// 	const upvoteReply = document.querySelector("#upvoteReply");
+	// 	const downvoteReply = document.querySelector("#downvoteReply");
+	// 	upvoteReply.disabled = true;
+	// 	downvoteReply.disabled = true;
+
+	// 	if(props.contentCode !== null){
+	// 		const fecthOption = {
+	// 			method: "POST"
+	// 			, headers: {"Content-Type": "application/json",}
+	// 			, credentials: "include", // Don't forget to specify this if you need cookies
+	// 		};
+	// 		const jsonString = await fetch(`${process.env.REACT_APP_SERVER}/boards/reply/${type}/${props.contentCode}`, fecthOption);
+	// 		const jsonData = await parseStringToJson(jsonString);
+
+	// 		if(jsonData === null){
+	// 			alert("오늘은 이미 해당 게시물에 추천, 비추천을 하였습니다");
+	// 		}
+	// 		else{
+	// 			// setUpvoteCount(jsonData.upvote);
+	// 			// setDownvoteCount(jsonData.downvote);
+	// 		}
+			
+	// 		upvoteReply.disabled = false;
+	// 		downvoteReply.disabled = false;
+	// 	}
+	// }, [props.contentCode])
 
 	/**
 	 * 댓글 가져오기
@@ -255,16 +286,20 @@ const AnonymousReply = (props) => {
 		const replyDataElement = document.querySelector("#replyData");
 		const replyPasswordElement = document.querySelector("#replyPassword");
 
-		if(replyPasswordElement.value === ""){
-			alert("삭제를 위한 비밀번호를 입력해주세요");
-			replyPasswordElement.focus();
-			return;
+		if(props.accountData.id === ""){
+			if(replyPasswordElement.value === ""){
+				alert("삭제를 위한 비밀번호를 입력해주세요");
+				replyPasswordElement.focus();
+				return;
+			}
 		}
-		else if(replyDataElement.value === ""){
+
+		if(replyDataElement.value === ""){
 			alert("내용을 입력해주세요");
 			replyDataElement.focus();
 			return;
 		}
+
 
 		if(props.contentCode !== null){
 			const sendData = {
@@ -274,7 +309,7 @@ const AnonymousReply = (props) => {
 				password: replyPasswordElement.value,
 				replyOrder: 0,
 				level: 0,
-				writer: "",
+				writer: props.accountData.id,
 			}
 			const createResult = await anonymousRepliesFetch.createReply(sendData);
 
@@ -289,7 +324,7 @@ const AnonymousReply = (props) => {
 				// document.querySelector("#replyForm").reset();
 			}
 		}
-	}, [props.contentCode, getReplies])
+	}, [props.contentCode, props.accountData.id, getReplies])
 
 	/**
 	 * 대댓글
@@ -315,70 +350,70 @@ const AnonymousReply = (props) => {
 		}
 	}
 
-	/**
-	 * 게시글 upvote & downvote
-	 */
-	// const voteReply = useCallback(async (type) => {
-	// 	const upvoteReply = document.querySelector("#upvoteReply");
-	// 	const downvoteReply = document.querySelector("#downvoteReply");
-	// 	upvoteReply.disabled = true;
-	// 	downvoteReply.disabled = true;
-
-	// 	if(props.contentCode !== null){
-	// 		const fecthOption = {
-	// 			method: "POST"
-	// 			, headers: {"Content-Type": "application/json",}
-	// 			, credentials: "include", // Don't forget to specify this if you need cookies
-	// 		};
-	// 		const jsonString = await fetch(`${process.env.REACT_APP_SERVER}/boards/reply/${type}/${props.contentCode}`, fecthOption);
-	// 		const jsonData = await parseStringToJson(jsonString);
-
-	// 		if(jsonData === null){
-	// 			alert("오늘은 이미 해당 게시물에 추천, 비추천을 하였습니다");
-	// 		}
-	// 		else{
-	// 			// setUpvoteCount(jsonData.upvote);
-	// 			// setDownvoteCount(jsonData.downvote);
-	// 		}
-			
-	// 		upvoteReply.disabled = false;
-	// 		downvoteReply.disabled = false;
-	// 	}
-	// }, [props.contentCode])
-
 	useEffect(() => {
 		getReplies(1);
 	}, [props.contentCode, getReplies])
 
-	return(
-		<Container style={{maxWidth: "1200px"}}>
-			<div>
-				<Form id={"replyForm"}>
-					<Form.Group className="mb-3">
-						<Form.Label>댓글 작성</Form.Label>
-						<Row className="g-2">
-							<Col>
-								<Form.Control id="writer" type="text" placeholder="작성자" defaultValue={"익명"} style={{marginBottom: "10px", fontSize: "0.8rem"}} readOnly />
-							</Col>
-							<Col>
-								<Form.Control id="replyPassword" type="password" placeholder="비밀번호" maxLength={20} style={{marginBottom: "10px", fontSize: "0.8rem"}} />
-							</Col>
-						</Row>
-						<Form.Control id={"replyData"} as="textarea" rows={4} style={{fontSize: "0.8rem"}} />
-					</Form.Group>
-				</Form>
-				<div style={{display: "flex", justifyContent: "flex-end"}}>
-					<Button id={"createReply"} onClick={() => {createReply()}} variant="outline-primary" style={{width: "30%", maxWidth: "200px", padding: "1px"}}>
-						<span style={{fontSize: "0.8rem"}}>등록</span>
-					</Button>
+	if(props.accountData.id === ""){
+		return(
+			<Container style={{maxWidth: "1200px"}}>
+				<div>
+					<Form id={"replyForm"}>
+						<Form.Group className="mb-3">
+							<Form.Label>댓글 작성</Form.Label>
+							<Row className="g-2">
+								<Col>
+									<Form.Control id="writer" type="text" placeholder="작성자" defaultValue={"익명"} style={{marginBottom: "10px", fontSize: "0.8rem"}} readOnly />
+								</Col>
+								<Col>
+									<Form.Control id="replyPassword" type="password" placeholder="비밀번호" maxLength={20} style={{marginBottom: "10px", fontSize: "0.8rem"}} />
+								</Col>
+							</Row>
+							<Form.Control id={"replyData"} as="textarea" rows={4} style={{fontSize: "0.8rem"}} />
+						</Form.Group>
+					</Form>
+					<div style={{display: "flex", justifyContent: "flex-end"}}>
+						<Button id={"createReply"} onClick={() => {createReply()}} variant="outline-primary" style={{width: "30%", maxWidth: "200px", padding: "1px"}}>
+							<span style={{fontSize: "0.8rem"}}>등록</span>
+						</Button>
+					</div>
+	
+					<hr/>
 				</div>
-
-				<hr/>
-			</div>
-
-			{renderData}
-		</Container>
-	);
+	
+				{renderData}
+			</Container>
+		);
+	}
+	else{
+		return(
+			<Container style={{maxWidth: "1200px"}}>
+				<div>
+					<Form id={"replyForm"}>
+						<Form.Group className="mb-3">
+							<Form.Label>댓글 작성</Form.Label>
+							<Row className="g-2">
+								<Col>
+									<Form.Control id="writer" type="text" placeholder="작성자" defaultValue={props.accountData.nickname} style={{marginBottom: "10px", fontSize: "0.9rem"}} readOnly plaintext />
+									<input type="hidden" id="replyPassword" value="" />
+								</Col>
+							</Row>
+							<Form.Control id={"replyData"} as="textarea" rows={4} style={{fontSize: "0.8rem"}} />
+						</Form.Group>
+					</Form>
+					<div style={{display: "flex", justifyContent: "flex-end"}}>
+						<Button id={"createReply"} onClick={() => {createReply()}} variant="outline-primary" style={{width: "30%", maxWidth: "200px", padding: "1px"}}>
+							<span style={{fontSize: "0.8rem"}}>등록</span>
+						</Button>
+					</div>
+	
+					<hr/>
+				</div>
+	
+				{renderData}
+			</Container>
+		);
+	}
 }
 
-export default AnonymousReply;
+export default ContentReply;

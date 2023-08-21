@@ -3,13 +3,13 @@ import { isFetchStatusGood, getFetchJson } from './fetchCommonImport';
 /**
  * 게시판의 게시글 목록을 가져온다
  */
-export const readContentList = async (page) => {
+export const readContentList = async (boardType, page) => {
 	const fecthOption = {
 		method: "GET"
 		, headers: {"Content-Type": "application/json",}
 		, credentials: "include", // Don't forget to specify this if you need cookies
 	};
-	const fetchResponse = await fetch(`${process.env.REACT_APP_SERVER}/boards/anonymous/list/${page}`, fecthOption);
+	const fetchResponse = await fetch(`${process.env.REACT_APP_SERVER}/boards/${boardType}/list/${page}`, fecthOption);
 	const [isStatusGood, checkMessage] = isFetchStatusGood(fetchResponse);
 
 	if(isStatusGood === true){
@@ -29,13 +29,13 @@ export const readContentList = async (page) => {
  * 특정 게시글 정보를 가져온다
  * view, read, edit
  */
-export const readContent = async (contentCode, type) => {
+export const readContent = async (boardType, contentCode, type) => {
 	const fecthOption = {
 		method: "GET"
 		, headers: {"Content-Type": "application/json",}
 		, credentials: "include", // Don't forget to specify this if you need cookies
 	};
-	const fetchResponse = await fetch(`${process.env.REACT_APP_SERVER}/boards/anonymous/view/${contentCode}?type=${type}`, fecthOption);
+	const fetchResponse = await fetch(`${process.env.REACT_APP_SERVER}/boards/${boardType}/view/${contentCode}?type=${type}`, fecthOption);
 	const [isStatusGood, checkMessage] = isFetchStatusGood(fetchResponse);
 
 	if(isStatusGood === true){
@@ -54,14 +54,14 @@ export const readContent = async (contentCode, type) => {
 /**
  * 특정 게시글을 삭제한다
  */
-export const deleteContent = async (sendData) => {
+export const deleteContent = async (boardType, sendData) => {
 	const fecthOption = {
 		method: "DELETE"
 		, body: JSON.stringify(sendData)
 		, headers: {"Content-Type": "application/json",}
 		, credentials: "include", // Don't forget to specify this if you need cookies
 	};
-	const fetchResponse = await fetch(`${process.env.REACT_APP_SERVER}/boards/anonymous/content`, fecthOption);
+	const fetchResponse = await fetch(`${process.env.REACT_APP_SERVER}/boards/${boardType}/content`, fecthOption);
 	const [isStatusGood, checkMessage] = isFetchStatusGood(fetchResponse);
 
 	if(isStatusGood === true){
@@ -80,14 +80,14 @@ export const deleteContent = async (sendData) => {
 /**
  * 특정 게시글에 추천, 비추천
  */
-export const voteContent = async (voteType, sendData) => {
+export const voteContent = async (boardType, voteType, sendData) => {
 	const fecthOption = {
 		method: "POST"
 		, body: JSON.stringify(sendData)
 		, headers: {"Content-Type": "application/json",}
 		, credentials: "include", // Don't forget to specify this if you need cookies
 	};
-	const fetchResponse = await fetch(`${process.env.REACT_APP_SERVER}/boards/anonymous/content/${voteType}`, fecthOption);
+	const fetchResponse = await fetch(`${process.env.REACT_APP_SERVER}/boards/${boardType}/content/${voteType}`, fecthOption);
 	const [isStatusGood, checkMessage] = isFetchStatusGood(fetchResponse);
 
 	if(isStatusGood === true){
@@ -106,14 +106,14 @@ export const voteContent = async (voteType, sendData) => {
 /**
  * 게시글 생성
  */
-export const createContent = async (sendData) => {
+export const createContent = async (boardType, sendData) => {
 	const fecthOption = {
 		method: "POST"
 		, body: JSON.stringify(sendData)
 		, headers: {"Content-Type": "application/json",}
 		, credentials: "include", // Don't forget to specify this if you need cookies
 	};
-	const fetchResponse = await fetch(`${process.env.REACT_APP_SERVER}/boards/anonymous/content`, fecthOption);
+	const fetchResponse = await fetch(`${process.env.REACT_APP_SERVER}/boards/${boardType}/content`, fecthOption);
 	const [isStatusGood, checkMessage] = isFetchStatusGood(fetchResponse);
 
 	if(isStatusGood === true){
@@ -132,14 +132,14 @@ export const createContent = async (sendData) => {
 /**
  * 게시글 수정
  */
-export const updateContent = async (sendData) => {
+export const updateContent = async (boardType, sendData) => {
 	const fecthOption = {
 		method: "PATCH"
 		, body: JSON.stringify(sendData)
 		, headers: {"Content-Type": "application/json",}
 		, credentials: "include", // Don't forget to specify this if you need cookies
 	};
-	const fetchResponse = await fetch(`${process.env.REACT_APP_SERVER}/boards/anonymous/content`, fecthOption);
+	const fetchResponse = await fetch(`${process.env.REACT_APP_SERVER}/boards/${boardType}/content`, fecthOption);
 	const [isStatusGood, checkMessage] = isFetchStatusGood(fetchResponse);
 
 	if(isStatusGood === true){
@@ -158,14 +158,14 @@ export const updateContent = async (sendData) => {
 /**
  * 수정 진입 전에 게시글 비밀번호 확인
  */
-export const checkBeforeEdit = async (sendData) => {
+export const checkBeforeEdit = async (boardType, sendData) => {
 	const fecthOption = {
 		method: "POST"
 		, body: JSON.stringify(sendData)
 		, headers: {"Content-Type": "application/json",}
 		, credentials: "include", // Don't forget to specify this if you need cookies
 	};
-	const fetchResponse = await fetch(`${process.env.REACT_APP_SERVER}/boards/anonymous/content/check/password`, fecthOption);
+	const fetchResponse = await fetch(`${process.env.REACT_APP_SERVER}/boards/${boardType}/content/check/author`, fecthOption);
 	const [isStatusGood, checkMessage] = isFetchStatusGood(fetchResponse);
 
 	if(isStatusGood === true){

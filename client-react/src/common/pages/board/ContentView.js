@@ -3,12 +3,12 @@ import { useNavigate, useParams } from "react-router-dom";
 import Container from 'react-bootstrap/Container';
 import Placeholder from 'react-bootstrap/Placeholder';
 import Button from 'react-bootstrap/Button';
-import AnonymousReply from './AnonymousReply';
+import ContentReply from './ContentReply';
 import LoadingModal from '../common/LoadingModal';
-import * as anonymousBoardsFetch from '../../js/anonymousBoardsFetch';
+import * as contentBoardFetch from '../../js/contentBoardFetch';
 import '../../css/View.css';
 
-const AnonymousView = () => {
+const ContentView = (props) => {
 	const [contentCode, setContentCode] = useState(null);
 	const [upvoteCount, setUpvoteCount] = useState(0);
 	const [downvoteCount, setDownvoteCount] = useState(0);
@@ -28,7 +28,7 @@ const AnonymousView = () => {
 		 * code로 게시글 정보 가져오기
 		 */
 		const readContent = async () => {
-			const contentData = await anonymousBoardsFetch.readContent(contentCode, "view");
+			const contentData = await contentBoardFetch.readContent(props.boardType, contentCode, "view");
 
 			if(contentData === null){
 				alert("존재하지 않는 게시물입니다");
@@ -44,7 +44,7 @@ const AnonymousView = () => {
 		if(contentCode !== null){
 			readContent();
 		}
-	}, [contentCode, navigate]);
+	}, [contentCode, navigate, props.boardType]);
 
 	useEffect(() => {
 		if(contentJson === null){
@@ -107,7 +107,7 @@ const AnonymousView = () => {
 					password: password,
 				};
 
-				const deleteResult = await anonymousBoardsFetch.deleteContent(sendData);
+				const deleteResult = await contentBoardFetch.deleteContent(props.boardType, sendData);
 
 				if(deleteResult === true){
 					navigate(`/lostark/board/anonymous/1`);
@@ -142,7 +142,7 @@ const AnonymousView = () => {
 				}
 
 				if(contentCode !== null){
-					const voteResult = await anonymousBoardsFetch.voteContent(voteType, sendData);
+					const voteResult = await contentBoardFetch.voteContent(props.boardType, voteType, sendData);
 
 					if(voteResult === null){
 						alert("오늘은 이미 해당 게시물에 추천, 비추천을 하였습니다");
@@ -236,12 +236,13 @@ const AnonymousView = () => {
 						</div>
 
 						<hr style={{border: "2px solid #5893ff"}} />
-						<AnonymousReply contentCode={contentCode}></AnonymousReply>
+						
+						<ContentReply accountData={props.accountData} contentCode={contentCode} />
 					</div>
 				</>
 			);
 		}
-	}, [contentCode, contentJson, upvoteCount, downvoteCount, navigate]);
+	}, [contentCode, contentJson, upvoteCount, downvoteCount, navigate, props.boardType, props.accountData]);
 	
 	return(
 		<Container style={{maxWidth: "1200px"}}>
@@ -251,4 +252,4 @@ const AnonymousView = () => {
 	);
 }
 
-export default AnonymousView;
+export default ContentView;

@@ -102,10 +102,10 @@ export class AnonymousBoardController {
 		// return { "error": { "message": "test error" } };
 	}
 
-	//게시글 수정 진입 시 비밀번호 확인
-	@Post("content/check/password")
-	async isAnonymousPasswordMatch(@Body() sendData: { code: number, password: string }): Promise<boolean> {
-		console.log("[Controller-boards-isAnonymousPasswordMatch]");
+	//게시글 수정 진입 시 작성자 확인
+	@Post("content/check/author")
+	async isAnonymousAuthorMatch(@Body() sendData: { code: number, password: string }): Promise<boolean> {
+		console.log("[Controller-boards-isAnonymousAuthorMatch]");
 
 		const findContent = await this.anonymousBoardService.getContent(sendData.code, "password");
 

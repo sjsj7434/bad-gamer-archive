@@ -3,17 +3,14 @@ import { useState, useEffect, useCallback } from 'react';
 import MyEditor from './MyEditor'
 import Form from 'react-bootstrap/Form';
 import Container from 'react-bootstrap/Container';
-import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
 import Placeholder from 'react-bootstrap/Placeholder';
-import InputGroup from 'react-bootstrap/InputGroup';
 import Button from 'react-bootstrap/Button';
 import ProgressBar from 'react-bootstrap/ProgressBar';
 import LoadingModal from '../common/LoadingModal';
-import * as anonymousBoardsFetch from '../../js/anonymousBoardsFetch';
+import * as userBoardsFetch from '../../js/userBoardsFetch';
 import '../../css/View.css';
 
-const AnonymousWrite = () => {
+const ContentWriteUser = (props) => {
 	const [writeMode, setWriteMode] = useState("");
 	const [contentCode, setContentCode] = useState(null);
 	const [renderData, setRenderData] = useState(<></>);
@@ -21,7 +18,6 @@ const AnonymousWrite = () => {
 	const [contentData, setContentData] = useState("");
 	const [contentPassword, setContentPassword] = useState("");
 	const [identity, setIdentity] = useState(false);
-	const [failMessage, setFailMessage] = useState(<>&nbsp;</>);
 	const [editorSizeByte, setEditorSizeByte] = useState(0);
 	const [loadingModalShow, setLoadingModalShow] = useState(false);
 	const [loadingModalMessage, setLoadingModalMessage] = useState("");
@@ -35,26 +31,18 @@ const AnonymousWrite = () => {
 	 * 신규 게시글 작성
 	 */
 	const saveEditorData = useCallback(async () => {
-		const passwordElement = document.querySelector("#contentPassword");
 		const titleElement = document.querySelector("#title");
 
-		if(passwordElement.value === ""){
-			alert("게시글의 수정&삭제를 위해 비밀번호를 입력해주세요");
-			passwordElement.focus();
-			return;
-		}
-		else if(titleElement.value === ""){
+		if(titleElement.value === ""){
 			alert("제목을 입력해주세요");
 			titleElement.focus();
 			return;
 		}
-
-		if(editorSizeByte >= editorMaxKB){
+		else if(editorSizeByte >= editorMaxKB){
 			alert("작성된 글의 용량이 너무 큽니다");
 			return;
 		}
-
-		if(window.confirm("게시글을 저장하시겠습니까?") === false){
+		else if(window.confirm("게시글을 저장하시겠습니까?") === false){
 			return;
 		}
 
@@ -64,13 +52,13 @@ const AnonymousWrite = () => {
 		const editorContet = editorObject.getData();
 
 		const sendData = {
-			password: passwordElement.value,
 			title: titleElement.value,
+			password: "",
 			content: editorContet,
 			hasImage: editorContet.indexOf("<img") > -1 ? true : false,
 		};
 
-		let createResult = await anonymousBoardsFetch.createContent(sendData);
+		let createResult = await userBoardsFetch.createContent(props.boardType, sendData);
 
 		if(createResult === null){
 			alert("문제가 발생하여 게시글을 저장할 수 없습니다(1)");
@@ -83,9 +71,9 @@ const AnonymousWrite = () => {
 			setLoadingModalMessage("");
 		}
 		else{
-			navigate(`/lostark/board/anonymous/1`);
+			navigate(`/lostark/board/user/1`);
 		}
-	}, [editorObject, editorSizeByte, editorMaxKB, navigate])
+	}, [editorObject, editorSizeByte, editorMaxKB, navigate, props.boardType])
 
 	/**
 	 * 게시글 수정
@@ -120,10 +108,10 @@ const AnonymousWrite = () => {
 			title: titleElement.value,
 			content: editorContet,
 			hasImage: editorContet.indexOf("<img") > -1 ? true : false,
-			writer: "",
+			writerID: props.accountData.id,
 		};
 
-		let result = await anonymousBoardsFetch.updateContent(sendData);
+		let result = await userBoardsFetch.updateContent(props.boardType, sendData);
 
 		if(result === null){
 			alert("문제가 발생하여 게시글을 수정할 수 없습니다(1)");
@@ -137,9 +125,9 @@ const AnonymousWrite = () => {
 		}
 		else{
 			//정상적으로 처리 성공
-			navigate(`/lostark/board/anonymous/view/${contentCode}`);
+			navigate(`/lostark/board/user/view/${contentCode}`);
 		}
-	}, [contentCode, contentPassword, editorObject, editorSizeByte, editorMaxKB, navigate])
+	}, [contentCode, contentPassword, editorObject, editorSizeByte, editorMaxKB, navigate, props.accountData.id, props.boardType])
 
 	useEffect(() => {
 		if(params.contentCode !== undefined){
@@ -157,7 +145,7 @@ const AnonymousWrite = () => {
 		 * 게시글 정보 가져오기
 		 */
 		const readContent = async () => {
-			const readResult = await anonymousBoardsFetch.readContent(contentCode, "edit");
+			const readResult = await userBoardsFetch.readContent(props.boardType, contentCode, "edit");
 	
 			setContentTitle(readResult.title);
 			setContentData(readResult.content);
@@ -166,38 +154,30 @@ const AnonymousWrite = () => {
 		if(contentCode !== null && identity === true){
 			readContent();
 		}
-	}, [contentCode, identity])
+	}, [contentCode, identity, props.boardType])
 
 	useEffect(() => {
 		/**
-		 * 수정 진입 전에 게시글 비밀번호 확인
+		 * 수정 진입 전에 게시글 작성자 정보 확인
 		 */
 		const checkBeforeEdit = async () => {
-			const contentPasswordElement = document.querySelector("#contentPassword");
-
-			if(contentPasswordElement.value === ""){
-				alert("비밀번호를 입력해주세요");
-				contentPasswordElement.focus();
-				return;
-			}
-
 			setLoadingModalShow(true);
-			setLoadingModalMessage("비밀번호 확인 중...");
-			setFailMessage(<>&nbsp;</>);
+			setLoadingModalMessage("작성자 정보 확인 중...");
 
 			const sendData = {
 				code: contentCode,
-				password: contentPasswordElement.value,
+				id: props.accountData.id,
 			};
 			
-			const checkResult = await anonymousBoardsFetch.checkBeforeEdit(sendData)
+			const checkResult = await userBoardsFetch.checkBeforeEdit(props.boardType, sendData)
 
 			if(checkResult === true){
 				setIdentity(true);
-				setContentPassword(contentPasswordElement.value);
+				setContentPassword(props.accountData.id);
 			}
 			else{
-				setFailMessage(<><b>[ ! ]</b> 올바른 비밀번호가 아닙니다</>);
+				alert("작성자가 아닙니다");
+				window.history.back();
 			}
 
 			setLoadingModalShow(false);
@@ -207,15 +187,7 @@ const AnonymousWrite = () => {
 		if(writeMode === "new"){
 			setRenderData(
 				<>
-					익명 게시판 / 신규
-					<Row className="g-2">
-						<Col>
-							<Form.Control id="writer" type="text" placeholder="작성자" defaultValue={"익명"} style={{marginBottom: "10px", fontSize: "0.8rem"}} readOnly />
-						</Col>
-						<Col>
-							<Form.Control id="contentPassword" type="password" placeholder="비밀번호" maxLength={20} style={{marginBottom: "10px", fontSize: "0.8rem"}} />
-						</Col>
-					</Row>
+					유저 게시판 / 신규
 					<Form.Control id="title" type="text" placeholder="제목" style={{marginBottom: "10px", fontSize: "0.8rem"}} defaultValue={""} />
 					
 					<MyEditor
@@ -237,48 +209,15 @@ const AnonymousWrite = () => {
 						&nbsp;
 						<Button onClick={() => {if(window.confirm("작성한 내용을 전부 비우시겠습니까?") === true){editorObject.setData("")}}} variant="outline-danger" style={{width: "20%", minWidth: "60px", maxWidth: "200px", fontSize: "0.8rem"}}>비우기</Button>
 						&nbsp;
-						<Button onClick={() => {if(window.confirm("작성한 내용을 저장하지않고 나가시겠습니까?") === true){navigate("/lostark/board/anonymous/1")}}} variant="outline-secondary" style={{width: "20%", minWidth: "60px", maxWidth: "200px", fontSize: "0.8rem"}}>취소</Button>
+						<Button onClick={() => {if(window.confirm("작성한 내용을 저장하지않고 나가시겠습니까?") === true){navigate("/lostark/board/user/1")}}} variant="outline-secondary" style={{width: "20%", minWidth: "60px", maxWidth: "200px", fontSize: "0.8rem"}}>취소</Button>
 					</div>
 				</>
 			)
 		}
 		else if(writeMode === "edit"){
 			if(identity !== true){
-				setRenderData(
-					<Container style={{maxWidth: "600px"}}>
-						<Form.Group as={Row} className="mb-3">
-							<Form.Label style={{fontWeight: "800", fontSize: "0.8rem"}}>
-								게시글 비밀번호를 입력해주세요
-							</Form.Label>
-							<Col>
-								<InputGroup>
-									<Form.Control id="contentPassword" maxLength={20} type="password" placeholder="게시글 비밀번호를 입력해주세요" onKeyDown={(event) => {if(event.key === "Enter"){checkBeforeEdit()}}} autoComplete="off" style={{fontSize: "0.8rem"}} />
-								</InputGroup>
-								<Form.Text style={{color: "red", fontSize: "0.8rem"}}>
-									{failMessage}
-								</Form.Text>
-							</Col>
-						</Form.Group>
-
-						<div style={{display: "flex", justifyContent: "flex-end", marginBottom: "15px", marginTop: "30px"}}>
-							<Button
-								onClick={() => {checkBeforeEdit()}}
-								variant="outline-primary"
-								style={{width: "20%", minWidth: "60px", maxWidth: "200px", fontSize: "0.8rem"}}
-							>
-								확인
-							</Button>
-							&nbsp;
-							<Button
-								onClick={() => {if(window.confirm("내용을 수정하지않고 나가시겠습니까?") === true){navigate(`/lostark/board/anonymous/view/${contentCode}`)}}}
-								variant="outline-secondary"
-								style={{width: "20%", minWidth: "60px", maxWidth: "200px", fontSize: "0.8rem"}}
-							>
-								취소
-							</Button>
-						</div>
-					</Container>
-				);
+				console.log('checkBeforeEdit!!')
+				checkBeforeEdit()
 			}
 			else{
 				if(contentData === "" && contentTitle === ""){
@@ -303,7 +242,7 @@ const AnonymousWrite = () => {
 				else{
 					setRenderData(
 						<>
-							익명 게시판 / 수정
+							유저 게시판 / 수정
 							<br />
 							<Form.Control id="title" type="text" placeholder="제목" style={{marginBottom: "10px", fontSize: "0.8rem"}} defaultValue={contentTitle} />
 
@@ -331,7 +270,7 @@ const AnonymousWrite = () => {
 								</Button>
 								&nbsp;
 								<Button
-									onClick={() => {if(window.confirm("내용을 수정하지않고 나가시겠습니까?") === true){navigate(`/lostark/board/anonymous/view/${contentCode}`)}}}
+									onClick={() => {if(window.confirm("내용을 수정하지않고 나가시겠습니까?") === true){navigate(`/lostark/board/user/view/${contentCode}`)}}}
 									variant="outline-secondary"
 									style={{width: "20%", minWidth: "60px", maxWidth: "200px", fontSize: "0.8rem"}}
 								>
@@ -343,7 +282,7 @@ const AnonymousWrite = () => {
 				}
 			}
 		}
-	}, [writeMode, contentCode, contentTitle, contentData, identity, failMessage, editorObject, editorSizeByte, saveEditorData, editEditorData, navigate])
+	}, [writeMode, contentCode, contentTitle, contentData, identity, editorObject, editorSizeByte, saveEditorData, editEditorData, navigate, props.accountData.id, props.boardType])
 	
 	return(
 		<Container style={{maxWidth: "1000px"}}>
@@ -353,4 +292,4 @@ const AnonymousWrite = () => {
 	);
 }
 
-export default AnonymousWrite;
+export default ContentWriteUser;

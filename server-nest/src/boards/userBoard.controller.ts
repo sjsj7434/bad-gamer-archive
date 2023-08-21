@@ -106,9 +106,9 @@ export class UserBoardController {
 	}
 
 	//게시글 수정 진입 시 작성자 확인
-	@Post("content/check/writer")
-	async isAnonymousIDMatch(@Body() sendData: { code: number, id: string }): Promise<boolean> {
-		console.log("[UserBoardController-boards-isAnonymousIDMatch]");
+	@Post("content/check/author")
+	async isAnonymousAuthorMatch(@Body() sendData: { code: number, id: string }): Promise<boolean> {
+		console.log("[UserBoardController-boards-isAnonymousAuthorMatch]");
 
 		const findContent = await this.userBoardService.getContent(sendData.code, "id");
 

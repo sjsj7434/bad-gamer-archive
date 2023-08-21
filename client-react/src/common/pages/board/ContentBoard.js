@@ -3,9 +3,9 @@ import { useParams, Link, useNavigate, NavLink } from "react-router-dom";
 import Container from 'react-bootstrap/Container';
 import Button from 'react-bootstrap/Button';
 import CustomPagination from './CustomPagination';
-import * as anonymousBoardsFetch from '../../js/anonymousBoardsFetch';
+import * as contentBoardFetch from '../../js/contentBoardFetch';
 
-const AnonymousBoard = () => {
+const ContentBoard = (props) => {
 	const [page, setPage] = useState(null);
 	const [renderData, setRenderData] = useState(<></>);
 	
@@ -28,7 +28,7 @@ const AnonymousBoard = () => {
 
 	useEffect(() => {
 		const readContentList = async () => {
-			const contentListData = await anonymousBoardsFetch.readContentList(page);
+			const contentListData = await contentBoardFetch.readContentList(props.boardType, page);
 
 			setContentList(contentListData[0]);
 			setContentCount(contentListData[1]);
@@ -37,7 +37,7 @@ const AnonymousBoard = () => {
 		if(page !== null){
 			readContentList();
 		}
-	}, [page])
+	}, [page, props.boardType])
 
 	useEffect(() => {
 		if(contentList !== null && contentCount !== null){
@@ -56,7 +56,7 @@ const AnonymousBoard = () => {
 						return(
 							<Link
 								key={"content" + data.code}
-								to={`/lostark/board/anonymous/view/${data.code}`}
+								to={`/lostark/board/${props.boardType}/view/${data.code}`}
 								style={{
 									textDecoration: "none",
 								}}
@@ -100,7 +100,7 @@ const AnonymousBoard = () => {
 												</div>
 											</div>
 											<div style={{fontSize: "0.75rem", color: "#5a5a5a", maxWidth: "95%", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap"}}>
-												<span>익명 ({data.ip})</span>
+												<span>{data.writer === undefined ? "익명" : data.writer} ({data.ip})</span>
 												&nbsp;|&nbsp;
 												<span>{new Date(data.createdAt).toLocaleDateString("sv-SE").replace(/-/g, ".")}</span>
 												&nbsp;
@@ -133,12 +133,12 @@ const AnonymousBoard = () => {
 				setRenderData(renderList);
 			}
 		}
-	}, [contentCount, contentList])
+	}, [contentCount, contentList, props.boardType])
 
 	useEffect(() => {
 		const pageMoveFunc = (pageIndex) => {
 			document.querySelector("h5").scrollIntoView({ behavior: "smooth", block: "center" });
-			navigate(`/lostark/board/anonymous/${pageIndex}`);
+			navigate(`/lostark/board/${props.boardType}/${pageIndex}`);
 		}
 
 		setPaginationData(
@@ -146,7 +146,7 @@ const AnonymousBoard = () => {
 				<CustomPagination currentPage={page} contentPerPage={contentPerPage} contentCount={contentCount} howManyPages={howManyPages} pageMoveFunc={pageMoveFunc}/>
 			</div>
 		);
-	}, [page, contentCount, navigate])
+	}, [page, contentCount, navigate, props.boardType])
 	
 	return(
 		<Container style={{maxWidth: "1200px"}}>
@@ -156,7 +156,7 @@ const AnonymousBoard = () => {
 						<path d="M.5 0a.5.5 0 0 1 .5.5v15a.5.5 0 0 1-1 0V.5A.5.5 0 0 1 .5 0zM2 1.5a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-4a.5.5 0 0 1-.5-.5v-1zm2 4a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-7a.5.5 0 0 1-.5-.5v-1zm2 4a.5.5 0 0 1 .5-.5h6a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-6a.5.5 0 0 1-.5-.5v-1zm2 4a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-7a.5.5 0 0 1-.5-.5v-1z"/>
 					</svg>
 					&nbsp;
-					익명 게시판
+					{props.boardTitle} 게시판
 				</h5>
 				<hr/>
 			</div>
@@ -167,7 +167,7 @@ const AnonymousBoard = () => {
 				</div>
 
 				<div style={{display: "flex", justifyContent: "flex-end"}}>
-					<NavLink to={`/lostark/board/anonymous/write`} style={{width: "30%", maxWidth: "200px"}}>
+					<NavLink to={`/lostark/board/${props.boardType}/write`} style={{width: "30%", maxWidth: "200px"}}>
 						<Button id={"createReply"} variant="outline-primary" style={{width: "100%", padding: "1px"}}>
 							<span style={{fontSize: "0.8rem"}}>글쓰기</span>
 						</Button>
@@ -180,4 +180,4 @@ const AnonymousBoard = () => {
 	);
 }
 
-export default AnonymousBoard;
+export default ContentBoard;
