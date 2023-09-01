@@ -18,9 +18,7 @@
 2023-06-16 : 캐릭터 정보 가져올 때 레벨도 가져올 수 있도록 수정 필요
 2023-06-16 : 캐릭터 정보 가져올 때 클래스도 가져올 수 있도록 수정 필요
 2023-06-16 : 캐릭터 정보 가져올 때 API와 이름 맞추기
-2023-06-19 : 로스피 쌀먹 그래프 추가해볼까?
 2023-06-20 : 비밀번호 찾기 기능(초기화하여 초기화 비번 메일 전송)
-2023-06-21 : 소셜 로그인?
 2023-07-30 : 가입할 때 이메일 & ID
 ```
 
@@ -62,6 +60,9 @@ npm run start
 - <input type='checkbox'> 게시글 작성자 IP차단 & 아이디 차단 기능(회원 전용)
 - <input type='checkbox'> Rate Limiting, protect applications from brute-force attacks
 - <input type='checkbox'> 인증 서버별로 Popcat 게임 추가
+- <input type='checkbox'> 로스피 쌀먹 그래프 추가해볼까?
+- <input type='checkbox'> 소셜 로그인?
+- <input type='checkbox'> 컨텐츠 별점 메기기(레벨 및 서버)
 
 ## 본캐 인증 절차(유저)
 ```bash
