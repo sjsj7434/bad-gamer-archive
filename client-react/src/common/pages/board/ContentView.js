@@ -58,7 +58,7 @@ const ContentView = (props) => {
 									<path d="M4.085 1H3.5A1.5 1.5 0 0 0 2 2.5v12A1.5 1.5 0 0 0 3.5 16h9a1.5 1.5 0 0 0 1.5-1.5v-12A1.5 1.5 0 0 0 12.5 1h-.585c.055.156.085.325.085.5V2a1.5 1.5 0 0 1-1.5 1.5h-5A1.5 1.5 0 0 1 4 2v-.5c0-.175.03-.344.085-.5ZM10 7a1 1 0 1 1 2 0v5a1 1 0 1 1-2 0V7Zm-6 4a1 1 0 1 1 2 0v1a1 1 0 1 1-2 0v-1Zm4-3a1 1 0 0 1 1 1v3a1 1 0 1 1-2 0V9a1 1 0 0 1 1-1Z"/>
 								</svg>
 								&nbsp;
-								익명 게시판
+								{props.boardTitle} 게시판
 							</span>
 
 							<Placeholder as={"p"} animation="glow">
@@ -132,6 +132,11 @@ const ContentView = (props) => {
 			 * 게시글 upvote & downvote
 			 */
 			const voteContent = async (voteType) => {
+				if(props.accountData.status === "empty" && props.boardType === "user"){
+					alert("로그인이 필요합니다");
+					return;
+				}
+
 				const downvoteButton = document.querySelector("#downvoteButton");
 				const upvoteButton = document.querySelector("#upvoteButton");
 				upvoteButton.disabled = true;
@@ -170,7 +175,7 @@ const ContentView = (props) => {
 									<path d="M4.085 1H3.5A1.5 1.5 0 0 0 2 2.5v12A1.5 1.5 0 0 0 3.5 16h9a1.5 1.5 0 0 0 1.5-1.5v-12A1.5 1.5 0 0 0 12.5 1h-.585c.055.156.085.325.085.5V2a1.5 1.5 0 0 1-1.5 1.5h-5A1.5 1.5 0 0 1 4 2v-.5c0-.175.03-.344.085-.5ZM10 7a1 1 0 1 1 2 0v5a1 1 0 1 1-2 0V7Zm-6 4a1 1 0 1 1 2 0v1a1 1 0 1 1-2 0v-1Zm4-3a1 1 0 0 1 1 1v3a1 1 0 1 1-2 0V9a1 1 0 0 1 1-1Z"/>
 								</svg>
 								&nbsp;
-								익명 게시판
+								{props.boardTitle} 게시판
 							</span>
 
 							<div style={{fontWeight: "800", fontSize: "1.5rem"}}>
@@ -227,13 +232,22 @@ const ContentView = (props) => {
 							</Button>
 						</div>
 
-						<div style={{display: "flex", justifyContent: "flex-end", marginBottom: "15px", marginTop: "30px"}}>
-							<Button onClick={() => {editContent()}} variant="outline-primary" style={{padding: "2px", width: "8%", minWidth: "60px", maxWidth: "100px", fontSize: "0.8rem"}}>수정</Button>
-							&nbsp;
-							<Button onClick={() => {deleteContent()}} variant="outline-danger" style={{padding: "2px", width: "8%", minWidth: "60px", maxWidth: "100px", fontSize: "0.8rem"}}>삭제</Button>
-							&nbsp;
-							<Button onClick={() => {navigate(`/lostark/board/anonymous/1`)}} variant="outline-secondary" style={{padding: "2px", width: "8%", minWidth: "70px", maxWidth: "100px", fontSize: "0.8rem"}}>목록으로</Button>
-						</div>
+						{
+							props.boardType === "anonymous" || props.accountData.id === contentJson.writerID ?
+							<>
+								<div style={{display: "flex", justifyContent: "flex-end", marginBottom: "15px", marginTop: "30px"}}>
+									<Button onClick={() => {editContent()}} variant="outline-primary" style={{padding: "2px", width: "8%", minWidth: "60px", maxWidth: "100px", fontSize: "0.8rem"}}>수정</Button>
+									&nbsp;
+									<Button onClick={() => {deleteContent()}} variant="outline-danger" style={{padding: "2px", width: "8%", minWidth: "60px", maxWidth: "100px", fontSize: "0.8rem"}}>삭제</Button>
+									&nbsp;
+									<Button onClick={() => {navigate(`/lostark/board/anonymous/1`)}} variant="outline-secondary" style={{padding: "2px", width: "8%", minWidth: "70px", maxWidth: "100px", fontSize: "0.8rem"}}>목록으로</Button>
+								</div>
+							</>
+							:
+							<>
+								{props.accountData.id}, {contentJson.writerID}
+							</>
+						}
 
 						<hr style={{border: "2px solid #5893ff"}} />
 						

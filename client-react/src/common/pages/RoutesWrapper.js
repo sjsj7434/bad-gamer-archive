@@ -61,14 +61,14 @@ const RoutesWrapper = () => {
 							<Route path="anonymous">
 								<Route path="" element={ <Navigate to="1" replace={true} /> } />
 								<Route path=":page" element={ <ContentBoard boardType="anonymous" boardTitle="익명" /> } />
-								<Route path="view/:contentCode" element={ <ContentView boardType="anonymous" accountData={accountData} /> } />
+								<Route path="view/:contentCode" element={ <ContentView boardType="anonymous" boardTitle="익명" accountData={accountData} /> } />
 								<Route path="write" element={ <ContentWriteAnonymous boardType="anonymous" /> } />
 								<Route path="edit/:contentCode" element={ <ContentWriteAnonymous boardType="anonymous" /> } />
 							</Route>
 							<Route path="user">
 								<Route path="" element={ <Navigate to="1" replace={true} /> } />
 								<Route path=":page" element={ <ContentBoard boardType="user" boardTitle="유저" /> } />
-								<Route path="view/:contentCode" element={ <ContentView boardType="user" accountData={accountData} /> } />
+								<Route path="view/:contentCode" element={ <ContentView boardType="user" boardTitle="유저" accountData={accountData} /> } />
 								<Route path="write" element={ <BlockNoSignin accountData={accountData} ifAllow={<ContentWriteUser boardType="user" accountData={accountData} />} /> } />
 								<Route path="edit/:contentCode" element={ <BlockNoSignin accountData={accountData} ifAllow={<ContentWriteUser boardType="user" accountData={accountData} />} /> } />
 							</Route>

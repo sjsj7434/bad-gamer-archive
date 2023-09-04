@@ -12,6 +12,10 @@ export class CreateBoardsDTO extends OmitType(Boards, ["code", "createdAt"] as c
 	password: string;
 	@IsBoolean()
 	hasImage: boolean;
+	@IsString()
+	writerID: string;
+	@IsString()
+	writerNickname: string;
 }
 
 export class UpdateBoardsDTO extends PartialType(Boards) {

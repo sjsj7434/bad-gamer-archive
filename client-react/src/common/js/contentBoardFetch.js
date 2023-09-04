@@ -180,3 +180,35 @@ export const checkBeforeEdit = async (boardType, sendData) => {
 		return null;
 	}
 }
+
+/*
+	From here, it is for the User Board ---------------------------------------------------------------------------------
+*/
+
+
+/**
+ * 유저 게시판 게시글 생성
+ */
+export const createContentUserBoard = async (sendData) => {
+	const fecthOption = {
+		method: "POST"
+		, body: JSON.stringify(sendData)
+		, headers: {"Content-Type": "application/json",}
+		, credentials: "include", // Don't forget to specify this if you need cookies
+	};
+	const fetchResponse = await fetch(`${process.env.REACT_APP_SERVER}/boards/user/content`, fecthOption);
+	const [isStatusGood, checkMessage] = isFetchStatusGood(fetchResponse);
+
+	if(isStatusGood === true){
+		console.log("kick!", fetchResponse)
+		const fetchData = await getFetchJson(fetchResponse);
+		console.log('createContent =>', fetchData)
+
+		return fetchData;
+	}
+	else{
+		alert(checkMessage);
+
+		return null;
+	}
+}

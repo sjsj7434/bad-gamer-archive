@@ -35,9 +35,9 @@ export class UserBoardController {
 
 	//게시글 작성
 	@Post("content")
-	async createContentAnonymous(@Req() request: Request, @Res({ passthrough: true }) response: Response, @Ip() ipData: string, @Body() boardData: CreateBoardsDTO): Promise<Boards> {
+	async createContentUser(@Req() request: Request, @Res({ passthrough: true }) response: Response, @Ip() ipData: string, @Body() boardData: CreateBoardsDTO): Promise<Boards> {
 		//set cookies/headers 정도만 사용하고, 나머지는 프레임워크에 떠넘기는 식으로 @Res()를 사용하는 거라면 passthrough: true 옵션은 필수! 그렇지 않으면 fetch 요청이 마무리가 안됨
-		console.log("[UserBoardController-boards-createContentAnonymous]");
+		console.log("[UserBoardController-boards-createContentUser]");
 		const cookieCheck = await this.accountsService.checkSignInStatus(request, response);
 
 		boardData.category = "user";
@@ -71,8 +71,8 @@ export class UserBoardController {
 
 	//게시글 수정
 	@Patch("content")
-	async updateContentAnonymous(@Body() updateBoardsDTO: UpdateBoardsDTO): Promise<Boards | null> {
-		console.log("[UserBoardController-boards-updateContentAnonymous]");
+	async updateContentUser(@Body() updateBoardsDTO: UpdateBoardsDTO): Promise<Boards | null> {
+		console.log("[UserBoardController-boards-updateContentUser]");
 
 		const updatedContent = await this.userBoardService.updateContent(updateBoardsDTO);
 
