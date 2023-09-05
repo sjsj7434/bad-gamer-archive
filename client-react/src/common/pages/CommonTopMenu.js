@@ -37,7 +37,7 @@ const CommonTopMenu = (props) => {
 			setRenderData(
 				<Form className="d-flex">
 					<Navbar.Text>
-						Hello, {props.accountData.nickname}
+						안녕하세요, {props.accountData.nickname}
 					</Navbar.Text>
 					&nbsp;&nbsp;
 					
