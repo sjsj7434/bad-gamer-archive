@@ -54,8 +54,8 @@ const ContentWriteUser = (props) => {
 		const sendData = {
 			title: titleElement.value,
 			password: "",
-			writerID: "user111",
-			writerNickname: "fsdflksjl",
+			writerID: props.accountData.id,
+			writerNickname: props.accountData.nickname,
 			content: editorContet,
 			hasImage: editorContet.indexOf("<img") > -1 ? true : false,
 		};

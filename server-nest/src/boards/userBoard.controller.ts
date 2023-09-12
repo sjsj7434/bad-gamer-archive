@@ -40,6 +40,10 @@ export class UserBoardController {
 		console.log("[UserBoardController-boards-createContentUser]");
 		const cookieCheck = await this.accountsService.checkSignInStatus(request, response);
 
+		if(cookieCheck.id !== boardData.writerID || cookieCheck.nickname !== boardData.writerNickname){
+			return new Boards;
+		}
+
 		boardData.category = "user";
 		boardData.writerID = cookieCheck.id;
 		boardData.writerNickname = cookieCheck.nickname;

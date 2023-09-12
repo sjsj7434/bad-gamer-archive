@@ -68,6 +68,8 @@ const ContentWriteAnonymous = (props) => {
 			title: titleElement.value,
 			content: editorContet,
 			hasImage: editorContet.indexOf("<img") > -1 ? true : false,
+			writerID: "",
+			writerNickname: "",
 		};
 
 		let createResult = await contentBoardFetch.createContent(props.boardType, sendData);
