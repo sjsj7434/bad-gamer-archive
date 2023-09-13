@@ -310,6 +310,7 @@ const ContentReply = (props) => {
 		const replyPasswordElement = document.querySelector("#replyPassword");
 		const isWriteAnonymouslyElement = document.querySelector("#isWriteAnonymously");
 		let writerNickname = "";
+		let replyPassword = "";
 
 		if(props.accountData.nickname === ""){
 			//비로그인
@@ -318,11 +319,17 @@ const ContentReply = (props) => {
 				replyPasswordElement.focus();
 				return;
 			}
+
+			replyPassword = replyPasswordElement.value;
 		}
 		else{
 			//로그인
-			if(isWriteAnonymouslyElement.checked === false){
+			if(isWriteAnonymouslyElement.checked === true){
+				replyPassword = replyPasswordElement.value;
+			}
+			else{
 				writerNickname = props.accountData.nickname;
+				replyPassword =  "";
 			}
 		}
 
@@ -337,7 +344,7 @@ const ContentReply = (props) => {
 				parentContentCode: props.contentCode,
 				parentReplyCode: 0,
 				content: replyDataElement.value,
-				password: replyPasswordElement.value,
+				password: replyPassword,
 				replyOrder: 0,
 				level: 0,
 				writer: writerNickname,
@@ -386,7 +393,7 @@ const ContentReply = (props) => {
 		const whenWriteNoticeableElement = document.querySelector(`#whenWriteNoticeable`);
 		const whenWriteAnonymouslyElement = document.querySelector(`#whenWriteAnonymously`);
 
-		if(isWriteAnonymouslyElement.checked === false){
+		if(isWriteAnonymouslyElement.checked === true){
 			whenWriteNoticeableElement.style.display = "none";
 			whenWriteAnonymouslyElement.style.display = "";
 		}
@@ -440,9 +447,7 @@ const ContentReply = (props) => {
 							<Form.Label>댓글 작성</Form.Label>
 							<Row className="g-2" id="whenWriteNoticeable">
 								<Col>
-									<Form.Control id="writer" type="text" placeholder="작성자" defaultValue={props.accountData.nickname} style={{marginBottom: "10px", fontSize: "0.9rem"}} readOnly plaintext />
-
-									<input type="hidden" id="replyPassword" value="" />
+									<Form.Control id="writer" type="text" placeholder="작성자" defaultValue={props.accountData.nickname} style={{marginBottom: "10px", fontSize: "0.8rem"}} readOnly plaintext />
 								</Col>
 							</Row>
 
@@ -458,8 +463,8 @@ const ContentReply = (props) => {
 							<Row className="g-2">
 								<Col>
 									<Form.Check id="isWriteAnonymously">
-										<Form.Check.Input type="checkbox" />
-										<Form.Check.Label onClick={() => {clickAnonymously()}} style={{marginBottom: "10px", fontSize: "0.9rem", verticalAlign: "middle"}}>익명 작성</Form.Check.Label>
+										<Form.Check.Input type="checkbox" onChange={() => {clickAnonymously()}} />
+										<Form.Check.Label style={{marginBottom: "10px", fontSize: "0.9rem", verticalAlign: "middle"}}>익명 작성</Form.Check.Label>
 									</Form.Check>
 								</Col>
 							</Row>
