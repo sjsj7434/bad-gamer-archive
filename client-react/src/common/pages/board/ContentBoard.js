@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useParams, Link, useNavigate, NavLink } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import Container from 'react-bootstrap/Container';
 import Button from 'react-bootstrap/Button';
 import CustomPagination from './CustomPagination';
@@ -167,11 +167,11 @@ const ContentBoard = (props) => {
 				</div>
 
 				<div style={{display: "flex", justifyContent: "flex-end"}}>
-					<NavLink to={`/lostark/board/${props.boardType}/write`} style={{width: "30%", maxWidth: "200px"}}>
+					<Link to={`/lostark/board/${props.boardType}/write`} style={{width: "30%", maxWidth: "200px"}}>
 						<Button id={"createReply"} variant="outline-primary" style={{width: "100%", padding: "1px"}}>
 							<span style={{fontSize: "0.8rem"}}>글쓰기</span>
 						</Button>
-					</NavLink>
+					</Link>
 				</div>
 			</div>
 
