@@ -73,7 +73,7 @@ const ContentWriteUser = (props) => {
 		else{
 			navigate(`/lostark/board/user/1`);
 		}
-	}, [editorObject, editorSizeByte, editorMaxKB, navigate, props.boardType])
+	}, [editorObject, editorSizeByte, editorMaxKB, navigate, props.accountData])
 
 	/**
 	 * 게시글 수정
