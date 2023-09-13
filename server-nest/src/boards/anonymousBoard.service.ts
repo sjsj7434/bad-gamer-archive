@@ -52,7 +52,7 @@ export class AnonymousBoardService {
 			select: {
 				replies: {code: true},
 				code: true,
-				writerID: true,
+				writerNickname: true,
 				title: true,
 				view: true,
 				upvote: true,

@@ -100,7 +100,7 @@ const ContentBoard = (props) => {
 												</div>
 											</div>
 											<div style={{fontSize: "0.75rem", color: "#5a5a5a", maxWidth: "95%", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap"}}>
-												<span>{data.writer === undefined ? "익명" : data.writer} ({data.ip})</span>
+												<span>{data.writerNickname === "" ? `익명 (${data.ip})` : data.writerNickname}</span>
 												&nbsp;|&nbsp;
 												<span>{new Date(data.createdAt).toLocaleDateString("sv-SE").replace(/-/g, ".")}</span>
 												&nbsp;

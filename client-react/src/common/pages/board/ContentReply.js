@@ -5,7 +5,7 @@ import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import CustomPagination from './CustomPagination';
-import * as anonymousRepliesFetch from '../../js/anonymousRepliesFetch';
+import * as repliesFetch from '../../js/repliesFetch';
 
 const ContentReply = (props) => {
 	// const [upvoteCount, setUpvoteCount] = useState(0);
@@ -86,7 +86,7 @@ const ContentReply = (props) => {
 						writer: "",
 					}
 
-					const deleteResult = await anonymousRepliesFetch.deleteReply(sendData);
+					const deleteResult = await repliesFetch.deleteReply(sendData);
 
 					if(deleteResult === null){
 						alert("댓글 삭제 중 오류가 발생하였습니다(1)");
@@ -109,13 +109,25 @@ const ContentReply = (props) => {
 		 */
 		const createRecursiveReply = async (replyCode, currentPage) => {
 			const formElement = document.querySelector(`#replyOfReplyForm_${replyCode}`);
+			const isWriteAnonymouslyElement = document.querySelector(`#isWriteAnonymously_${replyCode}`);
+			let writerNickname = "";
 
-			if(formElement.password.value === ""){
-				alert("삭제를 위한 비밀번호를 입력해주세요");
-				formElement.password.focus();
-				return;
+			if(props.accountData.nickname === ""){
+				//비로그인
+				if(formElement.password.value === ""){
+					alert("삭제를 위한 비밀번호를 입력해주세요");
+					formElement.password.focus();
+					return;
+				}
 			}
-			else if(formElement.content.value === ""){
+			else{
+				//로그인
+				if(isWriteAnonymouslyElement.checked === false){
+					writerNickname = props.accountData.nickname;
+				}
+			}
+
+			if(formElement.content.value === ""){
 				alert("내용을 입력해주세요");
 				formElement.content.focus();
 				return;
@@ -128,10 +140,10 @@ const ContentReply = (props) => {
 				password: formElement.password.value,
 				replyOrder: 0,
 				level: 1,
-				writer: "",
+				writer: writerNickname,
 			}
 
-			const createResult = await anonymousRepliesFetch.createRecursiveReply(sendData);
+			const createResult = await repliesFetch.createRecursiveReply(sendData);
 
 			if(createResult === null){
 				alert("답글 작성 중 오류가 발생하였습니다(1)");
@@ -147,7 +159,7 @@ const ContentReply = (props) => {
 		}
 
 		if(props.contentCode !== null){
-			const replyArray = await anonymousRepliesFetch.getReplies(props.contentCode, currentPage);
+			const replyArray = await repliesFetch.getReplies("anonymous", props.contentCode, currentPage);
 
 			if(replyArray !== null){
 				if(replyArray[1] === 0){
@@ -211,6 +223,7 @@ const ContentReply = (props) => {
 													&nbsp;
 													<strong>답글 작성</strong>
 												</Form.Label>
+
 												<Row className="g-2">
 													<Col>
 														<Form.Control name="writer" type="text" placeholder="작성자" defaultValue={"익명"} style={{marginBottom: "10px", fontSize: "0.8rem"}} readOnly />
@@ -219,6 +232,16 @@ const ContentReply = (props) => {
 														<Form.Control name="password" type="password" placeholder="비밀번호" maxLength={20} style={{marginBottom: "10px", fontSize: "0.8rem"}} />
 													</Col>
 												</Row>
+
+												<Row className="g-2">
+													<Col>
+														<Form.Check id={`isWriteAnonymously_${replyData.code}`}>
+															<Form.Check.Input type="checkbox" />
+															<Form.Check.Label style={{marginBottom: "10px", fontSize: "0.9rem", verticalAlign: "middle"}}>익명 작성</Form.Check.Label>
+														</Form.Check>
+													</Col>
+												</Row>
+												
 												<Form.Control name="content" as="textarea" rows={3} style={{fontSize: "0.8rem"}} />
 												<Button onClick={() => {createRecursiveReply(replyData.code, currentPage)}} variant="primary" style={{width: "100%", marginTop: "10px", fontSize: "0.8rem"}}>
 													저장
@@ -285,12 +308,21 @@ const ContentReply = (props) => {
 	const createReply = useCallback(async () => {
 		const replyDataElement = document.querySelector("#replyData");
 		const replyPasswordElement = document.querySelector("#replyPassword");
+		const isWriteAnonymouslyElement = document.querySelector("#isWriteAnonymously");
+		let writerNickname = "";
 
-		if(props.accountData.id === ""){
+		if(props.accountData.nickname === ""){
+			//비로그인
 			if(replyPasswordElement.value === ""){
 				alert("삭제를 위한 비밀번호를 입력해주세요");
 				replyPasswordElement.focus();
 				return;
+			}
+		}
+		else{
+			//로그인
+			if(isWriteAnonymouslyElement.checked === false){
+				writerNickname = props.accountData.nickname;
 			}
 		}
 
@@ -300,7 +332,6 @@ const ContentReply = (props) => {
 			return;
 		}
 
-
 		if(props.contentCode !== null){
 			const sendData = {
 				parentContentCode: props.contentCode,
@@ -309,9 +340,9 @@ const ContentReply = (props) => {
 				password: replyPasswordElement.value,
 				replyOrder: 0,
 				level: 0,
-				writer: props.accountData.id,
+				writer: writerNickname,
 			}
-			const createResult = await anonymousRepliesFetch.createReply(sendData);
+			const createResult = await repliesFetch.createReply("anonymous", sendData);
 
 			if(createResult === null){
 				alert("댓글 작성 중 오류가 발생하였습니다(1)");
@@ -324,7 +355,7 @@ const ContentReply = (props) => {
 				// document.querySelector("#replyForm").reset();
 			}
 		}
-	}, [props.contentCode, props.accountData.id, getReplies])
+	}, [props.contentCode, props.accountData.nickname, getReplies])
 
 	/**
 	 * 대댓글
@@ -350,11 +381,26 @@ const ContentReply = (props) => {
 		}
 	}
 
+	const clickAnonymously = () => {
+		const isWriteAnonymouslyElement = document.querySelector(`#isWriteAnonymously`);
+		const whenWriteNoticeableElement = document.querySelector(`#whenWriteNoticeable`);
+		const whenWriteAnonymouslyElement = document.querySelector(`#whenWriteAnonymously`);
+
+		if(isWriteAnonymouslyElement.checked === false){
+			whenWriteNoticeableElement.style.display = "none";
+			whenWriteAnonymouslyElement.style.display = "";
+		}
+		else{
+			whenWriteNoticeableElement.style.display = "";
+			whenWriteAnonymouslyElement.style.display = "none";
+		}
+	}
+
 	useEffect(() => {
 		getReplies(1);
 	}, [props.contentCode, getReplies])
 
-	if(props.accountData.id === ""){
+	if(props.accountData.nickname === ""){
 		return(
 			<Container style={{maxWidth: "1200px"}}>
 				<div>
@@ -392,10 +438,29 @@ const ContentReply = (props) => {
 					<Form id={"replyForm"}>
 						<Form.Group className="mb-3">
 							<Form.Label>댓글 작성</Form.Label>
-							<Row className="g-2">
+							<Row className="g-2" id="whenWriteNoticeable">
 								<Col>
 									<Form.Control id="writer" type="text" placeholder="작성자" defaultValue={props.accountData.nickname} style={{marginBottom: "10px", fontSize: "0.9rem"}} readOnly plaintext />
+
 									<input type="hidden" id="replyPassword" value="" />
+								</Col>
+							</Row>
+
+							<Row className="g-2" id="whenWriteAnonymously" style={{display: "none"}}>
+								<Col>
+									<Form.Control id="writer" type="text" placeholder="작성자" defaultValue={"익명"} style={{marginBottom: "10px", fontSize: "0.8rem"}} readOnly />
+								</Col>
+								<Col>
+									<Form.Control id="replyPassword" type="password" placeholder="비밀번호" maxLength={20} style={{marginBottom: "10px", fontSize: "0.8rem"}} />
+								</Col>
+							</Row>
+
+							<Row className="g-2">
+								<Col>
+									<Form.Check id="isWriteAnonymously">
+										<Form.Check.Input type="checkbox" />
+										<Form.Check.Label onClick={() => {clickAnonymously()}} style={{marginBottom: "10px", fontSize: "0.9rem", verticalAlign: "middle"}}>익명 작성</Form.Check.Label>
+									</Form.Check>
 								</Col>
 							</Row>
 							<Form.Control id={"replyData"} as="textarea" rows={4} style={{fontSize: "0.8rem"}} />

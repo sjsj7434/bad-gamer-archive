@@ -163,10 +163,7 @@ export class AnonymousBoardController {
 
 		const repliesData = await this.anonymousBoardService.getReplies(contentCode, page);
 
-		if (repliesData[1] === 0) {
-			console.log("getReplies is nothing");
-		}
-		else {
+		if (repliesData[1] !== 0) {
 			for (let index: number = 0; index < repliesData[0].length; index++) {
 				repliesData[0][index]["ip"] = repliesData[0][index]["ip"].split(".")[0] + (repliesData[0][index]["ip"].split(".")[1] !== undefined ? "." + repliesData[0][index]["ip"].split(".")[1] : "");
 

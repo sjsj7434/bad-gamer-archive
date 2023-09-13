@@ -55,13 +55,13 @@ export const createRecursiveReply = async (sendData) => {
 /**
  * 댓글 가져오기
  */
-export const getReplies = async (contentCode, currentPage) => {
+export const getReplies = async (boardType, contentCode, currentPage) => {
 	const fecthOption = {
 		method: "GET"
 		, headers: {"Content-Type": "application/json",}
 		, credentials: "include", // Don't forget to specify this if you need cookies
 	};
-	const fetchResponse = await fetch(`${process.env.REACT_APP_SERVER}/boards/anonymous/reply/${contentCode}/${currentPage}`, fecthOption);
+	const fetchResponse = await fetch(`${process.env.REACT_APP_SERVER}/boards/${boardType}/reply/${contentCode}/${currentPage}`, fecthOption);
 	const [isStatusGood, checkMessage] = isFetchStatusGood(fetchResponse);
 
 	if(isStatusGood === true){
@@ -80,14 +80,14 @@ export const getReplies = async (contentCode, currentPage) => {
 /**
  * 댓글 작성
  */
-export const createReply = async (sendData) => {
+export const createReply = async (boardType, sendData) => {
 	const fecthOption = {
 		method: "POST"
 		, body: JSON.stringify(sendData)
 		, headers: {"Content-Type": "application/json",}
 		, credentials: "include", // Don't forget to specify this if you need cookies
 	};
-	const fetchResponse = await fetch(`${process.env.REACT_APP_SERVER}/boards/anonymous/reply`, fecthOption);
+	const fetchResponse = await fetch(`${process.env.REACT_APP_SERVER}/boards/${boardType}/reply`, fecthOption);
 	const [isStatusGood, checkMessage] = isFetchStatusGood(fetchResponse);
 
 	if(isStatusGood === true){
