@@ -1,4 +1,4 @@
-import { isFetchStatusGood, getFetchJson } from './fetchCommonImport';
+import { isFetchStatusGood, getFetchJson, getFetchText } from './fetchCommonImport';
 
 /**
  * 게시판의 게시글 목록을 가져온다
@@ -117,7 +117,7 @@ export const createContent = async (boardType, sendData) => {
 	const [isStatusGood, checkMessage] = isFetchStatusGood(fetchResponse);
 
 	if(isStatusGood === true){
-		const fetchData = await getFetchJson(fetchResponse);
+		const fetchData = await getFetchText(fetchResponse);
 		console.log('createContent =>', fetchData)
 
 		return fetchData;

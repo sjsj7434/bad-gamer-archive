@@ -35,13 +35,14 @@ export class UserBoardController {
 
 	//게시글 작성
 	@Post("content")
-	async createContentUser(@Req() request: Request, @Res({ passthrough: true }) response: Response, @Ip() ipData: string, @Body() boardData: CreateBoardsDTO): Promise<Boards> {
+	async createContentUser(@Req() request: Request, @Res({ passthrough: true }) response: Response, @Ip() ipData: string, @Body() boardData: CreateBoardsDTO): Promise<Boolean> {
 		//set cookies/headers 정도만 사용하고, 나머지는 프레임워크에 떠넘기는 식으로 @Res()를 사용하는 거라면 passthrough: true 옵션은 필수! 그렇지 않으면 fetch 요청이 마무리가 안됨
 		console.log("[UserBoardController-boards-createContentUser]");
 		const cookieCheck = await this.accountsService.checkSignInStatus(request, response);
 
-		if(cookieCheck.id !== boardData.writerID || cookieCheck.nickname !== boardData.writerNickname){
-			return new Boards;
+		if (cookieCheck.id !== boardData.writerID || cookieCheck.nickname !== boardData.writerNickname) {
+			//위의 값이 아니면 누군가 값을 조작하여 전송했을 가능성이 있으므로 게시글 저장 차단
+			return false;
 		}
 
 		boardData.category = "user";
@@ -50,9 +51,9 @@ export class UserBoardController {
 		// boardData.ip = ipData;
 		boardData.ip = Math.random().toString().substring(2, 5) + "." + Math.random().toString().substring(2, 5) + "." + Math.random().toString().substring(2, 5) + "." + Math.random().toString().substring(2, 5);
 		
-		const createdContent = await this.userBoardService.createContent(boardData);
+		await this.userBoardService.createContent(boardData);
 
-		return createdContent;
+		return true;
 	}
 
 	//게시글 조회, contentCode 값이 number가 아니면 호출되지 않음

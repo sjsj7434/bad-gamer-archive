@@ -159,10 +159,8 @@ export class AnonymousBoardService {
 	/**
 	 * 게시판에 게시글을 생성한다
 	 */
-	async createContent(createBoardsDTO: CreateBoardsDTO): Promise<Boards> {
+	async createContent(createBoardsDTO: CreateBoardsDTO) {
 		const createdContent = await this.boardsRepository.save(createBoardsDTO);
-
-		return createdContent;
 	}
 
 	/**

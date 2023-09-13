@@ -17,7 +17,7 @@ export class AnonymousBoardController {
 	//게시글 목록, page 값이 number가 아니면 호출되지 않음
 	@Get("list/:page")
 	async getContentList(@Param("page") page: number): Promise<[Boards[], number]> {
-		console.log("[AnonymousBoardController-boards-getContentList]");
+		console.log("[AnonymousBoardController(Get) - boards/anonymous/list/:page]");
 		const perPage = 20;
 
 		const result = await this.anonymousBoardService.getContentList("anonymous", page, perPage);
@@ -33,25 +33,29 @@ export class AnonymousBoardController {
 
 	//게시글 작성
 	@Post("content")
-	async createContentAnonymous(@Ip() ipData: string, @Body() boardData: CreateBoardsDTO): Promise<Boards> {
+	async createContentAnonymous(@Ip() ipData: string, @Body() boardData: CreateBoardsDTO): Promise<Boolean> {
 		//set cookies/headers 정도만 사용하고, 나머지는 프레임워크에 떠넘기는 식으로 @Res()를 사용하는 거라면 passthrough: true 옵션은 필수! 그렇지 않으면 fetch 요청이 마무리가 안됨
+		console.log("[AnonymousBoardController(Post) - boards/anonymous/content]");
+		if (boardData.writerID !== "" || boardData.writerNickname !== ""){
+			//위의 값이 아니면 누군가 값을 조작하여 전송했을 가능성이 있으므로 게시글 저장 차단
+			return false;
+		}
 
-		console.log("[Controller-boards-createContentAnonymous]");
 		boardData.category = "anonymous";
 		boardData.writerID = "";
 		boardData.writerNickname = "";
 		// boardData.ip = ipData;
 		boardData.ip = Math.random().toString().substring(2, 5) + "." + Math.random().toString().substring(2, 5) + "." + Math.random().toString().substring(2, 5) + "." + Math.random().toString().substring(2, 5);
 
-		const createdContent = await this.anonymousBoardService.createContent(boardData);
+		await this.anonymousBoardService.createContent(boardData);
 
-		return createdContent;
+		return true;
 	}
 
 	//게시글 조회, contentCode 값이 number가 아니면 호출되지 않음
 	@Get("view/:contentCode")
 	async getContent(@Param("contentCode") contentCode: number, @Query("type") type: string): Promise<Boards | null> {
-		console.log("[Controller-boards-getContent]" + type);
+		console.log("[AnonymousBoardController(Get) - boards/anonymous/view/:contentCode]" + type);
 
 		if (isNaN(contentCode) === true){
 			return null;
@@ -69,7 +73,7 @@ export class AnonymousBoardController {
 	//게시글 수정
 	@Patch("content")
 	async updateContentAnonymous(@Body() updateBoardsDTO: UpdateBoardsDTO): Promise<Boards | null> {
-		console.log("[Controller-boards-updateContentAnonymous]");
+		console.log("[AnonymousBoardController(Patch) - boards/anonymous/content]");
 
 		const updatedContent = await this.anonymousBoardService.updateContent(updateBoardsDTO);
 
@@ -79,7 +83,7 @@ export class AnonymousBoardController {
 	//게시글 삭제
 	@Delete("content")
 	async deleteContent(@Body() deleteBoardsDTO: DeleteBoardsDTO): Promise<boolean> {
-		console.log("[Controller-boards-deleteContent]");
+		console.log("[AnonymousBoardController(Delete) - boards/anonymous/content]");
 		const isDeleted = await this.anonymousBoardService.softDeleteContent(deleteBoardsDTO);
 		return isDeleted;
 	}
@@ -95,7 +99,7 @@ export class AnonymousBoardController {
 		console.log(timeString);
 
 		const randomName = Array(10).fill(null).map(() => (Math.round(Math.random() * 16)).toString(16).substring(0, 1)).join("");
-		console.log("[Controller-boards-uploadImage]", timeString + "_" + randomName, extname(file.originalname));
+		console.log("[AnonymousBoardController(Post) - boards/anonymous/image]", timeString + "_" + randomName, extname(file.originalname));
 		console.log(file);
 		// return { "url": "https://docs.nestjs.com/assets/logo-small.svg" };
 		return { "url": "https://img-s-msn-com.akamaized.net/tenant/amp/entityid/AAZrqDW?w=300&h=157&q=60&m=6&f=jpg&u=t" };
@@ -105,7 +109,7 @@ export class AnonymousBoardController {
 	//게시글 수정 진입 시 작성자 확인
 	@Post("content/check/author")
 	async isAnonymousAuthorMatch(@Body() sendData: { code: number, password: string }): Promise<boolean> {
-		console.log("[Controller-boards-isAnonymousAuthorMatch]");
+		console.log("[AnonymousBoardController(Post) - boards/anonymous/content/check/author]");
 
 		const findContent = await this.anonymousBoardService.getContent(sendData.code, "password");
 
@@ -115,7 +119,7 @@ export class AnonymousBoardController {
 	//게시글 추천
 	@Post("content/upvote")
 	async upvoteContent(@Ip() ipData: string, @Body() sendData: { code: number }): Promise<Boards> {
-		console.log("[Controller-boards-upvoteContent]");
+		console.log("[AnonymousBoardController(Post) - boards/anonymous/content/upvote]");
 
 		const isVotable: boolean = this.anonymousBoardService.isVotableContent(sendData.code, ipData);
 
@@ -135,7 +139,7 @@ export class AnonymousBoardController {
 	//게시글 비추천
 	@Post("content/downvote")
 	async downvoteContent(@Ip() ipData: string, @Body() sendData: { code: number }): Promise<Boards> {
-		console.log("[Controller-boards-downvoteContent]");
+		console.log("[AnonymousBoardController(Post) - boards/anonymous/content/downvote]");
 
 		const isVotable: boolean = this.anonymousBoardService.isVotableContent(sendData.code, ipData);
 
@@ -155,7 +159,7 @@ export class AnonymousBoardController {
 	//게시글 댓글 조회
 	@Get("reply/:contentCode/:page")
 	async getReplies(@Param("contentCode") contentCode: number, @Param("page") page: number): Promise<[Replies[], number]> {
-		console.log("[Controller-boards-getReplies]");
+		console.log("[AnonymousBoardController(Get) - boards/anonymous/reply/:contentCode/:page]");
 
 		const repliesData = await this.anonymousBoardService.getReplies(contentCode, page);
 
@@ -178,7 +182,7 @@ export class AnonymousBoardController {
 	//게시글 댓글 작성
 	@Post("reply")
 	async createReply(@Ip() ipData: string, @Body() createRepliesDTO: CreateRepliesDTO): Promise<Replies | null> {
-		console.log("[Controller-boards-createReply]");
+		console.log("[AnonymousBoardController(Post) - boards/anonymous/reply]");
 		// createRepliesDTO.ip = ipData;
 		createRepliesDTO.ip = Math.random().toString().substring(2, 5) + "." + Math.random().toString().substring(2, 5) + "." + Math.random().toString().substring(2, 5) + "." + Math.random().toString().substring(2, 5);
 
@@ -189,7 +193,7 @@ export class AnonymousBoardController {
 	//게시글 댓글 삭제
 	@Delete("reply")
 	async deleteReply(@Body() deleteRepliesDTO: DeleteRepliesDTO): Promise<boolean> {
-		console.log("[Controller-boards-deleteReply]");
+		console.log("[AnonymousBoardController(Delete) - boards/anonymous/reply]");
 
 		const deleteResult = await this.anonymousBoardService.deleteReply(deleteRepliesDTO);
 		return deleteResult;

@@ -64,10 +64,10 @@ const ContentWriteAnonymous = (props) => {
 		const editorContet = editorObject.getData();
 
 		const sendData = {
-			password: passwordElement.value,
 			title: titleElement.value,
 			content: editorContet,
 			hasImage: editorContet.indexOf("<img") > -1 ? true : false,
+			password: passwordElement.value,
 			writerID: "",
 			writerNickname: "",
 		};
@@ -75,14 +75,12 @@ const ContentWriteAnonymous = (props) => {
 		let createResult = await contentBoardFetch.createContent(props.boardType, sendData);
 
 		if(createResult === null){
-			alert("문제가 발생하여 게시글을 저장할 수 없습니다(1)");
 			setLoadingModalShow(false);
 			setLoadingModalMessage("");
 		}
-		else if(createResult === undefined){
-			alert("문제가 발생하여 게시글을 저장할 수 없습니다(2)");
-			setLoadingModalShow(false);
-			setLoadingModalMessage("");
+		else if(createResult === false){
+			alert("게시글 저장이 실패하였습니다");
+			navigate(`/lostark/board/anonymous/1`);
 		}
 		else{
 			navigate(`/lostark/board/anonymous/1`);

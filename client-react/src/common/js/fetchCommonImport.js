@@ -5,10 +5,10 @@
  */
 export const isFetchStatusGood = (fetchResponse) => {
 	if(fetchResponse === null){
-		return [false, "응답이 없습니다"];
+		return [false, "서버로부터 응답이 없습니다"];
 	}
 	else if(fetchResponse.status === 500){
-		return [false, "데이터를 가져오는 중 오류가 발생하였습니다"];
+		return [false, "요청을 처리하는 중 오류가 발생하였습니다"];
 	}
 	else if(fetchResponse.status === 404){
 		return [false, "올바른 요청이 아닙니다"];
