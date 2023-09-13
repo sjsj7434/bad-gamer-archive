@@ -256,7 +256,7 @@ const ContentView = (props) => {
 				</>
 			);
 		}
-	}, [contentCode, contentJson, upvoteCount, downvoteCount, navigate, props.boardType, props.accountData]);
+	}, [contentCode, contentJson, upvoteCount, downvoteCount, navigate, props.boardType, props.boardTitle, props.accountData]);
 	
 	return(
 		<Container style={{maxWidth: "1200px"}}>

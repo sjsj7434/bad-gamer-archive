@@ -6,7 +6,7 @@ import HotContent from './HotContent';
 
 const LostarkMain = () => {
 	const tabOnSelect = (tabKey) => {
-		console.log(tabKey);
+		console.log("tabOnSelect", tabKey);
 	}
 
 	return(
