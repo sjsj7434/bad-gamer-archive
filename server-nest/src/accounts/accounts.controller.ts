@@ -15,14 +15,14 @@ export class  AccountsController {
 	 */
 	@Get("stove/verification/code")
 	async createStoveVerificationCode(@Req() request: Request): Promise<string> {
-		console.log("[Controller-accounts-createStoveVerificationCode]");
+		console.log("[AccountsController(Get) - accounts/stove/verification/code]");
 		const stoveVerificationCode = await this.accountsService.createStoveVerificationCode(request);
 		return stoveVerificationCode;
 	}
 
 	@Get("stove/verification/:method/:stoveURL")
 	async executeStoveVerification(@Req() request: Request, @Param("method") method: string, @Param("stoveURL") stoveURL: string): Promise<[string, object]> {
-		console.log("[Controller-accounts-executeStoveVerification] => " + stoveURL);
+		console.log("[AccountsController(Get) - accounts/stove/verification/:method/:stoveURL] => " + stoveURL);
 		const stoveURLWithOutProtocol: string = stoveURL.replace(/https:\/\/|http:\/\//g, "");
 		
 		if(isNaN(Number(stoveURLWithOutProtocol)) === false){
@@ -56,7 +56,7 @@ export class  AccountsController {
 
 	@Get("stove/character/scrap/:characterName")
 	async getCharacterInfoScrap(@Req() request: Request, @Param("characterName") characterName: string): Promise<object> {
-		console.log("[Controller-accounts-getCharacterInfoScrap] => " + characterName);
+		console.log("[AccountsController(Get) - accounts/stove/character/scrap/:characterName] => " + characterName);
 		
 		const characterInfo: object = await this.accountsService.getCharacterInfo_scrap(characterName);
 
@@ -65,7 +65,7 @@ export class  AccountsController {
 
 	@Post()
 	async createAccount(@Body() createAccountsDTO: CreateAccountsDTO): Promise<number> {
-		console.log("[Controller-accounts-createAccount] => ", createAccountsDTO);
+		console.log("[AccountsController(Post) - accounts/] => ", createAccountsDTO);
 
 		const result = await this.accountsService.createAccount(createAccountsDTO);
 
@@ -74,7 +74,7 @@ export class  AccountsController {
 
 	@Delete()
 	async deleteAccount(@Body() deleteAccountsDTO: DeleteAccountsDTO): Promise<string> {
-		console.log("[Controller-accounts-deleteAccount] => ", deleteAccountsDTO);
+		console.log("[AccountsController(Delete) - accounts/] => ", deleteAccountsDTO);
 
 		const result = await this.accountsService.deleteAccount(deleteAccountsDTO);
 		console.log(result);
@@ -84,7 +84,7 @@ export class  AccountsController {
 
 	@Put("lostark/character")
 	async updateLostarkMainCharacter(@Req() request: Request, @Body() body: { lostarkMainCharacter: string }): Promise<string> {
-		console.log("[Controller-accounts-updateLostarkMainCharacter] => ", body);
+		console.log("[AccountsController(Put) - accounts/lostark/character] => ", body);
 
 		const result = await this.accountsService.updateLostarkMainCharacter(request, body);
 		console.log(result);
@@ -94,7 +94,7 @@ export class  AccountsController {
 
 	@Post("signin")
 	async signInAccount(@Body() body: { id: string, password: string }, @Req() request: Request, @Res({ passthrough: true }) response: Response): Promise<string> {
-		console.log("[Controller-accounts-signInAccount] => ", body);
+		console.log("[AccountsController(Post) - accounts/signin] => ", body);
 
 		const cookieCheck = await this.accountsService.checkSignInStatus(request, response);
 
@@ -121,14 +121,14 @@ export class  AccountsController {
 
 	@Post("signout")
 	async setSignOut(@Req() request: Request, @Res({ passthrough: true }) response: Response) {
-		console.log("[Controller-accounts-setSignOut]");
+		console.log("[AccountsController(Post) - accounts/signout]");
 
 		this.accountsService.setSignOut(request, response);
 	}
 
 	@Get("signin/status")
 	async getSignInStatus(@Req() request: Request, @Res({ passthrough: true }) response: Response): Promise<{ status: string, id: string, nickname: string }> {
-		console.log("[Controller-accounts-getSignInStatus]");
+		console.log("[AccountsController(Get) - accounts/signin/status]");
 
 		const cookieCheck = await this.accountsService.checkSignInStatus(request, response);
 
@@ -137,7 +137,7 @@ export class  AccountsController {
 
 	@Get("information/my")
 	async getMyInfo(@Req() request: Request, @Res({ passthrough: true }) response: Response): Promise<Accounts> {
-		console.log("[Controller-accounts-getMyInfo]");
+		console.log("[AccountsController(Get) - accounts/information/my]");
 
 		const accountData = await this.accountsService.getMyInfo(request, response);
 
@@ -146,34 +146,36 @@ export class  AccountsController {
 
 	@Patch("password")
 	async updatePassword(@Req() request: Request, @Res({ passthrough: true }) response: Response, @Body() body: { oldPassword: string, newPassword: string }): Promise<number> {
-		console.log("[Controller-accounts-updatePassword]", body);
+		console.log("[AccountsController(Patch) - accounts/password]", body);
 
 		const updateResult = await this.accountsService.updatePassword(request, response, body);
 
 		return updateResult;
 	}
 
-	// @Post("verify/send/email")
-	// async setVerifyEmailTokenLater(@Req() request: Request, @Res({ passthrough: true }) response: Response): Promise<string> {
-	// 	console.log("[Controller-accounts-setVerifyEmailTokenLater]");
+	/*
+	@Post("verify/send/email")
+	async setVerifyEmailTokenLater(@Req() request: Request, @Res({ passthrough: true }) response: Response): Promise<string> {
+		console.log("[AccountsController(Post) - accounts/verify/send/email]");
 
-	// 	const verifyResult = await this.accountsService.setVerifyEmailTokenLater(request);
+		const verifyResult = await this.accountsService.setVerifyEmailTokenLater(request);
 
-	// 	return verifyResult;
-	// }
+		return verifyResult;
+	}
 
-	// @Get("verify/email/:verificationCode")
-	// async verifyEmail(@Param("verificationCode") verificationCode: string): Promise<boolean> {
-	// 	console.log("[Controller-accounts-verifyEmail]", verificationCode);
+	@Get("verify/email/:verificationCode")
+	async verifyEmail(@Param("verificationCode") verificationCode: string): Promise<boolean> {
+		console.log("[AccountsController(Get) - accounts/verify/email/:verificationCode]", verificationCode);
 
-	// 	const verifyResult = await this.accountsService.verifyEmail(verificationCode);
+		const verifyResult = await this.accountsService.verifyEmail(verificationCode);
 
-	// 	return verifyResult;
-	// }
+		return verifyResult;
+	}
+	*/
 
 	@Post("reset/password/request")
 	async requestResetPassword(@Body() body: { id: string }): Promise<string> {
-		console.log("[Controller-accounts-requestResetPassword]");
+		console.log("[AccountsController(Post) - accounts/reset/password/request]");
 
 		const verifyResult = await this.accountsService.beforeResetPassword(body);
 
@@ -182,7 +184,7 @@ export class  AccountsController {
 
 	@Post("verify/reset/password/code")
 	async checkResetEmail(@Body() body: { verificationCode: string }): Promise<string> {
-		console.log("[Controller-accounts-checkResetEmail]", body);
+		console.log("[AccountsController(Post) - accounts/verify/reset/password/code]", body);
 
 		const verifyResult = await this.accountsService.checkResetEmail(body.verificationCode);
 
@@ -191,7 +193,7 @@ export class  AccountsController {
 
 	@Patch("reset/password/execute")
 	async resetPassword(@Body() body: { newPassword: string, verificationCode: string }): Promise<string> {
-		console.log("[Controller-accounts-resetPassword]", body);
+		console.log("[AccountsController(Patch) - accounts/reset/password/execute]", body);
 
 		const verifyResult = await this.accountsService.resetPassword(body);
 

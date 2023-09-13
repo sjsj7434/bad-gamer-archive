@@ -19,7 +19,7 @@ export class UserBoardController {
 	//게시글 목록, page 값이 number가 아니면 호출되지 않음
 	@Get("list/:page")
 	async getContentList(@Param("page") page: number): Promise<[Boards[], number]> {
-		console.log("[UserBoardController-boards-getContentList]");
+		console.log("[UserBoardController(Get) - boards/user/list/:page]");
 		const perPage = 20;
 
 		const result = await this.userBoardService.getContentList("user", page, perPage);
@@ -37,7 +37,7 @@ export class UserBoardController {
 	@Post("content")
 	async createContentUser(@Req() request: Request, @Res({ passthrough: true }) response: Response, @Ip() ipData: string, @Body() boardData: CreateBoardsDTO): Promise<Boolean> {
 		//set cookies/headers 정도만 사용하고, 나머지는 프레임워크에 떠넘기는 식으로 @Res()를 사용하는 거라면 passthrough: true 옵션은 필수! 그렇지 않으면 fetch 요청이 마무리가 안됨
-		console.log("[UserBoardController-boards-createContentUser]");
+		console.log("[UserBoardController(Post) - boards/user/content]");
 		const cookieCheck = await this.accountsService.checkSignInStatus(request, response);
 
 		if (cookieCheck.id !== boardData.writerID || cookieCheck.nickname !== boardData.writerNickname) {
@@ -59,7 +59,7 @@ export class UserBoardController {
 	//게시글 조회, contentCode 값이 number가 아니면 호출되지 않음
 	@Get("view/:contentCode")
 	async getContent(@Param("contentCode") contentCode: number, @Query("type") type: string): Promise<Boards | null> {
-		console.log("[UserBoardController-boards-getContent]" + type);
+		console.log("[UserBoardController(Get) - boards/user/view/:contentCode]" + type);
 
 		if (isNaN(contentCode) === true){
 			return null;
@@ -77,7 +77,7 @@ export class UserBoardController {
 	//게시글 수정
 	@Patch("content")
 	async updateContentUser(@Body() updateBoardsDTO: UpdateBoardsDTO): Promise<Boards | null> {
-		console.log("[UserBoardController-boards-updateContentUser]");
+		console.log("[UserBoardController(Patch) - boards/user/content]");
 
 		const updatedContent = await this.userBoardService.updateContent(updateBoardsDTO);
 
@@ -87,7 +87,7 @@ export class UserBoardController {
 	//게시글 삭제
 	@Delete("content")
 	async deleteContent(@Body() deleteBoardsDTO: DeleteBoardsDTO): Promise<boolean> {
-		console.log("[UserBoardController-boards-deleteContent]");
+		console.log("[UserBoardController(Delete) - boards/user/content]");
 		const isDeleted = await this.userBoardService.softDeleteContent(deleteBoardsDTO);
 		return isDeleted;
 	}
@@ -103,7 +103,7 @@ export class UserBoardController {
 		console.log(timeString);
 
 		const randomName = Array(10).fill(null).map(() => (Math.round(Math.random() * 16)).toString(16).substring(0, 1)).join("");
-		console.log("[UserBoardController-boards-uploadImage]", timeString + "_" + randomName, extname(file.originalname));
+		console.log("[UserBoardController(Post) - boards/user/image]", timeString + "_" + randomName, extname(file.originalname));
 		console.log(file);
 		// return { "url": "https://docs.nestjs.com/assets/logo-small.svg" };
 		return { "url": "https://img-s-msn-com.akamaized.net/tenant/amp/entityid/AAZrqDW?w=300&h=157&q=60&m=6&f=jpg&u=t" };
@@ -113,7 +113,7 @@ export class UserBoardController {
 	//게시글 수정 진입 시 작성자 확인
 	@Post("content/check/author")
 	async isAnonymousAuthorMatch(@Body() sendData: { code: number, id: string }): Promise<boolean> {
-		console.log("[UserBoardController-boards-isAnonymousAuthorMatch]");
+		console.log("[UserBoardController(Post) - boards/user/content/check/author]");
 
 		const findContent = await this.userBoardService.getContent(sendData.code, "id");
 
@@ -125,7 +125,7 @@ export class UserBoardController {
 	//게시글 추천
 	@Post("content/upvote")
 	async upvoteContent(@Ip() ipData: string, @Body() sendData: { code: number }): Promise<Boards> {
-		console.log("[UserBoardController-boards-upvoteContent]");
+		console.log("[UserBoardController(Post) - boards/user/content/upvote]");
 
 		const isVotable: boolean = this.userBoardService.isVotableContent(sendData.code, ipData);
 
@@ -145,7 +145,7 @@ export class UserBoardController {
 	//게시글 비추천
 	@Post("content/downvote")
 	async downvoteContent(@Ip() ipData: string, @Body() sendData: { code: number }): Promise<Boards> {
-		console.log("[UserBoardController-boards-downvoteContent]");
+		console.log("[UserBoardController(Post) - boards/user/content/downvote]");
 
 		const isVotable: boolean = this.userBoardService.isVotableContent(sendData.code, ipData);
 
@@ -165,7 +165,7 @@ export class UserBoardController {
 	//게시글 댓글 조회
 	@Get("reply/:contentCode/:page")
 	async getReplies(@Param("contentCode") contentCode: number, @Param("page") page: number): Promise<[Replies[], number]> {
-		console.log("[UserBoardController-boards-getReplies]");
+		console.log("[UserBoardController(Get) - boards/user/reply/:contentCode/:page]");
 
 		const repliesData = await this.userBoardService.getReplies(contentCode, page);
 
@@ -188,7 +188,7 @@ export class UserBoardController {
 	//게시글 댓글 작성
 	@Post("reply")
 	async createReply(@Ip() ipData: string, @Body() createRepliesDTO: CreateRepliesDTO): Promise<Replies | null> {
-		console.log("[UserBoardController-boards-createReply]");
+		console.log("[UserBoardController(Post) - boards/user/reply]");
 		// createRepliesDTO.ip = ipData;
 		createRepliesDTO.ip = Math.random().toString().substring(2, 5) + "." + Math.random().toString().substring(2, 5) + "." + Math.random().toString().substring(2, 5) + "." + Math.random().toString().substring(2, 5);
 
@@ -199,7 +199,7 @@ export class UserBoardController {
 	//게시글 댓글 삭제
 	@Delete("reply")
 	async deleteReply(@Body() deleteRepliesDTO: DeleteRepliesDTO): Promise<boolean> {
-		console.log("[UserBoardController-boards-deleteReply]");
+		console.log("[UserBoardController(Delete) - boards/user/reply]");
 
 		const deleteResult = await this.userBoardService.deleteReply(deleteRepliesDTO);
 		return deleteResult;
