@@ -183,7 +183,7 @@ const ContentView = (props) => {
 							</div>
 							<div style={{fontWeight: "400", fontSize: "0.8rem"}}>
 								<span>
-									{contentJson.writer === "" ? "익명" : contentJson.writer} ({contentJson.ip})
+									{contentJson.writerNickname === "" ? `익명 (${contentJson.ip})` : contentJson.writerNickname}
 								</span>
 								&nbsp;|&nbsp;
 								<span>
@@ -202,7 +202,8 @@ const ContentView = (props) => {
 									{contentJson.updatedAt !== null ? `${new Date(contentJson.updatedAt).toLocaleString("sv-SE")}에 게시글이 수정되었습니다` : ""}
 								</span>
 							</div>
-							<hr style={{border: "2px solid #5893ff"}} />
+
+							<hr style={{border: "1px solid #5893ff"}} />
 						</div>
 
 						{/*
@@ -244,14 +245,12 @@ const ContentView = (props) => {
 								</div>
 							</>
 							:
-							<>
-								{props.accountData.id}, {contentJson.writerID}
-							</>
+							<></>
 						}
 
-						<hr style={{border: "2px solid #5893ff"}} />
+						<hr style={{border: "1px solid #5893ff"}} />
 						
-						<ContentReply accountData={props.accountData} contentCode={contentCode} />
+						<ContentReply accountData={props.accountData} contentCode={contentCode} boardType={props.boardType} />
 					</div>
 				</>
 			);

@@ -67,10 +67,6 @@ export class UserBoardController {
 
 		const result = await this.userBoardService.getContent(contentCode, type);
 
-		if (result !== null) {
-			result.ip = result.ip.split(".")[0] + (result.ip.split(".")[1] !== undefined ? "." + result.ip.split(".")[1] : "");
-		}
-
 		return result;
 	}
 

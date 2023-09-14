@@ -118,9 +118,7 @@ export class UserBoardService {
 					view: true,
 					upvote: true,
 					downvote: true,
-					writerID: true,
 					writerNickname: true,
-					ip: true,
 					createdAt: true,
 					updatedAt: true
 				},
@@ -141,9 +139,7 @@ export class UserBoardService {
 					view: true,
 					upvote: true,
 					downvote: true,
-					writerID: true,
 					writerNickname: true,
-					ip: true,
 					createdAt: true,
 					updatedAt: true
 				},

@@ -159,7 +159,7 @@ const ContentReply = (props) => {
 		}
 
 		if(props.contentCode !== null){
-			const replyArray = await repliesFetch.getReplies("anonymous", props.contentCode, currentPage);
+			const replyArray = await repliesFetch.getReplies(props.boardType, props.contentCode, currentPage);
 
 			if(replyArray !== null){
 				if(replyArray[1] === 0){
@@ -300,7 +300,7 @@ const ContentReply = (props) => {
 				}
 			}
 		}
-	}, [props.contentCode])
+	}, [props.contentCode, props.accountData.nickname])
 
 	/**
 	 * 댓글 작성
