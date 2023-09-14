@@ -256,7 +256,7 @@ export class AnonymousBoardService {
 				content: true,
 				upvote: true,
 				downvote: true,
-				writer: true,
+				writerNickname: true,
 				ip: true,
 				createdAt: true,
 				deletedAt: true
@@ -297,8 +297,7 @@ export class AnonymousBoardService {
 		const replyData = await this.repliesRepository.findOne({
 			where: {
 				code: deleteRepliesDTO.code,
-				writer: deleteRepliesDTO.writer,
-				password: deleteRepliesDTO.password,
+				writerID: deleteRepliesDTO.writerID,
 			}
 		});
 
@@ -308,8 +307,7 @@ export class AnonymousBoardService {
 		else{
 			await this.repliesRepository.softDelete({
 				code: deleteRepliesDTO.code,
-				writer: deleteRepliesDTO.writer,
-				password: deleteRepliesDTO.password,
+				writerID: deleteRepliesDTO.writerID,
 			});
 
 			return true;

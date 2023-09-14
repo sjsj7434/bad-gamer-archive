@@ -9,6 +9,8 @@ import { extname } from 'path';
 import { AccountsService } from 'src/accounts/accounts.service';
 import { Request, Response } from 'express';
 
+const REPlY_MAX_LENG = 300; //댓글 글자 수 제한
+
 /**
  * 익명 게시판 컨트롤러
  */
@@ -183,21 +185,51 @@ export class UserBoardController {
 
 	//게시글 댓글 작성
 	@Post("reply")
-	async createReply(@Ip() ipData: string, @Body() createRepliesDTO: CreateRepliesDTO): Promise<Replies | null> {
+	async createReply(@Req() request: Request, @Res({ passthrough: true }) response: Response, @Ip() ipData: string, @Body() createRepliesDTO: CreateRepliesDTO): Promise<Boolean> {
 		console.log("[UserBoardController(Post) - boards/user/reply]");
-		// createRepliesDTO.ip = ipData;
-		createRepliesDTO.ip = Math.random().toString().substring(2, 5) + "." + Math.random().toString().substring(2, 5) + "." + Math.random().toString().substring(2, 5) + "." + Math.random().toString().substring(2, 5);
 
-		const createdReply = await this.userBoardService.createReply(createRepliesDTO);
-		return createdReply;
+		if (createRepliesDTO.content.length > REPlY_MAX_LENG){
+			return false;
+		}
+
+		const signInCookie = await this.accountsService.checkSignInStatus(request, response);
+
+		if (signInCookie.status === "signin"){
+			createRepliesDTO.writerID = signInCookie.id;
+			createRepliesDTO.writerNickname = signInCookie.nickname;
+			createRepliesDTO.replyOrder = 0;
+
+			if (createRepliesDTO.level === 0){
+				createRepliesDTO.parentReplyCode = 0;
+			}
+
+			// createRepliesDTO.ip = ipData;
+			createRepliesDTO.ip = Math.random().toString().substring(2, 5) + "." + Math.random().toString().substring(2, 5) + "." + Math.random().toString().substring(2, 5) + "." + Math.random().toString().substring(2, 5);
+
+			await this.userBoardService.createReply(createRepliesDTO);
+
+			return true;
+		}
+		else{
+			return false;
+		}
 	}
 
 	//게시글 댓글 삭제
 	@Delete("reply")
-	async deleteReply(@Body() deleteRepliesDTO: DeleteRepliesDTO): Promise<boolean> {
+	async deleteReply(@Req() request: Request, @Res({ passthrough: true }) response: Response, @Body() deleteRepliesDTO: DeleteRepliesDTO): Promise<boolean> {
 		console.log("[UserBoardController(Delete) - boards/user/reply]");
 
+		const signInCookie = await this.accountsService.checkSignInStatus(request, response);
+
+		if (signInCookie.status !== "signin") {
+			return false;
+		}
+
+		deleteRepliesDTO.writerID = signInCookie.id;
+
 		const deleteResult = await this.userBoardService.deleteReply(deleteRepliesDTO);
+
 		return deleteResult;
 	}
 }

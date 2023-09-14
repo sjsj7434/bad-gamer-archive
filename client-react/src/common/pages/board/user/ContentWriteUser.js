@@ -1,14 +1,14 @@
 import { useNavigate, useParams } from "react-router-dom";
 import { useState, useEffect, useCallback } from 'react';
-import MyEditor from './MyEditor'
+import MyEditor from '../MyEditor'
 import Form from 'react-bootstrap/Form';
 import Container from 'react-bootstrap/Container';
 import Placeholder from 'react-bootstrap/Placeholder';
 import Button from 'react-bootstrap/Button';
 import ProgressBar from 'react-bootstrap/ProgressBar';
-import LoadingModal from '../common/LoadingModal';
-import * as contentBoardFetch from '../../js/contentBoardFetch';
-import '../../css/View.css';
+import LoadingModal from '../../common/LoadingModal';
+import * as contentBoardFetch from '../../../js/contentBoardFetch';
+import '../../../css/View.css';
 
 const ContentWriteUser = (props) => {
 	const [writeMode, setWriteMode] = useState("");

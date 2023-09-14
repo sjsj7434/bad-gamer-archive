@@ -4,10 +4,10 @@ import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
-import CustomPagination from './CustomPagination';
-import * as repliesFetch from '../../js/repliesFetch';
+import CustomPagination from '../CustomPagination';
+import * as repliesFetch from '../../../js/repliesFetch';
 
-const ContentReply = (props) => {
+const AnonymousReply = (props) => {
 	// const [upvoteCount, setUpvoteCount] = useState(0);
 	// const [downvoteCount, setDownvoteCount] = useState(0);
 	const [renderData, setRenderData] = useState(<></>);
@@ -105,30 +105,48 @@ const ContentReply = (props) => {
 		}
 
 		/**
+		 * 대댓글 입력 폼 컨트롤
+		 */
+		const appendReply = async (replyCode) => {
+			const targetForm = document.querySelector(`#replyOfReplyForm_${replyCode}`);
+			
+			if(targetForm.style.display === "block"){
+				targetForm.style.display = "none";
+				return;
+			}
+			else{
+				targetForm.style.display = "block";
+			}
+
+			const formArray = document.querySelectorAll(`form[id^=replyOfReplyForm_]`);
+			for (const element of formArray) {
+				if(element.id !== `replyOfReplyForm_${replyCode}`){
+					if(element.style.display === "block"){
+						element.style.display = "none";
+					}
+				}
+			}
+		}
+
+		/**
 		 * 대댓글 작성
 		 */
 		const createRecursiveReply = async (replyCode, currentPage) => {
 			const formElement = document.querySelector(`#replyOfReplyForm_${replyCode}`);
-			const isWriteAnonymouslyElement = document.querySelector(`#isWriteAnonymously_${replyCode}`);
 			let writerNickname = "";
+			let replyPassword = "";
 
-			if(props.accountData.nickname === ""){
-				//비로그인
-				if(formElement.password.value === ""){
-					alert("삭제를 위한 비밀번호를 입력해주세요");
-					formElement.password.focus();
-					return;
-				}
+			if(formElement.password.value === ""){
+				alert("삭제를 위한 비밀번호를 입력해주세요");
+				formElement.password.focus();
+				return;
 			}
-			else{
-				//로그인
-				if(isWriteAnonymouslyElement.checked === false){
-					writerNickname = props.accountData.nickname;
-				}
-			}
+
+			writerNickname =  "";
+			replyPassword = formElement.password.value;
 
 			if(formElement.content.value === ""){
-				alert("내용을 입력해주세요");
+				alert("답글 내용을 입력해주세요");
 				formElement.content.focus();
 				return;
 			}
@@ -136,14 +154,15 @@ const ContentReply = (props) => {
 			const sendData = {
 				parentContentCode: props.contentCode,
 				parentReplyCode: replyCode,
-				content: formElement.content.value,
-				password: formElement.password.value,
 				replyOrder: 0,
 				level: 1,
-				writer: writerNickname,
+				writerID: props.accountData.id,
+				writerNickname: writerNickname,
+				password: replyPassword,
+				content: formElement.content.value,
 			}
 
-			const createResult = await repliesFetch.createRecursiveReply(sendData);
+			const createResult = await repliesFetch.createReply(sendData);
 
 			if(createResult === null){
 				alert("답글 작성 중 오류가 발생하였습니다(1)");
@@ -184,7 +203,7 @@ const ContentReply = (props) => {
 								<div id={`reply_${replyData.code}`} key={`reply_${replyData.code}`} style={{display: "flex", flexDirection: "column", paddingBottom: "5px", marginBottom: "", borderBottom: "1px solid lightgray"}}>
 									<div style={{display: "flex", justifyContent: "space-between", alignItems: "center"}}>
 										<div>
-											<span style={{fontSize: "0.8rem", color: "black"}}>{replyData.writer === "" ? `익명(${replyData.ip})` : replyData.writer}</span>
+											<span style={{fontSize: "0.8rem", color: "gray"}}>익명 ({replyData.ip})</span>
 											&nbsp;
 											<span style={{fontSize: "0.75rem", color: "lightgray"}}>{new Date(replyData.createdAt).toLocaleString("sv-SE")}</span>
 										</div>
@@ -203,52 +222,43 @@ const ContentReply = (props) => {
 										</div>
 									</div>
 
-									<div style={{fontSize: "0.75rem", marginTop: "5px", whiteSpace: "break-spaces"}}>
+									<div style={{fontSize: "0.75rem", marginTop: "5px", whiteSpace: "break-spaces", overflowWrap: "anywhere", overflow: "auto"}}>
 										{(replyData.deletedAt === null ? replyData.content : <span style={{color: "palevioletred"}}>{replyData.content}</span>)}
 									</div>
 
 									<div style={{marginTop: "5px"}}>
-										<Button id={"appendReply"} onClick={() => {appendReply(replyData.code)}} variant="outline-secondary" style={{padding: "1px", width: "15%", maxWidth: "150px", fontSize: "0.7rem"}}>
-											답글
-										</Button>
-									</div>
-
-									<Form id={`replyOfReplyForm_${replyData.code}`} style={{display: "none", marginTop: "5px", borderRadius: "8px", backgroundColor: "#f1f4ff"}}>
-										<div style={{padding: "8px"}}>
-											<Form.Group className="mb-3">
-												<Form.Label style={{fontSize: "0.8rem"}}>
-													<svg xmlns="http://www.w3.org/2000/svg" width="1.0rem" height="1.0rem" fill="currentColor" className="bi bi-arrow-return-right" viewBox="0 0 16 16">
-														<path fillRule="evenodd" d="M1.5 1.5A.5.5 0 0 0 1 2v4.8a2.5 2.5 0 0 0 2.5 2.5h9.793l-3.347 3.346a.5.5 0 0 0 .708.708l4.2-4.2a.5.5 0 0 0 0-.708l-4-4a.5.5 0 0 0-.708.708L13.293 8.3H3.5A1.5 1.5 0 0 1 2 6.8V2a.5.5 0 0 0-.5-.5z"/>
-													</svg>
-													&nbsp;
-													<strong>답글 작성</strong>
-												</Form.Label>
-
-												<Row className="g-2">
-													<Col>
-														<Form.Control name="writer" type="text" placeholder="작성자" defaultValue={"익명"} style={{marginBottom: "10px", fontSize: "0.8rem"}} readOnly />
-													</Col>
-													<Col>
-														<Form.Control name="password" type="password" placeholder="비밀번호" maxLength={20} style={{marginBottom: "10px", fontSize: "0.8rem"}} />
-													</Col>
-												</Row>
-
-												<Row className="g-2">
-													<Col>
-														<Form.Check id={`isWriteAnonymously_${replyData.code}`}>
-															<Form.Check.Input type="checkbox" />
-															<Form.Check.Label style={{marginBottom: "10px", fontSize: "0.9rem", verticalAlign: "middle"}}>익명 작성</Form.Check.Label>
-														</Form.Check>
-													</Col>
-												</Row>
-												
-												<Form.Control name="content" as="textarea" rows={3} style={{fontSize: "0.8rem"}} />
-												<Button onClick={() => {createRecursiveReply(replyData.code, currentPage)}} variant="primary" style={{width: "100%", marginTop: "10px", fontSize: "0.8rem"}}>
-													저장
-												</Button>
-											</Form.Group>
+											<Button id={"appendReply"} onClick={() => {appendReply(replyData.code)}} variant="outline-secondary" style={{padding: "1px", width: "15%", maxWidth: "150px", fontSize: "0.7rem"}}>
+												답글
+											</Button>
 										</div>
-									</Form>
+
+										<Form id={`replyOfReplyForm_${replyData.code}`} style={{display: "none", marginTop: "5px", borderRadius: "8px", backgroundColor: "#f1f4ff"}}>
+											<div style={{padding: "8px"}}>
+												<Form.Group className="mb-3">
+													<Form.Label style={{fontSize: "0.8rem"}}>
+														<svg xmlns="http://www.w3.org/2000/svg" width="1.0rem" height="1.0rem" fill="currentColor" className="bi bi-arrow-return-right" viewBox="0 0 16 16">
+															<path fillRule="evenodd" d="M1.5 1.5A.5.5 0 0 0 1 2v4.8a2.5 2.5 0 0 0 2.5 2.5h9.793l-3.347 3.346a.5.5 0 0 0 .708.708l4.2-4.2a.5.5 0 0 0 0-.708l-4-4a.5.5 0 0 0-.708.708L13.293 8.3H3.5A1.5 1.5 0 0 1 2 6.8V2a.5.5 0 0 0-.5-.5z"/>
+														</svg>
+														&nbsp;
+														<strong>답글 작성</strong>
+													</Form.Label>
+
+													<Row className="g-2">
+														<Col style={{maxWidth: "70px"}}>
+															<Form.Control name="writer" type="text" placeholder="작성자" defaultValue={"익명"} style={{marginBottom: "10px", fontSize: "0.8rem"}} readOnly plaintext />
+														</Col>
+														<Col style={{maxWidth: "230px"}}>
+															<Form.Control name="password" type="password" placeholder="비밀번호" maxLength={20} style={{marginBottom: "10px", fontSize: "0.8rem"}} />
+														</Col>
+													</Row>
+													
+													<Form.Control name="content" as="textarea" rows={3} style={{fontSize: "0.8rem"}} />
+													<Button onClick={() => {createRecursiveReply(replyData.code, currentPage)}} variant="primary" style={{width: "100%", marginTop: "10px", fontSize: "0.8rem"}}>
+														저장
+													</Button>
+												</Form.Group>
+											</div>
+										</Form>
 								</div>
 							);
 						}
@@ -262,7 +272,7 @@ const ContentReply = (props) => {
 									<div style={{width: "100%", display: "flex", flexDirection: "column", marginLeft: "8px", paddingBottom: "5px", marginBottom: "5px"}}>
 										<div style={{display: "flex", justifyContent: "space-between", alignItems: "center"}}>
 											<div>
-												<span style={{fontSize: "0.8rem", color: "black"}}>{replyData.writer === "" ? `익명(${replyData.ip})` : replyData.writer}</span>
+												<span style={{fontSize: "0.8rem", color: "gray"}}>익명 ({replyData.ip})</span>
 												&nbsp;
 												<span style={{fontSize: "0.75rem", color: "lightgray"}}>{new Date(replyData.createdAt).toLocaleString("sv-SE")}</span>
 											</div>
@@ -281,7 +291,7 @@ const ContentReply = (props) => {
 											</div>
 										</div>
 
-										<div style={{fontSize: "0.75rem", marginTop: "5px", whiteSpace: "break-spaces"}}>
+										<div style={{fontSize: "0.75rem", marginTop: "5px", whiteSpace: "break-spaces", overflowWrap: "anywhere", overflow: "auto"}}>
 											{replyData.deletedAt === null ? replyData.content : <span style={{color: "palevioletred"}}>{replyData.content}</span>}
 										</div>
 									</div>
@@ -300,7 +310,7 @@ const ContentReply = (props) => {
 				}
 			}
 		}
-	}, [props.contentCode, props.accountData.nickname])
+	}, [props.contentCode, props.accountData.id, props.boardType])
 
 	/**
 	 * 댓글 작성
@@ -308,33 +318,20 @@ const ContentReply = (props) => {
 	const createReply = useCallback(async () => {
 		const replyDataElement = document.querySelector("#replyData");
 		const replyPasswordElement = document.querySelector("#replyPassword");
-		const isWriteAnonymouslyElement = document.querySelector("#isWriteAnonymously");
 		let writerNickname = "";
 		let replyPassword = "";
 
-		if(props.accountData.nickname === ""){
-			//비로그인
-			if(replyPasswordElement.value === ""){
-				alert("삭제를 위한 비밀번호를 입력해주세요");
-				replyPasswordElement.focus();
-				return;
-			}
+		if(replyPasswordElement.value === ""){
+			alert("삭제를 위한 비밀번호를 입력해주세요");
+			replyPasswordElement.focus();
+			return;
+		}
 
-			replyPassword = replyPasswordElement.value;
-		}
-		else{
-			//로그인
-			if(isWriteAnonymouslyElement.checked === true){
-				replyPassword = replyPasswordElement.value;
-			}
-			else{
-				writerNickname = props.accountData.nickname;
-				replyPassword =  "";
-			}
-		}
+		writerNickname =  "";
+		replyPassword = replyPasswordElement.value;
 
 		if(replyDataElement.value === ""){
-			alert("내용을 입력해주세요");
+			alert("댓글의 내용을 입력해주세요");
 			replyDataElement.focus();
 			return;
 		}
@@ -343,13 +340,15 @@ const ContentReply = (props) => {
 			const sendData = {
 				parentContentCode: props.contentCode,
 				parentReplyCode: 0,
-				content: replyDataElement.value,
-				password: replyPassword,
 				replyOrder: 0,
 				level: 0,
-				writer: writerNickname,
+				writerID: props.accountData.id,
+				writerNickname: writerNickname,
+				password: replyPassword,
+				content: replyDataElement.value,
 			}
-			const createResult = await repliesFetch.createReply("anonymous", sendData);
+
+			const createResult = await repliesFetch.createReply(props.boardType, sendData);
 
 			if(createResult === null){
 				alert("댓글 작성 중 오류가 발생하였습니다(1)");
@@ -362,128 +361,44 @@ const ContentReply = (props) => {
 				// document.querySelector("#replyForm").reset();
 			}
 		}
-	}, [props.contentCode, props.accountData.nickname, getReplies])
-
-	/**
-	 * 대댓글
-	 */
-	const appendReply = async (replyCode) => {
-		const targetForm = document.querySelector(`#replyOfReplyForm_${replyCode}`);
-
-		if(targetForm.style.display === "block"){
-			targetForm.style.display = "none";
-			return;
-		}
-		else{
-			targetForm.style.display = "block";
-		}
-
-		const formArray = document.querySelectorAll(`form[id^=replyOfReplyForm_]`);
-		for (const element of formArray) {
-			if(element.id !== `replyOfReplyForm_${replyCode}`){
-				if(element.style.display === "block"){
-					element.style.display = "none";
-				}
-			}
-		}
-	}
-
-	const clickAnonymously = () => {
-		const isWriteAnonymouslyElement = document.querySelector(`#isWriteAnonymously`);
-		const whenWriteNoticeableElement = document.querySelector(`#whenWriteNoticeable`);
-		const whenWriteAnonymouslyElement = document.querySelector(`#whenWriteAnonymously`);
-
-		if(isWriteAnonymouslyElement.checked === true){
-			whenWriteNoticeableElement.style.display = "none";
-			whenWriteAnonymouslyElement.style.display = "";
-		}
-		else{
-			whenWriteNoticeableElement.style.display = "";
-			whenWriteAnonymouslyElement.style.display = "none";
-		}
-	}
+	}, [props.contentCode, props.accountData.id, props.boardType, getReplies])
 
 	useEffect(() => {
 		getReplies(1);
 	}, [props.contentCode, getReplies])
 
-	if(props.accountData.nickname === ""){
-		return(
-			<Container style={{maxWidth: "1200px"}}>
-				<div>
-					<Form id={"replyForm"}>
-						<Form.Group className="mb-3">
-							<Form.Label>댓글 작성</Form.Label>
-							<Row className="g-2">
-								<Col>
-									<Form.Control id="writer" type="text" placeholder="작성자" defaultValue={"익명"} style={{marginBottom: "10px", fontSize: "0.8rem"}} readOnly />
-								</Col>
-								<Col>
-									<Form.Control id="replyPassword" type="password" placeholder="비밀번호" maxLength={20} style={{marginBottom: "10px", fontSize: "0.8rem"}} />
-								</Col>
-							</Row>
-							<Form.Control id={"replyData"} as="textarea" rows={4} style={{fontSize: "0.8rem"}} />
-						</Form.Group>
-					</Form>
-					<div style={{display: "flex", justifyContent: "flex-end"}}>
-						<Button id={"createReply"} onClick={() => {createReply()}} variant="outline-primary" style={{width: "30%", maxWidth: "200px", padding: "1px"}}>
-							<span style={{fontSize: "0.8rem"}}>등록</span>
-						</Button>
-					</div>
-	
-					<hr/>
-				</div>
-	
-				{renderData}
-			</Container>
-		);
-	}
-	else{
-		return(
-			<Container style={{maxWidth: "1200px"}}>
-				<div>
-					<Form id={"replyForm"}>
-						<Form.Group className="mb-3">
-							<Form.Label>댓글 작성</Form.Label>
-							<Row className="g-2" id="whenWriteNoticeable">
-								<Col>
-									<Form.Control id="writer" type="text" placeholder="작성자" defaultValue={props.accountData.nickname} style={{marginBottom: "10px", fontSize: "0.8rem"}} readOnly plaintext />
-								</Col>
-							</Row>
+	return(
+		<Container style={{maxWidth: "1200px"}}>
+			<div>
+				<Form id="replyForm">
+					<Form.Group className="mb-3">
+						<Form.Label>댓글 작성</Form.Label>
 
-							<Row className="g-2" id="whenWriteAnonymously" style={{display: "none"}}>
-								<Col>
-									<Form.Control id="writer" type="text" placeholder="작성자" defaultValue={"익명"} style={{marginBottom: "10px", fontSize: "0.8rem"}} readOnly />
-								</Col>
-								<Col>
-									<Form.Control id="replyPassword" type="password" placeholder="비밀번호" maxLength={20} style={{marginBottom: "10px", fontSize: "0.8rem"}} />
-								</Col>
-							</Row>
+						<Row className="g-2">
+							<Col style={{maxWidth: "70px"}}>
+								<Form.Control id="writer" type="text" placeholder="작성자" defaultValue={"익명"} style={{marginBottom: "10px", fontSize: "0.8rem"}} readOnly plaintext />
+							</Col>
+							<Col style={{maxWidth: "230px"}}>
+								<Form.Control id="replyPassword" type="password" placeholder="비밀번호" maxLength={20} style={{marginBottom: "10px", fontSize: "0.8rem"}} />
+							</Col>
+						</Row>
 
-							<Row className="g-2">
-								<Col>
-									<Form.Check id="isWriteAnonymously">
-										<Form.Check.Input type="checkbox" onChange={() => {clickAnonymously()}} />
-										<Form.Check.Label style={{marginBottom: "10px", fontSize: "0.9rem", verticalAlign: "middle"}}>익명 작성</Form.Check.Label>
-									</Form.Check>
-								</Col>
-							</Row>
-							<Form.Control id={"replyData"} as="textarea" rows={4} style={{fontSize: "0.8rem"}} />
-						</Form.Group>
-					</Form>
-					<div style={{display: "flex", justifyContent: "flex-end"}}>
-						<Button id={"createReply"} onClick={() => {createReply()}} variant="outline-primary" style={{width: "30%", maxWidth: "200px", padding: "1px"}}>
-							<span style={{fontSize: "0.8rem"}}>등록</span>
-						</Button>
-					</div>
-	
-					<hr/>
+						<Form.Control id="replyData" as="textarea" rows={4} style={{fontSize: "0.8rem"}} />
+					</Form.Group>
+				</Form>
+
+				<div style={{display: "flex", justifyContent: "flex-end"}}>
+					<Button id="createReply" onClick={() => {createReply()}} variant="outline-primary" style={{width: "30%", maxWidth: "200px", padding: "1px"}}>
+						<span style={{fontSize: "0.8rem"}}>등록</span>
+					</Button>
 				</div>
-	
-				{renderData}
-			</Container>
-		);
-	}
+
+				<hr/>
+			</div>
+
+			{renderData}
+		</Container>
+	);
 }
 
-export default ContentReply;
+export default AnonymousReply;

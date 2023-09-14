@@ -115,7 +115,17 @@ export class Replies {
 		length: 50,
 		nullable: false,
 	})
-	writer: string;
+	writerID: string;
+
+	/**
+	 * 작성자 닉네임
+	 */
+	@Column({
+		type: "varchar",
+		length: 60,
+		nullable: false,
+	})
+	writerNickname: string;
 
 	/**
 	 * 작성자 IP

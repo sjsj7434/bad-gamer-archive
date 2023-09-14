@@ -15,13 +15,13 @@ import * as accountsFetch from '../js/accountsFetch.js'
 import LostarkMain from '../../lostark/pages/LostarkMain';
 import ContentBoard from './board/ContentBoard';
 import ContentView from './board/ContentView';
-import ContentWriteAnonymous from './board/ContentWriteAnonymous';
+import ContentWriteAnonymous from './board/anonymous/ContentWriteAnonymous';
 import UsefulSitesLostark from './common/UsefulSitesLostark';
 import PasswordChangeForm from './accounts/PasswordChangeForm';
 import ForgotPasswordForm from './accounts/ForgotPasswordForm';
 import BlockYesSignin from './accounts/BlockYesSignin';
 import ResetPasswordForm from './accounts/ResetPasswordForm';
-import ContentWriteUser from './board/ContentWriteUser';
+import ContentWriteUser from './board/user/ContentWriteUser';
 import SetActiveMenu from './SetActiveMenu';
 // import CharacterInfo from '../../lostark/pages/character/CharacterInfo';
 
@@ -76,14 +76,14 @@ const RoutesWrapper = () => {
 								<Route path=":page" element={
 									<>
 										<SetActiveMenu setCurrentMenu={setCurrentMenu} menuCode={"/lostark/board/anonymous"} />
-										<ContentBoard boardType="anonymous" boardTitle="익명" />
+										<ContentBoard boardType="anonymous" boardTitle="수라도(익명)" />
 									</>
 								} />
 
 								<Route path="view/:contentCode" element={
 									<>
 										<SetActiveMenu setCurrentMenu={setCurrentMenu} menuCode={"/lostark/board/anonymous"} />
-										<ContentView boardType="anonymous" boardTitle="익명" accountData={accountData} />
+										<ContentView boardType="anonymous" boardTitle="수라도(익명)" accountData={accountData} />
 									</>
 								} />
 
@@ -110,14 +110,14 @@ const RoutesWrapper = () => {
 								<Route path=":page" element={
 									<>
 										<SetActiveMenu setCurrentMenu={setCurrentMenu} menuCode={"/lostark/board/user"} />
-										<ContentBoard boardType="user" boardTitle="유저" />
+										<ContentBoard boardType="user" boardTitle="유저 게시판" />
 									</>
 								} />
 
 								<Route path="view/:contentCode" element={
 									<>
 										<SetActiveMenu setCurrentMenu={setCurrentMenu} menuCode={"/lostark/board/user"} />
-										<ContentView boardType="user" boardTitle="유저" accountData={accountData} />
+										<ContentView boardType="user" boardTitle="유저 게시판" accountData={accountData} />
 									</>
 								} />
 

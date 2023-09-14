@@ -254,7 +254,7 @@ export class UserBoardService {
 				content: true,
 				upvote: true,
 				downvote: true,
-				writer: true,
+				writerNickname: true,
 				ip: true,
 				createdAt: true,
 				deletedAt: true
@@ -274,18 +274,19 @@ export class UserBoardService {
 	/**
 	 * 댓글 생성
 	 */
-	async createReply(createRepliesDTO: CreateRepliesDTO): Promise<Replies | null> {
+	async createReply(createRepliesDTO: CreateRepliesDTO) {
 		const contentData = await this.repliesRepository.save(createRepliesDTO);
 
 		if(contentData.level === 0){
+			//댓글
 			contentData.replyOrder = contentData.code;
 		}
 		else{
+			//답글
 			contentData.replyOrder = contentData.parentReplyCode;
 		}
-		await this.repliesRepository.save(contentData);
 
-		return contentData;
+		await this.repliesRepository.save(contentData);
 	}
 
 	/**
@@ -295,19 +296,17 @@ export class UserBoardService {
 		const replyData = await this.repliesRepository.findOne({
 			where: {
 				code: deleteRepliesDTO.code,
-				writer: deleteRepliesDTO.writer,
-				password: deleteRepliesDTO.password,
+				writerID: deleteRepliesDTO.writerID,
 			}
 		});
 
 		if (replyData === null){
 			return false;
 		}
-		else{
+		else {
 			await this.repliesRepository.softDelete({
 				code: deleteRepliesDTO.code,
-				writer: deleteRepliesDTO.writer,
-				password: deleteRepliesDTO.password,
+				writerID: deleteRepliesDTO.writerID,
 			});
 
 			return true;

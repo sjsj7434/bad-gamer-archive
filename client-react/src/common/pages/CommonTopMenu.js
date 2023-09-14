@@ -81,7 +81,7 @@ const CommonTopMenu = (props) => {
 							<Nav variant="underline" className="justify-content-start flex-grow-1 pe-3" style={{overflow: "", width: "fit-content"}}>
 								{/* <div className="vr" style={{color: "white", padding: "1px", marginTop: "7px", marginBottom: "7px"}}></div> */}
 								<Nav.Link active={props.currentMenu === "/lostark/main" ? true : false} onClick={() => menuClick("/lostark/main")}>메인</Nav.Link>
-								<Nav.Link active={props.currentMenu === "/lostark/board/anonymous" ? true : false} onClick={() => menuClick("/lostark/board/anonymous/1")}>익명 게시판</Nav.Link>
+								<Nav.Link active={props.currentMenu === "/lostark/board/anonymous" ? true : false} onClick={() => menuClick("/lostark/board/anonymous/1")}>수라도</Nav.Link>
 								<Nav.Link active={props.currentMenu === "/lostark/board/user" ? true : false} onClick={() => menuClick("/lostark/board/user/1")}>유저 게시판</Nav.Link>
 								<Nav.Link active={props.currentMenu === "/lostark/useful" ? true : false} onClick={() => menuClick("/lostark/useful")}>유용한 사이트</Nav.Link>
 							</Nav>

@@ -3,7 +3,8 @@ import { useNavigate, useParams } from "react-router-dom";
 import Container from 'react-bootstrap/Container';
 import Placeholder from 'react-bootstrap/Placeholder';
 import Button from 'react-bootstrap/Button';
-import ContentReply from './ContentReply';
+import AnonymousReply from './anonymous/AnonymousReply';
+import UserReply from './user/UserReply';
 import LoadingModal from '../common/LoadingModal';
 import * as contentBoardFetch from '../../js/contentBoardFetch';
 import '../../css/View.css';
@@ -250,7 +251,16 @@ const ContentView = (props) => {
 
 						<hr style={{border: "1px solid #5893ff"}} />
 						
-						<ContentReply accountData={props.accountData} contentCode={contentCode} boardType={props.boardType} />
+						{
+							props.boardType === "anonymous" ?
+							<>
+								<AnonymousReply accountData={props.accountData} contentCode={contentCode} boardType={props.boardType} />
+							</>
+							:
+							<>
+								<UserReply accountData={props.accountData} contentCode={contentCode} boardType={props.boardType} />
+							</>
+						}
 					</div>
 				</>
 			);
