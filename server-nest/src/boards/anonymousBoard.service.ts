@@ -276,18 +276,19 @@ export class AnonymousBoardService {
 	/**
 	 * 댓글 생성
 	 */
-	async createReply(createRepliesDTO: CreateRepliesDTO): Promise<Replies | null> {
+	async createReply(createRepliesDTO: CreateRepliesDTO) {
 		const contentData = await this.repliesRepository.save(createRepliesDTO);
 
-		if(contentData.level === 0){
+		if (contentData.level === 0) {
+			//댓글
 			contentData.replyOrder = contentData.code;
 		}
-		else{
+		else {
+			//답글
 			contentData.replyOrder = contentData.parentReplyCode;
 		}
-		await this.repliesRepository.save(contentData);
 
-		return contentData;
+		await this.repliesRepository.save(contentData);
 	}
 
 	/**

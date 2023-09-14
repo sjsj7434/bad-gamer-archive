@@ -7,6 +7,8 @@ import { CreateRepliesDTO, UpdateRepliesDTO, DeleteRepliesDTO } from './replies.
 import { FileInterceptor } from '@nestjs/platform-express';
 import { extname } from 'path';
 
+const REPlY_MAX_LENG = 300; //댓글 글자 수 제한
+
 /**
  * 익명 게시판 컨트롤러
  */
@@ -178,18 +180,32 @@ export class AnonymousBoardController {
 
 	//게시글 댓글 작성
 	@Post("reply")
-	async createReply(@Ip() ipData: string, @Body() createRepliesDTO: CreateRepliesDTO): Promise<Replies | null> {
+	async createReply(@Ip() ipData: string, @Body() createRepliesDTO: CreateRepliesDTO): Promise<Boolean> {
 		console.log("[AnonymousBoardController(Post) - boards/anonymous/reply]");
+
+		if (createRepliesDTO.content.length > REPlY_MAX_LENG) {
+			return false;
+		}
+
+		createRepliesDTO.writerID = "";
+		createRepliesDTO.writerNickname = "";
+		createRepliesDTO.replyOrder = 0;
+
+		if (createRepliesDTO.level === 0) {
+			createRepliesDTO.parentReplyCode = 0;
+		}
+
 		// createRepliesDTO.ip = ipData;
 		createRepliesDTO.ip = Math.random().toString().substring(2, 5) + "." + Math.random().toString().substring(2, 5) + "." + Math.random().toString().substring(2, 5) + "." + Math.random().toString().substring(2, 5);
 
-		const createdReply = await this.anonymousBoardService.createReply(createRepliesDTO);
-		return createdReply;
+		await this.anonymousBoardService.createReply(createRepliesDTO);
+
+		return true;
 	}
 
 	//게시글 댓글 삭제
 	@Delete("reply")
-	async deleteReply(@Body() deleteRepliesDTO: DeleteRepliesDTO): Promise<boolean> {
+	async deleteReply(@Body() deleteRepliesDTO: DeleteRepliesDTO): Promise<Boolean> {
 		console.log("[AnonymousBoardController(Delete) - boards/anonymous/reply]");
 
 		const deleteResult = await this.anonymousBoardService.deleteReply(deleteRepliesDTO);

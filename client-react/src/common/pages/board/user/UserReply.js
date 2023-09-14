@@ -298,8 +298,7 @@ const UserReply = (props) => {
 				}
 			}
 		}
-	}, [props.contentCode, props.accountData.nickname, props.accountData.id, props.boardType])
-
+	}, [props.contentCode, props.accountData.nickname, props.boardType])
 
 	/**
 	 * 댓글 작성할 떄 글자 수 제한 확인

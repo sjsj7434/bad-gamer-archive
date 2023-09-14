@@ -11,6 +11,7 @@ const AnonymousReply = (props) => {
 	// const [upvoteCount, setUpvoteCount] = useState(0);
 	// const [downvoteCount, setDownvoteCount] = useState(0);
 	const [renderData, setRenderData] = useState(<></>);
+	const REPlY_MAX_LENG = 300; //댓글 글자 수 제한
 
 	/**
 	 * 게시글 upvote & downvote
@@ -133,20 +134,19 @@ const AnonymousReply = (props) => {
 		 */
 		const createRecursiveReply = async (replyCode, currentPage) => {
 			const formElement = document.querySelector(`#replyOfReplyForm_${replyCode}`);
-			let writerNickname = "";
-			let replyPassword = "";
 
 			if(formElement.password.value === ""){
 				alert("삭제를 위한 비밀번호를 입력해주세요");
 				formElement.password.focus();
 				return;
 			}
-
-			writerNickname =  "";
-			replyPassword = formElement.password.value;
-
-			if(formElement.content.value === ""){
+			else if(formElement.content.value === ""){
 				alert("답글 내용을 입력해주세요");
+				formElement.content.focus();
+				return;
+			}
+			else if(formElement.content.value.length > REPlY_MAX_LENG){
+				alert("답글이 글자수 제한을 초과하였습니다");
 				formElement.content.focus();
 				return;
 			}
@@ -154,15 +154,12 @@ const AnonymousReply = (props) => {
 			const sendData = {
 				parentContentCode: props.contentCode,
 				parentReplyCode: replyCode,
-				replyOrder: 0,
 				level: 1,
-				writerID: props.accountData.id,
-				writerNickname: writerNickname,
-				password: replyPassword,
+				password: formElement.password.value,
 				content: formElement.content.value,
 			}
 
-			const createResult = await repliesFetch.createReply(sendData);
+			const createResult = await repliesFetch.createReply(props.boardType, sendData);
 
 			if(createResult === null){
 				alert("답글 작성 중 오류가 발생하였습니다(1)");
@@ -310,7 +307,22 @@ const AnonymousReply = (props) => {
 				}
 			}
 		}
-	}, [props.contentCode, props.accountData.id, props.boardType])
+	}, [props.contentCode, props.boardType])
+
+	/**
+	 * 댓글 작성할 떄 글자 수 제한 확인
+	 */
+	const checkReplyLimit = (event) => {
+		const replyData = event.target.value;
+
+		if(replyData.length > REPlY_MAX_LENG){
+			event.target.value = event.target.value.substring(0, REPlY_MAX_LENG);
+			return false;
+		}
+		else{
+			return true;
+		}
+	}
 
 	/**
 	 * 댓글 작성
@@ -318,20 +330,19 @@ const AnonymousReply = (props) => {
 	const createReply = useCallback(async () => {
 		const replyDataElement = document.querySelector("#replyData");
 		const replyPasswordElement = document.querySelector("#replyPassword");
-		let writerNickname = "";
-		let replyPassword = "";
 
 		if(replyPasswordElement.value === ""){
 			alert("삭제를 위한 비밀번호를 입력해주세요");
 			replyPasswordElement.focus();
 			return;
 		}
-
-		writerNickname =  "";
-		replyPassword = replyPasswordElement.value;
-
-		if(replyDataElement.value === ""){
+		else if(replyDataElement.value === ""){
 			alert("댓글의 내용을 입력해주세요");
+			replyDataElement.focus();
+			return;
+		}
+		else if(replyDataElement.value.length > REPlY_MAX_LENG){
+			alert("댓글이 글자수 제한을 초과하였습니다");
 			replyDataElement.focus();
 			return;
 		}
@@ -340,11 +351,8 @@ const AnonymousReply = (props) => {
 			const sendData = {
 				parentContentCode: props.contentCode,
 				parentReplyCode: 0,
-				replyOrder: 0,
 				level: 0,
-				writerID: props.accountData.id,
-				writerNickname: writerNickname,
-				password: replyPassword,
+				password: replyPasswordElement.value,
 				content: replyDataElement.value,
 			}
 
@@ -358,10 +366,10 @@ const AnonymousReply = (props) => {
 			}
 			else{
 				getReplies(1);
-				// document.querySelector("#replyForm").reset();
+				document.querySelector("#replyForm").reset();
 			}
 		}
-	}, [props.contentCode, props.accountData.id, props.boardType, getReplies])
+	}, [props.contentCode, props.boardType, getReplies])
 
 	useEffect(() => {
 		getReplies(1);
@@ -383,7 +391,7 @@ const AnonymousReply = (props) => {
 							</Col>
 						</Row>
 
-						<Form.Control id="replyData" as="textarea" rows={4} style={{fontSize: "0.8rem"}} />
+						<Form.Control id="replyData" as="textarea" rows={4} onChange={(event) => {checkReplyLimit(event)}} style={{fontSize: "0.8rem"}} />
 					</Form.Group>
 				</Form>
 
