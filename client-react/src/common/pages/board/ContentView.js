@@ -14,6 +14,7 @@ const ContentView = (props) => {
 	const [upvoteCount, setUpvoteCount] = useState(0);
 	const [downvoteCount, setDownvoteCount] = useState(0);
 	const [contentJson, setContentJson] = useState(null);
+	const [isContentWriter, setIsContentWriter] = useState(false);
 	const [renderData, setRenderData] = useState(<></>);
 	const [loadingModalShow, setLoadingModalShow] = useState(false);
 	const [loadingModalMessage, setLoadingModalMessage] = useState("");
@@ -29,15 +30,17 @@ const ContentView = (props) => {
 		 * code로 게시글 정보 가져오기
 		 */
 		const readContent = async () => {
-			const contentData = await contentBoardFetch.readContent(props.boardType, contentCode, "view");
+			const readResult = await contentBoardFetch.readContent(props.boardType, contentCode, "view");
+			const contentData = readResult.contentData;
 
 			if(contentData === null){
 				alert("존재하지 않는 게시물입니다");
-				navigate(`/lostark/board/anonymous/1`);
+				navigate(`/lostark/board/${props.boardType}/1`);
 			}
 			else{
 				setUpvoteCount(contentData.upvote);
 				setDownvoteCount(contentData.downvote);
+				setIsContentWriter(readResult.isWriter);
 				setContentJson(contentData);
 			}
 		}
@@ -95,23 +98,33 @@ const ContentView = (props) => {
 			 * code로 게시글 삭제
 			 */
 			const deleteContent = async () => {
-				const password = prompt("삭제하시려면 게시글의 비밀번호를 입력해주세요");
-				if(password === null){
-					return;
+				const sendData = {
+					code: contentCode,
+					password: "",
+				};
+
+				if(props.boardType === "anonymous"){
+					const password = prompt("삭제하시려면 게시글의 비밀번호를 입력해주세요");
+					
+					if(password === null || password === ""){
+						return;
+					}
+
+					sendData.password = password;
+				}
+				else{
+					if(window.confirm("게시글을 삭제하시겠습니까?") === false){
+						return;
+					}
 				}
 
 				setLoadingModalShow(true);
 				setLoadingModalMessage("게시글을 삭제 중입니다...");
 
-				const sendData = {
-					code: contentCode,
-					password: password,
-				};
-
 				const deleteResult = await contentBoardFetch.deleteContent(props.boardType, sendData);
 
 				if(deleteResult === true){
-					navigate(`/lostark/board/anonymous/1`);
+					navigate(`/lostark/board/${props.boardType}/1`);
 				}
 				else{
 					alert("게시글이 삭제되지 않았습니다\n올바른 게시글 비밀번호가 아닙니다");
@@ -126,7 +139,7 @@ const ContentView = (props) => {
 			 * 수정은 비밀번호 입력한 사람만 가능한데, 굳이 DB에서 다시 읽어와야하나?
 			 */
 			const editContent = async () => {
-				navigate(`/lostark/board/anonymous/edit/${contentCode}`);
+				navigate(`/lostark/board/${props.boardType}/edit/${contentCode}`);
 			}
 
 			/**
@@ -233,20 +246,25 @@ const ContentView = (props) => {
 								<span style={{fontSize: "0.85rem"}}>비추천</span>
 							</Button>
 						</div>
-
+						
+						
 						{
-							props.boardType === "anonymous" || props.accountData.id === contentJson.writerID ?
+							isContentWriter === true ?
 							<>
 								<div style={{display: "flex", justifyContent: "flex-end", marginBottom: "15px", marginTop: "30px"}}>
 									<Button onClick={() => {editContent()}} variant="outline-primary" style={{padding: "2px", width: "8%", minWidth: "60px", maxWidth: "100px", fontSize: "0.8rem"}}>수정</Button>
 									&nbsp;
 									<Button onClick={() => {deleteContent()}} variant="outline-danger" style={{padding: "2px", width: "8%", minWidth: "60px", maxWidth: "100px", fontSize: "0.8rem"}}>삭제</Button>
 									&nbsp;
-									<Button onClick={() => {navigate(`/lostark/board/anonymous/1`)}} variant="outline-secondary" style={{padding: "2px", width: "8%", minWidth: "70px", maxWidth: "100px", fontSize: "0.8rem"}}>목록으로</Button>
+									<Button onClick={() => {navigate(`/lostark/board/${props.boardType}/1`)}} variant="outline-secondary" style={{padding: "2px", width: "8%", minWidth: "70px", maxWidth: "100px", fontSize: "0.8rem"}}>목록으로</Button>
 								</div>
 							</>
 							:
-							<></>
+							<>
+								<div style={{display: "flex", justifyContent: "flex-end", marginBottom: "15px", marginTop: "30px"}}>
+									<Button onClick={() => {navigate(`/lostark/board/${props.boardType}/1`)}} variant="outline-secondary" style={{padding: "2px", width: "8%", minWidth: "70px", maxWidth: "100px", fontSize: "0.8rem"}}>목록으로</Button>
+								</div>
+							</>
 						}
 
 						<hr style={{border: "1px solid #5893ff"}} />
@@ -265,7 +283,7 @@ const ContentView = (props) => {
 				</>
 			);
 		}
-	}, [contentCode, contentJson, upvoteCount, downvoteCount, navigate, props.boardType, props.boardTitle, props.accountData]);
+	}, [contentCode, contentJson, upvoteCount, downvoteCount, isContentWriter, navigate, props.boardType, props.boardTitle, props.accountData]);
 	
 	return(
 		<Container style={{maxWidth: "1200px"}}>

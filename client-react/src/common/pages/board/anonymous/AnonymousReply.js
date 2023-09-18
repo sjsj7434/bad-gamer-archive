@@ -84,10 +84,9 @@ const AnonymousReply = (props) => {
 					const sendData = {
 						code: replyCode,
 						password: deletePassword,
-						writer: "",
 					}
 
-					const deleteResult = await repliesFetch.deleteReply(sendData);
+					const deleteResult = await repliesFetch.deleteReply(props.boardType, sendData);
 
 					if(deleteResult === null){
 						alert("댓글 삭제 중 오류가 발생하였습니다(1)");

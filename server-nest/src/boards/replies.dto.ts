@@ -1,5 +1,5 @@
 import { PartialType, PickType } from "@nestjs/mapped-types";
-import { IsNumber, IsString, IsDate, IsEmpty } from 'class-validator';
+import { IsNumber, IsString, IsDate, IsOptional } from 'class-validator';
 import { Replies } from "./replies.entity";
 
 //Entity 클래스는 실제 테이블과 매핑되어 만일 변경되게 되면 여러 다른 클래스에 영향을 끼치고, DTO 클래스는 View와 통신하며 자주 변경되므로 분리
@@ -38,9 +38,12 @@ export class BasicRepliesDTO extends Replies {
 
 export class CreateRepliesDTO extends PartialType(BasicRepliesDTO) { }
 
-export class DeleteRepliesDTO extends PickType(BasicRepliesDTO, ["code", "writerID"] as const) {
-	@IsEmpty()
-	writerID: string;
+export class DeleteRepliesDTO extends PickType(BasicRepliesDTO, ["code", "password"] as const) {
+	@IsNumber()
+	code: number;
+	@IsOptional()
+	@IsString()
+	password: string;
 }
 
 export class UpdateRepliesDTO extends PartialType(BasicRepliesDTO) { }

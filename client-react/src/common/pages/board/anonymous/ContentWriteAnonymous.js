@@ -120,7 +120,7 @@ const ContentWriteAnonymous = (props) => {
 			title: titleElement.value,
 			content: editorContet,
 			hasImage: editorContet.indexOf("<img") > -1 ? true : false,
-			writer: "",
+			writerID: "",
 		};
 
 		let result = await contentBoardFetch.updateContent(props.boardType, sendData);
@@ -158,9 +158,10 @@ const ContentWriteAnonymous = (props) => {
 		 */
 		const readContent = async () => {
 			const readResult = await contentBoardFetch.readContent(props.boardType, contentCode, "edit");
+			const contentData = readResult.contentData;
 	
-			setContentTitle(readResult.title);
-			setContentData(readResult.content);
+			setContentTitle(contentData.title);
+			setContentData(contentData.content);
 		}
 
 		if(contentCode !== null && identity === true){

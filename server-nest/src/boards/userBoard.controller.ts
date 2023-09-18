@@ -40,28 +40,28 @@ export class UserBoardController {
 	async createContentUser(@Req() request: Request, @Res({ passthrough: true }) response: Response, @Ip() ipData: string, @Body() boardData: CreateBoardsDTO): Promise<Boolean> {
 		//set cookies/headers 정도만 사용하고, 나머지는 프레임워크에 떠넘기는 식으로 @Res()를 사용하는 거라면 passthrough: true 옵션은 필수! 그렇지 않으면 fetch 요청이 마무리가 안됨
 		console.log("[UserBoardController(Post) - boards/user/content]");
-		const cookieCheck = await this.accountsService.checkSignInStatus(request, response);
+		const signInCookie = await this.accountsService.checkSignInStatus(request, response);
 
-		if (cookieCheck.id !== boardData.writerID || cookieCheck.nickname !== boardData.writerNickname) {
-			//위의 값이 아니면 누군가 값을 조작하여 전송했을 가능성이 있으므로 게시글 저장 차단
+		if (signInCookie.status === "signin") {
+			boardData.category = "user";
+			boardData.writerID = signInCookie.id;
+			boardData.writerNickname = signInCookie.nickname;
+			// boardData.ip = ipData;
+			boardData.ip = Math.random().toString().substring(2, 5) + "." + Math.random().toString().substring(2, 5) + "." + Math.random().toString().substring(2, 5) + "." + Math.random().toString().substring(2, 5);
+
+			await this.userBoardService.createContent(boardData);
+
+			return true;
+		}
+		else {
 			return false;
 		}
-
-		boardData.category = "user";
-		boardData.writerID = cookieCheck.id;
-		boardData.writerNickname = cookieCheck.nickname;
-		// boardData.ip = ipData;
-		boardData.ip = Math.random().toString().substring(2, 5) + "." + Math.random().toString().substring(2, 5) + "." + Math.random().toString().substring(2, 5) + "." + Math.random().toString().substring(2, 5);
-		
-		await this.userBoardService.createContent(boardData);
-
-		return true;
 	}
 
 	//게시글 조회, contentCode 값이 number가 아니면 호출되지 않음
 	@Get("view/:contentCode")
-	async getContent(@Param("contentCode") contentCode: number, @Query("type") type: string): Promise<Boards | null> {
-		console.log("[UserBoardController(Get) - boards/user/view/:contentCode]" + type);
+	async getContent(@Req() request: Request, @Res({ passthrough: true }) response: Response, @Param("contentCode") contentCode: number, @Query("type") type: string): Promise<{ "contentData": Boards, "isWriter": Boolean }> {
+		console.log("[UserBoardController(Get) - boards/user/view/:contentCode]");
 
 		if (isNaN(contentCode) === true){
 			return null;
@@ -69,25 +69,50 @@ export class UserBoardController {
 
 		const result = await this.userBoardService.getContent(contentCode, type);
 
-		return result;
+		const signInCookie = await this.accountsService.checkSignInStatus(request, response);
+		const isWriter: Boolean = result.writerID === signInCookie.id
+		result.writerID = null;
+
+		return { "contentData": result, "isWriter": isWriter };
 	}
 
 	//게시글 수정
 	@Patch("content")
-	async updateContentUser(@Body() updateBoardsDTO: UpdateBoardsDTO): Promise<Boards | null> {
+	async updateContentUser(@Req() request: Request, @Res({ passthrough: true }) response: Response, @Body() updateBoardsDTO: UpdateBoardsDTO): Promise<Boolean> {
 		console.log("[UserBoardController(Patch) - boards/user/content]");
 
-		const updatedContent = await this.userBoardService.updateContent(updateBoardsDTO);
+		const signInCookie = await this.accountsService.checkSignInStatus(request, response);
 
-		return updatedContent;
+		if (signInCookie.status === "signin") {
+			if (signInCookie.id !== updateBoardsDTO.writerID) {
+				//위의 값이 아니면 누군가 값을 조작하여 전송했을 가능성이 있으므로 게시글 저장 차단
+				return false;
+			}
+
+			updateBoardsDTO.writerID = signInCookie.id;
+
+			const updatedContent = await this.userBoardService.updateContent(updateBoardsDTO);
+			return updatedContent;
+		}
+		else {
+			return false;
+		}
 	}
 
 	//게시글 삭제
 	@Delete("content")
-	async deleteContent(@Body() deleteBoardsDTO: DeleteBoardsDTO): Promise<boolean> {
+	async deleteContent(@Req() request: Request, @Res({ passthrough: true }) response: Response, @Body() deleteBoardsDTO: DeleteBoardsDTO): Promise<Boolean> {
 		console.log("[UserBoardController(Delete) - boards/user/content]");
-		const isDeleted = await this.userBoardService.softDeleteContent(deleteBoardsDTO);
-		return isDeleted;
+
+		const signInCookie = await this.accountsService.checkSignInStatus(request, response);
+
+		if (signInCookie.status === "signin") {
+			const isDeleted = await this.userBoardService.softDeleteContent(deleteBoardsDTO, signInCookie.id);
+			return isDeleted;
+		}
+		else {
+			return false;
+		}
 	}
 
 	//게시글 이미지 삽입
@@ -110,14 +135,25 @@ export class UserBoardController {
 
 	//게시글 수정 진입 시 작성자 확인
 	@Post("content/check/author")
-	async isAnonymousAuthorMatch(@Body() sendData: { code: number, id: string }): Promise<boolean> {
+	async isAnonymousAuthorMatch(@Req() request: Request, @Res({ passthrough: true }) response: Response, @Body() sendData: { code: number }): Promise<Boolean> {
 		console.log("[UserBoardController(Post) - boards/user/content/check/author]");
 
-		const findContent = await this.userBoardService.getContent(sendData.code, "id");
+		const signInCookie = await this.accountsService.checkSignInStatus(request, response);
 
-		console.log(findContent.writerID, sendData.id, findContent.writerID === sendData.id)
+		if (signInCookie.status === "signin") {
+			//위의 값이 아니면 누군가 값을 조작하여 전송했을 가능성이 있으므로 게시글 저장 차단
 
-		return findContent.writerID === sendData.id;
+			const findContent = await this.userBoardService.getContent(sendData.code, "author");
+
+			if (findContent === null){
+				return false;
+			}
+
+			return findContent.writerID === signInCookie.id;
+		}
+		else {
+			return false;
+		}
 	}
 
 	//게시글 추천
@@ -226,9 +262,7 @@ export class UserBoardController {
 			return false;
 		}
 
-		deleteRepliesDTO.writerID = signInCookie.id;
-
-		const deleteResult = await this.userBoardService.deleteReply(deleteRepliesDTO);
+		const deleteResult = await this.userBoardService.deleteReply(deleteRepliesDTO, signInCookie.id);
 
 		return deleteResult;
 	}

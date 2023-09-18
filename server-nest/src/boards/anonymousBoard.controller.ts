@@ -38,10 +38,6 @@ export class AnonymousBoardController {
 	async createContentAnonymous(@Ip() ipData: string, @Body() boardData: CreateBoardsDTO): Promise<Boolean> {
 		//set cookies/headers 정도만 사용하고, 나머지는 프레임워크에 떠넘기는 식으로 @Res()를 사용하는 거라면 passthrough: true 옵션은 필수! 그렇지 않으면 fetch 요청이 마무리가 안됨
 		console.log("[AnonymousBoardController(Post) - boards/anonymous/content]");
-		if (boardData.writerID !== "" || boardData.writerNickname !== ""){
-			//위의 값이 아니면 누군가 값을 조작하여 전송했을 가능성이 있으므로 게시글 저장 차단
-			return false;
-		}
 
 		boardData.category = "anonymous";
 		boardData.writerID = "";
@@ -56,8 +52,8 @@ export class AnonymousBoardController {
 
 	//게시글 조회, contentCode 값이 number가 아니면 호출되지 않음
 	@Get("view/:contentCode")
-	async getContent(@Param("contentCode") contentCode: number, @Query("type") type: string): Promise<Boards | null> {
-		console.log("[AnonymousBoardController(Get) - boards/anonymous/view/:contentCode]" + type);
+	async getContent(@Param("contentCode") contentCode: number, @Query("type") type: string): Promise<{ "contentData": Boards, "isWriter": Boolean }> {
+		console.log("[AnonymousBoardController(Get) - boards/anonymous/view/:contentCode]");
 
 		if (isNaN(contentCode) === true){
 			return null;
@@ -69,7 +65,9 @@ export class AnonymousBoardController {
 			result.ip = result.ip.split(".")[0] + (result.ip.split(".")[1] !== undefined ? "." + result.ip.split(".")[1] : "");
 		}
 
-		return result;
+		result.writerID = null;
+
+		return { "contentData": result, "isWriter": true };
 	}
 
 	//게시글 수정
@@ -110,10 +108,14 @@ export class AnonymousBoardController {
 
 	//게시글 수정 진입 시 작성자 확인
 	@Post("content/check/author")
-	async isAnonymousAuthorMatch(@Body() sendData: { code: number, password: string }): Promise<boolean> {
+	async isAnonymousAuthorMatch(@Body() sendData: { code: number, password: string }): Promise<Boolean> {
 		console.log("[AnonymousBoardController(Post) - boards/anonymous/content/check/author]");
 
-		const findContent = await this.anonymousBoardService.getContent(sendData.code, "password");
+		const findContent = await this.anonymousBoardService.getContent(sendData.code, "author");
+
+		if (findContent === null){
+			return false;
+		}
 
 		return findContent.password === sendData.password;
 	}

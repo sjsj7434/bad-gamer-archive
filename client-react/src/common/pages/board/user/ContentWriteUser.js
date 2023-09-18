@@ -146,9 +146,10 @@ const ContentWriteUser = (props) => {
 		 */
 		const readContent = async () => {
 			const readResult = await contentBoardFetch.readContent(props.boardType, contentCode, "edit");
+			const contentData = readResult.contentData;
 	
-			setContentTitle(readResult.title);
-			setContentData(readResult.content);
+			setContentTitle(contentData.title);
+			setContentData(contentData.content);
 		}
 
 		if(contentCode !== null && identity === true){
@@ -166,10 +167,9 @@ const ContentWriteUser = (props) => {
 
 			const sendData = {
 				code: contentCode,
-				id: props.accountData.id,
 			};
 			
-			const checkResult = await contentBoardFetch.checkBeforeEdit(props.boardType, sendData)
+			const checkResult = await contentBoardFetch.checkBeforeEdit(props.boardType, sendData);
 
 			if(checkResult === true){
 				setIdentity(true);
@@ -216,7 +216,6 @@ const ContentWriteUser = (props) => {
 		}
 		else if(writeMode === "edit"){
 			if(identity !== true){
-				console.log('checkBeforeEdit!!')
 				checkBeforeEdit()
 			}
 			else{

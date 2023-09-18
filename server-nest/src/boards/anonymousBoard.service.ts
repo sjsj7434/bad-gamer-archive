@@ -102,35 +102,28 @@ export class AnonymousBoardService {
 	/**
 	 * code로 1개의 게시글을 찾는다
 	 */
-	async getContent(contentCode: number, type: string): Promise<Boards | null> {
-		if (type === "view"){
-			await this.boardsRepository.increment({code: contentCode}, "view", 1);
-		}
-
-		if (type === "password") {
+	async getContent(contentCode: number, type: string): Promise<Boards> {
+		if (type === "author") {
 			const contentData = await this.boardsRepository.findOne({
 				select: {
 					code: true,
-					category: true,
-					title: true,
-					content: true,
 					password: true,
-					view: true,
-					upvote: true,
-					downvote: true,
+					writerID: true,
 					writerNickname: true,
-					ip: true,
-					createdAt: true,
-					updatedAt: true
 				},
 				where: {
 					code: contentCode,
+					category: "anonymous",
 				},
 			});
 
 			return contentData;
 		}
-		else{
+		else if (type === "view" || type === "edit") {
+			if (type === "view"){
+				await this.boardsRepository.increment({ code: contentCode }, "view", 1);
+			}
+
 			const contentData = await this.boardsRepository.findOne({
 				select: {
 					code: true,
@@ -140,13 +133,15 @@ export class AnonymousBoardService {
 					view: true,
 					upvote: true,
 					downvote: true,
+					writerID: true,
 					writerNickname: true,
 					ip: true,
 					createdAt: true,
-					updatedAt: true
+					updatedAt: true,
 				},
 				where: {
 					code: contentCode,
+					category: "anonymous",
 				},
 			});
 
@@ -168,6 +163,7 @@ export class AnonymousBoardService {
 		const contentData = await this.boardsRepository.findOne({
 			where: {
 				code: boardData.code,
+				category: "anonymous",
 				password: boardData.password,
 			}
 		});
@@ -186,7 +182,13 @@ export class AnonymousBoardService {
 	 */
 	async softDeleteContent(deleteBoardsDTO: DeleteBoardsDTO): Promise<boolean>{
 		try {
-			const result = await this.boardsRepository.findOneBy({ code: deleteBoardsDTO.code, password: deleteBoardsDTO.password });
+			const result = await this.boardsRepository.findOneBy(
+				{
+					code: deleteBoardsDTO.code,
+					category: "anonymous",
+					password: deleteBoardsDTO.password,
+				}
+			);
 
 			if (result !== null){
 				this.boardsRepository.softDelete({
@@ -317,7 +319,7 @@ export class AnonymousBoardService {
 		const replyData = await this.repliesRepository.findOne({
 			where: {
 				code: deleteRepliesDTO.code,
-				writerID: deleteRepliesDTO.writerID,
+				password: deleteRepliesDTO.password,
 			}
 		});
 
@@ -327,7 +329,7 @@ export class AnonymousBoardService {
 		else{
 			await this.repliesRepository.softDelete({
 				code: deleteRepliesDTO.code,
-				writerID: deleteRepliesDTO.writerID,
+				password: deleteRepliesDTO.password,
 			});
 
 			return true;

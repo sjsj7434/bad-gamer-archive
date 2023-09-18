@@ -5,7 +5,7 @@ import { Boards } from './boards.entity';
 import { CreateBoardsDTO, UpdateBoardsDTO, DeleteBoardsDTO } from './boards.dto';
 import { Replies } from './replies.entity';
 import { Cron } from '@nestjs/schedule';
-import { CreateRepliesDTO, UpdateRepliesDTO, DeleteRepliesDTO } from './replies.dto';
+import { CreateRepliesDTO, DeleteRepliesDTO } from './replies.dto';
 
 @Injectable()
 export class UserBoardService {
@@ -102,34 +102,28 @@ export class UserBoardService {
 	/**
 	 * code로 1개의 게시글을 찾는다
 	 */
-	async getContent(contentCode: number, type: string): Promise<Boards | null> {
-		if (type === "view"){
-			await this.boardsRepository.increment({code: contentCode}, "view", 1);
-		}
-
-		if (type === "id") {
+	async getContent(contentCode: number, type: string): Promise<Boards> {
+		if (type === "author") {
 			const contentData = await this.boardsRepository.findOne({
 				select: {
 					code: true,
-					category: true,
-					title: true,
-					content: true,
 					password: true,
-					view: true,
-					upvote: true,
-					downvote: true,
+					writerID: true,
 					writerNickname: true,
-					createdAt: true,
-					updatedAt: true
 				},
 				where: {
 					code: contentCode,
+					category: "user",
 				},
 			});
 
 			return contentData;
 		}
-		else{
+		else if (type === "view" || type === "edit") {
+			if (type === "view") {
+				await this.boardsRepository.increment({ code: contentCode }, "view", 1);
+			}
+
 			const contentData = await this.boardsRepository.findOne({
 				select: {
 					code: true,
@@ -139,12 +133,14 @@ export class UserBoardService {
 					view: true,
 					upvote: true,
 					downvote: true,
+					writerID: true,
 					writerNickname: true,
 					createdAt: true,
-					updatedAt: true
+					updatedAt: true,
 				},
 				where: {
 					code: contentCode,
+					category: "user",
 				},
 			});
 
@@ -162,10 +158,11 @@ export class UserBoardService {
 	/**
 	 * 게시판에 게시글을 수정한다
 	 */
-	async updateContent(boardData: UpdateBoardsDTO) {
+	async updateContent(boardData: UpdateBoardsDTO): Promise<Boolean> {
 		const contentData = await this.boardsRepository.findOne({
 			where: {
 				code: boardData.code,
+				category: "user",
 				writerID: boardData.writerID,
 			}
 		});
@@ -174,24 +171,37 @@ export class UserBoardService {
 			boardData.updatedAt = new Date();
 	
 			await this.boardsRepository.save(boardData);
-		}
 
-		return contentData;
+			return true;
+		}
+		else{
+			return false;
+		}
 	}
 
 	/**
 	 * 게시글을 softDelete한다
 	 */
-	async softDeleteContent(deleteBoardsDTO: DeleteBoardsDTO): Promise<boolean>{
+	async softDeleteContent(deleteBoardsDTO: DeleteBoardsDTO, writerID: string): Promise<Boolean>{
 		try {
-			const result = await this.boardsRepository.findOneBy({ code: deleteBoardsDTO.code, password: deleteBoardsDTO.password });
+			const result = await this.boardsRepository.findOneBy(
+				{
+					code: deleteBoardsDTO.code,
+					category: "user",
+				}
+			);
 
 			if (result !== null){
-				this.boardsRepository.softDelete({
-					code: deleteBoardsDTO.code
-				});
+				if (result.writerID === writerID){
+					this.boardsRepository.softDelete({
+						code: deleteBoardsDTO.code
+					});
 
-				return true;
+					return true;
+				}
+				else {
+					return false;
+				}
 			}
 			else{
 				return false;
@@ -292,11 +302,11 @@ export class UserBoardService {
 	/**
 	 * 댓글 삭제
 	 */
-	async deleteReply(deleteRepliesDTO: DeleteRepliesDTO): Promise<boolean> {
+	async deleteReply(deleteRepliesDTO: DeleteRepliesDTO, writerID: string): Promise<boolean> {
 		const replyData = await this.repliesRepository.findOne({
 			where: {
 				code: deleteRepliesDTO.code,
-				writerID: deleteRepliesDTO.writerID,
+				writerID: writerID,
 			}
 		});
 
@@ -306,7 +316,7 @@ export class UserBoardService {
 		else {
 			await this.repliesRepository.softDelete({
 				code: deleteRepliesDTO.code,
-				writerID: deleteRepliesDTO.writerID,
+				writerID: writerID,
 			});
 
 			return true;
