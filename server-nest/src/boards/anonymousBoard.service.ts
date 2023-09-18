@@ -276,19 +276,38 @@ export class AnonymousBoardService {
 	/**
 	 * 댓글 생성
 	 */
-	async createReply(createRepliesDTO: CreateRepliesDTO) {
-		const contentData = await this.repliesRepository.save(createRepliesDTO);
+	async createReply(createRepliesDTO: CreateRepliesDTO): Promise<Boolean> {
+		//부모 게시글의 코드만 바꿔서 요청이 들어오면 비로그인 유저가 로그인 전용 게시글에 댓글을 익명으로 남길 수 있게됨
+		//댓글 저장 전에 부모 게시글의 정보 확인
+		const contentData = await this.boardsRepository.findOne({
+			select: {
+				category: true,
+			},
+			where: {
+				code: createRepliesDTO.parentContentCode,
+				category: "anonymous",
+			},
+		});
+		
+		if (contentData !== null){
+			const replyData = await this.repliesRepository.save(createRepliesDTO);
 
-		if (contentData.level === 0) {
-			//댓글
-			contentData.replyOrder = contentData.code;
-		}
-		else {
-			//답글
-			contentData.replyOrder = contentData.parentReplyCode;
-		}
+			if (replyData.level === 0) {
+				//댓글
+				replyData.replyOrder = replyData.code;
+			}
+			else {
+				//답글
+				replyData.replyOrder = replyData.parentReplyCode;
+			}
 
-		await this.repliesRepository.save(contentData);
+			await this.repliesRepository.save(replyData);
+
+			return true;
+		}
+		else{
+			return false;
+		}
 	}
 
 	/**

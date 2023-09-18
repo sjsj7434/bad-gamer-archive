@@ -183,10 +183,6 @@ export class AnonymousBoardController {
 	async createReply(@Ip() ipData: string, @Body() createRepliesDTO: CreateRepliesDTO): Promise<Boolean> {
 		console.log("[AnonymousBoardController(Post) - boards/anonymous/reply]");
 
-		//이 곳으로 게시글의 코드만 바꿔서 요청이 들어오면 비로그인 유저가 로그인 전용 게시글에 댓글을 익명으로 남길 수 있게됨
-		//fetch(...).then(r=>r.json()).then(r=>console.log(r));
-		//게시글 코드 DB 확인해서 비로그인이면 남기지 못하도록 조치 필요
-
 		if (createRepliesDTO.content.length > REPlY_MAX_LENG) {
 			return false;
 		}
@@ -202,9 +198,9 @@ export class AnonymousBoardController {
 		// createRepliesDTO.ip = ipData;
 		createRepliesDTO.ip = Math.random().toString().substring(2, 5) + "." + Math.random().toString().substring(2, 5) + "." + Math.random().toString().substring(2, 5) + "." + Math.random().toString().substring(2, 5);
 
-		await this.anonymousBoardService.createReply(createRepliesDTO);
+		const createResult: Boolean = await this.anonymousBoardService.createReply(createRepliesDTO);
 
-		return true;
+		return createResult;
 	}
 
 	//게시글 댓글 삭제
