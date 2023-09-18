@@ -7,6 +7,8 @@ import { Replies } from './replies.entity';
 import { UserBoardController } from './userBoard.controller';
 import { UserBoardService } from './userBoard.service';
 import { AccountsModule } from 'src/accounts/accounts.module';
+import { AllBoardController } from './allBoard.controller';
+import { AllBoardService } from './allBoard.service';
 
 @Module({
 	imports: [
@@ -16,7 +18,7 @@ import { AccountsModule } from 'src/accounts/accounts.module';
 			Boards, Replies
 		]),
 	],
-	controllers: [AnonymousBoardController, UserBoardController,],
-	providers: [AnonymousBoardService, UserBoardService,],
+	controllers: [AnonymousBoardController, UserBoardController, AllBoardController,],
+	providers: [AnonymousBoardService, UserBoardService, AllBoardService,],
 })
 export class BoardsModule {}

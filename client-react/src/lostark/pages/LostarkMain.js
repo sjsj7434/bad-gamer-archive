@@ -2,7 +2,9 @@ import Container from 'react-bootstrap/Container';
 import Tab from 'react-bootstrap/Tab';
 import Tabs from 'react-bootstrap/Tabs';
 import { Routes, Route } from "react-router-dom";
-import HotContent from './HotContent';
+import UpvoteTrend from './UpvoteTrend';
+import DownvoteTrend from './DownvoteTrend';
+import ViewTrend from './ViewTrend';
 
 const LostarkMain = () => {
 	const tabOnSelect = (tabKey) => {
@@ -19,14 +21,14 @@ const LostarkMain = () => {
 						id="uncontrolled-tab-example"
 						className="mb-2"
 					>
-						<Tab eventKey="hot" title="Hot" mountOnEnter={true} unmountOnExit={false}>
-							<HotContent category={"hot"}></HotContent>
+						<Tab eventKey="hot" title="뜨는 It" mountOnEnter={true} unmountOnExit={false}>
+							<UpvoteTrend category={"over 10 upvote"}></UpvoteTrend>
 						</Tab>
-						<Tab eventKey="class" title="Class" mountOnEnter={true} unmountOnExit={false}>
-							<HotContent category={"cool"}></HotContent>
+						<Tab eventKey="none" title="지는 It" mountOnEnter={true} unmountOnExit={false}>
+							<DownvoteTrend category={"over 10 downvote"}></DownvoteTrend>
 						</Tab>
-						<Tab eventKey="none" title="not_verified" mountOnEnter={true} unmountOnExit={false}>
-							<HotContent category={"warm"}></HotContent>
+						<Tab eventKey="class" title="시선집중" mountOnEnter={true} unmountOnExit={false}>
+							<ViewTrend category={"over 100 views"}></ViewTrend>
 						</Tab>
 					</Tabs>
 				</>}></Route>
