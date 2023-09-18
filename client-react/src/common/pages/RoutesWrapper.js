@@ -17,12 +17,13 @@ import ContentBoard from './board/ContentBoard';
 import ContentView from './board/ContentView';
 import ContentWriteAnonymous from './board/anonymous/ContentWriteAnonymous';
 import UsefulSitesLostark from './common/UsefulSitesLostark';
-import PasswordChangeForm from './accounts/PasswordChangeForm';
+import PasswordRenewForm from './accounts/PasswordRenewForm';
 import ForgotPasswordForm from './accounts/ForgotPasswordForm';
 import BlockYesSignin from './accounts/BlockYesSignin';
 import ResetPasswordForm from './accounts/ResetPasswordForm';
 import ContentWriteUser from './board/user/ContentWriteUser';
 import SetActiveMenu from './SetActiveMenu';
+import NicknameRenewForm from './accounts/NicknameRenewForm';
 // import CharacterInfo from '../../lostark/pages/character/CharacterInfo';
 
 // index.js에서 StrictMode 존재하면 두번 랜더링, 개발 모드에서만 적용됩니다. 생명주기 메서드들은 프로덕션 모드에서 이중으로 호출되지 않습니다.
@@ -221,13 +222,25 @@ const RoutesWrapper = () => {
 								/>
 							} />
 							
-							<Route path="change/password" element={
+							<Route path="renew/password" element={
 								<BlockNoSignin
 									accountData={accountData}
 									ifAllow={
 										<>
 											<SetActiveMenu setCurrentMenu={setCurrentMenu} menuCode={""} />
-											<PasswordChangeForm />
+											<PasswordRenewForm checkSignInStatus={checkSignInStatus} />
+										</>
+									}
+								/>
+							} />
+							
+							<Route path="renew/nickname" element={
+								<BlockNoSignin
+									accountData={accountData}
+									ifAllow={
+										<>
+											<SetActiveMenu setCurrentMenu={setCurrentMenu} menuCode={""} />
+											<NicknameRenewForm />
 										</>
 									}
 								/>

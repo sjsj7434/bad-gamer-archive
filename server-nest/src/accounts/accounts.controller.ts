@@ -94,7 +94,7 @@ export class  AccountsController {
 
 	@Post("signin")
 	async signInAccount(@Body() body: { id: string, password: string }, @Req() request: Request, @Res({ passthrough: true }) response: Response): Promise<string> {
-		console.log("[AccountsController(Post) - accounts/signin] => ", body);
+		console.log("[AccountsController(Post) - accounts/signin]");
 
 		const cookieCheck = await this.accountsService.checkSignInStatus(request, response);
 
@@ -146,7 +146,7 @@ export class  AccountsController {
 
 	@Patch("password")
 	async updatePassword(@Req() request: Request, @Res({ passthrough: true }) response: Response, @Body() body: { oldPassword: string, newPassword: string }): Promise<number> {
-		console.log("[AccountsController(Patch) - accounts/password]", body);
+		console.log("[AccountsController(Patch) - accounts/password]");
 
 		const updateResult = await this.accountsService.updatePassword(request, response, body);
 
@@ -198,5 +198,14 @@ export class  AccountsController {
 		const verifyResult = await this.accountsService.resetPassword(body);
 
 		return verifyResult;
+	}
+
+	@Patch("nickname")
+	async updateNickname(@Req() request: Request, @Res({ passthrough: true }) response: Response, @Body() body: { nickname: string, password: string }): Promise<Boolean> {
+		console.log("[AccountsController(Patch) - accounts/nickname]");
+
+		const updateResult = await this.accountsService.updateNickname(request, response, body);
+
+		return updateResult;
 	}
 }

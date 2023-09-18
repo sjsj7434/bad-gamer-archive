@@ -132,7 +132,7 @@ const SignUpForm = () => {
 
 	const isValidPassword = () => {
 		const passwordInput = document.querySelector("#passwordInput");
-		const passwordRegExp = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,20}$/;
+		const passwordRegExp = /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[!@#$%^&*(),.<>`~/?;:'"]).{8,20}$/;
 
 		if(passwordRegExp.test(passwordInput.value) === true){
 			setPasswordValid(2);

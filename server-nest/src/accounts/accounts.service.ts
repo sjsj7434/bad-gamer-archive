@@ -601,6 +601,44 @@ export class AccountsService {
 	}
 
 	/**
+	 * 닉네임 변경
+	 */
+	async updateNickname(request: Request, response: Response, body: { nickname: string, password: string }): Promise<Boolean> {
+		const acctountData = await this.accountsRepository.findOne({
+			select: {
+				id: true,
+				password: true,
+			},
+			where: {
+				uuid: SIGN_IN_SESSION.get(request.cookies["sessionCode"]),
+			}
+		});
+
+		if (acctountData !== null) {
+			const isMatch: boolean = await bcrypt.compare(body.password, acctountData.password);
+
+			if (isMatch === true) {
+				await this.accountsRepository.update(
+					{ //조건
+						id: acctountData.id
+					},
+					{ //변경 값
+						nickname: body.nickname,
+					}
+				)
+
+				return true;
+			}
+			else {
+				return false;
+			}
+		}
+		else {
+			return false;
+		}
+	}
+
+	/**
 	 * ID에 맞는 계정을 수정한다
 	 * find > 정보 수정 > save 처리
 	 */

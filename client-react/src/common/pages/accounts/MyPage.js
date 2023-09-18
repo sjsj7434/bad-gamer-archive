@@ -20,9 +20,9 @@ const MyPage = () => {
 		callMyInfo();
 	}, [])
 
-	const clickREQ = async () => {
-		await accountsFetch.requestVerifyEmail();
-	}
+	// const clickREQ = async () => {
+	// 	await accountsFetch.requestVerifyEmail();
+	// }
 
 	useEffect(() => {
 		if(accountData !== null){
@@ -36,6 +36,7 @@ const MyPage = () => {
 								<col width="*" />
 							</colgroup>
 							<tbody>
+								{/*
 								<tr>
 									<th>이메일</th>
 									<td><div className="vr"></div></td>
@@ -47,10 +48,13 @@ const MyPage = () => {
 										</div>
 									</td>
 								</tr>
+								*/}
 								<tr>
 									<th>닉네임</th>
 									<td><div className="vr"></div></td>
-									<td>{accountData.nickname}</td>
+									<td>
+										{accountData.nickname}
+									</td>
 								</tr>
 								<tr>
 									<th>LA</th>
@@ -74,9 +78,9 @@ const MyPage = () => {
 						</Table>
 
 						<Stack direction="horizontal" gap={3}>
-							<Button variant={"outline-primary"} onClick={() => {navigate("change/password")}} style={{width: "30%", maxWidth: "130px", padding: "2px", fontSize: "0.8rem"}}>비밀번호 변경</Button>
-							<Button variant={"outline-primary"} onClick={() => {navigate("lostark")}} style={{width: "30%", maxWidth: "130px", padding: "2px", fontSize: "0.8rem"}}>닉네임 변경</Button>
-							<Button variant={"outline-warning"} onClick={() => {navigate("lostark")}} style={{width: "30%", maxWidth: "130px", padding: "2px", fontSize: "0.8rem"}}>회원탈퇴</Button>
+							<Button variant={"outline-primary"} onClick={() => {navigate("renew/password")}} style={{width: "30%", maxWidth: "130px", padding: "2px", fontSize: "0.8rem"}}>비밀번호 변경</Button>
+							<Button variant={"outline-primary"} onClick={() => {navigate("renew/nickname")}} style={{width: "30%", maxWidth: "130px", padding: "2px", fontSize: "0.8rem"}}>닉네임 변경</Button>
+							<Button variant={"outline-warning"} onClick={() => {navigate("leave")}} style={{width: "30%", maxWidth: "130px", padding: "2px", fontSize: "0.8rem"}}>회원탈퇴</Button>
 						</Stack>
 					</div>
 				</Container>

@@ -299,7 +299,7 @@ export const getMyInfo = async () => {
 /**
  * 비밀번호 변경
  */
-export const updatePassword = async (sendData) => {
+export const renewPassword = async (sendData) => {
 	const fecthOption = {
 		method: "PATCH"
 		, body: JSON.stringify(sendData)
@@ -311,7 +311,33 @@ export const updatePassword = async (sendData) => {
 
 	if(isStatusGood === true){
 		const fetchData = await getFetchJson(fetchResponse);
-		console.log('updatePassword =>', fetchData)
+		console.log('renewPassword =>', fetchData)
+
+		return fetchData;
+	}
+	else{
+		alert(checkMessage);
+
+		return null;
+	}
+}
+
+/**
+ * 닉네임 변경
+ */
+export const renewNickname = async (sendData) => {
+	const fecthOption = {
+		method: "PATCH"
+		, body: JSON.stringify(sendData)
+		, headers: {"Content-Type": "application/json",}
+		, credentials: "include", // Don't forget to specify this if you need cookies
+	};
+	const fetchResponse = await fetch(`${process.env.REACT_APP_SERVER}/accounts/nickname`, fecthOption);
+	const [isStatusGood, checkMessage] = isFetchStatusGood(fetchResponse);
+
+	if(isStatusGood === true){
+		const fetchData = await getFetchJson(fetchResponse);
+		console.log('renewNickname =>', fetchData)
 
 		return fetchData;
 	}

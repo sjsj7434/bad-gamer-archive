@@ -91,7 +91,7 @@ const ResetPasswordForm = () => {
 
 	const isValidPassword = () => {
 		const newPasswordInput = document.querySelector("#newPasswordInput");
-		const passwordRegExp = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,20}$/;
+		const passwordRegExp = /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[!@#$%^&*(),.<>`~/?;:'"]).{8,20}$/;
 
 		if(passwordRegExp.test(newPasswordInput.value) === true){
 			setPasswordValid(2);

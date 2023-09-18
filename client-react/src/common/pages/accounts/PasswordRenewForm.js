@@ -9,14 +9,14 @@ import LoadingModal from '../common/LoadingModal.js';
 
 import * as accountsFetch from '../../js/accountsFetch.js'
 
-const PasswordChangeForm = () => {
+const PasswordRenewForm = (props) => {
 	const [passwordValid, setPasswordValid] = useState(0);
 	const [rePasswordValid, setRePasswordValid] = useState(0);
 	const [showLoadingModal, setShowLoadingModal] = useState(false);
 	const [loadingMessage, setLoadingMessage] = useState("");
 	const navigate = useNavigate();
 
-	const updatePassword = async (event) => {
+	const renewPassword = async (event) => {
 		event.preventDefault();
 		event.stopPropagation();
 		const form = event.currentTarget;
@@ -48,7 +48,7 @@ const PasswordChangeForm = () => {
 			await asyncWaiter(1);
 			setShowLoadingModal(false);
 
-			const updateResult = await accountsFetch.updatePassword({
+			const updateResult = await accountsFetch.renewPassword({
 				oldPassword: form.oldPasswordInput.value,
 				newPassword: form.newPasswordInput.value,
 			});
@@ -61,6 +61,8 @@ const PasswordChangeForm = () => {
 			}
 			else if(updateResult === 1){
 				alert("비밀번호가 변경되었습니다\n비밀번호가 변경되었으니 다시 로그인해주세요");
+
+				await props.checkSignInStatus();
 
 				navigate("/accounts/signin");
 			}
@@ -80,7 +82,7 @@ const PasswordChangeForm = () => {
 
 	const isValidPassword = () => {
 		const newPasswordInput = document.querySelector("#newPasswordInput");
-		const passwordRegExp = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,20}$/;
+		const passwordRegExp = /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[!@#$%^&*(),.<>`~/?;:'"]).{8,20}$/;
 
 		if(passwordRegExp.test(newPasswordInput.value) === true){
 			setPasswordValid(2);
@@ -137,7 +139,7 @@ const PasswordChangeForm = () => {
 					</svg>
 					<span style={{fontSize: "1.2rem", marginLeft: "12px"}}>비밀번호 변경</span>
 				</div>
-				<Form noValidate onSubmit={updatePassword}>
+				<Form noValidate onSubmit={renewPassword}>
 					<Form.Group as={Row} className="mb-3">
 						<Form.Label style={{fontWeight: "800", fontSize: "0.8rem"}}>
 							현재 비밀번호 (Password)
@@ -253,4 +255,4 @@ const PasswordChangeForm = () => {
 	);
 }
 
-export default PasswordChangeForm;
+export default PasswordRenewForm;
