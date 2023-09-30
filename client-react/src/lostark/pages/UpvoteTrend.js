@@ -19,9 +19,9 @@ const UpvoteTrend = (props) => {
 	
 	useEffect(() => {
 		const readContentList = async () => {
-			const monthlyData = await contentBoardFetch.readContentList("all/upvote/monthly", 1);
-			const weeklyData = await contentBoardFetch.readContentList("all/upvote/weekly", 1);
-			const dailyData = await contentBoardFetch.readContentList("all/upvote/daily", 1);
+			const monthlyData = await contentBoardFetch.readContentList("all/trend/upvote/monthly", 1);
+			const weeklyData = await contentBoardFetch.readContentList("all/trend/upvote/weekly", 1);
+			const dailyData = await contentBoardFetch.readContentList("all/trend/upvote/daily", 1);
 
 			setMonthlyList(monthlyData[0]);
 			setWeeklyList(weeklyData[0]);
@@ -153,11 +153,6 @@ const UpvoteTrend = (props) => {
 
 	return(
 		<Container style={{maxWidth: "1440px"}}>
-			category : {props.category}
-			<br/>
-			upvote가 1개 이상 & 이번 달
-			<br/>
-
 			<Tabs
 				onSelect={(key) => {console.log(key)}}
 				defaultActiveKey="hot"

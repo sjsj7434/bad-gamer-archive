@@ -14,7 +14,7 @@ export class AllBoardService {
 	/**
 	 * 글 목록 가져오기
 	 */
-	async getContentList(upvoteCutline: number, page: number, perPage: number, type: string): Promise<[Boards[], number]> {
+	async getUpvoteTrend(upvoteCutline: number, page: number, perPage: number, type: string): Promise<[Boards[], number]> {
 		const dateOfNow = new Date();
 		const yearNow = dateOfNow.getFullYear();
 		const monthNow = dateOfNow.getMonth();
@@ -71,6 +71,146 @@ export class AllBoardService {
 			order: {
 				upvote: "DESC",
 				view: "DESC",
+				createdAt: "DESC",
+			},
+			withDeleted: true,
+			skip: (page - 1) * perPage,
+			take: perPage,
+		})
+
+		return result;
+	}
+
+	/**
+	 * 글 목록 가져오기
+	 */
+	async getDownvoteTrend(downvoteCutline: number, page: number, perPage: number, type: string): Promise<[Boards[], number]> {
+		const dateOfNow = new Date();
+		const yearNow = dateOfNow.getFullYear();
+		const monthNow = dateOfNow.getMonth();
+		const dayNow = dateOfNow.getDate();
+
+		const allTime: Date = new Date(2023, 1, 1); //전체
+		const yearly: Date = new Date(yearNow - 1, monthNow, dayNow); //연간
+		const monthly: Date = new Date(yearNow, monthNow - 1, dayNow); //월간
+		const weekly: Date = new Date(yearNow, monthNow, dayNow - 7); //주간
+		const daily: Date = new Date(yearNow, monthNow, dayNow - 1); //일간
+		let searchDate: Date = null;
+
+		switch (type) {
+			case "allTime":
+				searchDate = allTime;
+				break;
+			case "yearly":
+				searchDate = yearly;
+				break;
+			case "monthly":
+				searchDate = monthly;
+				break;
+			case "weekly":
+				searchDate = weekly;
+				break;
+			case "daily":
+				searchDate = daily;
+				break;
+			default:
+				searchDate = monthly;
+				break;
+		}
+
+		const result = await this.boardsRepository.findAndCount({
+			relations: ["replies"], //댓글 정보 join
+			select: {
+				replies: { code: true },
+				code: true,
+				category: true,
+				writerNickname: true,
+				title: true,
+				view: true,
+				upvote: true,
+				downvote: true,
+				ip: true,
+				hasImage: true,
+				createdAt: true,
+			},
+			where: {
+				deletedAt: IsNull(),
+				downvote: MoreThanOrEqual(downvoteCutline),
+				createdAt: Between(searchDate, new Date()),
+			},
+			order: {
+				downvote: "DESC",
+				view: "DESC",
+				createdAt: "DESC",
+			},
+			withDeleted: true,
+			skip: (page - 1) * perPage,
+			take: perPage,
+		})
+
+		return result;
+	}
+
+	/**
+	 * 글 목록 가져오기
+	 */
+	async getViewTrend(viewCutline: number, page: number, perPage: number, type: string): Promise<[Boards[], number]> {
+		const dateOfNow = new Date();
+		const yearNow = dateOfNow.getFullYear();
+		const monthNow = dateOfNow.getMonth();
+		const dayNow = dateOfNow.getDate();
+
+		const allTime: Date = new Date(2023, 1, 1); //전체
+		const yearly: Date = new Date(yearNow - 1, monthNow, dayNow); //연간
+		const monthly: Date = new Date(yearNow, monthNow - 1, dayNow); //월간
+		const weekly: Date = new Date(yearNow, monthNow, dayNow - 7); //주간
+		const daily: Date = new Date(yearNow, monthNow, dayNow - 1); //일간
+		let searchDate: Date = null;
+
+		switch (type) {
+			case "allTime":
+				searchDate = allTime;
+				break;
+			case "yearly":
+				searchDate = yearly;
+				break;
+			case "monthly":
+				searchDate = monthly;
+				break;
+			case "weekly":
+				searchDate = weekly;
+				break;
+			case "daily":
+				searchDate = daily;
+				break;
+			default:
+				searchDate = monthly;
+				break;
+		}
+
+		const result = await this.boardsRepository.findAndCount({
+			relations: ["replies"], //댓글 정보 join
+			select: {
+				replies: { code: true },
+				code: true,
+				category: true,
+				writerNickname: true,
+				title: true,
+				view: true,
+				upvote: true,
+				downvote: true,
+				ip: true,
+				hasImage: true,
+				createdAt: true,
+			},
+			where: {
+				deletedAt: IsNull(),
+				view: MoreThanOrEqual(viewCutline),
+				createdAt: Between(searchDate, new Date()),
+			},
+			order: {
+				view: "DESC",
+				upvote: "DESC",
 				downvote: "ASC",
 				createdAt: "DESC",
 			},
