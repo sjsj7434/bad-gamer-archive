@@ -9,7 +9,6 @@ import Carousel from 'react-bootstrap/Carousel';
 import Image from 'react-bootstrap/Image';
 import Row from 'react-bootstrap/esm/Row';
 import Col from 'react-bootstrap/esm/Col';
-import '../../common/css/Carousel.css';
 
 const LostarkMain = () => {
 	const tabOnSelect = (tabKey) => {

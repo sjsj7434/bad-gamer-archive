@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import { Navigate } from "react-router-dom";
 
 import 'bootstrap/dist/css/bootstrap.min.css';
+import '../css/Common.css';
 
 import Error404 from './errors/Error404';
 import SignUpForm from './accounts/SignUpForm';
