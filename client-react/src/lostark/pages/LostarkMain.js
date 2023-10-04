@@ -45,22 +45,24 @@ const LostarkMain = () => {
 
 						<hr/>
 						
-						<Tabs
-							onSelect={(key) => {tabOnSelect(key)}}
-							defaultActiveKey="hot"
-							id="uncontrolled-tab-example"
-							className="mb-2"
-						>
-							<Tab eventKey="hot" title="뜨는 It" mountOnEnter={true} unmountOnExit={false}>
-								<UpvoteTrend category={"over 10 upvote"}></UpvoteTrend>
-							</Tab>
-							<Tab eventKey="none" title="지는 It" mountOnEnter={true} unmountOnExit={false}>
-								<DownvoteTrend category={"over 10 downvote"}></DownvoteTrend>
-							</Tab>
-							<Tab eventKey="class" title="시선집중" mountOnEnter={true} unmountOnExit={false}>
-								<ViewTrend category={"over 100 views"}></ViewTrend>
-							</Tab>
-						</Tabs>
+						<div style={{ backgroundColor: "#f3f3f3", padding: "0.5rem" }}>
+							<Tabs
+								onSelect={(key) => {tabOnSelect(key)}}
+								defaultActiveKey="hot"
+								className="mb-2"
+								justify
+							>
+								<Tab eventKey="hot" title="뜨는 It" mountOnEnter={true} unmountOnExit={false}>
+									<UpvoteTrend category={"over 10 upvote"}></UpvoteTrend>
+								</Tab>
+								<Tab eventKey="none" title="지는 It" mountOnEnter={true} unmountOnExit={false}>
+									<DownvoteTrend category={"over 10 downvote"}></DownvoteTrend>
+								</Tab>
+								<Tab eventKey="class" title="시선집중" mountOnEnter={true} unmountOnExit={false}>
+									<ViewTrend category={"over 100 views"}></ViewTrend>
+								</Tab>
+							</Tabs>
+						</div>
 					</>
 				}></Route>
 
