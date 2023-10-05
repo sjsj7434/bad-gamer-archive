@@ -25,6 +25,7 @@ import ContentWriteUser from './board/user/ContentWriteUser';
 import SetActiveMenu from './SetActiveMenu';
 import NicknameRenewForm from './accounts/NicknameRenewForm';
 import ActivateLostarkAPI from './accounts/ActivateLostarkAPI';
+import HelpCenter from './common/HelpCenter';
 // import CharacterInfo from '../../lostark/pages/character/CharacterInfo';
 
 // index.js에서 StrictMode 존재하면 두번 랜더링, 개발 모드에서만 적용됩니다. 생명주기 메서드들은 프로덕션 모드에서 이중으로 호출되지 않습니다.
@@ -251,6 +252,25 @@ const RoutesWrapper = () => {
 					</Route>
 
 					{/* <Route path="/character/:characterName" element={ <CharacterInfo /> } /> */}
+
+					<Route path="board/announcement" element={
+						<>
+							<SetActiveMenu setCurrentMenu={setCurrentMenu} menuCode={"/board/announcement"} />
+							<ContentBoard boardType="announcement" boardTitle="공지사항" />
+						</>
+					} />
+					
+					<Route path="help" element={
+						<BlockNoSignin
+							accountData={accountData}
+							ifAllow={
+								<>
+									<SetActiveMenu setCurrentMenu={setCurrentMenu} menuCode={"/help"} />
+									<HelpCenter />
+								</>
+							}
+						/>
+					} />
 
 					{/* 상단에 위치하는 라우트들의 규칙을 모두 확인, 일치하는 라우트가 없는경우 처리 */}
 					<Route path="*" element={
