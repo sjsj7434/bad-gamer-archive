@@ -13,6 +13,8 @@ import Stack from 'react-bootstrap/esm/Stack';
 import * as accountsFetch from '../../js/accountsFetch'
 import '../../css/ActivateLostark.css';
 import LoadingModal from '../common/LoadingModal';
+import Card from 'react-bootstrap/Card';
+import Table from 'react-bootstrap/Table';
 
 const ActivateLostarkAPI = (props) => {
 	const [characterModalShow, setCharacterModalShow] = useState(false);
@@ -21,10 +23,18 @@ const ActivateLostarkAPI = (props) => {
 	const [nowTime, setNowTime] = useState(null);
 	const [showLoadingModal, setShowLoadingModal] = useState(false);
 	const [loadingMessage, setLoadingMessage] = useState("");
+	const [isValidStoveURL, setIsValidStoveURL] = useState(0);
+	const [characterInfoModalShow, setCharacterInfoModalShow] = useState(false);
+	const [characterInfo, setCharacterInfo] = useState(null);
 	const intervalRef = useRef(null);
 	const tokenStatus = useRef(null);
 	const TOKEN_TIME_LIMIT = 60 * 3; //sec
 	const navigate = useNavigate();
+
+	//TEST용 간편설정
+	useEffect(() => {
+		setIsValidStoveURL(2)
+	}, [])
 
 	const controlActivateVerify = (status) => {
 		if(status === "activate"){
@@ -110,6 +120,7 @@ const ActivateLostarkAPI = (props) => {
 		setShowLoadingModal(true);
 		setLoadingMessage("스토브 소개 정보를 확인 중입니다");
 		const stoveURL = document.querySelector("#stoveURL").value;
+		// const [matchResult, characterNames] = await accountsFetch.checkProfileTokenMatchScrap(stoveURL);
 		const [matchResult, characterNames] = await accountsFetch.checkProfileTokenMatchAPI(stoveURL);
 		console.log(matchResult, characterNames)
 
@@ -127,6 +138,10 @@ const ActivateLostarkAPI = (props) => {
 
 			clearInterval(intervalRef.current);
 			controlActivateVerify("deactivate");
+		}
+		else if(matchResult === "limit"){
+			alert("스마일게이트 API 서버를 호출할 수 없습니다\n잠시 후 다시 시도해주세요");
+			setCharacterModalShow(false);
 		}
 		else if(matchResult.length === 0){
 			alert("캐릭터 정보가 존재하지 않습니다");
@@ -165,7 +180,8 @@ const ActivateLostarkAPI = (props) => {
 	}
 
 	const setCharacter = async (characterInfo) => {
-		if(window.confirm(`[${characterInfo.CharacterName} (Level.${characterInfo.ItemMaxLevel})] 캐릭터로 인증하시겠습니까?`)){
+		// if(window.confirm(`[${characterInfo.ServerName} - ${characterInfo.CharacterName}] 캐릭터로 인증을 진행하시겠습니까?`)){
+		if(window.confirm(`[${characterInfo.CharacterName} (Level.${characterInfo.ItemMaxLevel})] 캐릭터로 인증을 진행하시겠습니까?`)){
 			setCharacterModalShow(false);
 			controlActivateVerify("done");
 			
@@ -179,6 +195,93 @@ const ActivateLostarkAPI = (props) => {
 		}
 	}
 
+	const setCharacter2 = async (characterInfo) => {
+		if(window.confirm(`[${characterInfo.ServerName} - ${characterInfo.CharacterName}] 캐릭터로 인증을 진행하시겠습니까?`)){
+			setCharacterModalShow(false);
+			controlActivateVerify("done");
+			
+			setShowLoadingModal(true);
+			setLoadingMessage("캐릭터를 설정 중입니다");
+			
+			const characterData = await accountsFetch.getCharacterInfoScrap(characterInfo.CharacterName);
+			const elements = [];
+			
+			elements.push(
+				<Card style={{ width: "100%", fontSize: "0.8rem" }}>
+					<Card.Img variant="top" src={characterData.characterImage} />
+					<Card.Body>
+						<Card.Title>{characterData.characterName}</Card.Title>
+						<Card.Text>
+							-카드<br />
+							{characterData.cardEffects.map((element) => {
+								return(
+									<div>
+										{element}
+									</div>
+								)
+							})}
+							<br />
+							-생활<br />
+							{characterData.lifeSkills.map((element) => {
+								return(
+									<div>
+										{element}
+									</div>
+								)
+							})}
+						</Card.Text>
+					</Card.Body>
+					<ListGroup className="list-group-flush">
+						<ListGroup.Item>
+							<Table striped>
+								<colgroup>
+									<col width="30%" />
+									<col width="*" />
+								</colgroup>
+								<tbody>
+									<tr>
+										<td>원정대</td>
+										<td>{characterData.expeditionLevel}</td>
+									</tr>
+									<tr>
+										<td>전투 레벨</td>
+										<td>{characterData.combatLevel}</td>
+									</tr>
+									<tr>
+										<td>아이템 레벨</td>
+										<td>{characterData.maxItemLevel}</td>
+									</tr>
+									<tr>
+										<td>영지</td>
+										<td>{characterData.stringholdName} {characterData.stringholdLevel}</td>
+									</tr>
+								</tbody>
+							</Table>
+							<div style={{display: "flex", justifyContent: "space-evenly"}}>
+								<Button variant={"success"} onClick={() => {noCharacter()}} style={{fontSize: "0.8rem", width: "45%"}}>인증 완료하기</Button>
+								<Button variant={"danger"} onClick={() => {noCharacter()}} style={{fontSize: "0.8rem", width: "45%"}}>인증하지않기</Button>
+							</div>
+						</ListGroup.Item>
+					</ListGroup>
+					<Card.Body>
+						Card.BodyCard.BodyCard.BodyCard.BodyCard.Body<br />
+						Card.BodyCard.BodyCard.BodyCard.BodyCard.Body
+					</Card.Body>
+				</Card>
+			);
+
+			setCharacterInfo(elements);
+			setShowLoadingModal(false);
+			setCharacterInfoModalShow(true);
+			document.querySelector("#verifyButton").disabled = false;
+
+			// await accountsFetch.setLostarkMainCharacter({
+			// 	lostarkMainCharacter: characterInfo.CharacterName,
+			// });
+			// navigate("/accounts/mypage");
+		}
+	}
+
 	const checkStoveCodeValid = () => {
 		const numberRegExp = /^[0-9]+$/;
 
@@ -189,7 +292,6 @@ const ActivateLostarkAPI = (props) => {
 			setIsValidStoveURL(2);
 		}
 	}
-	const [isValidStoveURL, setIsValidStoveURL] = useState(0);
 
 	const statusParser = (isValidStoveURL) => {
 		if(isValidStoveURL === 0){
@@ -228,7 +330,7 @@ const ActivateLostarkAPI = (props) => {
 	}
 
 	return (
-		<Container style={{maxWidth: "600px"}}>
+		<Container style={{maxWidth: "450px"}}>
 			<LoadingModal showModal={showLoadingModal} message={loadingMessage}></LoadingModal>
 
 			<div style={{ marginTop: "20px", fontSize: "0.8rem", color: "black" }}>
@@ -259,7 +361,7 @@ const ActivateLostarkAPI = (props) => {
 								</Form.Label>
 								<InputGroup>
 									<Form.Control className={statusParser(isValidStoveURL)} id="stoveURL" maxLength={20} defaultValue={"83359381"} placeholder={"자신의 스토브 코드를 적어주세요"} autoComplete={"off"} onChange={() => {checkStoveCodeValid()}} style={{fontSize: "0.9rem"}} />
-									<Button variant="outline-secondary" id="getCodeButton" onClick={() => {getVerificationCode()}} style={{fontSize: "0.8rem"}}>
+									<Button variant="outline-secondary" id="getCodeButton" onClick={() => {getVerificationCode()}} style={{fontSize: "0.75rem"}}>
 										인증 코드 받기
 									</Button>
 								</InputGroup>

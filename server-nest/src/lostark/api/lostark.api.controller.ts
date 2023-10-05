@@ -6,13 +6,6 @@ import { ConfigService } from '@nestjs/config';
 export class LostarkAPIController {
 	constructor(private readonly lostarkAPIService: LostarkAPIService, private configService: ConfigService) { }
 
-	@Get('test/:characterNickName')
-	async getTestJson(@Param('characterNickName') characterNickName: string): Promise<object> {
-		console.log('[Controller-get] test => ' + decodeURIComponent(characterNickName));
-		const result = await this.lostarkAPIService.getTestJson(characterNickName);
-		return result;
-	}
-
 	@Get('guilds/:serverName')
 	async getGuildList(@Param('serverName') serverName: string): Promise<object> {
 		interface DatabaseConfig {

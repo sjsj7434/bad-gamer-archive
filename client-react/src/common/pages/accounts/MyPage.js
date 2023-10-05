@@ -31,7 +31,7 @@ const MyPage = () => {
 					<div style={{paddingLeft: "10px", paddingRight: "10px", fontSize: "0.8rem"}}>
 						<Table hover>
 							<colgroup>
-								<col width="25%" style={{fontSize: "20px"}} />
+								<col width="30%" />
 								<col width="5%" />
 								<col width="*" />
 							</colgroup>
@@ -57,7 +57,35 @@ const MyPage = () => {
 									</td>
 								</tr>
 								<tr>
-									<th>LA</th>
+									<th>이메일</th>
+									<td><div className="vr"></div></td>
+									<td>
+										{accountData.email}
+									</td>
+								</tr>
+								<tr>
+									<th>가입일</th>
+									<td><div className="vr"></div></td>
+									<td>
+										{accountData.nickname}
+									</td>
+								</tr>
+								<tr>
+									<th>비밀번호 변경일</th>
+									<td><div className="vr"></div></td>
+									<td>
+										{accountData.nickname}
+									</td>
+								</tr>
+								<tr>
+									<th>Exp</th>
+									<td><div className="vr"></div></td>
+									<td>
+										{accountData.nickname}
+									</td>
+								</tr>
+								<tr>
+									<th>LA Char</th>
 									<td><div className="vr"></div></td>
 									<td>
 										<div style={{ display: "flex", alignItems: "center" }}>
@@ -72,6 +100,13 @@ const MyPage = () => {
 											
 										</div>
 										* 더 다양한 정보를 저장하기 위해 테이블을 따로 구성해야 할 듯
+									</td>
+								</tr>
+								<tr>
+									<th>LA Date</th>
+									<td><div className="vr"></div></td>
+									<td>
+										* 더 다양한 정보를 저장하기 위해 테이블 따로
 									</td>
 								</tr>
 							</tbody>

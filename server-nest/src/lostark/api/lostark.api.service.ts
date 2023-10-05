@@ -1,6 +1,7 @@
 import { HttpService } from '@nestjs/axios';
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { Cron, CronExpression } from '@nestjs/schedule';
 import { AxiosError } from 'axios';
 import { catchError, firstValueFrom } from 'rxjs';
 
@@ -8,7 +9,28 @@ import { catchError, firstValueFrom } from 'rxjs';
 export class LostarkAPIService {
 	constructor(private readonly httpService: HttpService, private configService: ConfigService) { }
 
+	ApiCallCount: number; //max is 100 requests per minute, for now
+	API_CALL_LIMI: number = 100; //1분당 API 호출 가능 횟수
+
+	//서울 시간 기준으로 [1분 마다] 데이터 초기화
+	@Cron(CronExpression.EVERY_MINUTE, {
+		name: "resetApiCallCount",
+		timeZone: "Asia/Seoul",
+	})
+	resetApiCallCount() {
+		this.ApiCallCount = 0;
+		console.log("[resetApiCallCount] Reset data every minute");
+	}
+
 	getLostArkAPI = async (destination: string) => {
+		if (this.ApiCallCount >= this.API_CALL_LIMI){
+			console.log(`[Error] API Call Limit is ${this.API_CALL_LIMI} per min`);
+			return null;
+		}
+
+		this.ApiCallCount++; //api 호출 횟수 + 1, 매분 초기화 됨
+		console.log(`[Log] API Call : ${this.ApiCallCount}`);
+
 		const headersRequest = {
 			"Content-Type": "application/json", // As Far As I Know, this one is not needed
 			"Authorization": `bearer ${this.configService.get("LOSTARK_API_KEY")}`,
@@ -24,19 +46,6 @@ export class LostarkAPIService {
 		);
 
 		return data;
-	}
-
-	async getTestJson(characterNickName: string): Promise<object> {
-		characterNickName = "welcome to service";
-
-		return {
-			characterNickName: characterNickName,
-			CharacterClassName: "배틀마스터",
-			CharacterImage: "https://img.lostark.co.kr/armory/1/3D0FE3746B32F9D56FE5541819EA79047555E513F84EDE40D9A8A827218FC330.png?v=20230329115151",
-			ExpeditionLevel: 216,
-			ItemAvgLevel: "1,655.00",
-			CharacterLevel: 60
-		};
 	}
 
 	async getGuildList(serverName: string): Promise<object> {

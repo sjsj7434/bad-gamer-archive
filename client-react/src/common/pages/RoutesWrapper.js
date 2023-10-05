@@ -10,7 +10,6 @@ import SignUpForm from './accounts/SignUpForm';
 import SignInForm from './accounts/SignInForm';
 import CommonTopMenu from './CommonTopMenu';
 import MyPage from './accounts/MyPage';
-import ActivateLostarkScrap from './accounts/ActivateLostarkScrap';
 import BlockNoSignin from './accounts/BlockNoSignin';
 import * as accountsFetch from '../js/accountsFetch.js'
 import LostarkMain from '../../lostark/pages/LostarkMain';
@@ -25,6 +24,7 @@ import ResetPasswordForm from './accounts/ResetPasswordForm';
 import ContentWriteUser from './board/user/ContentWriteUser';
 import SetActiveMenu from './SetActiveMenu';
 import NicknameRenewForm from './accounts/NicknameRenewForm';
+import ActivateLostarkAPI from './accounts/ActivateLostarkAPI';
 // import CharacterInfo from '../../lostark/pages/character/CharacterInfo';
 
 // index.js에서 StrictMode 존재하면 두번 랜더링, 개발 모드에서만 적용됩니다. 생명주기 메서드들은 프로덕션 모드에서 이중으로 호출되지 않습니다.
@@ -217,7 +217,8 @@ const RoutesWrapper = () => {
 									ifAllow={
 										<>
 											<SetActiveMenu setCurrentMenu={setCurrentMenu} menuCode={"/accounts/activate/lostark"} />
-											<ActivateLostarkScrap />
+											{/* <ActivateLostarkScrap /> */}
+											<ActivateLostarkAPI />
 										</>
 									}
 								/>

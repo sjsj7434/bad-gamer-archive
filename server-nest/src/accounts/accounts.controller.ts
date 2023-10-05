@@ -1,10 +1,9 @@
-import { Param, Controller, Get, Post, Put, Delete, Body, Res, Req, Patch, Query } from '@nestjs/common';
+import { Param, Controller, Get, Post, Put, Delete, Body, Res, Req, Patch } from '@nestjs/common';
 import { AccountsService } from './accounts.service';
-import { CreateAccountsDTO, DeleteAccountsDTO, UpdateAccountsDTO } from './accounts.dto';
+import { CreateAccountsDTO, DeleteAccountsDTO } from './accounts.dto';
 import { Request, Response } from 'express';
 import { Accounts } from './accounts.entity';
 import { LostarkAPIService } from '../lostark/api/lostark.api.service';
-import { UpdateResult } from 'typeorm';
 
 @Controller("accounts")
 export class  AccountsController {
@@ -31,15 +30,25 @@ export class  AccountsController {
 
 			if (compareResult === true){
 				if(method === "api"){ //공식 API 사용
-					const characterName = await this.accountsService.getStoveUserCharacters_api(stoveURLWithOutProtocol);
-					const characterNames = await this.apiService.getCharacterList(characterName); // { CharacterClassName: string, CharacterName: number, ItemAvgLevel: string, ItemMaxLevel: string, ServerName: string }
+					const characterName = await this.accountsService.getStoveUserCharacters_api(stoveURLWithOutProtocol); //api 아니고 web scrap
+					const characterNames = await this.apiService.getCharacterList(characterName); // api 호출
 
-					return ["success", characterNames];
+					if (characterNames === null){
+						return ["limit", []];
+					}
+					else{
+						return ["success", characterNames];
+					}
 				}
 				else if(method === "scrap"){ //전투정보실 웹 페이지 정보 스크랩
 					const characterNames = await this.accountsService.getStoveUserCharacters_scrap(stoveURLWithOutProtocol);
 
-					return ["success", characterNames];
+					if (characterNames === null) {
+						return ["limit", []];
+					}
+					else {
+						return ["success", characterNames];
+					}
 				}
 				else{
 					return ["fail", []];

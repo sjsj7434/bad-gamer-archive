@@ -1,14 +1,15 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, UpdateResult } from 'typeorm';
+import { In, IsNull, Repository } from 'typeorm';
 import { Accounts } from './accounts.entity';
-import { CreateAccountsDTO, DeleteAccountsDTO, UpdateAccountsDTO } from './accounts.dto';
+import { CreateAccountsDTO, DeleteAccountsDTO } from './accounts.dto';
 import { randomBytes } from 'crypto';
 import puppeteer from 'puppeteer';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Cache } from 'cache-manager';
 import * as bcrypt from 'bcrypt';
 import { Request, Response } from 'express';
+import { Authentication } from './authentication.entity';
 
 const LOGIN_FAIL_LIMIT: number = 5; //로그인 최대 실패
 const SIGN_IN_SESSION: Map<string, string> = new Map(); //로그인 세션
@@ -20,6 +21,7 @@ const EMAIL_CODE_TTL = 1000 * 60 * 60; //이메일 인증 코드 캐시 유지 �
 export class AccountsService {
 	constructor(
 		@InjectRepository(Accounts) private accountsRepository: Repository<Accounts>,
+		@InjectRepository(Authentication) private authenticationRepository: Repository<Authentication>,
 		@Inject(CACHE_MANAGER) private cacheManager: Cache
 	) { }
 
@@ -643,16 +645,23 @@ export class AccountsService {
 	 * find > 정보 수정 > save 처리
 	 */
 	async updateLostarkMainCharacter(request: Request, body: { lostarkMainCharacter: string }) {
-		const account = await this.accountsRepository.findOne({
-			where: {
-				uuid: SIGN_IN_SESSION.get(request.cookies["sessionCode"]),
-			}
-		});
+		await this.authenticationRepository.softDelete({
+			uuid: SIGN_IN_SESSION.get(request.cookies["sessionCode"]),
+			type: In(["lostark_character", "stove_code"]),
+			deletedAt: IsNull(),
+		})
 
-		// account.lostarkMainCharacter = body.lostarkMainCharacter;
-		// 게임 계정 인증 테이블 분리 작업 중 / 2023-07-30
+		const authenticationData1 = this.authenticationRepository.create();
+		authenticationData1.uuid = SIGN_IN_SESSION.get(request.cookies["sessionCode"]);
+		authenticationData1.type = "lostark_character";
+		authenticationData1.data = body.lostarkMainCharacter;
+		await this.authenticationRepository.insert(authenticationData1);
 
-		await this.accountsRepository.save(account);
+		const authenticationData2 = this.authenticationRepository.create();
+		authenticationData2.uuid = SIGN_IN_SESSION.get(request.cookies["sessionCode"]);
+		authenticationData2.type = "stove_code";
+		authenticationData2.data = "random_887711";
+		await this.authenticationRepository.insert(authenticationData2);
 	}
 
 	/**
