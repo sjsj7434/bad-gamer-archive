@@ -250,10 +250,10 @@ const CommonTopMenu = (props) => {
 						</svg>
 						&nbsp;
 						<Nav style={{ display: "flex", flexDirection: "row", height: "2.2rem", color: "white", fontSize: "0.8rem", width: "90%", overflow: "scroll", whiteSpace: "nowrap" }}>
-							<Nav.Link style={{ marginRight: "1.4rem" }} active={props.currentMenu === "/lostark/main" ? true : false} onClick={() => menuClick("/lostark/main")}>메인</Nav.Link>
+							<Nav.Link style={{ marginLeft: "0.6rem", marginRight: "1.4rem" }} active={props.currentMenu === "/lostark/main" ? true : false} onClick={() => menuClick("/lostark/main")}>메인</Nav.Link>
 							<Nav.Link style={{ marginRight: "1.4rem" }} active={props.currentMenu === "/lostark/board/anonymous" ? true : false} onClick={() => menuClick("/lostark/board/anonymous/1")}>수라도</Nav.Link>
 							<Nav.Link style={{ marginRight: "1.4rem" }} active={props.currentMenu === "/lostark/board/user" ? true : false} onClick={() => menuClick("/lostark/board/user/1")}>유저 게시판</Nav.Link>
-							<Nav.Link style={{ marginRight: "1.4rem" }} active={props.currentMenu === "/lostark/useful" ? true : false} onClick={() => menuClick("/lostark/useful")}>유용한 사이트</Nav.Link>
+							<Nav.Link style={{ marginRight: "0.6rem" }} active={props.currentMenu === "/lostark/useful" ? true : false} onClick={() => menuClick("/lostark/useful")}>유용한 사이트</Nav.Link>
 						</Nav>
 						&nbsp;
 						<svg xmlns="http://www.w3.org/2000/svg" width="1rem" height="1rem" fill="lightgray" className="bi bi-arrow-right-square" viewBox="0 0 16 16">
