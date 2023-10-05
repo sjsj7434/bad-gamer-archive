@@ -253,7 +253,7 @@ const RoutesWrapper = () => {
 
 					{/* <Route path="/character/:characterName" element={ <CharacterInfo /> } /> */}
 
-					<Route path="board/announcement" element={
+					<Route path="board/announcement/:page" element={
 						<>
 							<SetActiveMenu setCurrentMenu={setCurrentMenu} menuCode={"/board/announcement"} />
 							<ContentBoard boardType="announcement" boardTitle="공지사항" />
