@@ -156,7 +156,7 @@ const RoutesWrapper = () => {
 								accountData={accountData}
 								ifAllow={
 									<>
-										<SetActiveMenu setCurrentMenu={setCurrentMenu} menuCode={""} />
+										<SetActiveMenu setCurrentMenu={setCurrentMenu} menuCode={"/accounts/signup"} />
 										<SignUpForm />
 									</>
 								}
@@ -167,7 +167,7 @@ const RoutesWrapper = () => {
 								accountData={accountData}
 								ifAllow={
 									<>
-										<SetActiveMenu setCurrentMenu={setCurrentMenu} menuCode={""} />
+										<SetActiveMenu setCurrentMenu={setCurrentMenu} menuCode={"/accounts/signin"} />
 										<SignInForm />
 									</>
 								}
@@ -179,7 +179,7 @@ const RoutesWrapper = () => {
 								accountData={accountData}
 								ifAllow={
 									<>
-										<SetActiveMenu setCurrentMenu={setCurrentMenu} menuCode={""} />
+										<SetActiveMenu setCurrentMenu={setCurrentMenu} menuCode={"/accounts/find/password"} />
 										<ForgotPasswordForm />
 									</>
 								}
@@ -191,7 +191,7 @@ const RoutesWrapper = () => {
 								accountData={accountData}
 								ifAllow={
 									<>
-										<SetActiveMenu setCurrentMenu={setCurrentMenu} menuCode={""} />
+										<SetActiveMenu setCurrentMenu={setCurrentMenu} menuCode={"/accounts/reset/password"} />
 										<ResetPasswordForm />
 									</>
 								}
@@ -204,7 +204,7 @@ const RoutesWrapper = () => {
 									accountData={accountData}
 									ifAllow={
 										<>
-											<SetActiveMenu setCurrentMenu={setCurrentMenu} menuCode={""} />
+											<SetActiveMenu setCurrentMenu={setCurrentMenu} menuCode={"/accounts/mypage"} />
 											<MyPage />
 										</>
 									}
@@ -216,7 +216,7 @@ const RoutesWrapper = () => {
 									accountData={accountData}
 									ifAllow={
 										<>
-											<SetActiveMenu setCurrentMenu={setCurrentMenu} menuCode={""} />
+											<SetActiveMenu setCurrentMenu={setCurrentMenu} menuCode={"/accounts/activate/lostark"} />
 											<ActivateLostarkScrap />
 										</>
 									}
@@ -228,7 +228,7 @@ const RoutesWrapper = () => {
 									accountData={accountData}
 									ifAllow={
 										<>
-											<SetActiveMenu setCurrentMenu={setCurrentMenu} menuCode={""} />
+											<SetActiveMenu setCurrentMenu={setCurrentMenu} menuCode={"/accounts/renew/password"} />
 											<PasswordRenewForm checkSignInStatus={checkSignInStatus} />
 										</>
 									}
@@ -240,7 +240,7 @@ const RoutesWrapper = () => {
 									accountData={accountData}
 									ifAllow={
 										<>
-											<SetActiveMenu setCurrentMenu={setCurrentMenu} menuCode={""} />
+											<SetActiveMenu setCurrentMenu={setCurrentMenu} menuCode={"/accounts/renew/nickname"} />
 											<NicknameRenewForm />
 										</>
 									}
