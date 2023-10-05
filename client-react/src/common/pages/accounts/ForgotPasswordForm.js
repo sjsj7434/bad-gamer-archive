@@ -53,7 +53,7 @@ const ForgotPasswordForm = (props) => {
 	// }
 
 	return (
-		<Container style={{maxWidth: "600px"}}>
+		<Container style={{maxWidth: "450px"}}>
 			<LoadingModal showModal={showLoadingModal} message={loadingMessage}></LoadingModal>
 
 			<div style={{ marginTop: "30px" }}>
@@ -80,7 +80,7 @@ const ForgotPasswordForm = (props) => {
 						</Form.Text>
 					</Form.Group>
 
-					<Button type="submit" variant="success" size="lg" style={{width: "100%", marginTop: "10px", fontSize: "0.95rem"}}>메일 보내기</Button>
+					<Button type="submit" variant="success" size="lg" style={{width: "100%", marginTop: "10px", fontSize: "0.9rem"}}>메일 보내기</Button>
 				</Form>
 			</div>
 		</Container>

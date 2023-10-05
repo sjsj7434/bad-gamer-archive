@@ -65,7 +65,7 @@ const NicknameRenewForm = () => {
 	}
 
 	return (
-		<Container style={{maxWidth: "600px"}}>
+		<Container style={{maxWidth: "450px"}}>
 			<LoadingModal showModal={showLoadingModal} message={loadingMessage}></LoadingModal>
 
 			<div style={{ marginTop: "30px" }}>
@@ -124,7 +124,7 @@ const NicknameRenewForm = () => {
 						</Col>
 					</Form.Group>
 
-					<Button type="submit" variant="success" size="lg" style={{width: "100%", marginTop: "20px"}}>변경하기</Button>
+					<Button type="submit" variant="success" size="lg" style={{width: "100%", marginTop: "20px", fontSize: "0.9rem"}}>변경하기</Button>
 				</Form>
 			</div>
 		</Container>

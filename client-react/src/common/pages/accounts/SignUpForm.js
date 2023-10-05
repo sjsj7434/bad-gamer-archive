@@ -178,7 +178,7 @@ const SignUpForm = () => {
 	}
 
 	return (
-		<Container style={{maxWidth: "600px"}}>
+		<Container style={{maxWidth: "450px"}}>
 			<LoadingModal showModal={showLoadingModal} message={loadingMessage}></LoadingModal>
 
 			<div style={{ marginTop: "30px" }}>
@@ -339,7 +339,7 @@ const SignUpForm = () => {
 						</Col>
 					</Form.Group>
 
-					<Button type="submit" variant="success" size="lg" style={{width: "100%", marginTop: "20px"}}>가입하기</Button>
+					<Button type="submit" variant="success" size="lg" style={{width: "100%", marginTop: "20px", fontSize: "0.9rem"}}>가입하기</Button>
 					<span style={{fontSize: "0.75rem"}}>
 						사용자의 비밀번호는 <strong>단방향 암호화</strong> 되어 보관됩니다
 						<br />

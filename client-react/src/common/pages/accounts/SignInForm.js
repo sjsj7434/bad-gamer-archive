@@ -75,7 +75,7 @@ const SignInForm = () => {
 	// }
 
 	return (
-		<Container style={{maxWidth: "600px"}}>
+		<Container style={{maxWidth: "450px"}}>
 			<LoadingModal showModal={showLoadingModal} message={loadingMessage}></LoadingModal>
 
 			<div style={{ marginTop: "30px" }}>
@@ -110,10 +110,11 @@ const SignInForm = () => {
 						</Form.Text>
 					</Form.Group>
 
-					<Button type="submit" variant="success" size="lg" style={{width: "100%", marginTop: "10px", fontSize: "0.95rem"}}>로그인</Button>
+					<Button type="submit" variant="success" size="lg" style={{width: "100%", marginTop: "10px", fontSize: "0.9rem"}}>로그인</Button>
 				</Form>
 
-				<Button onClick={() => { navigate("/accounts/find/password"); }} variant="outline-primary" size="lg" style={{width: "100%", marginTop: "10px", fontSize: "0.95rem"}}>비밀번호를 잊으셨나요?</Button>
+				<Button onClick={() => { navigate("/accounts/signup"); }} variant="outline-primary" size="lg" style={{width: "100%", marginTop: "10px", fontSize: "0.9rem"}}>계정이 없으신가요?</Button>
+				<Button onClick={() => { navigate("/accounts/find/password"); }} variant="outline-primary" size="lg" style={{width: "100%", marginTop: "10px", fontSize: "0.9rem"}}>비밀번호를 잊으셨나요?</Button>
 			</div>
 		</Container>
 	);
