@@ -89,7 +89,7 @@ const MyPage = () => {
 									<td><div className="vr"></div></td>
 									<td>
 										<div style={{ display: "flex", alignItems: "center" }}>
-											{accountData.lostarkMainCharacter === null ? "정보 없음" : accountData.lostarkMainCharacter}
+											{accountData.lostarkMainCharacter === null ? "정보 없음" : accountData.authentication[0].data}
 											&nbsp;&nbsp;
 											{
 												accountData.lostarkMainCharacter === null ? 

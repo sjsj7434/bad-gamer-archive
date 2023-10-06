@@ -1,9 +1,13 @@
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, DeleteDateColumn } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, DeleteDateColumn, OneToMany } from 'typeorm';
+import { Authentication } from './authentication.entity';
 
 // This will create following database table
 // If table is already exsists there could be error
 @Entity()
 export class Accounts {
+	@OneToMany(() => Authentication, (authentication) => authentication.accounts)
+	authentication: Authentication[];
+
 	/**
 	 * 자동으로 생성되는 코드
 	 */

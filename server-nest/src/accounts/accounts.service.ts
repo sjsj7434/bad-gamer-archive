@@ -530,17 +530,19 @@ export class AccountsService {
 	 */
 	async getMyInfo(request: Request, response: Response): Promise<Accounts> {
 		const acctountData = await this.accountsRepository.findOne({
+			relations: ["authentication"], //사용자 인증 정보 join
 			select: {
+				authentication: { code: true, type: true, data: true },
+				code: true,
 				id: true,
 				nickname: true,
 				lastLogin: true,
 				loginSuccessIP: true,
 				passwordChangeDate: true,
-				// lostarkMainCharacter: true,
-				// 게임 계정 인증 테이블 분리 작업 중 / 2023-07-30
 			},
 			where: {
 				uuid: SIGN_IN_SESSION.get(request.cookies["sessionCode"]),
+				// authentication: { type: "lostark_character" }
 			}
 		});
 
