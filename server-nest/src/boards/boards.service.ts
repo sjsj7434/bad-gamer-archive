@@ -119,7 +119,13 @@ export class BoardsService {
 			withDeleted: true,
 			skip: (page - 1) * perPage,
 			take: perPage,
-		})
+		});
+
+		if (result !== null) {
+			for (let index: number = 0; index < result[0].length; index++) {
+				result[0][index]["ip"] = result[0][index]["ip"].split(".")[0] + (result[0][index]["ip"].split(".")[1] !== undefined ? "." + result[0][index]["ip"].split(".")[1] : "");
+			}
+		}
 
 		return result;
 	}
@@ -158,7 +164,13 @@ export class BoardsService {
 			withDeleted: true,
 			skip: (page - 1) * perPage,
 			take: perPage,
-		})
+		});
+
+		if (result !== null) {
+			for (let index: number = 0; index < result[0].length; index++) {
+				result[0][index]["ip"] = result[0][index]["ip"].split(".")[0] + (result[0][index]["ip"].split(".")[1] !== undefined ? "." + result[0][index]["ip"].split(".")[1] : "");
+			}
+		}
 
 		return result;
 	}
@@ -198,7 +210,14 @@ export class BoardsService {
 			withDeleted: true,
 			skip: (page - 1) * perPage,
 			take: perPage,
-		})
+		});
+
+		if (result !== null) {
+			for (let index: number = 0; index < result[0].length; index++) {
+				result[0][index]["ip"] = result[0][index]["ip"].split(".")[0] + (result[0][index]["ip"].split(".")[1] !== undefined ? "." + result[0][index]["ip"].split(".")[1] : "");
+			}
+		}
+
 
 		return result;
 	}
@@ -233,7 +252,13 @@ export class BoardsService {
 			withDeleted: true,
 			skip: (page - 1) * perPage,
 			take: perPage,
-		})
+		});
+
+		if (result !== null) {
+			for (let index: number = 0; index < result[0].length; index++) {
+				result[0][index]["ip"] = result[0][index]["ip"].split(".")[0] + (result[0][index]["ip"].split(".")[1] !== undefined ? "." + result[0][index]["ip"].split(".")[1] : "");
+			}
+		}
 
 		return result;
 	}
@@ -241,7 +266,7 @@ export class BoardsService {
 	/**
 	 * code로 1개의 게시글을 찾는다
 	 */
-	async getContent(contentCode: number, category: string, type: string): Promise<Boards> {
+	async getContent(contentCode: number, category: string, type: string, writerID: string): Promise<[Boards, Boolean]> {
 		if (type === "author") {
 			const contentData = await this.boardsRepository.findOne({
 				select: {
@@ -256,9 +281,11 @@ export class BoardsService {
 				},
 			});
 
-			return contentData;
+			return [contentData, false];
 		}
 		else if (type === "view" || type === "edit") {
+			let isAuthor: Boolean = true;
+
 			if (type === "view") {
 				await this.boardsRepository.increment({ code: contentCode }, "view", 1);
 			}
@@ -284,7 +311,12 @@ export class BoardsService {
 				},
 			});
 
-			return contentData;
+			if (contentData !== null) {
+				contentData.ip = contentData.ip.split(".")[0] + (contentData.ip.split(".")[1] !== undefined ? "." + contentData.ip.split(".")[1] : "");
+				isAuthor = contentData.writerID === writerID;
+			}
+
+			return [contentData, isAuthor];
 		}
 	}
 
