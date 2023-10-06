@@ -1,14 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, IsNull } from 'typeorm';
+import { Repository, IsNull, MoreThanOrEqual, Between } from 'typeorm';
 import { Boards } from './boards.entity';
-import { CreateBoardsDTO, UpdateBoardsDTO, DeleteBoardsDTO } from './boards.dto';
 import { Replies } from './replies.entity';
-import { Cron } from '@nestjs/schedule';
-import { CreateRepliesDTO, UpdateRepliesDTO, DeleteRepliesDTO } from './replies.dto';
+import { CreateBoardsDTO, UpdateBoardsDTO, DeleteBoardsDTO } from './boards.dto';
+import { Cron, CronExpression } from '@nestjs/schedule';
+import { CreateRepliesDTO, DeleteRepliesDTO } from './replies.dto';
 
 @Injectable()
-export class AnonymousBoardService {
+export class BoardsService {
 	constructor(
 		@InjectRepository(Boards) private boardsRepository: Repository<Boards>,
 		@InjectRepository(Replies) private repliesRepository: Repository<Replies>,
@@ -17,7 +17,7 @@ export class AnonymousBoardService {
 	contentVoteData: Map<number, Array<string>> = new Map();
 
 	//서울 시간 기준으로 [매일 00:00]에 데이터 초기화
-	@Cron("0 0 0 * * *", {
+	@Cron(CronExpression.EVERY_DAY_AT_MIDNIGHT, {
 		name: "resetAnonymousVoteData",
 		timeZone: "Asia/Seoul",
 	})
@@ -26,7 +26,7 @@ export class AnonymousBoardService {
 		console.log("[resetAnonymousVoteData] Reset data every day at 00:00");
 	}
 
-	isVotableContent(contentCode: number, ipData: string): boolean{
+	isVotableContent(contentCode: number, ipData: string): boolean {
 		const ipArray: Array<string> | undefined = this.contentVoteData.get(contentCode);
 
 		if (ipArray === undefined) {
@@ -38,10 +38,172 @@ export class AnonymousBoardService {
 			this.contentVoteData.set(contentCode, ipArray);
 			return true;
 		}
-		else{
+		else {
 			return false;
 		}
 	}
+
+	/**
+	 * 검색 날짜 범위 설정
+	 * @param type 검색 타입
+	 * @returns Date
+	 */
+	setSearchDate(type: string): Date {
+		const dateOfNow = new Date();
+		const yearNow = dateOfNow.getFullYear();
+		const monthNow = dateOfNow.getMonth();
+		const dayNow = dateOfNow.getDate();
+
+		const allTime: Date = new Date(2023, 1, 1); //전체
+		const yearly: Date = new Date(yearNow - 1, monthNow, dayNow); //연간
+		const monthly: Date = new Date(yearNow, monthNow - 1, dayNow); //월간
+		const weekly: Date = new Date(yearNow, monthNow, dayNow - 7); //주간
+		const daily: Date = new Date(yearNow, monthNow, dayNow - 1); //일간
+		let searchDate: Date = null;
+
+		switch (type) {
+			case "allTime":
+				searchDate = allTime;
+				break;
+			case "yearly":
+				searchDate = yearly;
+				break;
+			case "monthly":
+				searchDate = monthly;
+				break;
+			case "weekly":
+				searchDate = weekly;
+				break;
+			case "daily":
+				searchDate = daily;
+				break;
+			default:
+				searchDate = monthly;
+				break;
+		}
+
+		return searchDate;
+	}
+
+	/**
+	 * 글 목록 가져오기
+	 */
+	async getUpvoteTrend(upvoteCutline: number, page: number, perPage: number, type: string): Promise<[Boards[], number]> {
+		let searchDate: Date = this.setSearchDate(type);
+
+		const result = await this.boardsRepository.findAndCount({
+			relations: ["replies"], //댓글 정보 join
+			select: {
+				replies: { code: true },
+				code: true,
+				category: true,
+				writerNickname: true,
+				title: true,
+				view: true,
+				upvote: true,
+				downvote: true,
+				ip: true,
+				hasImage: true,
+				createdAt: true,
+			},
+			where: {
+				deletedAt: IsNull(),
+				upvote: MoreThanOrEqual(upvoteCutline),
+				createdAt: Between(searchDate, new Date()),
+			},
+			order: {
+				upvote: "DESC",
+				view: "DESC",
+				createdAt: "DESC",
+			},
+			withDeleted: true,
+			skip: (page - 1) * perPage,
+			take: perPage,
+		})
+
+		return result;
+	}
+
+	/**
+	 * 글 목록 가져오기
+	 */
+	async getDownvoteTrend(downvoteCutline: number, page: number, perPage: number, type: string): Promise<[Boards[], number]> {
+		let searchDate: Date = this.setSearchDate(type);
+
+		const result = await this.boardsRepository.findAndCount({
+			relations: ["replies"], //댓글 정보 join
+			select: {
+				replies: { code: true },
+				code: true,
+				category: true,
+				writerNickname: true,
+				title: true,
+				view: true,
+				upvote: true,
+				downvote: true,
+				ip: true,
+				hasImage: true,
+				createdAt: true,
+			},
+			where: {
+				deletedAt: IsNull(),
+				downvote: MoreThanOrEqual(downvoteCutline),
+				createdAt: Between(searchDate, new Date()),
+			},
+			order: {
+				downvote: "DESC",
+				view: "DESC",
+				createdAt: "DESC",
+			},
+			withDeleted: true,
+			skip: (page - 1) * perPage,
+			take: perPage,
+		})
+
+		return result;
+	}
+
+	/**
+	 * 글 목록 가져오기
+	 */
+	async getViewTrend(viewCutline: number, page: number, perPage: number, type: string): Promise<[Boards[], number]> {
+		let searchDate: Date = this.setSearchDate(type);
+
+		const result = await this.boardsRepository.findAndCount({
+			relations: ["replies"], //댓글 정보 join
+			select: {
+				replies: { code: true },
+				code: true,
+				category: true,
+				writerNickname: true,
+				title: true,
+				view: true,
+				upvote: true,
+				downvote: true,
+				ip: true,
+				hasImage: true,
+				createdAt: true,
+			},
+			where: {
+				deletedAt: IsNull(),
+				view: MoreThanOrEqual(viewCutline),
+				createdAt: Between(searchDate, new Date()),
+			},
+			order: {
+				view: "DESC",
+				upvote: "DESC",
+				downvote: "ASC",
+				createdAt: "DESC",
+			},
+			withDeleted: true,
+			skip: (page - 1) * perPage,
+			take: perPage,
+		})
+
+		return result;
+	}
+
+	//=================================================================================================================================================================================
 
 	/**
 	 * 글 목록 가져오기
@@ -50,7 +212,7 @@ export class AnonymousBoardService {
 		const result = await this.boardsRepository.findAndCount({
 			relations: ["replies"], //댓글 정보 join
 			select: {
-				replies: {code: true},
+				replies: { code: true },
 				code: true,
 				writerNickname: true,
 				title: true,
@@ -73,36 +235,13 @@ export class AnonymousBoardService {
 			take: perPage,
 		})
 
-		// const result = await this.boardsRepository.findAndCount({
-		// 	skip: (page - 1) * 10, //시작 인덱스
-		// 	take: 10, //페이지 당 갯수
-		// 	select: {
-		// 		code: true,
-		// 		title: true,
-		// 		hasImage: true,
-		// 		view: true,
-		// 		upvote: true,
-		// 		downvote: true,
-		// 		writer: true,
-		// 		ip: true,
-		// 		createdAt: true,
-		// 	},
-		// 	where: {
-		// 		category: category,
-		// 	},
-		// 	order: {
-		// 		createdAt: "DESC",
-		// 		code: "DESC",
-		// 	}
-		// });
-
 		return result;
 	}
 
 	/**
 	 * code로 1개의 게시글을 찾는다
 	 */
-	async getContent(contentCode: number, type: string): Promise<Boards> {
+	async getContent(contentCode: number, category: string, type: string): Promise<Boards> {
 		if (type === "author") {
 			const contentData = await this.boardsRepository.findOne({
 				select: {
@@ -113,14 +252,14 @@ export class AnonymousBoardService {
 				},
 				where: {
 					code: contentCode,
-					category: "anonymous",
+					category: category,
 				},
 			});
 
 			return contentData;
 		}
 		else if (type === "view" || type === "edit") {
-			if (type === "view"){
+			if (type === "view") {
 				await this.boardsRepository.increment({ code: contentCode }, "view", 1);
 			}
 
@@ -141,7 +280,7 @@ export class AnonymousBoardService {
 				},
 				where: {
 					code: contentCode,
-					category: "anonymous",
+					category: category,
 				},
 			});
 
@@ -159,45 +298,50 @@ export class AnonymousBoardService {
 	/**
 	 * 게시판에 게시글을 수정한다
 	 */
-	async updateContent(boardData: UpdateBoardsDTO) {
+	async updateContent(boardData: UpdateBoardsDTO): Promise<Boolean> {
 		const contentData = await this.boardsRepository.findOne({
 			where: {
 				code: boardData.code,
-				category: "anonymous",
+				category: boardData.category,
 				password: boardData.password,
+				writerID: boardData.writerID,
 			}
 		});
 
-		if (contentData !== null){
+		if (contentData !== null) {
 			boardData.updatedAt = new Date();
-	
-			await this.boardsRepository.save(boardData);
-		}
 
-		return contentData;
+			await this.boardsRepository.save(boardData);
+
+			return true;
+		}
+		else {
+			return false;
+		}
 	}
 
 	/**
 	 * 게시글을 softDelete한다
 	 */
-	async softDeleteContent(deleteBoardsDTO: DeleteBoardsDTO): Promise<boolean>{
+	async softDeleteContent(deleteBoardsDTO: DeleteBoardsDTO, category: string, writerID: string): Promise<Boolean> {
 		try {
 			const result = await this.boardsRepository.findOneBy(
 				{
 					code: deleteBoardsDTO.code,
-					category: "anonymous",
+					category: category,
 					password: deleteBoardsDTO.password,
+					writerID: writerID,
 				}
 			);
 
-			if (result !== null){
+			if (result !== null) {
 				this.boardsRepository.softDelete({
 					code: deleteBoardsDTO.code
 				});
 
 				return true;
 			}
-			else{
+			else {
 				return false;
 			}
 		} catch (error) {
@@ -278,20 +422,17 @@ export class AnonymousBoardService {
 	/**
 	 * 댓글 생성
 	 */
-	async createReply(createRepliesDTO: CreateRepliesDTO): Promise<Boolean> {
+	async createReply(createRepliesDTO: CreateRepliesDTO, category: string): Promise<Boolean> {
 		//부모 게시글의 코드만 바꿔서 요청이 들어오면 비로그인 유저가 로그인 전용 게시글에 댓글을 익명으로 남길 수 있게됨
 		//댓글 저장 전에 부모 게시글의 정보 확인
-		const contentData = await this.boardsRepository.findOne({
-			select: {
-				category: true,
-			},
+		const contentData = await this.boardsRepository.exist({
 			where: {
 				code: createRepliesDTO.parentContentCode,
-				category: "anonymous",
+				category: category,
 			},
 		});
-		
-		if (contentData !== null){
+
+		if (contentData === true) {
 			const replyData = await this.repliesRepository.save(createRepliesDTO);
 
 			if (replyData.level === 0) {
@@ -307,7 +448,7 @@ export class AnonymousBoardService {
 
 			return true;
 		}
-		else{
+		else {
 			return false;
 		}
 	}
@@ -315,20 +456,22 @@ export class AnonymousBoardService {
 	/**
 	 * 댓글 삭제
 	 */
-	async deleteReply(deleteRepliesDTO: DeleteRepliesDTO): Promise<boolean> {
+	async deleteReply(deleteRepliesDTO: DeleteRepliesDTO, writerID: string): Promise<boolean> {
 		const replyData = await this.repliesRepository.findOne({
 			where: {
 				code: deleteRepliesDTO.code,
+				writerID: writerID,
 				password: deleteRepliesDTO.password,
 			}
 		});
 
-		if (replyData === null){
+		if (replyData === null) {
 			return false;
 		}
-		else{
+		else {
 			await this.repliesRepository.softDelete({
 				code: deleteRepliesDTO.code,
+				writerID: writerID,
 				password: deleteRepliesDTO.password,
 			});
 
