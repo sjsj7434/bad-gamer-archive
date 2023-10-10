@@ -92,7 +92,7 @@ export class  AccountsController {
 	}
 
 	@Put("lostark/character")
-	async updateLostarkMainCharacter(@Req() request: Request, @Body() body: { lostarkMainCharacter: string }): Promise<string> {
+	async updateLostarkMainCharacter(@Req() request: Request, @Body() body: { lostarkMainCharacter: string, stoveCode: string }): Promise<string> {
 		console.log("[AccountsController(Put) - accounts/lostark/character] => ", body);
 
 		const result = await this.accountsService.updateLostarkMainCharacter(request, body);

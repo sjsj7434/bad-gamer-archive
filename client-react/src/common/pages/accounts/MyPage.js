@@ -78,7 +78,7 @@ const MyPage = () => {
 									</td>
 								</tr>
 								<tr>
-									<th>Exp</th>
+									<th>lvl</th>
 									<td><div className="vr"></div></td>
 									<td>
 										{accountData.nickname}
@@ -97,7 +97,6 @@ const MyPage = () => {
 												:
 												<Button onClick={() => { navigate("activate/lostark") }} variant="outline-danger" style={{ width: "30%", maxWidth: "130px", padding: "2px", fontSize: "0.8rem" }}>변경하기</Button>
 											}
-											
 										</div>
 										* 더 다양한 정보를 저장하기 위해 테이블을 따로 구성해야 할 듯
 									</td>

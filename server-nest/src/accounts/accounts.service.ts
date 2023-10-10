@@ -646,12 +646,15 @@ export class AccountsService {
 	 * ID에 맞는 계정을 수정한다
 	 * find > 정보 수정 > save 처리
 	 */
-	async updateLostarkMainCharacter(request: Request, body: { lostarkMainCharacter: string }) {
+	async updateLostarkMainCharacter(request: Request, body: { lostarkMainCharacter: string, stoveCode: string }) {
 		await this.authenticationRepository.softDelete({
 			uuid: SIGN_IN_SESSION.get(request.cookies["sessionCode"]),
 			type: In(["lostark_character", "stove_code"]),
 			deletedAt: IsNull(),
-		})
+		});
+
+		//받아온 캐릭터 정보 저장해놓고, 다시 넘어온 것 비교해서 위조 확인
+		//어디 Redis에 저장해야하나?
 
 		const authenticationData1 = this.authenticationRepository.create();
 		authenticationData1.uuid = SIGN_IN_SESSION.get(request.cookies["sessionCode"]);
@@ -662,7 +665,7 @@ export class AccountsService {
 		const authenticationData2 = this.authenticationRepository.create();
 		authenticationData2.uuid = SIGN_IN_SESSION.get(request.cookies["sessionCode"]);
 		authenticationData2.type = "stove_code";
-		authenticationData2.data = "random_887711";
+		authenticationData2.data = body.stoveCode;
 		await this.authenticationRepository.insert(authenticationData2);
 	}
 

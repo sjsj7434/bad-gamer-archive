@@ -24,8 +24,6 @@ const ActivateLostarkAPI = (props) => {
 	const [showLoadingModal, setShowLoadingModal] = useState(false);
 	const [loadingMessage, setLoadingMessage] = useState("");
 	const [isValidStoveURL, setIsValidStoveURL] = useState(0);
-	const [characterInfoModalShow, setCharacterInfoModalShow] = useState(false);
-	const [characterInfo, setCharacterInfo] = useState(null);
 	const intervalRef = useRef(null);
 	const tokenStatus = useRef(null);
 	const TOKEN_TIME_LIMIT = 60 * 3; //sec
@@ -150,18 +148,80 @@ const ActivateLostarkAPI = (props) => {
 		else{
 			clearInterval(intervalRef.current);
 
+			//아이템 레밸 내림차순 정렬
+			characterNames.sort(function (a, b) {
+				const lvl_1 = parseFloat(a.ItemMaxLevel.replace(",", ""));
+				const lvl_2 = parseFloat(b.ItemMaxLevel.replace(",", ""));
+				
+				if (lvl_1 > lvl_2) {
+					return -1;
+				}
+				if (lvl_1 < lvl_2) {
+					return 1;
+				}
+
+				return 0;
+			});
+
 			const elements = [];
 			elements.push(characterNames.map((characterInfo) => {
 				return (
-					<ListGroup.Item key={characterInfo.CharacterName} action onClick={() => {setCharacter(characterInfo)}} style={{fontSize: "0.8rem"}}>
-						[{characterInfo.ServerName}] <b>{characterInfo.CharacterName}</b> / {characterInfo.ItemMaxLevel} / {characterInfo.CharacterClassName}
-					</ListGroup.Item>
+					<Card key={characterInfo.CharacterName} style={{ fontSize: "0.8rem", marginBottom: "0.4rem" }}>
+						<Card.Body>
+							<Card.Title>{characterInfo.CharacterName}</Card.Title>
+							<Table>
+								<colgroup>
+									<col width="35%" />
+									<col width="5%" />
+									<col width="*" />
+								</colgroup>
+								<tbody>
+									<tr>
+										<th>서버</th>
+										<td><div className="vr"></div></td>
+										<td>
+											{characterInfo.ServerName}
+										</td>
+									</tr>
+									<tr>
+										<th>클래스</th>
+										<td><div className="vr"></div></td>
+										<td>
+											{characterInfo.CharacterClassName}
+										</td>
+									</tr>
+									<tr>
+										<th>전투 레벨</th>
+										<td><div className="vr"></div></td>
+										<td>
+											{characterInfo.CharacterLevel}
+										</td>
+									</tr>
+									<tr>
+										<th>아이템 레벨</th>
+										<td><div className="vr"></div></td>
+										<td>
+											{characterInfo.ItemMaxLevel}
+										</td>
+									</tr>
+								</tbody>
+							</Table>
+							<Stack direction="horizontal" gap={2} style={{ marginTop: "0.3rem"}}>
+								<Button variant="primary" style={{ fontSize: "0.8rem" }} className="tabletOver" onClick={ () => { window.open(`https://lostark.game.onstove.com/Profile/Character/${characterInfo.CharacterName}`) } }>전투정보실</Button>
+								<Button variant="primary" style={{ fontSize: "0.8rem" }} className="mobileOnly" onClick={ () => { window.open(`https://m-lostark.game.onstove.com/Profile/Character/${characterInfo.CharacterName}`) } }>전투정보실</Button>
+								<Button variant="success" style={{ fontSize: "0.8rem" }} onClick={ () => { setCharacter(characterInfo) } }>인증하기</Button>
+							</Stack>
+						</Card.Body>
+					</Card>
 				)
 			}));
 			elements.push(
-				<ListGroup.Item key={"noCharacter"} action onClick={() => {noCharacter()}} style={{color: "red", fontSize: "0.8rem"}}>
-					[!] 인증하지않고 종료하기
-				</ListGroup.Item>
+				<Card key={"noCharacter"} bg="danger" onClick={() => {noCharacter()}} style={{ marginBottom: "0.4rem", cursor: "pointer" }}>
+					<Card.Body>
+						<Card.Title style={{ fontSize: "0.85rem", color: "white" }}>인증하지않고 종료하기</Card.Title>
+						<Card.Subtitle style={{ fontSize: "0.75rem", color: "white" }} className="mb-2">인증을 진행하지 않고 종료합니다</Card.Subtitle>
+					</Card.Body>
+				</Card>
 			);
 
 			setcharacterList(elements);
@@ -180,8 +240,7 @@ const ActivateLostarkAPI = (props) => {
 	}
 
 	const setCharacter = async (characterInfo) => {
-		// if(window.confirm(`[${characterInfo.ServerName} - ${characterInfo.CharacterName}] 캐릭터로 인증을 진행하시겠습니까?`)){
-		if(window.confirm(`[${characterInfo.CharacterName} (Level.${characterInfo.ItemMaxLevel})] 캐릭터로 인증을 진행하시겠습니까?`)){
+		if(window.confirm(`${characterInfo.CharacterName} (아이템 레벨. ${characterInfo.ItemMaxLevel}) 캐릭터로 인증을 진행하시겠습니까?`)){
 			setCharacterModalShow(false);
 			controlActivateVerify("done");
 			
@@ -189,96 +248,11 @@ const ActivateLostarkAPI = (props) => {
 			setLoadingMessage("캐릭터를 설정 중입니다");
 			await accountsFetch.setLostarkMainCharacter({
 				lostarkMainCharacter: characterInfo.CharacterName,
+				stoveCode: document.querySelector("#stoveURL").value,
 			});
+
 			setShowLoadingModal(false);
 			navigate("/accounts/mypage")
-		}
-	}
-
-	const setCharacter2 = async (characterInfo) => {
-		if(window.confirm(`[${characterInfo.ServerName} - ${characterInfo.CharacterName}] 캐릭터로 인증을 진행하시겠습니까?`)){
-			setCharacterModalShow(false);
-			controlActivateVerify("done");
-			
-			setShowLoadingModal(true);
-			setLoadingMessage("캐릭터를 설정 중입니다");
-			
-			const characterData = await accountsFetch.getCharacterInfoScrap(characterInfo.CharacterName);
-			const elements = [];
-			
-			elements.push(
-				<Card style={{ width: "100%", fontSize: "0.8rem" }}>
-					<Card.Img variant="top" src={characterData.characterImage} />
-					<Card.Body>
-						<Card.Title>{characterData.characterName}</Card.Title>
-						<Card.Text>
-							-카드<br />
-							{characterData.cardEffects.map((element) => {
-								return(
-									<div>
-										{element}
-									</div>
-								)
-							})}
-							<br />
-							-생활<br />
-							{characterData.lifeSkills.map((element) => {
-								return(
-									<div>
-										{element}
-									</div>
-								)
-							})}
-						</Card.Text>
-					</Card.Body>
-					<ListGroup className="list-group-flush">
-						<ListGroup.Item>
-							<Table striped>
-								<colgroup>
-									<col width="30%" />
-									<col width="*" />
-								</colgroup>
-								<tbody>
-									<tr>
-										<td>원정대</td>
-										<td>{characterData.expeditionLevel}</td>
-									</tr>
-									<tr>
-										<td>전투 레벨</td>
-										<td>{characterData.combatLevel}</td>
-									</tr>
-									<tr>
-										<td>아이템 레벨</td>
-										<td>{characterData.maxItemLevel}</td>
-									</tr>
-									<tr>
-										<td>영지</td>
-										<td>{characterData.stringholdName} {characterData.stringholdLevel}</td>
-									</tr>
-								</tbody>
-							</Table>
-							<div style={{display: "flex", justifyContent: "space-evenly"}}>
-								<Button variant={"success"} onClick={() => {noCharacter()}} style={{fontSize: "0.8rem", width: "45%"}}>인증 완료하기</Button>
-								<Button variant={"danger"} onClick={() => {noCharacter()}} style={{fontSize: "0.8rem", width: "45%"}}>인증하지않기</Button>
-							</div>
-						</ListGroup.Item>
-					</ListGroup>
-					<Card.Body>
-						Card.BodyCard.BodyCard.BodyCard.BodyCard.Body<br />
-						Card.BodyCard.BodyCard.BodyCard.BodyCard.Body
-					</Card.Body>
-				</Card>
-			);
-
-			setCharacterInfo(elements);
-			setShowLoadingModal(false);
-			setCharacterInfoModalShow(true);
-			document.querySelector("#verifyButton").disabled = false;
-
-			// await accountsFetch.setLostarkMainCharacter({
-			// 	lostarkMainCharacter: characterInfo.CharacterName,
-			// });
-			// navigate("/accounts/mypage");
 		}
 	}
 
@@ -360,7 +334,7 @@ const ActivateLostarkAPI = (props) => {
 									스토브 코드 (Stove code)
 								</Form.Label>
 								<InputGroup>
-									<Form.Control className={statusParser(isValidStoveURL)} id="stoveURL" maxLength={20} defaultValue={"83359381"} placeholder={"자신의 스토브 코드를 적어주세요"} autoComplete={"off"} onChange={() => {checkStoveCodeValid()}} style={{fontSize: "0.9rem"}} />
+									<Form.Control className={statusParser(isValidStoveURL)} id="stoveURL" maxLength={20} defaultValue={"176889760"} placeholder={"자신의 스토브 코드를 적어주세요"} autoComplete={"off"} onChange={() => {checkStoveCodeValid()}} style={{fontSize: "0.9rem"}} />
 									<Button variant="outline-secondary" id="getCodeButton" onClick={() => {getVerificationCode()}} style={{fontSize: "0.75rem"}}>
 										인증 코드 받기
 									</Button>
