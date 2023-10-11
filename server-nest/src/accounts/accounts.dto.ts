@@ -8,7 +8,7 @@ export class CreateAccountsDTO extends PickType(Accounts, ["uuid", "id", "passwo
 	
 	@IsString()
 	id: string;
-	@IsStrongPassword()
+	@IsString()
 	password: string;
 	@IsString()
 	nickname: string;
@@ -21,7 +21,7 @@ export class UpdateAccountsDTO extends PartialType(Accounts) {
 	uuid?: string;
 	@IsString()
 	id?: string;
-	@IsStrongPassword()
+	@IsString()
 	password?: string;
 }
 

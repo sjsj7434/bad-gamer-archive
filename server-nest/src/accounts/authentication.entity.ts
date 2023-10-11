@@ -1,4 +1,4 @@
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, DeleteDateColumn, UpdateDateColumn, ManyToOne, JoinColumn } from 'typeorm';
+import { Entity, Column, CreateDateColumn, DeleteDateColumn, UpdateDateColumn, ManyToOne, JoinColumn, Unique, PrimaryColumn } from 'typeorm';
 import { Accounts } from './accounts.entity';
 
 // This will create following database table
@@ -13,15 +13,9 @@ export class Authentication {
 	accounts: Accounts;
 
 	/**
-	 * 자동으로 생성되는 코드
-	 */
-	@PrimaryGeneratedColumn()
-	code: number;
-
-	/**
 	 * 유저 uuid, 서버에서 랜덤 생성값을 부여함, 사용자에게 공개하지 않는 것이 중요
 	 */
-	@Column({
+	@PrimaryColumn({
 		type: "varchar"
 		, length: 50
 		, nullable: false
@@ -31,7 +25,7 @@ export class Authentication {
 	/**
 	 * 분류 : stove 인증 계정 코드, lostark 캐릭, 스팀 플레이타임...
 	 */
-	@Column({
+	@PrimaryColumn({
 		type: "varchar"
 		, length: 100
 	})

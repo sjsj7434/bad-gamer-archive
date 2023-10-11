@@ -12,6 +12,20 @@ export class  AccountsController {
 	/**
 	 * 마이페이지 > stove 계정 인증 코드 발급
 	 */
+	@Get("test")
+	async getTestData(@Req() request: Request) {
+		console.log("[AccountsController(Get) - accounts/test]");
+		await this.accountsService.createStoveVerificationCode(request);
+		console.log("");
+		console.log(`=================================================================`);
+		console.log(await this.accountsService.getCacheData("LOSTARK_" + request.cookies["sessionCode"]));
+		console.log(`=================================================================`);
+		console.log("");
+	}
+
+	/**
+	 * 마이페이지 > stove 계정 인증 코드 발급
+	 */
 	@Get("stove/verification/code")
 	async createStoveVerificationCode(@Req() request: Request): Promise<string> {
 		console.log("[AccountsController(Get) - accounts/stove/verification/code]");
@@ -32,6 +46,8 @@ export class  AccountsController {
 				if(method === "api"){ //공식 API 사용
 					const characterName = await this.accountsService.getStoveUserCharacters_api(stoveURLWithOutProtocol); //api 아니고 web scrap
 					const characterNames = await this.apiService.getCharacterList(characterName); // api 호출
+					await this.accountsService.setCacheData("LOSTARK_" + request.cookies["sessionCode"], characterNames, 5 * 60); //캐릭터 데이터 cache에 저장
+					await this.accountsService.setCacheData("STOVE_CODE_" + request.cookies["sessionCode"], stoveURLWithOutProtocol, 5 * 60); //스토브 코드 cache에 저장
 
 					if (characterNames === null){
 						return ["limit", []];
@@ -92,13 +108,33 @@ export class  AccountsController {
 	}
 
 	@Put("lostark/character")
-	async updateLostarkMainCharacter(@Req() request: Request, @Body() body: { lostarkMainCharacter: string, stoveCode: string }): Promise<string> {
+	async updateLostarkCharacter(@Req() request: Request, @Body() body: { lostarkMainCharacter: string }): Promise<string> {
 		console.log("[AccountsController(Put) - accounts/lostark/character] => ", body);
 
-		const result = await this.accountsService.updateLostarkMainCharacter(request, body);
+		const result = await this.accountsService.updateLostarkCharacter(request, body);
 		console.log(result);
 
 		return "update lostark";
+	}
+
+	@Delete("lostark/character")
+	async deactivateLostarkCharacter(@Req() request: Request): Promise<string> {
+		console.log("[AccountsController(Delete) - accounts/lostark/character]");
+
+		const result = await this.accountsService.deactivateLostarkCharacter(request);
+		console.log(result);
+
+		return "deactivate lostark";
+	}
+
+	@Post("lostark/character/exit")
+	async exitLostarkAuthentication(@Req() request: Request): Promise<string> {
+		console.log("[AccountsController(Post) - accounts/lostark/character/exit]");
+
+		const result = await this.accountsService.exitLostarkAuthentication(request);
+		console.log(result);
+
+		return "deactivate lostark";
 	}
 
 	@Post("signin")

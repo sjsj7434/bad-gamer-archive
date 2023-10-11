@@ -247,7 +247,7 @@ export const getCharacterInfoScrap = async (characterName) => {
 /**
  * lostark 캐릭터 설정
  */
-export const setLostarkMainCharacter = async (accountInfo) => {
+export const setLostarkCharacter = async (accountInfo) => {
 	console.log(accountInfo)
 	const fecthOption = {
 		method: "PUT"
@@ -260,7 +260,60 @@ export const setLostarkMainCharacter = async (accountInfo) => {
 
 	if(isStatusGood === true){
 		const fetchData = await getFetchText(fetchResponse);
-		console.log('setLostarkMainCharacter =>', fetchData)
+		console.log('setLostarkCharacter =>', fetchData)
+
+		return fetchData;
+	}
+	else{
+		alert(checkMessage);
+
+		return null;
+	}
+}
+
+/**
+ * lostark 캐릭터 설정하지 않고 종료
+ */
+export const exitLostarkAuthentication = async (accountInfo) => {
+	console.log(accountInfo)
+	const fecthOption = {
+		method: "POST"
+		, body: JSON.stringify(accountInfo)
+		, headers: {"Content-Type": "application/json",}
+		, credentials: "include", // Don't forget to specify this if you need cookies
+	};
+	const fetchResponse = await fetch(`${process.env.REACT_APP_SERVER}/accounts/lostark/character/exit`, fecthOption);
+	const [isStatusGood, checkMessage] = isFetchStatusGood(fetchResponse);
+
+	if(isStatusGood === true){
+		const fetchData = await getFetchText(fetchResponse);
+		console.log('exitLostarkAuthentication =>', fetchData)
+
+		return fetchData;
+	}
+	else{
+		alert(checkMessage);
+
+		return null;
+	}
+}
+
+/**
+ * 로스트아크 캐릭터 인증 해제
+ */
+export const deactivateLostarkCharacter = async (sendData) => {
+	const fecthOption = {
+		method: "DELETE"
+		, body: JSON.stringify(sendData)
+		, headers: {"Content-Type": "application/json",}
+		, credentials: "include", // Don't forget to specify this if you need cookies
+	};
+	const fetchResponse = await fetch(`${process.env.REACT_APP_SERVER}/accounts/lostark/character`, fecthOption);
+	const [isStatusGood, checkMessage] = isFetchStatusGood(fetchResponse);
+
+	if(isStatusGood === true){
+		const fetchData = await getFetchText(fetchResponse);
+		console.log('deactivateLostarkCharacter =>', fetchData)
 
 		return fetchData;
 	}

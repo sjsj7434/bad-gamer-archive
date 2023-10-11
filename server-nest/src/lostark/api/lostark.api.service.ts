@@ -19,7 +19,7 @@ export class LostarkAPIService {
 	})
 	resetApiCallCount() {
 		this.ApiCallCount = 0;
-		console.log("[resetApiCallCount] Reset data every minute");
+		console.log("[resetApiCallCount] Reset data every minute" + new Date());
 	}
 
 	getLostArkAPI = async (destination: string) => {

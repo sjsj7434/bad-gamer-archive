@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { In, IsNull, Repository } from 'typeorm';
+import { In, IsNull, Not, Repository } from 'typeorm';
 import { Accounts } from './accounts.entity';
 import { CreateAccountsDTO, DeleteAccountsDTO } from './accounts.dto';
 import { randomBytes } from 'crypto';
@@ -532,7 +532,7 @@ export class AccountsService {
 		const acctountData = await this.accountsRepository.findOne({
 			relations: ["authentication"], //사용자 인증 정보 join
 			select: {
-				authentication: { code: true, type: true, data: true },
+				authentication: { type: true, data: true },
 				code: true,
 				id: true,
 				nickname: true,
@@ -542,7 +542,7 @@ export class AccountsService {
 			},
 			where: {
 				uuid: SIGN_IN_SESSION.get(request.cookies["sessionCode"]),
-				// authentication: { type: "lostark_character" }
+				// authentication: { type: "lostark_name" }
 			}
 		});
 
@@ -643,30 +643,78 @@ export class AccountsService {
 	}
 
 	/**
-	 * ID에 맞는 계정을 수정한다
-	 * find > 정보 수정 > save 처리
+	 * 로스트아크 캐릭터 인증
 	 */
-	async updateLostarkMainCharacter(request: Request, body: { lostarkMainCharacter: string, stoveCode: string }) {
+	async updateLostarkCharacter(request: Request, body: { lostarkMainCharacter: string }) {
+		//받아온 캐릭터 정보 저장해놓고, 다시 넘어온 것 비교해서 위조 확인
+		const characterList: [any] = await this.cacheManager.get("LOSTARK_" + request.cookies["sessionCode"]);
+
+		let isContain: boolean = false;
+		let infoIndex: number = 0;
+
+		if (typeof characterList !== "object"){
+			return;
+		}
+
+		for (let index = 0; index < characterList.length; index++) {
+			const element = characterList[index];
+			if (element.CharacterName === body.lostarkMainCharacter){
+				isContain = true;
+				infoIndex = index;
+				break;
+			}
+		}
+
+		if (isContain === true) {
+			const uuid = SIGN_IN_SESSION.get(request.cookies["sessionCode"]);
+
+			//다시 인증을 진행하면 이전에 인증 해제한 데이터 완전 삭제 처리
+			await this.authenticationRepository.delete({
+				uuid: uuid,
+				type: In(["lostark_name", "lostark_item_level", "lostark_server", "lostark_character_level", "stove_code"]),
+				deletedAt: Not(IsNull()),
+			});
+
+			const stoveCode: string = await this.cacheManager.get("STOVE_CODE_" + request.cookies["sessionCode"]);
+
+			const upsertResult = await this.authenticationRepository.upsert(
+				[
+					{ uuid: uuid, type: "stove_code", data: stoveCode },
+					{ uuid: uuid, type: "lostark_name", data: characterList[infoIndex].CharacterName },
+					{ uuid: uuid, type: "lostark_character_level", data: characterList[infoIndex].CharacterLevel },
+					{ uuid: uuid, type: "lostark_item_level", data: characterList[infoIndex].ItemMaxLevel },
+					{ uuid: uuid, type: "lostark_server", data: characterList[infoIndex].ServerName },
+				],
+				["uuid", "type"]
+			);
+
+			console.log("upsertResult : ", upsertResult);
+
+			await this.cacheManager.del("LOSTARK_" + request.cookies["sessionCode"]);
+			await this.cacheManager.del("STOVE_CODE_" + request.cookies["sessionCode"]);
+		}
+	}
+
+	/**
+	 * 로스트아크 캐릭터 인증 해제
+	 */
+	async deactivateLostarkCharacter(request: Request) {
+		const uuid = SIGN_IN_SESSION.get(request.cookies["sessionCode"]);
+
+		//다시 인증을 진행하지 않으면 데이터는 완전 삭제되지 않음
 		await this.authenticationRepository.softDelete({
-			uuid: SIGN_IN_SESSION.get(request.cookies["sessionCode"]),
-			type: In(["lostark_character", "stove_code"]),
+			uuid: uuid,
+			type: In(["lostark_name", "lostark_item_level", "lostark_server", "lostark_character_level", "stove_code"]),
 			deletedAt: IsNull(),
 		});
+	}
 
-		//받아온 캐릭터 정보 저장해놓고, 다시 넘어온 것 비교해서 위조 확인
-		//어디 Redis에 저장해야하나?
-
-		const authenticationData1 = this.authenticationRepository.create();
-		authenticationData1.uuid = SIGN_IN_SESSION.get(request.cookies["sessionCode"]);
-		authenticationData1.type = "lostark_character";
-		authenticationData1.data = body.lostarkMainCharacter;
-		await this.authenticationRepository.insert(authenticationData1);
-
-		const authenticationData2 = this.authenticationRepository.create();
-		authenticationData2.uuid = SIGN_IN_SESSION.get(request.cookies["sessionCode"]);
-		authenticationData2.type = "stove_code";
-		authenticationData2.data = body.stoveCode;
-		await this.authenticationRepository.insert(authenticationData2);
+	/**
+	 * 로스트아크 캐릭터 인증하지 않고 종료할 때 캐시 데이터 삭제
+	 */
+	async exitLostarkAuthentication(request: Request) {
+		await this.cacheManager.del("LOSTARK_" + request.cookies["sessionCode"]);
+		await this.cacheManager.del("STOVE_CODE_" + request.cookies["sessionCode"]);
 	}
 
 	/**
@@ -767,4 +815,82 @@ export class AccountsService {
 			}
 		}
 	}
+
+	/**
+	 * 캐시 데이터 설정
+	 * @param cacheName 캐시 이름
+	 * @param cacheValue 캐시 값
+	 * @param cacheLiveSeconds TTL 초
+	 * @returns 정상 처리인가 아닌가
+	 */
+	async setCacheData(cacheName: string, cacheValue: any, cacheLiveSeconds: number): Promise<Boolean> {
+		if (cacheName === "" || cacheName === undefined || cacheName === null) {
+			return false;
+		}
+		else if (cacheValue === undefined) {
+			return false;
+		}
+		else if (cacheLiveSeconds === null || cacheLiveSeconds === undefined || cacheLiveSeconds < 0) {
+			return false;
+		}
+
+		let cacheTTL: number = 1000 * cacheLiveSeconds;
+
+		await this.cacheManager.set(cacheName, cacheValue, cacheTTL);
+
+		return true;
+	}
+
+	/**
+	 * 캐시 데이터 가져오기
+	 * @param cacheName 캐시 이름
+	 * @returns 가져온 값(any)
+	 */
+	async getCacheData(cacheName: string): Promise<any> {
+		if (cacheName === "" || cacheName === undefined || cacheName === null) {
+			return null;
+		}
+
+		return await this.cacheManager.get(cacheName);
+	}
+
+	/**
+	 * 쿠키 설정
+	 * @param response Response
+	 * @param cookieName 쿠키 이름
+	 * @param cookieValue 쿠키 값
+	 * @param cookieLiveSeconds 쿠키 만료 시간
+	 * @returns 정상 처리인가 아닌가
+	 */
+	async setCookieData(response: Response, cookieName: string, cookieValue: string, cookieLiveSeconds: number): Promise<Boolean> {
+		if (cookieName === "" || cookieName === undefined || cookieName === null) {
+			return false;
+		}
+		else if (cookieValue === undefined) {
+			return false;
+		}
+		else if (cookieLiveSeconds === null || cookieLiveSeconds === undefined || cookieLiveSeconds < 0) {
+			return false;
+		}
+
+		let cacheTTL: number = 1000 * cookieLiveSeconds;
+
+		response.cookie(cookieName, cookieValue, { maxAge: cacheTTL, httpOnly: true, secure: true });
+
+		return true;
+	}
+
+	// /**
+	//  * 쿠키 가져오기
+	//  * @param request Request
+	//  * @param cookieName 쿠키 이름
+	//  * @returns 가져온 값(string)
+	//  */
+	// async getCookieData(request: Request, cookieName: string): Promise<any> {
+	// 	if (cookieName === "" || cookieName === undefined || cookieName === null) {
+	// 		return null;
+	// 	}
+
+	// 	return request.cookies[cookieName];
+	// }
 }

@@ -13,10 +13,6 @@ const MyPage = () => {
 	const navigate = useNavigate();
 
 	useEffect(() => {
-		const callMyInfo = async () => {
-			setAccountData(await accountsFetch.getMyInfo());
-		}
-
 		callMyInfo();
 	}, [])
 
@@ -24,7 +20,49 @@ const MyPage = () => {
 	// 	await accountsFetch.requestVerifyEmail();
 	// }
 
+	const callMyInfo = async () => {
+		setAccountData(await accountsFetch.getMyInfo());
+	}
+
+	const stringParser = (value) => {
+		let name = "";
+
+		if(value === "lostark_character_level"){
+			name = "전투 레벨";
+		}
+		switch (value) {
+			case "lostark_character_level":
+				name = "전투 레벨";
+				break;
+			case "lostark_item_level":
+				name = "아이템 레벨";
+				break;
+			case "lostark_name":
+				name = "캐릭터";
+				break;
+			case "lostark_server":
+				name = "서버";
+				break;
+			case "stove_code":
+				name = "스토브 코드";
+				break;
+			default:
+				name = "-";
+				break;
+		}
+
+		return name;
+	}
+
 	useEffect(() => {
+		const deactivateLostarkCharacter = async () => {
+			if(window.confirm("로스트아크 캐릭터 인증을 해제하시겠습니까?") === true){
+				await accountsFetch.deactivateLostarkCharacter();
+	
+				callMyInfo();
+			}
+		}
+		
 		if(accountData !== null){
 			setRenderData(
 				<Container style={{maxWidth: "600px"}}>
@@ -88,17 +126,42 @@ const MyPage = () => {
 									<th>LA Char</th>
 									<td><div className="vr"></div></td>
 									<td>
-										<div style={{ display: "flex", alignItems: "center" }}>
-											{accountData.lostarkMainCharacter === null ? "정보 없음" : accountData.authentication[0].data}
-											&nbsp;&nbsp;
+										<Table>
+											<colgroup>
+												<col width="*" />
+											</colgroup>
 											{
-												accountData.lostarkMainCharacter === null ? 
-												<Button onClick={() => { navigate("activate/lostark") }} variant="outline-danger" style={{ width: "30%", maxWidth: "130px", padding: "2px", fontSize: "0.8rem" }}>설정하기</Button>
+												accountData.authentication.map((element) => (
+													<tr>
+														<th>
+															{stringParser(element.type)}
+														</th>
+														<td>
+															{element.data}
+														</td>
+													</tr>
+												))
+											}
+											{
+												accountData.authentication.length === 0 ? "인증되지 않음" : ""
+											}
+										</Table>
+										<div style={{ display: "flex", alignItems: "center" }}>
+											{
+												accountData.authentication.length === 0 ? 
+												<>
+													<Button onClick={() => { navigate("activate/lostark") }} variant="outline-success" style={{ width: "30%", maxWidth: "130px", padding: "2px", fontSize: "0.8rem" }}>인증하기</Button>
+												</>
 												:
-												<Button onClick={() => { navigate("activate/lostark") }} variant="outline-danger" style={{ width: "30%", maxWidth: "130px", padding: "2px", fontSize: "0.8rem" }}>변경하기</Button>
+												<>
+													<Button onClick={() => { navigate("update/lostark") }} variant="outline-success" style={{ width: "30%", maxWidth: "130px", padding: "2px", fontSize: "0.8rem" }}>업데이트</Button>
+													&nbsp;
+													<Button onClick={() => { navigate("activate/lostark") }} variant="outline-warning" style={{ width: "30%", maxWidth: "130px", padding: "2px", fontSize: "0.8rem" }}>변경하기</Button>
+													&nbsp;
+													<Button onClick={() => { deactivateLostarkCharacter() }} variant="outline-danger" style={{ width: "30%", maxWidth: "130px", padding: "2px", fontSize: "0.8rem" }}>해제하기</Button>
+												</>
 											}
 										</div>
-										* 더 다양한 정보를 저장하기 위해 테이블을 따로 구성해야 할 듯
 									</td>
 								</tr>
 								<tr>

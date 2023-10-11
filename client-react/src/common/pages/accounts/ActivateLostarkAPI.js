@@ -235,6 +235,7 @@ const ActivateLostarkAPI = (props) => {
 		if(window.confirm("인증하지 않고 종료하시겠습니까?")){
 			setCharacterModalShow(false);
 			controlActivateVerify("done");
+			await accountsFetch.exitLostarkAuthentication();
 			navigate("/accounts/mypage");
 		}
 	}
@@ -246,9 +247,8 @@ const ActivateLostarkAPI = (props) => {
 			
 			setShowLoadingModal(true);
 			setLoadingMessage("캐릭터를 설정 중입니다");
-			await accountsFetch.setLostarkMainCharacter({
+			await accountsFetch.setLostarkCharacter({
 				lostarkMainCharacter: characterInfo.CharacterName,
-				stoveCode: document.querySelector("#stoveURL").value,
 			});
 
 			setShowLoadingModal(false);
