@@ -55,6 +55,27 @@ const MyPage = () => {
 	}
 
 	useEffect(() => {
+		//캐릭터 인증 업데이트
+		const refreshLostarkCharacter = async () => {
+			const result = await accountsFetch.refreshLostarkCharacter();
+		
+			if(result === null){
+				return;
+			}
+			if(result === "0001"){
+				alert("정상적으로 업데이트 되었습니다");
+			}
+			else if(result === "0002"){
+				alert("알 수 없는 데이터가 입력되었습니다");
+			}
+			else if(result === "0003"){
+				alert("정보를 업데이트할 수 없습니다(닉네임이 변경되었다면 변경하기를 진행해주세요");
+			}
+
+			callMyInfo();
+		}
+
+		//캐릭터 인증을 해제
 		const deactivateLostarkCharacter = async () => {
 			if(window.confirm("로스트아크 캐릭터 인증을 해제하시겠습니까?") === true){
 				await accountsFetch.deactivateLostarkCharacter();
@@ -130,21 +151,23 @@ const MyPage = () => {
 											<colgroup>
 												<col width="*" />
 											</colgroup>
-											{
-												accountData.authentication.map((element) => (
-													<tr>
-														<th>
-															{stringParser(element.type)}
-														</th>
-														<td>
-															{element.data}
-														</td>
-													</tr>
-												))
-											}
-											{
-												accountData.authentication.length === 0 ? "인증되지 않음" : ""
-											}
+											<tbody>
+												{
+													accountData.authentication.map((element) => (
+														<tr key={element.type}>
+															<th>
+																{stringParser(element.type)}
+															</th>
+															<td>
+																{element.data}
+															</td>
+														</tr>
+													))
+												}
+												{
+													accountData.authentication.length === 0 ? <tr><td>인증되지 않음</td></tr> : <></>
+												}
+											</tbody>
 										</Table>
 										<div style={{ display: "flex", alignItems: "center" }}>
 											{
@@ -154,7 +177,7 @@ const MyPage = () => {
 												</>
 												:
 												<>
-													<Button onClick={() => { navigate("update/lostark") }} variant="outline-success" style={{ width: "30%", maxWidth: "130px", padding: "2px", fontSize: "0.8rem" }}>업데이트</Button>
+													<Button onClick={() => { refreshLostarkCharacter() }} variant="outline-success" style={{ width: "30%", maxWidth: "130px", padding: "2px", fontSize: "0.8rem" }}>업데이트</Button>
 													&nbsp;
 													<Button onClick={() => { navigate("activate/lostark") }} variant="outline-warning" style={{ width: "30%", maxWidth: "130px", padding: "2px", fontSize: "0.8rem" }}>변경하기</Button>
 													&nbsp;

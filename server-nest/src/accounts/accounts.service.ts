@@ -10,6 +10,7 @@ import { Cache } from 'cache-manager';
 import * as bcrypt from 'bcrypt';
 import { Request, Response } from 'express';
 import { Authentication } from './authentication.entity';
+import { LostarkAPIService } from 'src/lostark/api/lostark.api.service';
 
 const LOGIN_FAIL_LIMIT: number = 5; //로그인 최대 실패
 const SIGN_IN_SESSION: Map<string, string> = new Map(); //로그인 세션
@@ -22,7 +23,8 @@ export class AccountsService {
 	constructor(
 		@InjectRepository(Accounts) private accountsRepository: Repository<Accounts>,
 		@InjectRepository(Authentication) private authenticationRepository: Repository<Authentication>,
-		@Inject(CACHE_MANAGER) private cacheManager: Cache
+		@Inject(CACHE_MANAGER) private cacheManager: Cache,
+		private lostarkAPIService: LostarkAPIService,
 	) { }
 
 	/**
@@ -36,16 +38,84 @@ export class AccountsService {
 	}
 
 	/**
+	 * 스토브 로아 캐릭터 인증
+	 */
+	async startAuthentication(request: Request, stoveCode: string): Promise<[string, object]> {
+		const stoveCodeWithOutProtocol: string = stoveCode.replace(/https:\/\/|http:\/\//g, "");
+
+		if (isNaN(Number(stoveCodeWithOutProtocol)) === true) {
+			return ["codeError", []];
+		}
+
+		// const isMatched: boolean = await this.compareStoveVerificationCode(request, stoveCodeWithOutProtocol);
+		const isMatched = true;
+
+		if (isMatched) {
+			const characterName = await this.getCharacterName(stoveCode); //api 아니고 web scrap
+			const characterNameArray = await this.lostarkAPIService.getCharacterList(characterName); //api 호출
+
+			await this.setCacheData("LOSTARK_" + request.cookies["sessionCode"], characterNameArray, 5 * 60); //캐릭터 데이터 cache에 저장
+			await this.setCacheData("STOVE_CODE_" + request.cookies["sessionCode"], stoveCode, 5 * 60); //스토브 코드 cache에 저장
+
+			if (characterNameArray === null) {
+				return ["limit", []];
+			}
+			else {
+				return ["success", characterNameArray];
+			}
+		}
+		else {
+			return ["fail", []];
+		}
+	}
+
+	/**
+	 * 이미 인증한 계정만 가능한 간편 스토브 로아 캐릭터 인증
+	 */
+	async restartAuthentication(request: Request): Promise<[string, object]> {
+		const authenticationData = await this.authenticationRepository.findOne({
+			select: {
+				data: true,
+			},
+			where: {
+				uuid: SIGN_IN_SESSION.get(request.cookies["sessionCode"]),
+				type: "stove_code",
+			}
+		});
+
+		if (authenticationData === null) {
+			return ["fail", []];
+		}
+
+		const characterName = await this.getCharacterName(authenticationData.data); //api 아니고 web scrap
+		const characterNameArray = await this.lostarkAPIService.getCharacterList(characterName); //api 호출
+
+		await this.setCacheData("LOSTARK_" + request.cookies["sessionCode"], characterNameArray, 5 * 60); //캐릭터 데이터 cache에 저장
+		await this.setCacheData("STOVE_CODE_" + request.cookies["sessionCode"], authenticationData.data, 5 * 60); //스토브 코드 cache에 저장
+
+		if (characterNameArray === null) {
+			return ["limit", []];
+		}
+		else {
+			return ["success", characterNameArray];
+		}
+	}
+
+	/**
 	 * 스토브 소개란에 적힌 인증 코드를 가져와 비교한다
 	 */
 	async compareStoveVerificationCode(request: Request, stoveCode: string): Promise<boolean>{
+		const stoveCodeWithOutProtocol: string = stoveCode.replace(/https:\/\/|http:\/\//g, "");
+
 		const browser = await puppeteer.launch({
 			headless: true,
 			waitForInitialPage: false,
 		});
+
 		const page = await browser.newPage();
 		// await page.setViewport({width: 1920, height: 1080}); //화면 크기 설정, headless: false 여야 확인 가능
-		await page.goto(`https://timeline.onstove.com/${stoveCode}`, {waitUntil: "networkidle2"});
+		
+		await page.goto(`https://timeline.onstove.com/${stoveCodeWithOutProtocol}`, {waitUntil: "networkidle2"});
 		const targetElement = await page.$("#navContent > div > div.layout-column-r > section:nth-child(1) > div.section-body > p"); //소개
 		const stoveVerificationCode = await page.evaluate((data) => {
 			return data.textContent;
@@ -67,14 +137,16 @@ export class AccountsService {
 	/**
 	 * 유저의 스토브 ID로 로스트아크 대표 캐릭터 이름을 가져온다
 	 */
-	async getStoveUserCharacters_api(stoveCode: string): Promise<string>{
+	async getCharacterName(stoveCode: string): Promise<string> {
+		const stoveCodeWithOutProtocol: string = stoveCode.replace(/https:\/\/|http:\/\//g, "");
+
 		const browser = await puppeteer.launch({
 			headless: true,
 			waitForInitialPage: false,
 		});
 		const page = await browser.newPage();
 		// await page.setViewport({width: 1920, height: 1080}); //화면 크기 설정, headless: false 여야 확인 가능
-		await page.goto(`https://lostark.game.onstove.com/Board/GetExpandInfo?memberNo=${stoveCode}`, {timeout: 10000, waitUntil: "networkidle2"});
+		await page.goto(`https://lostark.game.onstove.com/Board/GetExpandInfo?memberNo=${stoveCodeWithOutProtocol}`, {timeout: 10000, waitUntil: "networkidle2"});
 
 		const pageTarget = page.target(); //save this to know that this was the opener
 		await page.click("body > div.profile-library > div.profile-link > a.button.button--black"); //click on a link
@@ -121,12 +193,6 @@ export class AccountsService {
 			const serverNamesBrowser: Array<string> = [];
 			const serverCharacterCountsBrowser: Array<number> = [];
 			const characterNamesBrowser: Array<string> = [];
-
-			// 여기 console.log는 브라우저에서 출력되는 코드
-			// console.log('serverNameElements', serverNameElements);
-			// console.log('serverCharacterElements', serverCharacterElements);
-			// console.log('characterNameElements', characterNameElements);
-			// {ServerName: string, CharacterName: string}
 			
 			for(const element of serverNameElements){
 				serverNamesBrowser.push(element.textContent);
@@ -163,12 +229,6 @@ export class AccountsService {
 				}
 			);
 		});
-		// console.log('serverNames', serverNames)
-		// console.log('');
-		// console.log('serverCharacterCounts', serverCharacterCounts)
-		// console.log('');
-		// console.log('characterNames', characterNames)
-		// console.log('');
 
 		browser.close(); //창 종료
 
@@ -529,6 +589,12 @@ export class AccountsService {
 	 * 내 정보 가져오기
 	 */
 	async getMyInfo(request: Request, response: Response): Promise<Accounts> {
+		const loginUUID = SIGN_IN_SESSION.get(request.cookies["sessionCode"]); //로그인한 정보
+
+		if (loginUUID === null || loginUUID === undefined){
+			return null;
+		}
+
 		const acctountData = await this.accountsRepository.findOne({
 			relations: ["authentication"], //사용자 인증 정보 join
 			select: {
@@ -540,10 +606,16 @@ export class AccountsService {
 				loginSuccessIP: true,
 				passwordChangeDate: true,
 			},
-			where: {
-				uuid: SIGN_IN_SESSION.get(request.cookies["sessionCode"]),
-				// authentication: { type: "lostark_name" }
-			}
+			where: [
+				{
+					uuid: loginUUID,
+					authentication: { type: In(["lostark_character_level", "lostark_item_level", "lostark_name", "lostark_server", "stove_code"]) },
+				},
+				{
+					uuid: loginUUID,
+					authentication: { type: IsNull() }
+				},
+			],
 		});
 
 		return acctountData;
@@ -645,7 +717,7 @@ export class AccountsService {
 	/**
 	 * 로스트아크 캐릭터 인증
 	 */
-	async updateLostarkCharacter(request: Request, body: { lostarkMainCharacter: string }) {
+	async updateLostarkCharacter(request: Request, body: { lostarkCharacter: string }): Promise<string> {
 		//받아온 캐릭터 정보 저장해놓고, 다시 넘어온 것 비교해서 위조 확인
 		const characterList: [any] = await this.cacheManager.get("LOSTARK_" + request.cookies["sessionCode"]);
 
@@ -653,12 +725,12 @@ export class AccountsService {
 		let infoIndex: number = 0;
 
 		if (typeof characterList !== "object"){
-			return;
+			return "0002";
 		}
 
 		for (let index = 0; index < characterList.length; index++) {
 			const element = characterList[index];
-			if (element.CharacterName === body.lostarkMainCharacter){
+			if (element.CharacterName === body.lostarkCharacter){
 				isContain = true;
 				infoIndex = index;
 				break;
@@ -666,6 +738,7 @@ export class AccountsService {
 		}
 
 		if (isContain === true) {
+			console.log("isContain")
 			const uuid = SIGN_IN_SESSION.get(request.cookies["sessionCode"]);
 
 			//다시 인증을 진행하면 이전에 인증 해제한 데이터 완전 삭제 처리
@@ -677,7 +750,7 @@ export class AccountsService {
 
 			const stoveCode: string = await this.cacheManager.get("STOVE_CODE_" + request.cookies["sessionCode"]);
 
-			const upsertResult = await this.authenticationRepository.upsert(
+			await this.authenticationRepository.upsert(
 				[
 					{ uuid: uuid, type: "stove_code", data: stoveCode },
 					{ uuid: uuid, type: "lostark_name", data: characterList[infoIndex].CharacterName },
@@ -688,10 +761,13 @@ export class AccountsService {
 				["uuid", "type"]
 			);
 
-			console.log("upsertResult : ", upsertResult);
-
 			await this.cacheManager.del("LOSTARK_" + request.cookies["sessionCode"]);
 			await this.cacheManager.del("STOVE_CODE_" + request.cookies["sessionCode"]);
+
+			return "0001";
+		}
+		else{
+			return "0003";
 		}
 	}
 

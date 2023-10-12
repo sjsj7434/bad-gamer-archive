@@ -272,6 +272,58 @@ export const setLostarkCharacter = async (accountInfo) => {
 }
 
 /**
+ * lostark 캐릭터 설정
+ */
+export const resetLostarkCharacter = async () => {
+	const fecthOption = {
+		method: "PUT"
+		, headers: {"Content-Type": "application/json",}
+		, credentials: "include", // Don't forget to specify this if you need cookies
+	};
+	const fetchResponse = await fetch(`${process.env.REACT_APP_SERVER}/accounts/stove/verification/api/again`, fecthOption);
+	const [isStatusGood, checkMessage] = isFetchStatusGood(fetchResponse);
+
+	if(isStatusGood === true){
+		const fetchData = await getFetchJson(fetchResponse);
+		console.log('resetLostarkCharacter =>', fetchData)
+
+		return fetchData;
+	}
+	else{
+		alert(checkMessage);
+
+		return null;
+	}
+}
+
+/**
+ * lostark 캐릭터 인증 업데이트
+ */
+export const refreshLostarkCharacter = async (accountInfo) => {
+	console.log(accountInfo)
+	const fecthOption = {
+		method: "PUT"
+		, body: JSON.stringify(accountInfo)
+		, headers: {"Content-Type": "application/json",}
+		, credentials: "include", // Don't forget to specify this if you need cookies
+	};
+	const fetchResponse = await fetch(`${process.env.REACT_APP_SERVER}/accounts/lostark/character/refresh`, fecthOption);
+	const [isStatusGood, checkMessage] = isFetchStatusGood(fetchResponse);
+
+	if(isStatusGood === true){
+		const fetchData = await getFetchText(fetchResponse);
+		console.log('refreshLostarkCharacter =>', fetchData)
+
+		return fetchData;
+	}
+	else{
+		alert(checkMessage);
+
+		return null;
+	}
+}
+
+/**
  * lostark 캐릭터 설정하지 않고 종료
  */
 export const exitLostarkAuthentication = async (accountInfo) => {

@@ -1,4 +1,4 @@
-import { Param, Controller, Get, Post, Put, Delete, Body, Res, Req, Patch } from '@nestjs/common';
+import { Param, Controller, Get, Post, Put, Delete, Body, Res, Req, Patch, NotFoundException } from '@nestjs/common';
 import { AccountsService } from './accounts.service';
 import { CreateAccountsDTO, DeleteAccountsDTO } from './accounts.dto';
 import { Request, Response } from 'express';
@@ -12,20 +12,6 @@ export class  AccountsController {
 	/**
 	 * 마이페이지 > stove 계정 인증 코드 발급
 	 */
-	@Get("test")
-	async getTestData(@Req() request: Request) {
-		console.log("[AccountsController(Get) - accounts/test]");
-		await this.accountsService.createStoveVerificationCode(request);
-		console.log("");
-		console.log(`=================================================================`);
-		console.log(await this.accountsService.getCacheData("LOSTARK_" + request.cookies["sessionCode"]));
-		console.log(`=================================================================`);
-		console.log("");
-	}
-
-	/**
-	 * 마이페이지 > stove 계정 인증 코드 발급
-	 */
 	@Get("stove/verification/code")
 	async createStoveVerificationCode(@Req() request: Request): Promise<string> {
 		console.log("[AccountsController(Get) - accounts/stove/verification/code]");
@@ -33,54 +19,8 @@ export class  AccountsController {
 		return stoveVerificationCode;
 	}
 
-	@Get("stove/verification/:method/:stoveURL")
-	async executeStoveVerification(@Req() request: Request, @Param("method") method: string, @Param("stoveURL") stoveURL: string): Promise<[string, object]> {
-		console.log("[AccountsController(Get) - accounts/stove/verification/:method/:stoveURL] => " + stoveURL);
-		const stoveURLWithOutProtocol: string = stoveURL.replace(/https:\/\/|http:\/\//g, "");
-		
-		if(isNaN(Number(stoveURLWithOutProtocol)) === false){
-			// const compareResult = await this.accountsService.compareStoveVerificationCode(request, stoveURLWithOutProtocol);
-			const compareResult = true; //인증 테스트를 위해서 확인 절차 건너뛰는 중
-
-			if (compareResult === true){
-				if(method === "api"){ //공식 API 사용
-					const characterName = await this.accountsService.getStoveUserCharacters_api(stoveURLWithOutProtocol); //api 아니고 web scrap
-					const characterNames = await this.apiService.getCharacterList(characterName); // api 호출
-					await this.accountsService.setCacheData("LOSTARK_" + request.cookies["sessionCode"], characterNames, 5 * 60); //캐릭터 데이터 cache에 저장
-					await this.accountsService.setCacheData("STOVE_CODE_" + request.cookies["sessionCode"], stoveURLWithOutProtocol, 5 * 60); //스토브 코드 cache에 저장
-
-					if (characterNames === null){
-						return ["limit", []];
-					}
-					else{
-						return ["success", characterNames];
-					}
-				}
-				else if(method === "scrap"){ //전투정보실 웹 페이지 정보 스크랩
-					const characterNames = await this.accountsService.getStoveUserCharacters_scrap(stoveURLWithOutProtocol);
-
-					if (characterNames === null) {
-						return ["limit", []];
-					}
-					else {
-						return ["success", characterNames];
-					}
-				}
-				else{
-					return ["fail", []];
-				}
-			}
-			else {
-				return ["fail", []];
-			}
-		}
-		else{
-			return ["codeError", []];
-		}
-	}
-
 	@Get("stove/character/scrap/:characterName")
-	async getCharacterInfoScrap(@Req() request: Request, @Param("characterName") characterName: string): Promise<object> {
+	async getCharacterInfoScrap(@Param("characterName") characterName: string): Promise<object> {
 		console.log("[AccountsController(Get) - accounts/stove/character/scrap/:characterName] => " + characterName);
 		
 		const characterInfo: object = await this.accountsService.getCharacterInfo_scrap(characterName);
@@ -107,14 +47,55 @@ export class  AccountsController {
 		return "soft-delete";
 	}
 
+	@Get("stove/verification/api/:stoveCode")
+	async startAuthentication(@Req() request: Request, @Param("stoveCode") stoveCode: string): Promise<[string, object]> {
+		console.log("[AccountsController(Get) - accounts/stove/verification/api/:stoveCode] => " + stoveCode);
+
+		const result: [string, object] = await this.accountsService.startAuthentication(request, stoveCode);
+
+		return result;
+	}
+
 	@Put("lostark/character")
-	async updateLostarkCharacter(@Req() request: Request, @Body() body: { lostarkMainCharacter: string }): Promise<string> {
+	async updateLostarkCharacter(@Req() request: Request, @Body() body: { lostarkCharacter: string }): Promise<string> {
 		console.log("[AccountsController(Put) - accounts/lostark/character] => ", body);
 
-		const result = await this.accountsService.updateLostarkCharacter(request, body);
-		console.log(result);
+		const resultCode: string = await this.accountsService.updateLostarkCharacter(request, body);
 
-		return "update lostark";
+		return resultCode;
+	}
+
+	@Put("lostark/character/refresh")
+	async refreshLostarkCharacter(@Req() request: Request, @Res({ passthrough: true }) response: Response): Promise<string> {
+		console.log("[AccountsController(Put) - accounts/lostark/character/refresh]");
+
+		const accountData = await this.accountsService.getMyInfo(request, response);
+
+		if (accountData !== null) {
+			const lostarkName: string = accountData.authentication.filter((element) => element.type === "lostark_name")[0].data;
+			const stoveCode: string = accountData.authentication.filter((element) => element.type === "stove_code")[0].data;
+
+			const lostarkCharacterData: any = await this.apiService.getCharacterInfoProfile(lostarkName);
+
+			await this.accountsService.setCacheData("LOSTARK_" + request.cookies["sessionCode"], [lostarkCharacterData], 5 * 60); //캐릭터 데이터 cache에 저장
+			await this.accountsService.setCacheData("STOVE_CODE_" + request.cookies["sessionCode"], stoveCode, 5 * 60); //스토브 코드 cache에 저장
+
+			const resultCode: string = await this.accountsService.updateLostarkCharacter(request, { lostarkCharacter: lostarkName });
+
+			return resultCode;
+		}
+		else{
+			response.status(400);
+		}
+	}
+
+	@Put("stove/verification/api/again")
+	async restartAuthentication(@Req() request: Request): Promise<[string, object]> {
+		console.log("[AccountsController(Get) - accounts/stove/verification/api/again]");
+
+		const result: [string, object] = await this.accountsService.restartAuthentication(request);
+
+		return result;
 	}
 
 	@Delete("lostark/character")
@@ -134,7 +115,7 @@ export class  AccountsController {
 		const result = await this.accountsService.exitLostarkAuthentication(request);
 		console.log(result);
 
-		return "deactivate lostark";
+		return "exit lostark";
 	}
 
 	@Post("signin")
@@ -181,10 +162,14 @@ export class  AccountsController {
 	}
 
 	@Get("information/my")
-	async getMyInfo(@Req() request: Request, @Res({ passthrough: true }) response: Response): Promise<Accounts> {
+	async getMyInfo(@Req() request: Request, @Res({ passthrough: true }) response: Response): Promise<Accounts | NotFoundException> {
 		console.log("[AccountsController(Get) - accounts/information/my]");
 
 		const accountData = await this.accountsService.getMyInfo(request, response);
+
+		if (accountData === null){
+			response.status(400);
+		}
 
 		return accountData;
 	}

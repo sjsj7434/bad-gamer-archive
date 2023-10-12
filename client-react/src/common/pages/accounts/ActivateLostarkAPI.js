@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Form from 'react-bootstrap/Form';
@@ -16,8 +16,9 @@ import LoadingModal from '../common/LoadingModal';
 import Card from 'react-bootstrap/Card';
 import Table from 'react-bootstrap/Table';
 
-const ActivateLostarkAPI = (props) => {
+const ActivateLostarkAPI = () => {
 	const [characterModalShow, setCharacterModalShow] = useState(false);
+	const [accountData, setAccountData] = useState(null);
 	const [characterList, setcharacterList] = useState([]);
 	const [startTime, setStartTime] = useState(null);
 	const [nowTime, setNowTime] = useState(null);
@@ -29,10 +30,160 @@ const ActivateLostarkAPI = (props) => {
 	const TOKEN_TIME_LIMIT = 60 * 3; //sec
 	const navigate = useNavigate();
 
+	const noCharacter = useCallback(async () => {
+		if(window.confirm("인증하지 않고 종료하시겠습니까?")){
+			setCharacterModalShow(false);
+			controlActivateVerify("done");
+			await accountsFetch.exitLostarkAuthentication();
+			navigate("/accounts/mypage");
+		}
+	}, [navigate])
+
+	const setCharacter = useCallback(async (characterInfo) => {
+		if(window.confirm(`${characterInfo.CharacterName} (아이템 레벨. ${characterInfo.ItemMaxLevel}) 캐릭터로 인증을 진행하시겠습니까?`)){
+			setCharacterModalShow(false);
+			controlActivateVerify("done");
+			
+			setShowLoadingModal(true);
+			setLoadingMessage("캐릭터를 설정 중입니다");
+
+			const result = await accountsFetch.setLostarkCharacter({
+				lostarkCharacter: characterInfo.CharacterName,
+			});
+
+			if(result === "0001"){
+				// alert("정상적으로 업데이트 되었습니다");
+			}
+			else if(result === "0002"){
+				alert("알 수 없는 데이터가 입력되었습니다");
+			}
+			else if(result === "0003"){
+				alert("정보를 업데이트할 수 없습니다(닉네임이 변경되었다면 변경하기를 진행해주세요");
+			}
+
+			setShowLoadingModal(false);
+			navigate("/accounts/mypage")
+		}
+	}, [navigate])
+
+	const setCharacterCardList = useCallback(async (characterNames) => {
+		//아이템 레밸 내림차순 정렬
+		characterNames.sort(function (a, b) {
+			const lvl_1 = parseFloat(a.ItemMaxLevel.replace(",", ""));
+			const lvl_2 = parseFloat(b.ItemMaxLevel.replace(",", ""));
+			
+			if (lvl_1 > lvl_2) {
+				return -1;
+			}
+			if (lvl_1 < lvl_2) {
+				return 1;
+			}
+
+			return 0;
+		});
+
+		const elements = [];
+
+		elements.push(characterNames.map((characterInfo) => {
+			return (
+				<Card key={characterInfo.CharacterName} style={{ fontSize: "0.8rem", marginBottom: "0.4rem" }}>
+					<Card.Body>
+						<Card.Title>{characterInfo.CharacterName}</Card.Title>
+						<Table>
+							<colgroup>
+								<col width="35%" />
+								<col width="5%" />
+								<col width="*" />
+							</colgroup>
+							<tbody>
+								<tr>
+									<th>서버</th>
+									<td><div className="vr"></div></td>
+									<td>
+										{characterInfo.ServerName}
+									</td>
+								</tr>
+								<tr>
+									<th>클래스</th>
+									<td><div className="vr"></div></td>
+									<td>
+										{characterInfo.CharacterClassName}
+									</td>
+								</tr>
+								<tr>
+									<th>전투 레벨</th>
+									<td><div className="vr"></div></td>
+									<td>
+										{characterInfo.CharacterLevel}
+									</td>
+								</tr>
+								<tr>
+									<th>아이템 레벨</th>
+									<td><div className="vr"></div></td>
+									<td>
+										{characterInfo.ItemMaxLevel}
+									</td>
+								</tr>
+							</tbody>
+						</Table>
+						<Stack direction="horizontal" gap={2} style={{ marginTop: "0.3rem"}}>
+							<Button variant="primary" style={{ fontSize: "0.8rem" }} className="tabletOver" onClick={ () => { window.open(`https://lostark.game.onstove.com/Profile/Character/${characterInfo.CharacterName}`) } }>전투정보실</Button>
+							<Button variant="primary" style={{ fontSize: "0.8rem" }} className="mobileOnly" onClick={ () => { window.open(`https://m-lostark.game.onstove.com/Profile/Character/${characterInfo.CharacterName}`) } }>전투정보실</Button>
+							<Button variant="success" style={{ fontSize: "0.8rem" }} onClick={ () => { setCharacter(characterInfo) } }>인증하기</Button>
+						</Stack>
+					</Card.Body>
+				</Card>
+			)
+		}));
+
+		elements.push(
+			<Card key={"noCharacter"} bg="danger" onClick={() => {noCharacter()}} style={{ marginBottom: "0.4rem", cursor: "pointer" }}>
+				<Card.Body>
+					<Card.Title style={{ fontSize: "0.85rem", color: "white" }}>인증하지않고 종료하기</Card.Title>
+					<Card.Subtitle style={{ fontSize: "0.75rem", color: "white" }} className="mb-2">인증을 진행하지 않고 종료합니다</Card.Subtitle>
+				</Card.Body>
+			</Card>
+		);
+
+		setcharacterList(elements);
+		setCharacterModalShow(true);
+	}, [noCharacter, setCharacter])
+
 	//TEST용 간편설정
 	useEffect(() => {
-		setIsValidStoveURL(2)
+		console.log("Doing Test")
+		setIsValidStoveURL(2); //다시 입력할 필요 없게 OK 처리
 	}, [])
+
+	//로그인 사용자 정보 불러오기
+	useEffect(() => {
+		const callMyInfo = async () => {
+			setAccountData(await accountsFetch.getMyInfo());
+		}
+
+		callMyInfo();
+	}, [])
+	
+	//인증 완료한 사용자 다시 인증하는 경우
+	useEffect(() => {
+		if(accountData !== null){
+			if(accountData.authentication.length > 0){
+				setShowLoadingModal(true);
+				setLoadingMessage("재인증 정보 확인 중입니다");
+
+				accountsFetch.resetLostarkCharacter().then(([matchResult, characterNames]) => {
+					if(matchResult === "success"){
+						setCharacterCardList(characterNames);
+						setShowLoadingModal(false);
+					}
+					else{
+						alert("재인증을 진행할 수 없습니다");
+						navigate("/accounts/mypage");
+					}
+				});
+			}
+		}
+	}, [accountData, setCharacterCardList, navigate])
 
 	const controlActivateVerify = (status) => {
 		if(status === "activate"){
@@ -118,11 +269,9 @@ const ActivateLostarkAPI = (props) => {
 		setShowLoadingModal(true);
 		setLoadingMessage("스토브 소개 정보를 확인 중입니다");
 		const stoveURL = document.querySelector("#stoveURL").value;
-		// const [matchResult, characterNames] = await accountsFetch.checkProfileTokenMatchScrap(stoveURL);
 		const [matchResult, characterNames] = await accountsFetch.checkProfileTokenMatchAPI(stoveURL);
-		console.log(matchResult, characterNames)
 
-		if(matchResult === "code"){
+		if(matchResult === "codeError"){
 			alert("스토브 코드를 다시 확인해주세요");
 			setCharacterModalShow(false);
 		}
@@ -148,112 +297,10 @@ const ActivateLostarkAPI = (props) => {
 		else{
 			clearInterval(intervalRef.current);
 
-			//아이템 레밸 내림차순 정렬
-			characterNames.sort(function (a, b) {
-				const lvl_1 = parseFloat(a.ItemMaxLevel.replace(",", ""));
-				const lvl_2 = parseFloat(b.ItemMaxLevel.replace(",", ""));
-				
-				if (lvl_1 > lvl_2) {
-					return -1;
-				}
-				if (lvl_1 < lvl_2) {
-					return 1;
-				}
-
-				return 0;
-			});
-
-			const elements = [];
-			elements.push(characterNames.map((characterInfo) => {
-				return (
-					<Card key={characterInfo.CharacterName} style={{ fontSize: "0.8rem", marginBottom: "0.4rem" }}>
-						<Card.Body>
-							<Card.Title>{characterInfo.CharacterName}</Card.Title>
-							<Table>
-								<colgroup>
-									<col width="35%" />
-									<col width="5%" />
-									<col width="*" />
-								</colgroup>
-								<tbody>
-									<tr>
-										<th>서버</th>
-										<td><div className="vr"></div></td>
-										<td>
-											{characterInfo.ServerName}
-										</td>
-									</tr>
-									<tr>
-										<th>클래스</th>
-										<td><div className="vr"></div></td>
-										<td>
-											{characterInfo.CharacterClassName}
-										</td>
-									</tr>
-									<tr>
-										<th>전투 레벨</th>
-										<td><div className="vr"></div></td>
-										<td>
-											{characterInfo.CharacterLevel}
-										</td>
-									</tr>
-									<tr>
-										<th>아이템 레벨</th>
-										<td><div className="vr"></div></td>
-										<td>
-											{characterInfo.ItemMaxLevel}
-										</td>
-									</tr>
-								</tbody>
-							</Table>
-							<Stack direction="horizontal" gap={2} style={{ marginTop: "0.3rem"}}>
-								<Button variant="primary" style={{ fontSize: "0.8rem" }} className="tabletOver" onClick={ () => { window.open(`https://lostark.game.onstove.com/Profile/Character/${characterInfo.CharacterName}`) } }>전투정보실</Button>
-								<Button variant="primary" style={{ fontSize: "0.8rem" }} className="mobileOnly" onClick={ () => { window.open(`https://m-lostark.game.onstove.com/Profile/Character/${characterInfo.CharacterName}`) } }>전투정보실</Button>
-								<Button variant="success" style={{ fontSize: "0.8rem" }} onClick={ () => { setCharacter(characterInfo) } }>인증하기</Button>
-							</Stack>
-						</Card.Body>
-					</Card>
-				)
-			}));
-			elements.push(
-				<Card key={"noCharacter"} bg="danger" onClick={() => {noCharacter()}} style={{ marginBottom: "0.4rem", cursor: "pointer" }}>
-					<Card.Body>
-						<Card.Title style={{ fontSize: "0.85rem", color: "white" }}>인증하지않고 종료하기</Card.Title>
-						<Card.Subtitle style={{ fontSize: "0.75rem", color: "white" }} className="mb-2">인증을 진행하지 않고 종료합니다</Card.Subtitle>
-					</Card.Body>
-				</Card>
-			);
-
-			setcharacterList(elements);
-			setCharacterModalShow(true);
+			setCharacterCardList(characterNames);
 		}
 		
 		setShowLoadingModal(false);
-	}
-
-	const noCharacter = async () => {
-		if(window.confirm("인증하지 않고 종료하시겠습니까?")){
-			setCharacterModalShow(false);
-			controlActivateVerify("done");
-			await accountsFetch.exitLostarkAuthentication();
-			navigate("/accounts/mypage");
-		}
-	}
-
-	const setCharacter = async (characterInfo) => {
-		if(window.confirm(`${characterInfo.CharacterName} (아이템 레벨. ${characterInfo.ItemMaxLevel}) 캐릭터로 인증을 진행하시겠습니까?`)){
-			setCharacterModalShow(false);
-			controlActivateVerify("done");
-			
-			setShowLoadingModal(true);
-			setLoadingMessage("캐릭터를 설정 중입니다");
-			await accountsFetch.setLostarkCharacter({
-				lostarkMainCharacter: characterInfo.CharacterName,
-			});
-
-			setShowLoadingModal(false);
-			navigate("/accounts/mypage")
-		}
 	}
 
 	const checkStoveCodeValid = () => {

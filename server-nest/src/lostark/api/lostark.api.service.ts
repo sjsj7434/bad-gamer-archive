@@ -9,8 +9,8 @@ import { catchError, firstValueFrom } from 'rxjs';
 export class LostarkAPIService {
 	constructor(private readonly httpService: HttpService, private configService: ConfigService) { }
 
-	ApiCallCount: number; //max is 100 requests per minute, for now
-	API_CALL_LIMI: number = 100; //1분당 API 호출 가능 횟수
+	ApiCallCount: number = 0; //max is 100 requests per minute, for now
+	API_CALL_LIMIT: number = 100; //1분당 API 호출 가능 횟수
 
 	//서울 시간 기준으로 [1분 마다] 데이터 초기화
 	@Cron(CronExpression.EVERY_MINUTE, {
@@ -23,8 +23,8 @@ export class LostarkAPIService {
 	}
 
 	getLostArkAPI = async (destination: string) => {
-		if (this.ApiCallCount >= this.API_CALL_LIMI){
-			console.log(`[Error] API Call Limit is ${this.API_CALL_LIMI} per min`);
+		if (this.ApiCallCount >= this.API_CALL_LIMIT){
+			console.log(`[Error] API Call Limit is ${this.API_CALL_LIMIT} per min`);
 			return null;
 		}
 
