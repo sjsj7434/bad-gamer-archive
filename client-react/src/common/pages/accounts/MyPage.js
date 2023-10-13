@@ -109,6 +109,13 @@ const MyPage = () => {
 								</tr>
 								*/}
 								<tr>
+									<th>아이디</th>
+									<td><div className="vr"></div></td>
+									<td>
+										{accountData.id}
+									</td>
+								</tr>
+								<tr>
 									<th>닉네임</th>
 									<td><div className="vr"></div></td>
 									<td>
@@ -119,38 +126,35 @@ const MyPage = () => {
 									<th>이메일</th>
 									<td><div className="vr"></div></td>
 									<td>
-										{accountData.email}
+										{accountData.email === null ? "-" : accountData.email}
+									</td>
+								</tr>
+								<tr>
+									<th>레벨</th>
+									<td><div className="vr"></div></td>
+									<td>
+										{accountData.exp}
 									</td>
 								</tr>
 								<tr>
 									<th>가입일</th>
 									<td><div className="vr"></div></td>
 									<td>
-										{accountData.nickname}
+										{accountData.createdAt.substring(0, 10)}
 									</td>
 								</tr>
 								<tr>
 									<th>비밀번호 변경일</th>
 									<td><div className="vr"></div></td>
 									<td>
-										{accountData.nickname}
+										{accountData.passwordChangeDate === null ? "-" : accountData.passwordChangeDate.substring(0, 10)}
 									</td>
 								</tr>
 								<tr>
-									<th>lvl</th>
-									<td><div className="vr"></div></td>
-									<td>
-										{accountData.nickname}
-									</td>
-								</tr>
-								<tr>
-									<th>LA Char</th>
+									<th>LA 인증</th>
 									<td><div className="vr"></div></td>
 									<td>
 										<Table>
-											<colgroup>
-												<col width="*" />
-											</colgroup>
 											<tbody>
 												{
 													accountData.authentication.map((element) => (
@@ -165,7 +169,15 @@ const MyPage = () => {
 													))
 												}
 												{
-													accountData.authentication.length === 0 ? <tr><td>인증되지 않음</td></tr> : <></>
+													accountData.authentication.length === 0 ?
+													<tr>
+														<td colSpan="2">인증되지 않음</td>
+													</tr>
+													:
+													<tr>
+														<th>인증일</th>
+														<td>{accountData.authentication.filter((element) => element.type === "lostark_item_level")[0].updatedAt.substring(0, 10)}</td>
+													</tr>
 												}
 											</tbody>
 										</Table>
@@ -185,13 +197,6 @@ const MyPage = () => {
 												</>
 											}
 										</div>
-									</td>
-								</tr>
-								<tr>
-									<th>LA Date</th>
-									<td><div className="vr"></div></td>
-									<td>
-										* 더 다양한 정보를 저장하기 위해 테이블 따로
 									</td>
 								</tr>
 							</tbody>

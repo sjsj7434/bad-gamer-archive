@@ -609,13 +609,14 @@ export class AccountsService {
 		const acctountData = await this.accountsRepository.findOne({
 			relations: ["authentication"], //사용자 인증 정보 join
 			select: {
-				authentication: { type: true, data: true },
+				authentication: { type: true, data: true, createdAt: true, updatedAt: true },
 				code: true,
 				id: true,
 				nickname: true,
-				lastLogin: true,
-				loginSuccessIP: true,
+				email: true,
+				exp: true,
 				passwordChangeDate: true,
+				createdAt: true,
 			},
 			where: [
 				{
