@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, IsNull, MoreThanOrEqual, Between } from 'typeorm';
+import { Repository, IsNull, MoreThanOrEqual, Between, Equal } from 'typeorm';
 import { Boards } from './boards.entity';
 import { Replies } from './replies.entity';
 import { CreateBoardsDTO, UpdateBoardsDTO, DeleteBoardsDTO } from './boards.dto';
@@ -243,7 +243,7 @@ export class BoardsService {
 				createdAt: true,
 			},
 			where: {
-				category: category,
+				category: Equal(category),
 				deletedAt: IsNull(),
 			},
 			order: {
@@ -276,8 +276,8 @@ export class BoardsService {
 					writerNickname: true,
 				},
 				where: {
-					code: contentCode,
-					category: category,
+					code: Equal(contentCode),
+					category: Equal(category),
 				},
 			});
 
@@ -306,8 +306,8 @@ export class BoardsService {
 					updatedAt: true,
 				},
 				where: {
-					code: contentCode,
-					category: category,
+					code: Equal(contentCode),
+					category: Equal(category),
 				},
 			});
 
@@ -333,10 +333,10 @@ export class BoardsService {
 	async updateContent(boardData: UpdateBoardsDTO): Promise<Boolean> {
 		const contentData = await this.boardsRepository.findOne({
 			where: {
-				code: boardData.code,
-				category: boardData.category,
-				password: boardData.password,
-				writerID: boardData.writerID,
+				code: Equal(boardData.code),
+				category: Equal(boardData.category),
+				password: Equal(boardData.password),
+				writerID: Equal(boardData.writerID),
 			}
 		});
 
@@ -393,7 +393,7 @@ export class BoardsService {
 				downvote: true,
 			},
 			where: {
-				code: contentCode,
+				code: Equal(contentCode),
 			},
 		});
 
@@ -412,7 +412,7 @@ export class BoardsService {
 				downvote: true,
 			},
 			where: {
-				code: contentCode,
+				code: Equal(contentCode),
 			},
 		});
 
@@ -440,7 +440,7 @@ export class BoardsService {
 				deletedAt: true
 			},
 			where: {
-				parentContentCode: contentCode,
+				parentContentCode: Equal(contentCode),
 			},
 			order: {
 				replyOrder: "DESC",
@@ -459,8 +459,8 @@ export class BoardsService {
 		//댓글 저장 전에 부모 게시글의 정보 확인
 		const contentData = await this.boardsRepository.exist({
 			where: {
-				code: createRepliesDTO.parentContentCode,
-				category: category,
+				code: Equal(createRepliesDTO.parentContentCode),
+				category: Equal(category),
 			},
 		});
 
@@ -491,9 +491,9 @@ export class BoardsService {
 	async deleteReply(deleteRepliesDTO: DeleteRepliesDTO, writerID: string): Promise<boolean> {
 		const replyData = await this.repliesRepository.findOne({
 			where: {
-				code: deleteRepliesDTO.code,
-				writerID: writerID,
-				password: deleteRepliesDTO.password,
+				code: Equal(deleteRepliesDTO.code),
+				writerID: Equal(writerID),
+				password: Equal(deleteRepliesDTO.password),
 			}
 		});
 

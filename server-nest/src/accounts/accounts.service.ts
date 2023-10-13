@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { In, IsNull, Not, Repository } from 'typeorm';
+import { Equal, In, IsNull, Not, Repository } from 'typeorm';
 import { Accounts } from './accounts.entity';
 import { CreateAccountsDTO, DeleteAccountsDTO } from './accounts.dto';
 import { randomBytes } from 'crypto';
@@ -73,13 +73,22 @@ export class AccountsService {
 	 * 이미 인증한 계정만 가능한 간편 스토브 로아 캐릭터 인증
 	 */
 	async restartAuthentication(request: Request): Promise<[string, object]> {
+		// let hello = await this.authenticationRepository.query("SELECT ? AS TEST", ["dd"]);
+		// console.log(hello);
+		const loginUUID = SIGN_IN_SESSION.get(request.cookies["sessionCode"]); //로그인한 정보
+		console.log(loginUUID);
+
+		if (loginUUID === null || loginUUID === undefined) {
+			return ["fail", []];
+		}
+		
 		const authenticationData = await this.authenticationRepository.findOne({
 			select: {
 				data: true,
 			},
 			where: {
-				uuid: SIGN_IN_SESSION.get(request.cookies["sessionCode"]),
-				type: "stove_code",
+				uuid: Equal(loginUUID),
+				type: Equal("stove_code"),
 			}
 		});
 
@@ -318,7 +327,7 @@ export class AccountsService {
 
 			uuidExists = await this.accountsRepository.exist({
 				where: {
-					uuid: randomString,
+					uuid: Equal(randomString),
 				},
 			});
 
@@ -338,7 +347,7 @@ export class AccountsService {
 	isExistsID(accountID: string): Promise<boolean> {
 		return this.accountsRepository.exist({
 			where: {
-				id: accountID,
+				id: Equal(accountID),
 			},
 		});
 	}
@@ -349,7 +358,7 @@ export class AccountsService {
 	isExistsNickname(accountNickname: string): Promise<boolean> {
 		return this.accountsRepository.exist({
 			where: {
-				nickname: accountNickname,
+				nickname: Equal(accountNickname),
 			},
 		});
 	}
@@ -423,9 +432,11 @@ export class AccountsService {
 			}
 		}
 		else if (SIGN_IN_SESSION.has(request.cookies["sessionCode"]) === true) { //정상적으로 로그인한 쿠키가 있다
+			const loginUUID = SIGN_IN_SESSION.get(request.cookies["sessionCode"]); //로그인한 정보
+
 			const account = await this.accountsRepository.findOne({
 				where: {
-					uuid: SIGN_IN_SESSION.get(request.cookies["sessionCode"]),
+					uuid: Equal(loginUUID),
 				},
 			});
 
@@ -483,8 +494,8 @@ export class AccountsService {
 	async signInAccount(body: { id: string, password: string }, request: Request, response: Response): Promise<string> {
 		const account = await this.accountsRepository.findOne({
 			where: {
-				id: body.id,
-				isBanned: false,
+				id: Equal(body.id),
+				isBanned: Equal(false),
 			}
 		});
 
@@ -608,11 +619,11 @@ export class AccountsService {
 			},
 			where: [
 				{
-					uuid: loginUUID,
+					uuid: Equal(loginUUID),
 					authentication: { type: In(["lostark_character_level", "lostark_item_level", "lostark_name", "lostark_server", "stove_code"]) },
 				},
 				{
-					uuid: loginUUID,
+					uuid: Equal(loginUUID),
 					authentication: { type: IsNull() }
 				},
 			],
@@ -625,13 +636,15 @@ export class AccountsService {
 	 * 비밀번호 변경
 	 */
 	async updatePassword(request: Request, response: Response, body: { oldPassword: string, newPassword: string }): Promise<number> {
+		const loginUUID = SIGN_IN_SESSION.get(request.cookies["sessionCode"]); //로그인한 정보
+
 		const acctountData = await this.accountsRepository.findOne({
 			select: {
 				id: true,
 				password: true,
 			},
 			where: {
-				uuid: SIGN_IN_SESSION.get(request.cookies["sessionCode"]),
+				uuid: Equal(loginUUID),
 			}
 		});
 
@@ -680,13 +693,15 @@ export class AccountsService {
 	 * 닉네임 변경
 	 */
 	async updateNickname(request: Request, response: Response, body: { nickname: string, password: string }): Promise<Boolean> {
+		const loginUUID = SIGN_IN_SESSION.get(request.cookies["sessionCode"]); //로그인한 정보
+
 		const acctountData = await this.accountsRepository.findOne({
 			select: {
 				id: true,
 				password: true,
 			},
 			where: {
-				uuid: SIGN_IN_SESSION.get(request.cookies["sessionCode"]),
+				uuid: Equal(loginUUID),
 			}
 		});
 
@@ -739,11 +754,11 @@ export class AccountsService {
 
 		if (isContain === true) {
 			console.log("isContain")
-			const uuid = SIGN_IN_SESSION.get(request.cookies["sessionCode"]);
+			const loginUUID = SIGN_IN_SESSION.get(request.cookies["sessionCode"]); //로그인한 정보
 
 			//다시 인증을 진행하면 이전에 인증 해제한 데이터 완전 삭제 처리
 			await this.authenticationRepository.delete({
-				uuid: uuid,
+				uuid: loginUUID,
 				type: In(["lostark_name", "lostark_item_level", "lostark_server", "lostark_character_level", "stove_code"]),
 				deletedAt: Not(IsNull()),
 			});
@@ -752,11 +767,11 @@ export class AccountsService {
 
 			await this.authenticationRepository.upsert(
 				[
-					{ uuid: uuid, type: "stove_code", data: stoveCode },
-					{ uuid: uuid, type: "lostark_name", data: characterList[infoIndex].CharacterName },
-					{ uuid: uuid, type: "lostark_character_level", data: characterList[infoIndex].CharacterLevel },
-					{ uuid: uuid, type: "lostark_item_level", data: characterList[infoIndex].ItemMaxLevel },
-					{ uuid: uuid, type: "lostark_server", data: characterList[infoIndex].ServerName },
+					{ uuid: loginUUID, type: "stove_code", data: stoveCode },
+					{ uuid: loginUUID, type: "lostark_name", data: characterList[infoIndex].CharacterName },
+					{ uuid: loginUUID, type: "lostark_character_level", data: characterList[infoIndex].CharacterLevel },
+					{ uuid: loginUUID, type: "lostark_item_level", data: characterList[infoIndex].ItemMaxLevel },
+					{ uuid: loginUUID, type: "lostark_server", data: characterList[infoIndex].ServerName },
 				],
 				["uuid", "type"]
 			);
@@ -775,11 +790,11 @@ export class AccountsService {
 	 * 로스트아크 캐릭터 인증 해제
 	 */
 	async deactivateLostarkCharacter(request: Request) {
-		const uuid = SIGN_IN_SESSION.get(request.cookies["sessionCode"]);
+		const loginUUID = SIGN_IN_SESSION.get(request.cookies["sessionCode"]);
 
 		//다시 인증을 진행하지 않으면 데이터는 완전 삭제되지 않음
 		await this.authenticationRepository.softDelete({
-			uuid: uuid,
+			uuid: loginUUID,
 			type: In(["lostark_name", "lostark_item_level", "lostark_server", "lostark_character_level", "stove_code"]),
 			deletedAt: IsNull(),
 		});
@@ -799,8 +814,8 @@ export class AccountsService {
 	async beforeResetPassword(body: { id: string }): Promise<string> {
 		const account = await this.accountsRepository.findOne({
 			where: {
-				id: body.id,
-				isBanned: false,
+				id: Equal(body.id),
+				isBanned: Equal(false),
 			},
 		});
 
@@ -827,7 +842,7 @@ export class AccountsService {
 		else{
 			const account = await this.accountsRepository.findOne({
 				where: {
-					uuid: uuid,
+					uuid: Equal(uuid),
 				},
 			});
 	
@@ -856,7 +871,7 @@ export class AccountsService {
 
 			const account = await this.accountsRepository.findOne({
 				where: {
-					uuid: uuid,
+					uuid: Equal(uuid),
 				}
 			})
 			const isSame = await bcrypt.compare(password, account.password);
