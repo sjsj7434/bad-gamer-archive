@@ -19,9 +19,9 @@ const ForgotPasswordForm = (props) => {
 		event.stopPropagation();
 		const form = event.currentTarget;
 
-		if(form.emailInput.value === ""){
-			alert("이메일 (Email)을 확인해주세요");
-			form.emailInput.focus();
+		if(form.idInput.value === ""){
+			alert("아이디 (ID)를 확인해주세요");
+			form.idInput.focus();
 			return false;
 		}
 
@@ -31,7 +31,7 @@ const ForgotPasswordForm = (props) => {
 		setShowLoadingModal(false);
 
 		const signInResult = await accountsFetch.requestPasswordReset({
-			email: form.emailInput.value,
+			id: form.idInput.value,
 		});
 
 		if(signInResult === "email_sent"){
@@ -66,17 +66,15 @@ const ForgotPasswordForm = (props) => {
 				<Form noValidate onSubmit={handleSubmit}>
 					<Form.Group as={Row} className="mb-3">
 						<Form.Label style={{fontWeight: "800", fontSize: "0.8rem"}}>
-							이메일 (Email)
+							아이디 (ID)
 						</Form.Label>
 						<InputGroup>
-							<Form.Control id="emailInput" maxLength={20} type="text" placeholder="이메일을 입력해주세요" style={{fontSize: "0.9rem"}} />
+							<Form.Control id="idInput" maxLength={20} type="text" placeholder="아이디를 입력해주세요" style={{fontSize: "0.9rem"}} />
 						</InputGroup>
 						<Form.Text muted style={{fontSize: "0.72rem"}}>
-							가입하신 이메일을 적어주시면 해당 이메일로 비밀번호 재설정 메일이 발송됩니다
+							가입하신 계정의 이메일로 비밀번호 재설정 메일이 발송됩니다
 							<br />
-							이메일 입력 / 이메일이 DB에 있으면 메일 발송 / 해당 메일의 링크를 클릭하면 해당 계정 비밀번호 변경하는 페이지로 이동
-							<br />
-							아무나 메일 찍어서 초기화 시키지 못하는 방법임
+							아이디 없으면 없다고 알림창 / 해당 메일의 링크를 클릭하면 해당 계정 비밀번호 변경하는 페이지로 이동
 						</Form.Text>
 					</Form.Group>
 
