@@ -67,7 +67,7 @@ const ActivateLostarkAPI = () => {
 	}, [navigate])
 
 	const setCharacterCardList = useCallback(async (characterNames) => {
-		//아이템 레밸 내림차순 정렬
+		//아이템 레벨 내림차순 정렬
 		characterNames.sort(function (a, b) {
 			const lvl_1 = parseFloat(a.ItemMaxLevel.replace(",", ""));
 			const lvl_2 = parseFloat(b.ItemMaxLevel.replace(",", ""));
@@ -75,11 +75,12 @@ const ActivateLostarkAPI = () => {
 			if (lvl_1 > lvl_2) {
 				return -1;
 			}
-			if (lvl_1 < lvl_2) {
+			else if (lvl_1 < lvl_2) {
 				return 1;
 			}
-
-			return 0;
+			else{
+				return 0;
+			}
 		});
 
 		const elements = [];
@@ -127,8 +128,8 @@ const ActivateLostarkAPI = () => {
 							</tbody>
 						</Table>
 						<Stack direction="horizontal" gap={2} style={{ marginTop: "0.3rem"}}>
-							<Button variant="primary" style={{ fontSize: "0.8rem" }} className="tabletOver" onClick={ () => { window.open(`https://lostark.game.onstove.com/Profile/Character/${characterInfo.CharacterName}`) } }>전투정보실</Button>
-							<Button variant="primary" style={{ fontSize: "0.8rem" }} className="mobileOnly" onClick={ () => { window.open(`https://m-lostark.game.onstove.com/Profile/Character/${characterInfo.CharacterName}`) } }>전투정보실</Button>
+							<Button variant="primary" style={{ fontSize: "0.8rem" }} className="tabletOver" onClick={ () => { window.open(`https://lostark.game.onstove.com/Profile/Character/${characterInfo.CharacterName}`) } }>전투정보실</Button>{/* PC용 버튼 */}
+							<Button variant="primary" style={{ fontSize: "0.8rem" }} className="mobileOnly" onClick={ () => { window.open(`https://m-lostark.game.onstove.com/Profile/Character/${characterInfo.CharacterName}`) } }>전투정보실</Button>{/* Moblie용 버튼 */}
 							<Button variant="success" style={{ fontSize: "0.8rem" }} onClick={ () => { setCharacter(characterInfo) } }>인증하기</Button>
 						</Stack>
 					</Card.Body>
