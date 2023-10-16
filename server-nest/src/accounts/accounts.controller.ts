@@ -72,6 +72,13 @@ export class  AccountsController {
 		const accountData = await this.accountsService.getMyInfo(request, response);
 
 		if (accountData !== null) {
+			//cached data 확인해서 이미 진행했으면 튕김
+			const isOkay: boolean = this.accountsService.IS_USE_API_TODAY(request, "updateLostarkCharacter");
+
+			if (isOkay === false){
+				return "0004";
+			}
+
 			const lostarkName: string = accountData.authentication.filter((element) => element.type === "lostark_name")[0].data;
 			const stoveCode: string = accountData.authentication.filter((element) => element.type === "stove_code")[0].data;
 
@@ -92,6 +99,13 @@ export class  AccountsController {
 	@Put("stove/verification/api/again")
 	async restartAuthentication(@Req() request: Request): Promise<[string, object]> {
 		console.log("[AccountsController(Get) - accounts/stove/verification/api/again]");
+
+		//cached data 확인해서 이미 진행했으면 튕김
+		const isOkay: boolean = this.accountsService.IS_USE_API_TODAY(request, "updateLostarkCharacter");
+
+		if (isOkay === false) {
+			return ["fail", []];
+		}
 
 		const result: [string, object] = await this.accountsService.restartAuthentication(request);
 

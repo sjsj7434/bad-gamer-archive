@@ -60,6 +60,9 @@ const ActivateLostarkAPI = () => {
 			else if(result === "0003"){
 				alert("정보를 업데이트할 수 없습니다(닉네임이 변경되었다면 변경하기를 진행해주세요");
 			}
+			else if(result === "0004"){
+				alert("이미 캐릭터 인증이 진행되었습니다\n내일 다시 진행해주세요");
+			}
 
 			setShowLoadingModal(false);
 			navigate("/accounts/mypage")

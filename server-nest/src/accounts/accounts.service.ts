@@ -11,12 +11,7 @@ import * as bcrypt from 'bcrypt';
 import { Request, Response } from 'express';
 import { Authentication } from './authentication.entity';
 import { LostarkAPIService } from 'src/lostark/api/lostark.api.service';
-
-const LOGIN_FAIL_LIMIT: number = 5; //로그인 최대 실패
-const SIGN_IN_SESSION: Map<string, string> = new Map(); //로그인 세션
-const LOGIN_COOKIE_TTL = 1000 * 60 * 60 * 2; //로그인 쿠키 유지 기간 : 2 Hours
-const STOVE_CODE_TTL = 1000 * 60 * 3; //스토브 인증 코드 캐시 유지 기간 : 3 Minutes
-const EMAIL_CODE_TTL = 1000 * 60 * 60; //이메일 인증 코드 캐시 유지 기간 : 1 Hour
+import { Cron, CronExpression } from '@nestjs/schedule';
 
 @Injectable()
 export class AccountsService {
@@ -27,12 +22,43 @@ export class AccountsService {
 		private lostarkAPIService: LostarkAPIService,
 	) { }
 
+	private LOGIN_FAIL_LIMIT: number = 5; //로그인 최대 실패
+	private SIGN_IN_SESSION: Map<string, string> = new Map(); //로그인 세션
+	private LOGIN_COOKIE_TTL = 1000 * 60 * 60 * 2; //로그인 쿠키 유지 기간 : 2 Hours
+	private STOVE_CODE_TTL = 1000 * 60 * 3; //스토브 인증 코드 캐시 유지 기간 : 3 Minutes
+	private EMAIL_CODE_TTL = 1000 * 60 * 60; //이메일 인증 코드 캐시 유지 기간 : 1 Hour
+
+	public WHO_USE_API_TODAY: Map<string, Map<string, Date>> = new Map(); //오늘 누가 API를 사용하였는가
+
+	//서울 시간 기준으로 [매일 00:00] 데이터 초기화
+	@Cron(CronExpression.EVERY_DAY_AT_MIDNIGHT, {
+		name: "resetCharacterUpdateCount",
+		timeZone: "Asia/Seoul",
+	})
+	resetCharacterUpdateCount(serviceName: string) {
+		this.WHO_USE_API_TODAY.clear(); //초기화
+		console.log("[resetCharacterUpdateCount] Reset data : " + new Date());
+	}
+
+	IS_USE_API_TODAY(request: Request, serviceName: string): boolean {
+		const loginUUID = this.SIGN_IN_SESSION.get(request.cookies["sessionCode"]); //로그인한 정보
+
+		if (this.WHO_USE_API_TODAY.has(loginUUID) === true){
+			const whatService = this.WHO_USE_API_TODAY.get(loginUUID);
+
+			return !whatService.has(serviceName);
+		}
+		else{
+			return true;
+		}
+	}
+
 	/**
 	 * 스토브 소개란에 적을 인증 코드(32글자)를 생성한다
 	 */
 	async createStoveVerificationCode(request: Request): Promise<string>{
 		const stoveVerificationCode = randomBytes(16).toString("hex");
-		await this.cacheManager.set("STOVE_" + request.cookies["sessionCode"], stoveVerificationCode, STOVE_CODE_TTL);
+		await this.cacheManager.set("STOVE_" + request.cookies["sessionCode"], stoveVerificationCode, this.STOVE_CODE_TTL);
 
 		return stoveVerificationCode;
 	}
@@ -75,7 +101,7 @@ export class AccountsService {
 	async restartAuthentication(request: Request): Promise<[string, object]> {
 		// let hello = await this.authenticationRepository.query("SELECT ? AS TEST", ["dd"]);
 		// console.log(hello);
-		const loginUUID = SIGN_IN_SESSION.get(request.cookies["sessionCode"]); //로그인한 정보
+		const loginUUID = this.SIGN_IN_SESSION.get(request.cookies["sessionCode"]); //로그인한 정보
 		console.log(loginUUID);
 
 		if (loginUUID === null || loginUUID === undefined) {
@@ -431,8 +457,8 @@ export class AccountsService {
 				nickname: "",
 			}
 		}
-		else if (SIGN_IN_SESSION.has(request.cookies["sessionCode"]) === true) { //정상적으로 로그인한 쿠키가 있다
-			const loginUUID = SIGN_IN_SESSION.get(request.cookies["sessionCode"]); //로그인한 정보
+		else if (this.SIGN_IN_SESSION.has(request.cookies["sessionCode"]) === true) { //정상적으로 로그인한 쿠키가 있다
+			const loginUUID = this.SIGN_IN_SESSION.get(request.cookies["sessionCode"]); //로그인한 정보
 
 			const account = await this.accountsRepository.findOne({
 				where: {
@@ -468,7 +494,7 @@ export class AccountsService {
 				}
 			}
 			else{ //정상적인 상태
-				response.cookie("sessionCode", request.cookies["sessionCode"], { maxAge: LOGIN_COOKIE_TTL, httpOnly: true, secure: true }); //expire 갱신
+				response.cookie("sessionCode", request.cookies["sessionCode"], { maxAge: this.LOGIN_COOKIE_TTL, httpOnly: true, secure: true }); //expire 갱신
 
 				return {
 					status: "signin",
@@ -518,14 +544,14 @@ export class AccountsService {
 					{ //변경 값
 						loginFailIP: request.ip,
 						loginFailCount: failCount,
-						isLocked: (failCount >= LOGIN_FAIL_LIMIT), //실패 제한에 걸리면 계정 잠금 처리
+						isLocked: (failCount >= this.LOGIN_FAIL_LIMIT), //실패 제한에 걸리면 계정 잠금 처리
 					},
 				);
 
-				if (failCount === (LOGIN_FAIL_LIMIT - 1)){
+				if (failCount === (this.LOGIN_FAIL_LIMIT - 1)){
 					return "fail_limit"; //한번 더 실패할 경우 계정이 잠깁니다, 비밀번호 찾기로 잠김 해제 가능
 				}
-				else if (failCount >= LOGIN_FAIL_LIMIT) {
+				else if (failCount >= this.LOGIN_FAIL_LIMIT) {
 					return "locked";
 				}
 				else{
@@ -563,32 +589,32 @@ export class AccountsService {
 		const saltRounds: number = 15;
 		const sessionCode: string = bcrypt.genSaltSync(saltRounds);
 
-		for (const sessionData of SIGN_IN_SESSION) {
+		for (const sessionData of this.SIGN_IN_SESSION) {
 			if (account.uuid === sessionData[1]) { //같은 uuid 세션이 존재하면
-				SIGN_IN_SESSION.delete(sessionData[0]); //해당 세션을 삭제
+				this.SIGN_IN_SESSION.delete(sessionData[0]); //해당 세션을 삭제
 				break;
 			}
 		}
 
-		if (SIGN_IN_SESSION.has(request.cookies["sessionCode"]) === true) { //초기화
-			SIGN_IN_SESSION.delete(request.cookies["sessionCode"]);
+		if (this.SIGN_IN_SESSION.has(request.cookies["sessionCode"]) === true) { //초기화
+			this.SIGN_IN_SESSION.delete(request.cookies["sessionCode"]);
 		}
 
 		if (request.cookies["sessionCode"] !== undefined) { //초기화
 			response.clearCookie("sessionCode");
 		}
 
-		SIGN_IN_SESSION.set(sessionCode, account.uuid);
+		this.SIGN_IN_SESSION.set(sessionCode, account.uuid);
 
-		response.cookie("sessionCode", sessionCode, { maxAge: LOGIN_COOKIE_TTL, httpOnly: true, secure: true });
+		response.cookie("sessionCode", sessionCode, { maxAge: this.LOGIN_COOKIE_TTL, httpOnly: true, secure: true });
 	}
 
 	/**
 	 * 로그아웃 Cookie 설정
 	 */
 	setSignOut(request: Request, response: Response) {
-		if (SIGN_IN_SESSION.has(request.cookies["sessionCode"]) === true) {
-			SIGN_IN_SESSION.delete(request.cookies["sessionCode"]); //서버의 로그인 데이터에서 삭제
+		if (this.SIGN_IN_SESSION.has(request.cookies["sessionCode"]) === true) {
+			this.SIGN_IN_SESSION.delete(request.cookies["sessionCode"]); //서버의 로그인 데이터에서 삭제
 		}
 
 		if (request.cookies["sessionCode"] !== undefined) {
@@ -600,7 +626,7 @@ export class AccountsService {
 	 * 내 정보 가져오기
 	 */
 	async getMyInfo(request: Request, response: Response): Promise<Accounts> {
-		const loginUUID = SIGN_IN_SESSION.get(request.cookies["sessionCode"]); //로그인한 정보
+		const loginUUID = this.SIGN_IN_SESSION.get(request.cookies["sessionCode"]); //로그인한 정보
 
 		if (loginUUID === null || loginUUID === undefined){
 			return null;
@@ -637,7 +663,7 @@ export class AccountsService {
 	 * 비밀번호 변경
 	 */
 	async updatePassword(request: Request, response: Response, body: { oldPassword: string, newPassword: string }): Promise<number> {
-		const loginUUID = SIGN_IN_SESSION.get(request.cookies["sessionCode"]); //로그인한 정보
+		const loginUUID = this.SIGN_IN_SESSION.get(request.cookies["sessionCode"]); //로그인한 정보
 
 		const acctountData = await this.accountsRepository.findOne({
 			select: {
@@ -694,7 +720,7 @@ export class AccountsService {
 	 * 닉네임 변경
 	 */
 	async updateNickname(request: Request, response: Response, body: { nickname: string, password: string }): Promise<Boolean> {
-		const loginUUID = SIGN_IN_SESSION.get(request.cookies["sessionCode"]); //로그인한 정보
+		const loginUUID = this.SIGN_IN_SESSION.get(request.cookies["sessionCode"]); //로그인한 정보
 
 		const acctountData = await this.accountsRepository.findOne({
 			select: {
@@ -735,10 +761,20 @@ export class AccountsService {
 	 */
 	async updateLostarkCharacter(request: Request, body: { lostarkCharacter: string }): Promise<string> {
 		//받아온 캐릭터 정보 저장해놓고, 다시 넘어온 것 비교해서 위조 확인
-		const characterList: [any] = await this.cacheManager.get("LOSTARK_" + request.cookies["sessionCode"]);
+		const sessionCode: string = request.cookies["sessionCode"]; //로그인한 세션의 코드 값
+		const loginUUID = this.SIGN_IN_SESSION.get(sessionCode); //로그인한 정보
+		const characterList: [any] = await this.cacheManager.get("LOSTARK_" + sessionCode);
 
 		let isContain: boolean = false;
 		let infoIndex: number = 0;
+
+		if (this.WHO_USE_API_TODAY.has(loginUUID) === true){
+			const whatService = this.WHO_USE_API_TODAY.get(loginUUID);
+
+			if (whatService.has("updateLostarkCharacter") === true) {
+				return "0004";
+			}
+		}
 
 		if (typeof characterList !== "object"){
 			return "0002";
@@ -754,9 +790,6 @@ export class AccountsService {
 		}
 
 		if (isContain === true) {
-			console.log("isContain")
-			const loginUUID = SIGN_IN_SESSION.get(request.cookies["sessionCode"]); //로그인한 정보
-
 			//다시 인증을 진행하면 이전에 인증 해제한 데이터 완전 삭제 처리
 			await this.authenticationRepository.delete({
 				uuid: loginUUID,
@@ -764,7 +797,7 @@ export class AccountsService {
 				deletedAt: Not(IsNull()),
 			});
 
-			const stoveCode: string = await this.cacheManager.get("STOVE_CODE_" + request.cookies["sessionCode"]);
+			const stoveCode: string = await this.cacheManager.get("STOVE_CODE_" + sessionCode);
 
 			await this.authenticationRepository.upsert(
 				[
@@ -777,8 +810,18 @@ export class AccountsService {
 				["uuid", "type"]
 			);
 
-			await this.cacheManager.del("LOSTARK_" + request.cookies["sessionCode"]);
-			await this.cacheManager.del("STOVE_CODE_" + request.cookies["sessionCode"]);
+			await this.cacheManager.del("LOSTARK_" + sessionCode);
+			await this.cacheManager.del("STOVE_CODE_" + sessionCode);
+
+			if (this.WHO_USE_API_TODAY.has(loginUUID) === true) {
+				const whatService = this.WHO_USE_API_TODAY.get(loginUUID);
+				whatService.set("updateLostarkCharacter", new Date()); //API 이용자 추가
+			}
+			else {
+				const newService = new Map();
+				newService.set("updateLostarkCharacter", new Date())
+				this.WHO_USE_API_TODAY.set(loginUUID, newService);
+			}
 
 			return "0001";
 		}
@@ -791,7 +834,7 @@ export class AccountsService {
 	 * 로스트아크 캐릭터 인증 해제
 	 */
 	async deactivateLostarkCharacter(request: Request) {
-		const loginUUID = SIGN_IN_SESSION.get(request.cookies["sessionCode"]);
+		const loginUUID = this.SIGN_IN_SESSION.get(request.cookies["sessionCode"]);
 
 		//다시 인증을 진행하지 않으면 데이터는 완전 삭제되지 않음
 		await this.authenticationRepository.softDelete({
@@ -825,7 +868,7 @@ export class AccountsService {
 		}
 		else {
 			const verificationCode = randomBytes(16).toString("hex");
-			await this.cacheManager.set("PASSWORD_" + verificationCode, account.uuid, EMAIL_CODE_TTL);
+			await this.cacheManager.set("PASSWORD_" + verificationCode, account.uuid, this.EMAIL_CODE_TTL);
 
 			return "email_sent";
 		}

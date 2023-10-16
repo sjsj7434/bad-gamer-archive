@@ -9,7 +9,7 @@ import { catchError, firstValueFrom } from 'rxjs';
 export class LostarkAPIService {
 	constructor(private readonly httpService: HttpService, private configService: ConfigService) { }
 
-	ApiCallCount: number = 0; //max is 100 requests per minute, for now
+	API_CALL_COUNT: number = 0; //max is 100 requests per minute, for now
 	API_CALL_LIMIT: number = 100; //1분당 API 호출 가능 횟수
 
 	//서울 시간 기준으로 [1분 마다] 데이터 초기화
@@ -18,18 +18,22 @@ export class LostarkAPIService {
 		timeZone: "Asia/Seoul",
 	})
 	resetApiCallCount() {
-		this.ApiCallCount = 0;
-		console.log("[resetApiCallCount] Reset data every minute" + new Date());
+		this.API_CALL_COUNT = 0; //초기화
 	}
 
+	/**
+	 * 로스트아크 API 호출 공통 함수
+	 * @param destination API 주소
+	 * @returns 반환 값
+	 */
 	getLostArkAPI = async (destination: string) => {
-		if (this.ApiCallCount >= this.API_CALL_LIMIT){
+		if (this.API_CALL_COUNT >= this.API_CALL_LIMIT){
 			console.log(`[Error] API Call Limit is ${this.API_CALL_LIMIT} per min`);
 			return null;
 		}
 
-		this.ApiCallCount++; //api 호출 횟수 + 1, 매분 초기화 됨
-		console.log(`[Log] API Call : ${this.ApiCallCount}`);
+		this.API_CALL_COUNT++; //api 호출 횟수 + 1, 매분 초기화 됨
+		console.log(`[Log] API Call : ${this.API_CALL_COUNT}`);
 
 		const headersRequest = {
 			"Content-Type": "application/json", // As Far As I Know, this one is not needed

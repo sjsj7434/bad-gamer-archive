@@ -3,9 +3,10 @@ import Button from 'react-bootstrap/Button';
 import Container from 'react-bootstrap/Container';
 import { useNavigate } from "react-router-dom";
 import Table from 'react-bootstrap/Table';
-import Stack from 'react-bootstrap/Stack';
 
 import * as accountsFetch from '../../../common/js/accountsFetch.js'
+import Row from 'react-bootstrap/esm/Row.js';
+import Col from 'react-bootstrap/esm/Col.js';
 
 const MyPage = () => {
 	const [accountData, setAccountData] = useState(null);
@@ -70,6 +71,9 @@ const MyPage = () => {
 			}
 			else if(result === "0003"){
 				alert("정보를 업데이트할 수 없습니다(닉네임이 변경되었다면 변경하기를 진행해주세요");
+			}
+			else if(result === "0004"){
+				alert("이미 캐릭터 인증이 진행되었습니다\n내일 다시 진행해주세요");
 			}
 
 			callMyInfo();
@@ -182,18 +186,34 @@ const MyPage = () => {
 											</tbody>
 										</Table>
 										<div style={{ display: "flex", alignItems: "center" }}>
+											<Row>
+											</Row>
 											{
 												accountData.authentication.length === 0 ? 
 												<>
-													<Button onClick={() => { navigate("activate/lostark") }} variant="outline-success" style={{ width: "30%", maxWidth: "130px", padding: "2px", fontSize: "0.8rem" }}>인증하기</Button>
+													<Col>
+														<div className="d-grid gap-2" style={{ margin: "0.4rem" }}>
+															<Button onClick={() => { navigate("activate/lostark") }} variant="outline-success" style={{ padding: "2px", fontSize: "0.8rem" }}>인증하기</Button>
+														</div>
+													</Col>
 												</>
 												:
 												<>
-													<Button onClick={() => { refreshLostarkCharacter() }} variant="outline-success" style={{ width: "30%", maxWidth: "130px", padding: "2px", fontSize: "0.8rem" }}>업데이트</Button>
-													&nbsp;
-													<Button onClick={() => { navigate("activate/lostark") }} variant="outline-warning" style={{ width: "30%", maxWidth: "130px", padding: "2px", fontSize: "0.8rem" }}>변경하기</Button>
-													&nbsp;
-													<Button onClick={() => { deactivateLostarkCharacter() }} variant="outline-danger" style={{ width: "30%", maxWidth: "130px", padding: "2px", fontSize: "0.8rem" }}>해제하기</Button>
+													<Col>
+														<div className="d-grid gap-2" style={{ margin: "0.4rem" }}>
+															<Button onClick={() => { refreshLostarkCharacter() }} variant="outline-success" style={{ padding: "2px", fontSize: "0.8rem" }}>업데이트</Button>
+														</div>
+													</Col>
+													<Col>
+														<div className="d-grid gap-2" style={{ margin: "0.4rem" }}>
+															<Button onClick={() => { navigate("activate/lostark") }} variant="outline-warning" style={{ padding: "2px", fontSize: "0.8rem" }}>변경하기</Button>
+														</div>
+													</Col>
+													<Col>
+														<div className="d-grid gap-2" style={{ margin: "0.4rem" }}>
+															<Button onClick={() => { deactivateLostarkCharacter() }} variant="outline-danger" style={{ padding: "2px", fontSize: "0.8rem" }}>해제하기</Button>
+														</div>
+													</Col>
 												</>
 											}
 										</div>
@@ -202,11 +222,27 @@ const MyPage = () => {
 							</tbody>
 						</Table>
 
-						<Stack direction="horizontal" gap={3}>
-							<Button variant={"outline-primary"} onClick={() => {navigate("renew/password")}} style={{width: "30%", maxWidth: "130px", padding: "2px", fontSize: "0.8rem"}}>비밀번호 변경</Button>
-							<Button variant={"outline-primary"} onClick={() => {navigate("renew/nickname")}} style={{width: "30%", maxWidth: "130px", padding: "2px", fontSize: "0.8rem"}}>닉네임 변경</Button>
-							<Button variant={"outline-warning"} onClick={() => {navigate("leave")}} style={{width: "30%", maxWidth: "130px", padding: "2px", fontSize: "0.8rem"}}>회원탈퇴</Button>
-						</Stack>
+						<Row>
+							<Col>
+								<div className="d-grid gap-2">
+									<Button variant="outline-primary" size="lg" onClick={() => {navigate("renew/email")}} style={{ padding: "2px", fontSize: "0.8rem" }}>이메일 변경</Button>
+								</div>
+							</Col>
+							<Col>
+								<div className="d-grid gap-2">
+									<Button variant="outline-primary" size="lg" onClick={() => {navigate("renew/password")}} style={{ padding: "2px", fontSize: "0.8rem" }}>비밀번호 변경</Button>
+								</div>
+							</Col>
+							<Col>
+								<div className="d-grid gap-2">
+									<Button variant="outline-primary" size="lg" onClick={() => {navigate("renew/nickname")}} style={{ padding: "2px", fontSize: "0.8rem" }}>닉네임 변경</Button>
+								</div>
+							</Col>
+						</Row>
+
+						<div className="d-grid gap-2" style={{ marginTop: "1.5rem" }}>
+							<Button variant="danger" size="lg" onClick={() => {navigate("leave")}} style={{ fontSize: "0.8rem" }}>회원탈퇴</Button>
+						</div>
 					</div>
 				</Container>
 			);
