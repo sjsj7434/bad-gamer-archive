@@ -19,9 +19,9 @@ const DownvoteTrend = (props) => {
 	
 	useEffect(() => {
 		const readContentList = async () => {
-			const monthlyData = await contentBoardFetch.readContentList("all/trend/downvote/monthly", 1);
-			const weeklyData = await contentBoardFetch.readContentList("all/trend/downvote/weekly", 1);
-			const dailyData = await contentBoardFetch.readContentList("all/trend/downvote/daily", 1);
+			const monthlyData = await contentBoardFetch.readContentList("downvote/trend/monthly", 1);
+			const weeklyData = await contentBoardFetch.readContentList("downvote/trend/weekly", 1);
+			const dailyData = await contentBoardFetch.readContentList("downvote/trend/daily", 1);
 
 			setMonthlyList(monthlyData[0]);
 			setWeeklyList(weeklyData[0]);

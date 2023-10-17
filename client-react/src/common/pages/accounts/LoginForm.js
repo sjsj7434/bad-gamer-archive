@@ -7,9 +7,9 @@ import InputGroup from 'react-bootstrap/InputGroup';
 import Button from 'react-bootstrap/Button';
 import LoadingModal from '../common/LoadingModal.js';
 
-import * as accountsFetch from '../../../common/js/accountsFetch.js'
+import * as accountsFetch from '../../js/accountsFetch.js'
 
-const SignInForm = () => {
+const LoginForm = () => {
 	const [showLoadingModal, setShowLoadingModal] = useState(false);
 	const [loadingMessage, setLoadingMessage] = useState("");
 	const navigate = useNavigate();
@@ -35,32 +35,32 @@ const SignInForm = () => {
 		// await asyncWaiter(1);
 		setShowLoadingModal(false);
 
-		const signInResult = await accountsFetch.signInAccount({
+		const loginResult = await accountsFetch.loginAccount({
 			id: form.idInput.value,
 			password: form.passwordInput.value,
 		});
 
-		if(signInResult === "success"){
+		if(loginResult === "success"){
 			navigate("/");
 		}
-		else if(signInResult === "fail"){
+		else if(loginResult === "error"){
 			alert("아이디나 비밀번호가 올바르지 않습니다");
 		}
-		else if(signInResult === "fail_limit"){
+		else if(loginResult === "fail_limit"){
 			alert("아이디나 비밀번호가 올바르지 않습니다\n\n한번 더 실패할 경우 해당 계정은 잠금 처리됩니다");
 		}
-		else if(signInResult === "locked"){
+		else if(loginResult === "locked"){
 			if(window.confirm("지속된 로그인 실패로 계정이 잠금상태가 되었습니다\n\n해당 계정의 비밀번호를 잊으셨나요?") === true){
 				navigate("/accounts/find/password");
 			}
 		}
-		else if(signInResult === "sleep"){
+		else if(loginResult === "sleep"){
 			alert("계정이 휴면상태입니다");
 		}
-		else if(signInResult === "error"){
+		else if(loginResult === "error"){
 			alert("로그인에 실패하였습니다");
 		}
-		else if(signInResult === "already"){
+		else if(loginResult === "already"){
 			alert("누군가 이미 로그인하였습니다");
 		}
 	};
@@ -113,11 +113,11 @@ const SignInForm = () => {
 					<Button type="submit" variant="success" size="lg" style={{width: "100%", marginTop: "10px", fontSize: "0.9rem"}}>로그인</Button>
 				</Form>
 
-				<Button onClick={() => { navigate("/accounts/signup"); }} variant="outline-primary" size="lg" style={{width: "100%", marginTop: "10px", fontSize: "0.9rem"}}>계정이 없으신가요?</Button>
+				<Button onClick={() => { navigate("/accounts/register"); }} variant="outline-primary" size="lg" style={{width: "100%", marginTop: "10px", fontSize: "0.9rem"}}>계정이 없으신가요?</Button>
 				<Button onClick={() => { navigate("/accounts/find/password"); }} variant="outline-primary" size="lg" style={{width: "100%", marginTop: "10px", fontSize: "0.9rem"}}>비밀번호를 잊으셨나요?</Button>
 			</div>
 		</Container>
 	);
 }
 
-export default SignInForm;
+export default LoginForm;

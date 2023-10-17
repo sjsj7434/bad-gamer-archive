@@ -6,11 +6,10 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import '../css/Common.css';
 
 import Error404 from './errors/Error404';
-import SignUpForm from './accounts/SignUpForm';
-import SignInForm from './accounts/SignInForm';
+import RegisterForm from './accounts/RegisterForm';
+import LoginForm from './accounts/LoginForm';
 import CommonTopMenu from './CommonTopMenu';
 import MyPage from './accounts/MyPage';
-import BlockNoSignin from './accounts/BlockNoSignin';
 import * as accountsFetch from '../js/accountsFetch.js'
 import LostarkMain from '../../lostark/pages/LostarkMain';
 import ContentBoard from './board/ContentBoard';
@@ -19,7 +18,8 @@ import ContentWriteAnonymous from './board/anonymous/ContentWriteAnonymous';
 import UsefulSitesLostark from './common/UsefulSitesLostark';
 import PasswordRenewForm from './accounts/PasswordRenewForm';
 import ForgotPasswordForm from './accounts/ForgotPasswordForm';
-import BlockYesSignin from './accounts/BlockYesSignin';
+import BlockLoginUser from './accounts/BlockLoginUser';
+import BlockLogoutUser from './accounts/BlockLogoutUser';
 import ResetPasswordForm from './accounts/ResetPasswordForm';
 import ContentWriteUser from './board/user/ContentWriteUser';
 import SetActiveMenu from './SetActiveMenu';
@@ -34,19 +34,19 @@ const RoutesWrapper = () => {
 	const [currentMenu, setCurrentMenu] = useState(null);
 	let location = useLocation();
 	
-	const checkSignInStatus = async () => {
-		const statusJSON = await accountsFetch.checkSignInStatus();
+	const checkLoginStatus = async () => {
+		const statusJSON = await accountsFetch.checkLoginStatus();
 		setAccountData(statusJSON);
 	}
 
 	useEffect(() => {
-		checkSignInStatus();
+		checkLoginStatus();
 	}, [location.pathname]); //URL이 바뀔 때 마다 로그인 정보 갱신
 
 	if(accountData !== null){
 		return (
 			<>
-				<CommonTopMenu accountData={accountData} currentMenu={currentMenu} checkSignInStatus={checkSignInStatus} />
+				<CommonTopMenu accountData={accountData} currentMenu={currentMenu} checkLoginStatus={checkLoginStatus} />
 
 				<Routes>
 					{/* Contents */}
@@ -125,7 +125,7 @@ const RoutesWrapper = () => {
 								} />
 
 								<Route path="write" element={
-									<BlockNoSignin
+									<BlockLogoutUser
 										accountData={accountData}
 										ifAllow={
 											<>
@@ -137,7 +137,7 @@ const RoutesWrapper = () => {
 								} />
 
 								<Route path="edit/:contentCode" element={
-									<BlockNoSignin
+									<BlockLogoutUser
 										accountData={accountData}
 										ifAllow={
 											<>
@@ -152,31 +152,31 @@ const RoutesWrapper = () => {
 					</Route>
 
 					<Route path="accounts">
-						<Route path="signup" element={
-							<BlockYesSignin
+						<Route path="register" element={
+							<BlockLoginUser
 								accountData={accountData}
 								ifAllow={
 									<>
-										<SetActiveMenu setCurrentMenu={setCurrentMenu} menuCode={"/accounts/signup"} />
-										<SignUpForm />
+										<SetActiveMenu setCurrentMenu={setCurrentMenu} menuCode={"/accounts/register"} />
+										<RegisterForm />
 									</>
 								}
 							/>
 						} />
-						<Route path="signin" element={
-							<BlockYesSignin
+						<Route path="login" element={
+							<BlockLoginUser
 								accountData={accountData}
 								ifAllow={
 									<>
-										<SetActiveMenu setCurrentMenu={setCurrentMenu} menuCode={"/accounts/signin"} />
-										<SignInForm />
+										<SetActiveMenu setCurrentMenu={setCurrentMenu} menuCode={"/accounts/login"} />
+										<LoginForm />
 									</>
 								}
 							/>
 						} />
 
 						<Route path="find/password" element={
-							<BlockYesSignin
+							<BlockLoginUser
 								accountData={accountData}
 								ifAllow={
 									<>
@@ -188,7 +188,7 @@ const RoutesWrapper = () => {
 						} />
 
 						<Route path="reset/password" element={
-							<BlockYesSignin
+							<BlockLoginUser
 								accountData={accountData}
 								ifAllow={
 									<>
@@ -201,7 +201,7 @@ const RoutesWrapper = () => {
 						
 						<Route path="mypage">
 							<Route path="" element={
-								<BlockNoSignin
+								<BlockLogoutUser
 									accountData={accountData}
 									ifAllow={
 										<>
@@ -213,7 +213,7 @@ const RoutesWrapper = () => {
 							} />
 							
 							<Route path="activate/lostark" element={
-								<BlockNoSignin
+								<BlockLogoutUser
 									accountData={accountData}
 									ifAllow={
 										<>
@@ -226,19 +226,19 @@ const RoutesWrapper = () => {
 							} />
 							
 							<Route path="renew/password" element={
-								<BlockNoSignin
+								<BlockLogoutUser
 									accountData={accountData}
 									ifAllow={
 										<>
 											<SetActiveMenu setCurrentMenu={setCurrentMenu} menuCode={"/accounts/renew/password"} />
-											<PasswordRenewForm checkSignInStatus={checkSignInStatus} />
+											<PasswordRenewForm checkLoginStatus={checkLoginStatus} />
 										</>
 									}
 								/>
 							} />
 							
 							<Route path="renew/nickname" element={
-								<BlockNoSignin
+								<BlockLogoutUser
 									accountData={accountData}
 									ifAllow={
 										<>
@@ -261,7 +261,7 @@ const RoutesWrapper = () => {
 					} />
 					
 					<Route path="help" element={
-						<BlockNoSignin
+						<BlockLogoutUser
 							accountData={accountData}
 							ifAllow={
 								<>

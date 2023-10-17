@@ -1,4 +1,4 @@
-import { Entity, Column, CreateDateColumn, DeleteDateColumn, UpdateDateColumn, ManyToOne, JoinColumn, Unique, PrimaryColumn } from 'typeorm';
+import { Entity, Column, CreateDateColumn, DeleteDateColumn, UpdateDateColumn, ManyToOne, JoinColumn, PrimaryColumn } from 'typeorm';
 import { Accounts } from './accounts.entity';
 
 // This will create following database table

@@ -29,8 +29,8 @@ const ContentView = (props) => {
 		/**
 		 * code로 게시글 정보 가져오기
 		 */
-		const readContent = async () => {
-			const readResult = await contentBoardFetch.readContent(props.boardType, contentCode, "view");
+		const getContentData = async () => {
+			const readResult = await contentBoardFetch.getContentData(props.boardType, contentCode);
 			const contentData = readResult.contentData;
 
 			if(contentData === null){
@@ -46,7 +46,7 @@ const ContentView = (props) => {
 		}
 
 		if(contentCode !== null){
-			readContent();
+			getContentData();
 		}
 	}, [contentCode, navigate, props.boardType]);
 

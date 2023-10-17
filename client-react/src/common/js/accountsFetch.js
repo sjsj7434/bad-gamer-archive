@@ -158,26 +158,25 @@ export const createAccount = async (accountInfo) => {
 }
 
 /**
- * 로그인, Sign In
+ * 로그인
  */
-export const signInAccount = async (accountInfo) => {
+export const loginAccount = async (accountInfo) => {
 	const fecthOption = {
 		method: "POST"
 		, body: JSON.stringify(accountInfo)
 		, headers: {"Content-Type": "application/json",}
 		, credentials: "include", // Don't forget to specify this if you need cookies
 	};
-	const fetchResponse = await fetch(`${process.env.REACT_APP_SERVER}/accounts/signin`, fecthOption);
+	const fetchResponse = await fetch(`${process.env.REACT_APP_SERVER}/accounts/login`, fecthOption);
 	const [isStatusGood] = isFetchStatusGood(fetchResponse);
 
 	if(isStatusGood === true){
 		const fetchData = await getFetchText(fetchResponse);
-		console.log('signInAccount =>', fetchData)
+		console.log('loginAccount =>', fetchData)
 
 		return fetchData;
 	}
 	else{
-		// alert(checkMessage);
 		alert("로그인이 실패하였습니다");
 
 		return null;
@@ -187,17 +186,17 @@ export const signInAccount = async (accountInfo) => {
 /**
  * 이미 해당 계정으로 로그인한 사람이 있는지 확인
  */
-export const checkSignInStatus = async () => {
+export const checkLoginStatus = async () => {
 	const fecthOption = {
 		method: "GET"
 		, credentials: "include", // Don't forget to specify this if you need cookies
 	};
-	const fetchResponse = await fetch(`${process.env.REACT_APP_SERVER}/accounts/signin/status`, fecthOption);
+	const fetchResponse = await fetch(`${process.env.REACT_APP_SERVER}/accounts/login/status`, fecthOption);
 	const [isStatusGood, checkMessage] = isFetchStatusGood(fetchResponse);
 
 	if(isStatusGood === true){
 		const fetchData = await getFetchJson(fetchResponse);
-		console.log('checkSignInStatus =>', fetchData)
+		console.log('checkLoginStatus =>', fetchData)
 
 		return fetchData;
 	}
@@ -209,14 +208,14 @@ export const checkSignInStatus = async () => {
 }
 
 /**
- * 로그아웃, sign out
+ * 로그아웃
  */
-export const setSignOut = async () => {
+export const logoutAccount = async () => {
 	const fecthOption = {
 		method: "POST"
 		, credentials: "include", // Don't forget to specify this if you need cookies
 	};
-	await fetch(`${process.env.REACT_APP_SERVER}/accounts/signout`, fecthOption);
+	await fetch(`${process.env.REACT_APP_SERVER}/accounts/logout`, fecthOption);
 }
 
 /**

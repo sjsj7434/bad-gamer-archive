@@ -3,8 +3,8 @@ import { Navigate } from "react-router-dom";
 /**
  * 로그인하지 않은 상태에서만 접근 가능한 페이지에 포함되는 컴포넌트
  */
-const BlockYesSignin = (props) => {
-	if(props.accountData.status === "signin"){
+const BlockLoginUser = (props) => {
+	if(props.accountData.status === "login"){
 		alert("로그인한 상태로는 이용할 수 없습니다");
 
 		return (
@@ -20,4 +20,4 @@ const BlockYesSignin = (props) => {
 	}
 }
 
-export default BlockYesSignin;
+export default BlockLoginUser;

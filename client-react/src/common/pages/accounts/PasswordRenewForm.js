@@ -62,9 +62,9 @@ const PasswordRenewForm = (props) => {
 			else if(updateResult === 1){
 				alert("비밀번호가 변경되었습니다\n비밀번호가 변경되었으니 다시 로그인해주세요");
 
-				await props.checkSignInStatus();
+				await props.checkLoginStatus();
 
-				navigate("/accounts/signin");
+				navigate("/accounts/login");
 			}
 			else if(updateResult === 2){
 				alert("입력하신 현재 비밀번호가 올바르지 않습니다");

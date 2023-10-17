@@ -19,9 +19,9 @@ const ViewTrend = (props) => {
 	
 	useEffect(() => {
 		const readContentList = async () => {
-			const monthlyData = await contentBoardFetch.readContentList("all/trend/view/monthly", 1);
-			const weeklyData = await contentBoardFetch.readContentList("all/trend/view/weekly", 1);
-			const dailyData = await contentBoardFetch.readContentList("all/trend/view/daily", 1);
+			const monthlyData = await contentBoardFetch.readContentList("view/trend/monthly", 1);
+			const weeklyData = await contentBoardFetch.readContentList("view/trend/weekly", 1);
+			const dailyData = await contentBoardFetch.readContentList("view/trend/daily", 1);
 
 			setMonthlyList(monthlyData[0]);
 			setWeeklyList(weeklyData[0]);

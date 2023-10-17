@@ -72,19 +72,9 @@ const ContentWriteAnonymous = (props) => {
 			writerNickname: "",
 		};
 
-		let createResult = await contentBoardFetch.createContent(props.boardType, sendData);
+		await contentBoardFetch.createContent(props.boardType, sendData);
 
-		if(createResult === null){
-			setLoadingModalShow(false);
-			setLoadingModalMessage("");
-		}
-		else if(createResult === false){
-			alert("게시글 저장이 실패하였습니다");
-			navigate(`/lostark/board/anonymous/1`);
-		}
-		else{
-			navigate(`/lostark/board/anonymous/1`);
-		}
+		navigate(`/lostark/board/anonymous/1`);
 	}, [editorObject, editorSizeByte, editorMaxKB, navigate, props.boardType])
 
 	/**
@@ -156,8 +146,8 @@ const ContentWriteAnonymous = (props) => {
 		/**
 		 * 게시글 정보 가져오기
 		 */
-		const readContent = async () => {
-			const readResult = await contentBoardFetch.readContent(props.boardType, contentCode, "edit");
+		const getContentData = async () => {
+			const readResult = await contentBoardFetch.getContentData(props.boardType, contentCode);
 			const contentData = readResult.contentData;
 	
 			setContentTitle(contentData.title);
@@ -165,7 +155,7 @@ const ContentWriteAnonymous = (props) => {
 		}
 
 		if(contentCode !== null && identity === true){
-			readContent();
+			getContentData();
 		}
 	}, [contentCode, identity, props.boardType])
 

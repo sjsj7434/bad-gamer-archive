@@ -9,7 +9,7 @@ import Button from 'react-bootstrap/Button';
 import * as accountsFetch from '../../js/accountsFetch.js'
 import LoadingModal from '../common/LoadingModal.js';
 
-const SignUpForm = () => {
+const RegisterForm = () => {
 	const [idValid, setIdValid] = useState(0);
 	const [nicknameValid, setNicknameValid] = useState(0);
 	const [emailValid, setEmailValid] = useState(0);
@@ -65,7 +65,7 @@ const SignUpForm = () => {
 
 			if(createResult === 4){
 				alert("환영합니다!\n로그인 페이지로 이동합니다");
-				navigate("/accounts/signin");
+				navigate("/accounts/login");
 			}
 			else if(createResult === 0){
 				alert("이미 사용 중인 아이디와 닉네임입니다");
@@ -351,4 +351,4 @@ const SignUpForm = () => {
 	);
 }
 
-export default SignUpForm;
+export default RegisterForm;

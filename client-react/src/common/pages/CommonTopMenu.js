@@ -23,13 +23,13 @@ const CommonTopMenu = (props) => {
 		})
 	}, [navigate])
 	
-	const signOut = async () => {
+	const logoutAccount = async () => {
 		if(window.confirm("로그아웃 하시겠습니까?") === false){
 			return;
 		}
-		await accountsFetch.setSignOut();
+		await accountsFetch.logoutAccount();
 		setShowOffcanvas(false);
-		props.checkSignInStatus();
+		props.checkLoginStatus();
 		navigate("/");
 	}
 
@@ -70,7 +70,7 @@ const CommonTopMenu = (props) => {
 
 					<Nav style={{ flexDirection: "row" }}>
 						{
-							props.accountData.status === "signin" ?
+							props.accountData.status === "login" ?
 							<>
 								<Button variant="dark" style={{ fontSize: "0.8rem", padding: "0px" }}>
 									<Nav.Link active={props.currentMenu === "/accounts/mypage" ? true : false} onClick={() => menuClick("/accounts/mypage")}>
@@ -83,7 +83,7 @@ const CommonTopMenu = (props) => {
 									</Nav.Link>
 								</Button>
 								&nbsp;
-								<Button variant="dark" onClick={() => { signOut() }} style={{ fontSize: "0.8rem", padding: "0px" }}>
+								<Button variant="dark" onClick={() => { logoutAccount() }} style={{ fontSize: "0.8rem", padding: "0px" }}>
 									<div style={{ padding: "8px", color: "#ffaa3d" }}>
 										<div style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
 											<strong style={{ marginRight: "0.3rem" }}>로그아웃</strong>
@@ -98,7 +98,7 @@ const CommonTopMenu = (props) => {
 							:
 							<>
 								<Button variant="dark" style={{ fontSize: "0.8rem", padding: "0px" }}>
-									<Nav.Link active={props.currentMenu === "/accounts/signup" ? true : false} onClick={() => menuClick("/accounts/signup")}>
+									<Nav.Link active={props.currentMenu === "/accounts/register" ? true : false} onClick={() => menuClick("/accounts/register")}>
 										<div style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
 											<p style={{ marginRight: "0.3rem" }}>회원가입</p>
 											<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor" className="bi bi-person-square" viewBox="0 0 16 16">
@@ -110,7 +110,7 @@ const CommonTopMenu = (props) => {
 								</Button>
 								&nbsp;
 								<Button variant="dark" style={{ fontSize: "0.8rem", padding: "0px" }}>
-									<Nav.Link active={props.currentMenu === "/accounts/signin" ? true : false} onClick={() => menuClick("/accounts/signin")}>
+									<Nav.Link active={props.currentMenu === "/accounts/login" ? true : false} onClick={() => menuClick("/accounts/login")}>
 										<div style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
 											<p style={{ marginRight: "0.3rem" }}>로그인</p>
 											<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor" className="bi bi-box-arrow-in-up-right" viewBox="0 0 16 16">
@@ -140,9 +140,9 @@ const CommonTopMenu = (props) => {
 
 					<Nav style={{ display: "flex", flexDirection: "row", color: "white", fontSize: "0.8rem", width: "maxWidth" }}>
 						{
-							props.accountData.status === "signin" ?
+							props.accountData.status === "login" ?
 							<>
-								<div style={{ padding: "8px", color: "#ffaa3d" }} onClick={() => { signOut() }}>
+								<div style={{ padding: "8px", color: "#ffaa3d" }} onClick={() => { logoutAccount() }}>
 									<div style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
 										<strong style={{ marginRight: "0.3rem" }}>로그아웃</strong>
 										<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor" className="bi bi-box-arrow-right" viewBox="0 0 16 16">
@@ -154,7 +154,7 @@ const CommonTopMenu = (props) => {
 							</>
 							:
 							<>
-								<Nav.Link active={props.currentMenu === "/accounts/signup" ? true : false} onClick={() => menuClick("/accounts/signup")}>
+								<Nav.Link active={props.currentMenu === "/accounts/register" ? true : false} onClick={() => menuClick("/accounts/register")}>
 									<div style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
 										<p style={{ marginRight: "0.3rem" }}>회원가입</p>
 										<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor" className="bi bi-person-square" viewBox="0 0 16 16">
@@ -164,7 +164,7 @@ const CommonTopMenu = (props) => {
 									</div>
 								</Nav.Link>
 								&nbsp;&nbsp;
-								<Nav.Link active={props.currentMenu === "/accounts/signin" ? true : false} onClick={() => menuClick("/accounts/signin")}>
+								<Nav.Link active={props.currentMenu === "/accounts/login" ? true : false} onClick={() => menuClick("/accounts/login")}>
 									<div style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
 										<p style={{ marginRight: "0.3rem" }}>로그인</p>
 										<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor" className="bi bi-box-arrow-in-up-right" viewBox="0 0 16 16">
@@ -199,7 +199,7 @@ const CommonTopMenu = (props) => {
 								<hr style={{ width: "100%" }}></hr>
 
 								{
-									props.accountData.status === "signin" ?
+									props.accountData.status === "login" ?
 									<>
 										<Nav.Link active={props.currentMenu === "/accounts/mypage" ? true : false} onClick={() => menuClick("/accounts/mypage")}>
 											<div style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
@@ -221,7 +221,7 @@ const CommonTopMenu = (props) => {
 									</>
 									:
 									<>
-										<Nav.Link active={props.currentMenu === "/accounts/signup" ? true : false} onClick={() => menuClick("/accounts/signup")}>
+										<Nav.Link active={props.currentMenu === "/accounts/register" ? true : false} onClick={() => menuClick("/accounts/register")}>
 											<div style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
 												<p style={{ marginRight: "0.3rem" }}>회원가입</p>
 												<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor" className="bi bi-person-square" viewBox="0 0 16 16">
@@ -230,7 +230,7 @@ const CommonTopMenu = (props) => {
 												</svg>
 											</div>
 										</Nav.Link>
-										<Nav.Link active={props.currentMenu === "/accounts/signin" ? true : false} onClick={() => menuClick("/accounts/signin")}>
+										<Nav.Link active={props.currentMenu === "/accounts/login" ? true : false} onClick={() => menuClick("/accounts/login")}>
 											<div style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
 												<p style={{ marginRight: "0.3rem" }}>로그인</p>
 												<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor" className="bi bi-box-arrow-in-up-right" viewBox="0 0 16 16">

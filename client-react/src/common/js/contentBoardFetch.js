@@ -1,4 +1,4 @@
-import { isFetchStatusGood, getFetchJson, getFetchText } from './fetchCommonImport';
+import { isFetchStatusGood, getFetchJson } from './fetchCommonImport';
 
 /**
  * 게시판의 게시글 목록을 가져온다
@@ -26,21 +26,45 @@ export const readContentList = async (boardType, page) => {
 }
 
 /**
- * 특정 게시글 정보를 가져온다
- * view, read, edit
+ * 특정 게시글을 조회
  */
-export const readContent = async (boardType, contentCode, type) => {
+export const readContent = async (boardType, contentCode) => {
 	const fecthOption = {
 		method: "GET"
 		, headers: {"Content-Type": "application/json",}
 		, credentials: "include", // Don't forget to specify this if you need cookies
 	};
-	const fetchResponse = await fetch(`${process.env.REACT_APP_SERVER}/boards/${boardType}/view/${contentCode}?type=${type}`, fecthOption);
+	const fetchResponse = await fetch(`${process.env.REACT_APP_SERVER}/boards/${boardType}/content/read/${contentCode}`, fecthOption);
 	const [isStatusGood, checkMessage] = isFetchStatusGood(fetchResponse);
 
 	if(isStatusGood === true){
 		const fetchData = await getFetchJson(fetchResponse);
 		console.log('readContent =>', fetchData)
+
+		return fetchData;
+	}
+	else{
+		alert(checkMessage);
+
+		return null;
+	}
+}
+
+/**
+ * 특정 게시글 정보를 가져온다
+ */
+export const getContentData = async (boardType, contentCode) => {
+	const fecthOption = {
+		method: "GET"
+		, headers: {"Content-Type": "application/json",}
+		, credentials: "include", // Don't forget to specify this if you need cookies
+	};
+	const fetchResponse = await fetch(`${process.env.REACT_APP_SERVER}/boards/${boardType}/content/data/${contentCode}`, fecthOption);
+	const [isStatusGood, checkMessage] = isFetchStatusGood(fetchResponse);
+
+	if(isStatusGood === true){
+		const fetchData = await getFetchJson(fetchResponse);
+		console.log('getContentData =>', fetchData)
 
 		return fetchData;
 	}
@@ -104,7 +128,7 @@ export const voteContent = async (boardType, voteType, sendData) => {
 }
 
 /**
- * 게시글 생성
+ * 게시판 글 작성
  */
 export const createContent = async (boardType, sendData) => {
 	const fecthOption = {
@@ -116,16 +140,8 @@ export const createContent = async (boardType, sendData) => {
 	const fetchResponse = await fetch(`${process.env.REACT_APP_SERVER}/boards/${boardType}/content`, fecthOption);
 	const [isStatusGood, checkMessage] = isFetchStatusGood(fetchResponse);
 
-	if(isStatusGood === true){
-		const fetchData = await getFetchText(fetchResponse);
-		console.log('createContent =>', fetchData)
-
-		return fetchData;
-	}
-	else{
+	if(isStatusGood !== true){
 		alert(checkMessage);
-
-		return null;
 	}
 }
 

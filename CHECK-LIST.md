@@ -60,6 +60,7 @@ npm run start
 - <input type='checkbox'> 관리자 페이지(밴, 게시글 삭제...)
 - <input type='checkbox'> 관리자 페이지는 Django(Python)를 써볼까?
 - <input type='checkbox'> 관리자 페이지는 Strapi(JS)를 써볼까?
+- <input type='checkbox'> 관리자 페이지는 AdminJS(JS)를 써볼까?
 - <input type='checkbox'> 게시글 작성자 IP차단 & 아이디 차단 기능(회원 전용)
 - <input type='checkbox'> Rate Limiting, protect applications from brute-force attacks
 - <input type='checkbox'> 인증 서버별로 Popcat 게임 추가

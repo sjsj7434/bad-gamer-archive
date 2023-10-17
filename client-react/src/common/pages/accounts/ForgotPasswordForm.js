@@ -30,15 +30,15 @@ const ForgotPasswordForm = (props) => {
 		// await asyncWaiter(1);
 		setShowLoadingModal(false);
 
-		const signInResult = await accountsFetch.requestPasswordReset({
+		const loginResult = await accountsFetch.requestPasswordReset({
 			id: form.idInput.value,
 		});
 
-		if(signInResult === "email_sent"){
+		if(loginResult === "email_sent"){
 			alert("비밀번호 초기화를 위한 이메일이 발송되었습니다");
 			navigate("/");
 		}
-		else if(signInResult === "no_user"){
+		else if(loginResult === "no_user"){
 			alert("이메일을 발송할 수 없습니다");
 		}
 	};
