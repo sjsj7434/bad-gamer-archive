@@ -460,7 +460,7 @@ export class AccountsService {
 	async deleteAccount(request: Request, response: Response, deleteAccountsDTO: DeleteAccountsDTO) {
 		const loginUUID = this.LOGIN_SESSION.get(request.cookies["sessionCode"]); //로그인한 정보
 
-		const isExists: boolean = await this.accountsRepository.exist({ where: { uuid: loginUUID, id: deleteAccountsDTO.id, password: deleteAccountsDTO.password } });
+		const isExists: boolean = await this.accountsRepository.exist({ where: { uuid: Equal(loginUUID), id: Equal(deleteAccountsDTO.id), password: Equal(deleteAccountsDTO.password) } });
 
 		if (isExists === true){
 			await this.accountsRepository.softDelete({
@@ -876,7 +876,7 @@ export class AccountsService {
 
 		const isExists: boolean = await this.authenticationRepository.exist({
 			where: {
-				uuid: loginUUID,
+				uuid: Equal(loginUUID),
 				type: In(["lostark_name", "lostark_item_level", "lostark_server", "lostark_character_level", "stove_code"]),
 				deletedAt: IsNull(),
 			}
@@ -885,7 +885,7 @@ export class AccountsService {
 		if (isExists === true){
 			//다시 인증을 진행하지 않으면 데이터는 완전 삭제되지 않음
 			await this.authenticationRepository.softDelete({
-				uuid: loginUUID,
+				uuid: Equal(loginUUID),
 				type: In(["lostark_name", "lostark_item_level", "lostark_server", "lostark_character_level", "stove_code"]),
 				deletedAt: IsNull(),
 			});

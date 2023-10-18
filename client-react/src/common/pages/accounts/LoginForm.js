@@ -43,7 +43,7 @@ const LoginForm = () => {
 		if(loginResult === "success"){
 			navigate("/");
 		}
-		else if(loginResult === "error"){
+		else if(loginResult === "fail"){
 			alert("아이디나 비밀번호가 올바르지 않습니다");
 		}
 		else if(loginResult === "fail_limit"){
@@ -57,11 +57,11 @@ const LoginForm = () => {
 		else if(loginResult === "sleep"){
 			alert("계정이 휴면상태입니다");
 		}
-		else if(loginResult === "error"){
-			alert("로그인에 실패하였습니다");
-		}
 		else if(loginResult === "already"){
 			alert("누군가 이미 로그인하였습니다");
+		}
+		else{
+			alert("로그인에 실패하였습니다");
 		}
 	};
 
@@ -75,7 +75,7 @@ const LoginForm = () => {
 	// }
 
 	return (
-		<Container style={{maxWidth: "450px"}}>
+		<Container style={{ maxWidth: "450px" }}>
 			<LoadingModal showModal={showLoadingModal} message={loadingMessage}></LoadingModal>
 
 			<div style={{ marginTop: "30px" }}>
@@ -101,7 +101,7 @@ const LoginForm = () => {
 							비밀번호 (Password)
 						</Form.Label>
 						<InputGroup>
-							<Form.Control id="passwordInput" maxLength={20} type="password" placeholder="비밀번호를 입력해주세요" style={{fontSize: "0.9rem"}} />
+							<Form.Control id="passwordInput" autoComplete="off" maxLength={20} type="password" placeholder="비밀번호를 입력해주세요" style={{fontSize: "0.9rem"}} />
 						</InputGroup>
 						<Form.Text muted style={{fontSize: "0.72rem"}}>
 							5번 이상 로그인에 실패할 경우 계정이 <span style={{color: "orangered", fontWeight: "600"}}>잠금 상태</span>가 됩니다

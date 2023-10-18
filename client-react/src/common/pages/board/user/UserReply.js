@@ -12,6 +12,7 @@ const UserReply = (props) => {
 	// const [downvoteCount, setDownvoteCount] = useState(0);
 	const [renderData, setRenderData] = useState(<></>);
 	const REPlY_MAX_LENG = 300; //댓글 글자 수 제한
+	const REPlY_MAX_ROW = 10; //댓글 줄 수 제한
 
 	/**
 	 * 게시글 upvote & downvote
@@ -125,15 +126,20 @@ const UserReply = (props) => {
 		 */
 		const createRecursiveReply = async (replyCode, currentPage) => {
 			const formElement = document.querySelector(`#replyOfReplyForm_${replyCode}`);
+			const replyLines = formElement.content.value.split("\n"); //댓글 줄
 
 			if(formElement.content.value === ""){
 				alert("답글 내용을 입력해주세요");
 				formElement.content.focus();
 				return;
 			}
-
-			if(formElement.content.value.length > REPlY_MAX_LENG){
+			else if(formElement.content.value.length > REPlY_MAX_LENG){
 				alert("답글이 글자수 제한을 초과하였습니다");
+				formElement.content.focus();
+				return;
+			}
+			else if(replyLines.length > REPlY_MAX_ROW){
+				alert(`댓글 내용이 ${REPlY_MAX_ROW}줄을 넘어 저장할 수 없습니다\n좀 더 짧게 작성해주세요`);
 				formElement.content.focus();
 				return;
 			}
@@ -305,7 +311,6 @@ const UserReply = (props) => {
 	 */
 	const checkReplyLimit = (event) => {
 		const replyData = event.target.value;
-
 		if(replyData.length > REPlY_MAX_LENG){
 			event.target.value = event.target.value.substring(0, REPlY_MAX_LENG);
 			return false;
@@ -320,6 +325,7 @@ const UserReply = (props) => {
 	 */
 	const createReply = useCallback(async () => {
 		const replyDataElement = document.querySelector("#replyData");
+		const replyLines = replyDataElement.value.split("\n"); //댓글 줄
 
 		if(replyDataElement.value === ""){
 			alert("댓글의 내용을 입력해주세요");
@@ -328,6 +334,11 @@ const UserReply = (props) => {
 		}
 		else if(replyDataElement.value.length > REPlY_MAX_LENG){
 			alert("댓글이 글자수 제한을 초과하였습니다");
+			replyDataElement.focus();
+			return;
+		}
+		else if(replyLines.length > REPlY_MAX_ROW){
+			alert(`댓글 내용이 ${REPlY_MAX_ROW}줄을 넘어 저장할 수 없습니다\n좀 더 짧게 작성해주세요`);
 			replyDataElement.focus();
 			return;
 		}
@@ -370,7 +381,7 @@ const UserReply = (props) => {
 								</Col>
 							</Row>
 
-							<Form.Control id="replyData" as="textarea" rows={4} style={{fontSize: "0.8rem"}} disabled />
+							<Form.Control id="replyData" as="textarea" rows={4} style={{fontSize: "0.8rem"}} onChange={(event) => {checkReplyLimit(event)}} disabled />
 						</Form.Group>
 					</Form>
 					
@@ -401,7 +412,7 @@ const UserReply = (props) => {
 								</Col>
 							</Row>
 
-							<Form.Control id="replyData" as="textarea" rows={4} onChange={(event) => {checkReplyLimit(event)}} style={{fontSize: "0.8rem"}} />
+							<Form.Control id="replyData" as="textarea" rows={4} style={{fontSize: "0.8rem"}} onChange={(event) => {checkReplyLimit(event)}} />
 						</Form.Group>
 					</Form>
 

@@ -22,23 +22,22 @@ export class CreateBoardsDTO extends OmitType(Boards, ["code", "createdAt"] as c
 
 export class UpdateBoardsDTO extends PartialType(Boards) {
 	@IsNumber()
-	code?: number;
-	@IsString()
-	password?: string;
-	@IsString()
-	title?: string;
-	@IsString()
-	content?: string;
-	@IsBoolean()
-	hasImage?: boolean;
-	@IsString()
-	writerID?: string;
+	code: number;
+	@IsOptional() @IsString()
+	password: string;
+	@IsOptional() @IsString()
+	title: string;
+	@IsOptional() @IsString()
+	content: string;
+	@IsOptional() @IsBoolean()
+	hasImage: boolean;
+	@IsOptional() @IsString()
+	writerID: string;
 }
 
 export class DeleteBoardsDTO extends PickType(Boards, ["code", "password", "writerID"] as const) {
 	@IsNumber()
 	code: number;
-	@IsOptional()
-	@IsString()
+	@IsOptional() @IsString()
 	password: string;
 }

@@ -102,21 +102,47 @@ export const deleteContent = async (boardType, sendData) => {
 }
 
 /**
- * 특정 게시글에 추천, 비추천
+ * 게시글 추천
  */
-export const voteContent = async (boardType, voteType, sendData) => {
+export const upvoteContent = async (boardType, sendData) => {
 	const fecthOption = {
 		method: "POST"
 		, body: JSON.stringify(sendData)
 		, headers: {"Content-Type": "application/json",}
 		, credentials: "include", // Don't forget to specify this if you need cookies
 	};
-	const fetchResponse = await fetch(`${process.env.REACT_APP_SERVER}/boards/${boardType}/content/${voteType}`, fecthOption);
+	const fetchResponse = await fetch(`${process.env.REACT_APP_SERVER}/boards/${boardType}/content/upvote`, fecthOption);
 	const [isStatusGood, checkMessage] = isFetchStatusGood(fetchResponse);
 
 	if(isStatusGood === true){
 		const fetchData = await getFetchJson(fetchResponse);
-		console.log('voteContent =>', fetchData)
+		console.log('upvoteContent =>', fetchData)
+
+		return fetchData;
+	}
+	else{
+		alert(checkMessage);
+
+		return null;
+	}
+}
+
+/**
+ * 게시글 비추천
+ */
+export const downvoteContent = async (boardType, sendData) => {
+	const fecthOption = {
+		method: "POST"
+		, body: JSON.stringify(sendData)
+		, headers: {"Content-Type": "application/json",}
+		, credentials: "include", // Don't forget to specify this if you need cookies
+	};
+	const fetchResponse = await fetch(`${process.env.REACT_APP_SERVER}/boards/${boardType}/content/downvote`, fecthOption);
+	const [isStatusGood, checkMessage] = isFetchStatusGood(fetchResponse);
+
+	if(isStatusGood === true){
+		const fetchData = await getFetchJson(fetchResponse);
+		console.log('downvoteContent =>', fetchData)
 
 		return fetchData;
 	}

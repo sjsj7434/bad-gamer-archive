@@ -237,19 +237,21 @@ const ContentWriteAnonymous = (props) => {
 			if(identity !== true){
 				setRenderData(
 					<Container style={{maxWidth: "600px"}}>
-						<Form.Group as={Row} className="mb-3">
-							<Form.Label style={{fontWeight: "800", fontSize: "0.8rem"}}>
-								게시글 비밀번호를 입력해주세요
-							</Form.Label>
-							<Col>
-								<InputGroup>
-									<Form.Control id="contentPassword" maxLength={20} type="password" placeholder="게시글 비밀번호를 입력해주세요" onKeyDown={(event) => {if(event.key === "Enter"){checkBeforeEdit()}}} autoComplete="off" style={{fontSize: "0.8rem"}} />
-								</InputGroup>
-								<Form.Text style={{color: "red", fontSize: "0.8rem"}}>
-									{failMessage}
-								</Form.Text>
-							</Col>
-						</Form.Group>
+						<Form>
+							<Form.Group as={Row} className="mb-3">
+								<Form.Label style={{fontWeight: "800", fontSize: "0.8rem"}}>
+									게시글 비밀번호를 입력해주세요
+								</Form.Label>
+								<Col>
+									<InputGroup>
+										<Form.Control id="contentPassword" maxLength={20} type="password" autoComplete="off" placeholder="게시글 비밀번호를 입력해주세요" onKeyDown={(event) => {if(event.key === "Enter"){checkBeforeEdit()}}} style={{fontSize: "0.8rem"}} />
+									</InputGroup>
+									<Form.Text style={{color: "red", fontSize: "0.8rem"}}>
+										{failMessage}
+									</Form.Text>
+								</Col>
+							</Form.Group>
+						</Form>
 
 						<div style={{display: "flex", justifyContent: "flex-end", marginBottom: "15px", marginTop: "30px"}}>
 							<Button

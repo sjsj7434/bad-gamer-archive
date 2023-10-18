@@ -42,13 +42,13 @@ export class BoardsController {
 
 	//익명 게시판 글 조회, contentCode 값이 number가 아니면 호출되지 않음
 	@Get("anonymous/content/read/:contentCode")
-	async readAnonymousContent(@Param("contentCode") contentCode: number): Promise<{ "contentData": Boards, "isWriter": boolean }> {
+	async readAnonymousContent(@Param("contentCode") contentCode: number): Promise<{ contentData: Boards, isWriter: boolean }> {
 		return await this.boardsService.readAnonymousContent(contentCode);
 	}
 
 	//익명 게시판 글 데이터 가져오기, contentCode 값이 number가 아니면 호출되지 않음
 	@Get("anonymous/content/data/:contentCode")
-	async getAnonymousContentData(@Param("contentCode") contentCode: number): Promise<{ "contentData": Boards, "isWriter": boolean }> {
+	async getAnonymousContentData(@Param("contentCode") contentCode: number): Promise<{ contentData: Boards, isWriter: boolean }> {
 		return await this.boardsService.getAnonymousContentData(contentCode);
 	}
 
@@ -78,13 +78,13 @@ export class BoardsController {
 
 	//익명 게시판 글 추천
 	@Post("anonymous/content/upvote")
-	async upvoteAnonymousContent(@Ip() ipData: string, @Body() sendData: { code: number }): Promise<Boards> {
+	async upvoteAnonymousContent(@Ip() ipData: string, @Body() sendData: { code: number }): Promise<{ upvote: number, downvote: number, isVotable: boolean }> {
 		return await this.boardsService.upvoteAnonymousContent(sendData.code, ipData);
 	}
 
 	//익명 게시판 글 비추천
 	@Post("anonymous/content/downvote")
-	async downvoteAnonymousContent(@Ip() ipData: string, @Body() sendData: { code: number }): Promise<Boards> {
+	async downvoteAnonymousContent(@Ip() ipData: string, @Body() sendData: { code: number }): Promise<{ upvote: number, downvote: number, isVotable: boolean }> {
 		return await this.boardsService.downvoteAnonymousContent(sendData.code, ipData);
 	}
 
@@ -106,16 +106,6 @@ export class BoardsController {
 		return await this.boardsService.deleteAnonymousReply(deleteRepliesDTO);
 	}
 
-	//익명 게시판 글 이미지 삽입
-	@Post("anonymous/image")
-	@UseInterceptors(FileInterceptor("upload"))
-	async uploadImageAnonymous(@UploadedFile() file: Express.Multer.File): Promise<{ url: string } | { error: { message: string } }> {
-		//Multer is --save-dev option installed, same as -d option
-		//If the upload is successful, the server should return: An object containing [the url property] which points to the uploaded image on the server
-		//이미지 업로드가 성공했으면 서버가 이미지 주소 정보가 담긴 오브젝트(url 프로퍼티를 가진)를 반환해야만 함
-		return await this.boardsService.uploadImageAnonymous(file);
-	}
-
 	//================================================================================================================================================= user
 
 	//유저 게시판 목록, page 값이 number가 아니면 호출되지 않음
@@ -126,14 +116,14 @@ export class BoardsController {
 
 	//유저 게시판 글 조회, contentCode 값이 number가 아니면 호출되지 않음
 	@Get("user/content/read/:contentCode")
-	async readUserContent(@Req() request: Request, @Res({ passthrough: true }) response: Response, @Param("contentCode") contentCode: number): Promise<{ "contentData": Boards, "isWriter": boolean }> {
+	async readUserContent(@Req() request: Request, @Res({ passthrough: true }) response: Response, @Param("contentCode") contentCode: number): Promise<{ contentData: Boards, isWriter: boolean }> {
 		//set cookies/headers 정도만 사용하고, 나머지는 프레임워크에 떠넘기는 식으로 @Res()를 사용하는 거라면 passthrough: true 옵션은 필수! 그렇지 않으면 fetch 요청이 마무리가 안됨
 		return await this.boardsService.readUserContent(request, response, contentCode);
 	}
 
 	//유저 게시판 글 데이터 가져오기, contentCode 값이 number가 아니면 호출되지 않음
-	@Get("anonymous/content/data/:contentCode")
-	async getUserContentData(@Req() request: Request, @Res({ passthrough: true }) response: Response, @Param("contentCode") contentCode: number): Promise<{ "contentData": Boards, "isWriter": boolean }> {
+	@Get("user/content/data/:contentCode")
+	async getUserContentData(@Req() request: Request, @Res({ passthrough: true }) response: Response, @Param("contentCode") contentCode: number): Promise<{ contentData: Boards, isWriter: boolean }> {
 		return await this.boardsService.getUserContentData(request, response, contentCode);
 	}
 
@@ -163,13 +153,13 @@ export class BoardsController {
 
 	//게시글 추천
 	@Post("user/content/upvote")
-	async upvoteUserContent(@Ip() ipData: string, @Body() sendData: { code: number }): Promise<Boards> {
+	async upvoteUserContent(@Ip() ipData: string, @Body() sendData: { code: number }): Promise<{ upvote: number, downvote: number, isVotable: boolean }> {
 		return await this.boardsService.upvoteUserContent(sendData.code, ipData);
 	}
 
 	//게시글 비추천
 	@Post("user/content/downvote")
-	async downvoteUserContent(@Ip() ipData: string, @Body() sendData: { code: number }): Promise<Boards> {
+	async downvoteUserContent(@Ip() ipData: string, @Body() sendData: { code: number }): Promise<{ upvote: number, downvote: number, isVotable: boolean }> {
 		return await this.boardsService.downvoteUserContent(sendData.code, ipData);
 	}
 
@@ -191,13 +181,16 @@ export class BoardsController {
 		return await this.boardsService.deleteUserReply(request, response, deleteRepliesDTO);
 	}
 
+	//================================================================================================================================================= common
+
 	//게시글 이미지 삽입
-	@Post("user/image")
+	@Post("image")
 	@UseInterceptors(FileInterceptor("upload"))
-	async uploadImageUser(@UploadedFile() file: Express.Multer.File): Promise<{ url: string } | { error: { message: string } }> {
+	async uploadImage(@UploadedFile() file: Express.Multer.File): Promise<{ url: string } | { error: { message: string } }> {
 		//Multer is --save-dev option installed, same as -d option
 		//If the upload is successful, the server should return: An object containing [the url property] which points to the uploaded image on the server
 		//이미지 업로드가 성공했으면 서버가 이미지 주소 정보가 담긴 오브젝트(url 프로퍼티를 가진)를 반환해야만 함
-		return await this.boardsService.uploadImageUser(file);
+
+		return await this.boardsService.uploadImage(file);
 	}
 }

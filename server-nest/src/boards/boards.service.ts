@@ -19,6 +19,7 @@ export class BoardsService {
 
 	private VOTE_HISTORY: Map<number, Array<string>> = new Map();
 	private REPlY_MAX_LENG = 300; //댓글 글자 수 제한
+	private REPlY_MAX_ROW = 10; //댓글 줄 수 제한
 
 	//서울 시간 기준으로 [매일 00:00]에 데이터 초기화
 	@Cron(CronExpression.EVERY_DAY_AT_MIDNIGHT, {
@@ -316,7 +317,7 @@ export class BoardsService {
 	/**
 	 * 익명 게시판 글 읽기, 조회수 + 1
 	 */
-	async readAnonymousContent(contentCode: number): Promise<{ "contentData": Boards, "isWriter": boolean }> {
+	async readAnonymousContent(contentCode: number): Promise<{ contentData: Boards, isWriter: boolean }> {
 		if (isNaN(contentCode) === true) {
 			return null;
 		}
@@ -351,13 +352,13 @@ export class BoardsService {
 			isAuthor = contentData.writerID === "";
 		}
 
-		return { "contentData": contentData, "isWriter": isAuthor };
+		return { contentData: contentData, isWriter: isAuthor };
 	}
 
 	/**
 	 * 익명 게시판 글 데이터 가져오기
 	 */
-	async getAnonymousContentData(contentCode: number): Promise<{ "contentData": Boards, "isWriter": boolean }> {
+	async getAnonymousContentData(contentCode: number): Promise<{ contentData: Boards, isWriter: boolean }> {
 		if (isNaN(contentCode) === true) {
 			return null;
 		}
@@ -390,13 +391,13 @@ export class BoardsService {
 			isAuthor = contentData.writerID === "";
 		}
 
-		return { "contentData": contentData, "isWriter": isAuthor };
+		return { contentData: contentData, isWriter: isAuthor };
 	}
 
 	/**
 	 * 유저 게시판 글 읽기, 조회수 + 1
 	 */
-	async readUserContent(request: Request, response: Response, contentCode: number): Promise<{ "contentData": Boards, "isWriter": boolean }> {
+	async readUserContent(request: Request, response: Response, contentCode: number): Promise<{ contentData: Boards, isWriter: boolean }> {
 		const loginCookie = await this.accountsService.checkLoginStatus(request, response);
 
 		if (isNaN(contentCode) === true) {
@@ -432,13 +433,13 @@ export class BoardsService {
 			isAuthor = contentData.writerID === loginCookie.id;
 		}
 
-		return { "contentData": contentData, "isWriter": isAuthor };
+		return { contentData: contentData, isWriter: isAuthor };
 	}
 
 	/**
 	 * 유저 게시판 글 데이터 가져오기
 	 */
-	async getUserContentData(request: Request, response: Response, contentCode: number): Promise<{ "contentData": Boards, "isWriter": boolean }> {
+	async getUserContentData(request: Request, response: Response, contentCode: number): Promise<{ contentData: Boards, isWriter: boolean }> {
 		const loginCookie = await this.accountsService.checkLoginStatus(request, response);
 
 		if (isNaN(contentCode) === true) {
@@ -473,22 +474,22 @@ export class BoardsService {
 			isAuthor = contentData.writerID === loginCookie.id;
 		}
 
-		return { "contentData": contentData, "isWriter": isAuthor };
+		return { contentData: contentData, isWriter: isAuthor };
 	}
 
 	/**
 	 * 익명 게시글 작성자 확인
 	 */
-	async isAnonymousAuthor(code: number, password: string): Promise<boolean> {
-		if (isNaN(code) === true) {
+	async isAnonymousAuthor(inputCode: number, inputPassword: string): Promise<boolean> {
+		if (isNaN(inputCode) === true) {
 			return false;
 		}
 
 		const isExists = await this.boardsRepository.exist({
 			where: {
-				"code": Equal(code),
-				"category": Equal("anonymous"),
-				"password": Equal(password),
+				code: Equal(inputCode),
+				category: Equal("anonymous"),
+				password: Equal(inputPassword),
 			},
 		});
 
@@ -624,16 +625,16 @@ export class BoardsService {
 	async softDeleteAnonymousContent(deleteBoardsDTO: DeleteBoardsDTO): Promise<boolean> {
 		const isExists = await this.boardsRepository.exist({
 			where: {
-				code: deleteBoardsDTO.code,
-				category: "anonymous",
-				password: deleteBoardsDTO.password,
-				writerID: "",
+				code: Equal(deleteBoardsDTO.code),
+				category: Equal("anonymous"),
+				password: Equal(deleteBoardsDTO.password),
+				writerID: Equal(""),
 			}
 		});
 
 		if (isExists === true) {
-			this.boardsRepository.softDelete({
-				code: deleteBoardsDTO.code
+			await this.boardsRepository.softDelete({
+				code: Equal(deleteBoardsDTO.code)
 			});
 		}
 
@@ -649,16 +650,16 @@ export class BoardsService {
 		if (loginCookie.status === "login") {
 			const isExists = await this.boardsRepository.exist({
 				where: {
-					code: deleteBoardsDTO.code,
-					category: "user",
-					password: deleteBoardsDTO.password,
-					writerID: "",
+					code: Equal(deleteBoardsDTO.code),
+					category: Equal("user"),
+					password: Equal(deleteBoardsDTO.password),
+					writerID: Equal(""),
 				}
 			});
 
 			if (isExists === true) {
-				this.boardsRepository.softDelete({
-					code: deleteBoardsDTO.code
+				await this.boardsRepository.softDelete({
+					code: Equal(deleteBoardsDTO.code)
 				});
 			}
 
@@ -672,110 +673,97 @@ export class BoardsService {
 	/**
 	 * 익명 게시판 글 추천
 	 */
-	async upvoteAnonymousContent(contentCode: number, ipData: string): Promise<Boards> {
+	async upvoteAnonymousContent(contentCode: number, ipData: string): Promise<{ upvote: number, downvote: number, isVotable: boolean }> {
 		const isVotable: boolean = this.isVotableContent(contentCode, ipData);
 
 		if (isVotable === true) {
-			await this.boardsRepository.increment({
+			await this.boardsRepository.increment({ code: Equal(contentCode), category: Equal("anonymous") }, "upvote", 1);
+		}
+
+		const contentData = await this.boardsRepository.findOne({
+			select: {
+				upvote: true,
+				downvote: true,
+			},
+			where: {
 				code: Equal(contentCode),
-				category: Equal("anonymouse"),
-			}, "upvote", 1);
+				category: Equal("anonymous"),
+			},
+		});
 
-			const contentData = await this.boardsRepository.findOne({
-				select: {
-					upvote: true,
-					downvote: true,
-				},
-				where: {
-					code: Equal(contentCode),
-					category: Equal("anonymouse"),
-				},
-			});
-
-			return contentData;
-		}
-		else {
-			return new Boards();
-		}
+		return { upvote: contentData.upvote, downvote: contentData.downvote, isVotable: isVotable };
 	}
 
 	/**
 	 * 유저 게시판 글 추천
 	 */
-	async upvoteUserContent(contentCode: number, ipData: string): Promise<Boards> {
+	async upvoteUserContent(contentCode: number, ipData: string): Promise<{ upvote: number, downvote: number, isVotable: boolean }> {
 		const isVotable: boolean = this.isVotableContent(contentCode, ipData);
 
 		if (isVotable === true) {
-			await this.boardsRepository.increment({ code: contentCode }, "upvote", 1);
+			await this.boardsRepository.increment({ code: Equal(contentCode), category: Equal("user") }, "upvote", 1);
+		}
 
-			return await this.boardsRepository.findOne({
-				select: {
-					upvote: true,
-					downvote: true,
-				},
-				where: {
-					code: Equal(contentCode),
-					category: Equal("user"),
-				},
-			});
-		}
-		else {
-			return new Boards();
-		}
+		const contentData = await this.boardsRepository.findOne({
+			select: {
+				upvote: true,
+				downvote: true,
+			},
+			where: {
+				code: Equal(contentCode),
+				category: Equal("user"),
+			},
+		});
+
+		return { upvote: contentData.upvote, downvote: contentData.downvote, isVotable: isVotable };
 	}
 
 	/**
 	 * 익명 게시판 글 비추천
 	 */
-	async downvoteAnonymousContent(contentCode: number, ipData: string): Promise<Boards | null> {
+	async downvoteAnonymousContent(contentCode: number, ipData: string): Promise<{ upvote: number, downvote: number, isVotable: boolean }> {
 		const isVotable: boolean = this.isVotableContent(contentCode, ipData);
 
 		if (isVotable === true) {
-			await this.boardsRepository.increment({ code: Equal(contentCode), category: Equal("anonymouse") }, "downvote", 1);
-
-			const contentData = await this.boardsRepository.findOne({
-				select: {
-					upvote: true,
-					downvote: true,
-				},
-				where: {
-					code: Equal(contentCode),
-					category: Equal("anonymouse"),
-				},
-			});
-
-			return contentData;
+			await this.boardsRepository.increment({ code: Equal(contentCode), category: Equal("anonymous") }, "downvote", 1);
 		}
-		else {
-			return new Boards();
-		}
+
+		const contentData = await this.boardsRepository.findOne({
+			select: {
+				upvote: true,
+				downvote: true,
+			},
+			where: {
+				code: Equal(contentCode),
+				category: Equal("anonymous"),
+			},
+		});
+
+		return { upvote: contentData.upvote, downvote: contentData.downvote, isVotable: isVotable };
 	}
 
 	/**
 	 * 유저 게시판 글 비추천
 	 */
-	async downvoteUserContent(contentCode: number, ipData: string): Promise<Boards | null> {
+	async downvoteUserContent(contentCode: number, ipData: string): Promise<{ upvote: number, downvote: number, isVotable: boolean }> {
 		const isVotable: boolean = this.isVotableContent(contentCode, ipData);
 
 		if (isVotable === true) {
-			await this.boardsRepository.increment({ code: Equal(contentCode) }, "downvote", 1);
-
-			const contentData = await this.boardsRepository.findOne({
-				select: {
-					upvote: true,
-					downvote: true,
-				},
-				where: {
-					code: Equal(contentCode),
-					category: Equal("user"),
-				},
-			});
-
-			return contentData;
+			await this.boardsRepository.increment({ code: Equal(contentCode), category: Equal("user") }, "downvote", 1);
 		}
-		else {
-			return new Boards();
-		}
+
+		const contentData = await this.boardsRepository.findOne({
+			select: {
+				upvote: true,
+				downvote: true,
+			},
+			where: {
+				code: Equal(contentCode),
+				category: Equal("user"),
+			},
+		});
+
+		return { upvote: contentData.upvote, downvote: contentData.downvote, isVotable: isVotable };
 	}
 
 	/**
@@ -784,7 +772,7 @@ export class BoardsService {
 	async getAnonymousReplies(contentCode: number, page: number): Promise<[Replies[], number]> {
 		const perPage = 50;
 
-		const repliesData = this.repliesRepository.findAndCount({
+		const repliesData = await this.repliesRepository.findAndCount({
 			skip: (page - 1) * perPage, //시작 인덱스
 			take: perPage, //페이지 당 갯수
 			select: {
@@ -829,7 +817,7 @@ export class BoardsService {
 	async getUserReplies(contentCode: number, page: number): Promise<[Replies[], number]> {
 		const perPage = 50;
 
-		const repliesData = this.repliesRepository.findAndCount({
+		const repliesData = await this.repliesRepository.findAndCount({
 			skip: (page - 1) * perPage, //시작 인덱스
 			take: perPage, //페이지 당 갯수
 			select: {
@@ -874,9 +862,16 @@ export class BoardsService {
 	async createAnonymousReply(createRepliesDTO: CreateRepliesDTO, ipData: string): Promise<boolean> {
 		//부모 게시글의 코드만 바꿔서 요청이 들어오면 비로그인 유저가 로그인 전용 게시글에 댓글을 익명으로 남길 수 있게됨
 		//댓글 저장 전에 부모 게시글의 정보 확인
-		if (createRepliesDTO.content.length > this.REPlY_MAX_LENG) {
+		if (createRepliesDTO.content === "") {
 			return false;
 		}
+		else if (createRepliesDTO.content.length > this.REPlY_MAX_LENG) {
+			return false;
+		}
+		else if (createRepliesDTO.content.split("\n").length > this.REPlY_MAX_ROW) {
+			return false;
+		}
+		
 		if (createRepliesDTO.level === 0) {
 			createRepliesDTO.parentReplyCode = 0;
 		}
@@ -888,8 +883,8 @@ export class BoardsService {
 
 		const contentData = await this.boardsRepository.exist({
 			where: {
-				"code": Equal(createRepliesDTO.parentContentCode),
-				"category": Equal("anonymous"),
+				code: Equal(createRepliesDTO.parentContentCode),
+				category: Equal("anonymous"),
 			},
 		});
 
@@ -920,7 +915,13 @@ export class BoardsService {
 	async createUserReply(request: Request, response: Response, createRepliesDTO: CreateRepliesDTO, ipData: string): Promise<boolean> {
 		//부모 게시글의 코드만 바꿔서 요청이 들어오면 비로그인 유저가 로그인 전용 게시글에 댓글을 익명으로 남길 수 있게됨
 		//댓글 저장 전에 부모 게시글의 정보 확인
-		if (createRepliesDTO.content.length > this.REPlY_MAX_LENG) {
+		if (createRepliesDTO.content === ""){
+			return false;
+		}
+		else if (createRepliesDTO.content.length > this.REPlY_MAX_LENG) {
+			return false;
+		}
+		else if (createRepliesDTO.content.split("\n").length > this.REPlY_MAX_ROW) {
 			return false;
 		}
 
@@ -976,17 +977,17 @@ export class BoardsService {
 	async deleteAnonymousReply(deleteRepliesDTO: DeleteRepliesDTO): Promise<boolean> {
 		const isExists = await this.repliesRepository.exist({
 			where: {
-				"code": Equal(deleteRepliesDTO.code),
-				"writerID": Equal(""),
-				"password": Equal(deleteRepliesDTO.password),
+				code: Equal(deleteRepliesDTO.code),
+				writerID: Equal(""),
+				password: Equal(deleteRepliesDTO.password),
 			}
 		});
 
 		if (isExists === true) {
 			await this.repliesRepository.softDelete({
-				"code": Equal(deleteRepliesDTO.code),
-				"writerID": Equal(""),
-				"password": Equal(deleteRepliesDTO.password),
+				code: Equal(deleteRepliesDTO.code),
+				writerID: Equal(""),
+				password: Equal(deleteRepliesDTO.password),
 			});
 		}
 
@@ -1005,9 +1006,9 @@ export class BoardsService {
 		
 		const replyData = await this.repliesRepository.findOne({
 			where: {
-				"code": Equal(deleteRepliesDTO.code),
-				"writerID": Equal(loginCookie.id),
-				"password": Equal(deleteRepliesDTO.password),
+				code: Equal(deleteRepliesDTO.code),
+				writerID: Equal(loginCookie.id),
+				password: Equal(deleteRepliesDTO.password),
 			}
 		});
 
@@ -1016,9 +1017,9 @@ export class BoardsService {
 		}
 		else {
 			await this.repliesRepository.softDelete({
-				"code": Equal(deleteRepliesDTO.code),
-				"writerID": Equal(loginCookie.id),
-				"password": Equal(deleteRepliesDTO.password),
+				code: Equal(deleteRepliesDTO.code),
+				writerID: Equal(loginCookie.id),
+				password: Equal(deleteRepliesDTO.password),
 			});
 
 			return true;
@@ -1028,26 +1029,14 @@ export class BoardsService {
 	/**
 	 * 유저 게시판 글 이미지 삽입
 	 */
-	async uploadImageAnonymous(file: Express.Multer.File): Promise<{ url: string } | { error: { message: string } }> {
-		const timeOfNow = new Date();
-		const timeString = timeOfNow.toLocaleDateString("sv-SE").replace(/-/g, "") + timeOfNow.toLocaleTimeString("sv-SE").replace(/:/g, "");
-		const randomName = Array(10).fill(null).map(() => (Math.round(Math.random() * 16)).toString(16).substring(0, 1)).join("");
-		console.log("uploadImageAnonymous : ", file);
+	async uploadImage(file: Express.Multer.File): Promise<{ url: string } | { error: { message: string } }> {
+		// const timeOfNow = new Date();
+		// const timeString = timeOfNow.toLocaleDateString("sv-SE").replace(/-/g, "") + timeOfNow.toLocaleTimeString("sv-SE").replace(/:/g, "");
+		// const randomName = Array(10).fill(null).map(() => (Math.round(Math.random() * 16)).toString(16).substring(0, 1)).join("");
+		file.originalname = Buffer.from(file.originalname, "latin1").toString("utf8"); //한글 파일 이름이 깨져서 인코딩 추가
+		console.log("uploadImage : ", file);
 
-		return { "url": "https://img-s-msn-com.akamaized.net/tenant/amp/entityid/AAZrqDW?w=300&h=157&q=60&m=6&f=jpg&u=t" };
-		// return { "error": { "message": "test error" } };
-	}
-
-	/**
-	 * 유저 게시판 글 이미지 삽입
-	 */
-	async uploadImageUser(file: Express.Multer.File): Promise<{ url: string } | { error: { message: string } }> {
-		const timeOfNow = new Date();
-		const timeString = timeOfNow.toLocaleDateString("sv-SE").replace(/-/g, "") + timeOfNow.toLocaleTimeString("sv-SE").replace(/:/g, "");
-		const randomName = Array(10).fill(null).map(() => (Math.round(Math.random() * 16)).toString(16).substring(0, 1)).join("");
-		console.log("uploadImageUser : ", file);
-
-		return { "url": "https://img-s-msn-com.akamaized.net/tenant/amp/entityid/AAZrqDW?w=300&h=157&q=60&m=6&f=jpg&u=t" };
-		// return { "error": { "message": "test error" } };
+		return { url: "https://img-s-msn-com.akamaized.net/tenant/amp/entityid/AAZrqDW?w=300&h=157&q=60&m=6&f=jpg&u=t" };
+		// return { error: { message: "test error" } };
 	}
 }

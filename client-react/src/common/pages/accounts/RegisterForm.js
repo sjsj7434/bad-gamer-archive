@@ -285,7 +285,7 @@ const RegisterForm = () => {
 							비밀번호 (Password)
 						</Form.Label>
 						<Col>
-							<Form.Control className={statusParser(passwordValid)} id="passwordInput" maxLength={20} type="password" placeholder="비밀번호를 입력해주세요" onChange={() => {isValidPassword()}} style={{fontSize: "0.9rem"}} />
+							<Form.Control className={statusParser(passwordValid)} id="passwordInput" autoComplete="off" maxLength={20} type="password" placeholder="비밀번호를 입력해주세요" onChange={() => {isValidPassword()}} style={{fontSize: "0.9rem"}} />
 							<Form.Text muted style={{fontSize: "0.72rem"}}>
 								알파벳 대문자와 소문자, 숫자, 특수문자를 조합하여 8~20자로 생성해주세요
 							</Form.Text>
@@ -314,7 +314,7 @@ const RegisterForm = () => {
 							비밀번호 확인 (Password Check)
 						</Form.Label>
 						<Col>
-							<Form.Control className={statusParser(rePasswordValid)} id="rePasswordInput" maxLength={20} type="password" placeholder="비밀번호를 한번 더 입력해주세요" onChange={() => {checkRePassword()}} style={{fontSize: "0.9rem"}} />
+							<Form.Control className={statusParser(rePasswordValid)} id="rePasswordInput" autoComplete="off" maxLength={20} type="password" placeholder="비밀번호를 한번 더 입력해주세요" onChange={() => {checkRePassword()}} style={{fontSize: "0.9rem"}} />
 							<Form.Text muted style={{fontSize: "0.72rem"}}>
 								확인을 위해 비밀번호를 한번 더 입력해주세요
 							</Form.Text>

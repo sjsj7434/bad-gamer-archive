@@ -244,7 +244,7 @@ const AnonymousReply = (props) => {
 															<Form.Control name="writer" type="text" placeholder="작성자" defaultValue={"익명"} style={{marginBottom: "10px", fontSize: "0.8rem"}} readOnly plaintext />
 														</Col>
 														<Col style={{maxWidth: "230px"}}>
-															<Form.Control name="password" type="password" placeholder="비밀번호" maxLength={20} style={{marginBottom: "10px", fontSize: "0.8rem"}} />
+															<Form.Control name="password" type="password" autoComplete="off" placeholder="비밀번호" maxLength={20} style={{marginBottom: "10px", fontSize: "0.8rem"}} />
 														</Col>
 													</Row>
 													
@@ -383,10 +383,10 @@ const AnonymousReply = (props) => {
 
 						<Row className="g-2">
 							<Col style={{maxWidth: "70px"}}>
-								<Form.Control id="writer" type="text" placeholder="작성자" defaultValue={"익명"} style={{marginBottom: "10px", fontSize: "0.8rem"}} readOnly plaintext />
+								<Form.Control id="writer" type="text" autoComplete="off" placeholder="작성자" defaultValue={"익명"} style={{marginBottom: "10px", fontSize: "0.8rem"}} readOnly plaintext />
 							</Col>
 							<Col style={{maxWidth: "230px"}}>
-								<Form.Control id="replyPassword" type="password" placeholder="비밀번호" maxLength={20} style={{marginBottom: "10px", fontSize: "0.8rem"}} />
+								<Form.Control id="replyPassword" autoComplete="off" type="password" placeholder="비밀번호" maxLength={20} style={{marginBottom: "10px", fontSize: "0.8rem"}} />
 							</Col>
 						</Row>
 
