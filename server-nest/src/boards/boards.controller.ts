@@ -1,10 +1,9 @@
-import { Param, Controller, Get, Post, Body, Ip, Req, Res, Delete, Patch, UseInterceptors, UploadedFile, NotFoundException } from '@nestjs/common';
+import { Param, Controller, Get, Post, Body, Ip, Req, Res, Delete, Patch, UseInterceptors, UploadedFile } from '@nestjs/common';
 import { Boards } from './boards.entity';
 import { Replies } from './replies.entity';
 import { CreateBoardsDTO, UpdateBoardsDTO, DeleteBoardsDTO } from './boards.dto';
 import { CreateRepliesDTO, DeleteRepliesDTO } from './replies.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { AccountsService } from 'src/accounts/accounts.service';
 import { Request, Response } from 'express';
 import { BoardsService } from './boards.service';
 
@@ -13,23 +12,23 @@ import { BoardsService } from './boards.service';
  */
 @Controller("boards")
 export class BoardsController {
-	constructor(private boardsService: BoardsService, private accountsService: AccountsService) { }
+	constructor(private boardsService: BoardsService) { }
 
 	//추천 트랜드 게시글 목록, page 값이 number가 아니면 호출되지 않음
 	@Get("upvote/trend/:type/list/:page")
-	async getUpvoteTrend(@Param("type") type: string, @Param("page") page: number): Promise<[Boards[], number] | NotFoundException> {
+	async getUpvoteTrend(@Param("type") type: string, @Param("page") page: number): Promise<[Boards[], number]> {
 		return await this.boardsService.getUpvoteTrend(page, type);
 	}
 
 	//비추천 트랜드 게시글 목록, page 값이 number가 아니면 호출되지 않음
 	@Get("downvote/trend/:type/list/:page")
-	async getDownvoteTrend(@Param("type") type: string, @Param("page") page: number): Promise<[Boards[], number] | NotFoundException> {
+	async getDownvoteTrend(@Param("type") type: string, @Param("page") page: number): Promise<[Boards[], number]> {
 		return await this.boardsService.getDownvoteTrend(page, type);
 	}
 
 	//조회수 트랜드 게시글 목록, page 값이 number가 아니면 호출되지 않음
 	@Get("view/trend/:type/list/:page")
-	async getViewTrend(@Param("type") type: string, @Param("page") page: number): Promise<[Boards[], number] | NotFoundException> {
+	async getViewTrend(@Param("type") type: string, @Param("page") page: number): Promise<[Boards[], number]> {
 		return await this.boardsService.getViewTrend(page, type);
 	}
 
@@ -165,101 +164,31 @@ export class BoardsController {
 	//게시글 추천
 	@Post("user/content/upvote")
 	async upvoteUserContent(@Ip() ipData: string, @Body() sendData: { code: number }): Promise<Boards> {
-		const isVotable: boolean = this.boardsService.isVotableContent(sendData.code, ipData);
-
-		if (isVotable === true) {
-			const updatedContent = await this.boardsService.upvoteUserContent(sendData.code);
-
-			return updatedContent;
-		}
-		else {
-			const emptyElement = new Boards();
-			emptyElement.upvote = null;
-			emptyElement.downvote = null;
-			return emptyElement;
-		}
+		return await this.boardsService.upvoteUserContent(sendData.code, ipData);
 	}
 
 	//게시글 비추천
 	@Post("user/content/downvote")
 	async downvoteUserContent(@Ip() ipData: string, @Body() sendData: { code: number }): Promise<Boards> {
-		const isVotable: boolean = this.boardsService.isVotableContent(sendData.code, ipData);
-
-		if (isVotable === true) {
-			const updatedContent = await this.boardsService.downvoteUserContent(sendData.code);
-
-			return updatedContent;
-		}
-		else {
-			const emptyElement = new Boards();
-			emptyElement.upvote = null;
-			emptyElement.downvote = null;
-			return emptyElement;
-		}
+		return await this.boardsService.downvoteUserContent(sendData.code, ipData);
 	}
 
 	//게시글 댓글 조회
 	@Get("user/reply/:contentCode/:page")
 	async getUserReplies(@Param("contentCode") contentCode: number, @Param("page") page: number): Promise<[Replies[], number]> {
-		const repliesData = await this.boardsService.getUserReplies(contentCode, page);
-
-		if (repliesData[1] === 0) {
-		}
-		else {
-			for (let index: number = 0; index < repliesData[0].length; index++) {
-				repliesData[0][index]["ip"] = repliesData[0][index]["ip"].split(".")[0] + (repliesData[0][index]["ip"].split(".")[1] !== undefined ? "." + repliesData[0][index]["ip"].split(".")[1] : "");
-
-				if (repliesData[0][index]["deletedAt"] !== null) {
-					repliesData[0][index]["content"] = new Date(repliesData[0][index]["deletedAt"]).toLocaleString("sv-SE") + " 삭제되었습니다";
-				}
-			}
-		}
-
-		return repliesData;
+		return await this.boardsService.getUserReplies(contentCode, page);
 	}
 
 	//게시글 댓글 작성
 	@Post("user/reply")
 	async createUserReply(@Req() request: Request, @Res({ passthrough: true }) response: Response, @Ip() ipData: string, @Body() createRepliesDTO: CreateRepliesDTO): Promise<boolean> {
-		if (createRepliesDTO.content.length > 300) {
-			return false;
-		}
-
-		const loginCookie = await this.accountsService.checkLoginStatus(request, response);
-
-		if (loginCookie.status === "login") {
-			createRepliesDTO.writerID = loginCookie.id;
-			createRepliesDTO.writerNickname = loginCookie.nickname;
-			createRepliesDTO.replyOrder = 0;
-
-			if (createRepliesDTO.level === 0) {
-				createRepliesDTO.parentReplyCode = 0;
-			}
-
-			// createRepliesDTO.ip = ipData;
-			createRepliesDTO.ip = Math.random().toString().substring(2, 5) + "." + Math.random().toString().substring(2, 5) + "." + Math.random().toString().substring(2, 5) + "." + Math.random().toString().substring(2, 5);
-
-			await this.boardsService.createUserReply(createRepliesDTO, "user");
-
-			return true;
-		}
-		else {
-			return false;
-		}
+		return await this.boardsService.createUserReply(request, response, createRepliesDTO, ipData);
 	}
 
 	//게시글 댓글 삭제
 	@Delete("user/reply")
 	async deleteUserReply(@Req() request: Request, @Res({ passthrough: true }) response: Response, @Body() deleteRepliesDTO: DeleteRepliesDTO): Promise<boolean> {
-		const loginCookie = await this.accountsService.checkLoginStatus(request, response);
-
-		if (loginCookie.status !== "login") {
-			return false;
-		}
-
-		const deleteResult = await this.boardsService.deleteUserReply(deleteRepliesDTO, loginCookie.id);
-
-		return deleteResult;
+		return await this.boardsService.deleteUserReply(request, response, deleteRepliesDTO);
 	}
 
 	//게시글 이미지 삽입
