@@ -21,7 +21,7 @@ import BlockLoginUser from './accounts/BlockLoginUser';
 import BlockLogoutUser from './accounts/BlockLogoutUser';
 import ContentWriteUser from './board/user/ContentWriteUser';
 import SetActiveMenu from './SetActiveMenu';
-import NicknameRenewForm from './accounts/NicknameRenewForm';
+import RenewNicknameForm from './accounts/RenewNicknameForm';
 import ActivateLostarkAPI from './accounts/ActivateLostarkAPI';
 import HelpCenter from './common/HelpCenter';
 import ResetPasswordForm from './accounts/ResetPasswordForm';
@@ -242,7 +242,7 @@ const RoutesWrapper = () => {
 									ifAllow={
 										<>
 											<SetActiveMenu setCurrentMenu={setCurrentMenu} menuCode={"/accounts/renew/nickname"} />
-											<NicknameRenewForm />
+											<RenewNicknameForm />
 										</>
 									}
 								/>

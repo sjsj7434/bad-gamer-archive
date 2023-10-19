@@ -9,7 +9,7 @@ import LoadingModal from '../common/LoadingModal.js';
 
 import * as accountsFetch from '../../js/accountsFetch.js'
 
-const NicknameRenewForm = () => {
+const RenewNicknameForm = () => {
 	const [showLoadingModal, setShowLoadingModal] = useState(false);
 	const [loadingMessage, setLoadingMessage] = useState("");
 	const navigate = useNavigate();
@@ -19,15 +19,14 @@ const NicknameRenewForm = () => {
 		event.stopPropagation();
 		const form = event.currentTarget;
 
-		if(form.nicknameInput.value === ""){
-			alert("새로운 닉네임을 입력해주세요");
-			form.nicknameInput.focus();
-			return false;
-		}
-
 		if(form.passwordInput.value === ""){
 			alert("현재 비밀번호를 입력해주세요");
 			form.passwordInput.focus();
+			return false;
+		}
+		else if(form.nicknameInput.value === ""){
+			alert("새로운 닉네임을 입력해주세요");
+			form.nicknameInput.focus();
 			return false;
 		}
 
@@ -78,6 +77,31 @@ const NicknameRenewForm = () => {
 				<Form noValidate onSubmit={renewNickname}>
 					<Form.Group as={Row} className="mb-3">
 						<Form.Label style={{fontWeight: "800", fontSize: "0.8rem"}}>
+							비밀번호 (Password)
+						</Form.Label>
+						<Col>
+							<Form.Control
+								id="passwordInput"
+								maxLength={20}
+								type="password"
+								placeholder="비밀번호를 입력해주세요"
+								autoComplete="off"
+								style={{fontSize: "0.9rem"}}
+							/>
+							<Form.Text muted style={{fontSize: "0.8rem"}}>
+								<div style={{display: "flex", alignItems: "center", marginTop: "5px"}}>
+									<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#6c757d" className="bi bi-info-circle" viewBox="0 0 16 16">
+										<path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+										<path d="m8.93 6.588-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533L8.93 6.588zM9 4.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0z"/>
+									</svg>
+									<span style={{marginLeft: "8px"}}>닉네임을 변경하려면 비밀번호를 입력해주세요</span>
+								</div>
+							</Form.Text>
+						</Col>
+					</Form.Group>
+
+					<Form.Group as={Row} className="mb-3">
+						<Form.Label style={{fontWeight: "800", fontSize: "0.8rem"}}>
 							닉네임 (Nickname)
 						</Form.Label>
 						<Col>
@@ -95,30 +119,7 @@ const NicknameRenewForm = () => {
 										<path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
 										<path d="m8.93 6.588-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533L8.93 6.588zM9 4.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0z"/>
 									</svg>
-									<span style={{marginLeft: "8px"}}>닉네임은 1~20글자 제한이며 특수문자와 띄어쓰기는 사용 불가능합니다</span>
-								</div>
-							</Form.Text>
-						</Col>
-					</Form.Group>
-					<Form.Group as={Row} className="mb-3">
-						<Form.Label style={{fontWeight: "800", fontSize: "0.8rem"}}>
-							비밀번호 (Password)
-						</Form.Label>
-						<Col>
-							<Form.Control
-								id="passwordInput"
-								maxLength={20}
-								type="password"
-								placeholder="비밀번호를 입력해주세요"
-								style={{fontSize: "0.9rem"}}
-							/>
-							<Form.Text muted style={{fontSize: "0.8rem"}}>
-								<div style={{display: "flex", alignItems: "center", marginTop: "5px"}}>
-									<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#6c757d" className="bi bi-info-circle" viewBox="0 0 16 16">
-										<path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
-										<path d="m8.93 6.588-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533L8.93 6.588zM9 4.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0z"/>
-									</svg>
-									<span style={{marginLeft: "8px"}}>닉네임을 변경하려면 비밀번호를 입력해주세요</span>
+									<span style={{marginLeft: "8px"}}>닉네임은 1~20글자이며 특수문자와 띄어쓰기는 불가능합니다</span>
 								</div>
 							</Form.Text>
 						</Col>
@@ -131,4 +132,4 @@ const NicknameRenewForm = () => {
 	);
 }
 
-export default NicknameRenewForm;
+export default RenewNicknameForm;

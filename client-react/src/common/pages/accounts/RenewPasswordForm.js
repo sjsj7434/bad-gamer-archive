@@ -54,7 +54,7 @@ const RenewPasswordForm = (props) => {
 			});
 			
 			if(updateResult === 0){
-				alert("똑같은 비밀번호로 변경할 수 없습니다");
+				alert("동일한 비밀번호로 변경할 수 없습니다");
 
 				form.newPasswordInput.value = "";
 				form.reNewPasswordInput.value = "";
@@ -150,6 +150,7 @@ const RenewPasswordForm = (props) => {
 								maxLength={20}
 								type="password"
 								placeholder="비밀번호를 입력해주세요"
+								autoComplete="off"
 								style={{fontSize: "0.9rem"}}
 							/>
 							<Form.Text muted style={{fontSize: "0.8rem"}}>
@@ -174,6 +175,7 @@ const RenewPasswordForm = (props) => {
 								maxLength={20}
 								type="password"
 								placeholder="비밀번호를 입력해주세요"
+								autoComplete="off"
 								onChange={() => {isValidPassword()}} style={{fontSize: "0.9rem"}}
 							/>
 							<Form.Text muted style={{fontSize: "0.8rem"}}>
@@ -200,7 +202,7 @@ const RenewPasswordForm = (props) => {
 										<path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
 										<path d="M7.002 11a1 1 0 1 1 2 0 1 1 0 0 1-2 0zM7.1 4.995a.905.905 0 1 1 1.8 0l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 4.995z"/>
 									</svg>
-									<span style={{marginLeft: "8px"}}>강력하지 못한 비밀번호입니다</span>
+									<span style={{marginLeft: "8px"}}>올바르지 않은 비밀번호입니다</span>
 								</div>
 							</Form.Control.Feedback>
 						</Col>
@@ -216,6 +218,7 @@ const RenewPasswordForm = (props) => {
 								maxLength={20}
 								type="password"
 								placeholder="비밀번호를 한번 더 입력해주세요"
+								autoComplete="off"
 								onChange={() => {checkRePassword()}} style={{fontSize: "0.9rem"}}
 							/>
 							<Form.Text muted style={{fontSize: "0.8rem"}}>
@@ -242,7 +245,7 @@ const RenewPasswordForm = (props) => {
 										<path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
 										<path d="M7.002 11a1 1 0 1 1 2 0 1 1 0 0 1-2 0zM7.1 4.995a.905.905 0 1 1 1.8 0l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 4.995z"/>
 									</svg>
-									<span style={{marginLeft: "8px"}}>비밀번호가 일치하지 않거나 강력하지 않은 비밀번호입니다</span>
+									<span style={{marginLeft: "8px"}}>비밀번호가 일치하지 않거나 올바르지 않은 비밀번호입니다</span>
 								</div>
 							</Form.Control.Feedback>
 						</Col>

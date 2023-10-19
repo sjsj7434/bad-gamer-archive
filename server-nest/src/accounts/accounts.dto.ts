@@ -24,6 +24,8 @@ export class UpdateAccountsDTO extends PartialType(Accounts) {
 	id: string;
 	@IsOptional() @IsString()
 	password: string;
+	@IsOptional() @IsString()
+	nickname: string;
 
 	@IsOptional() @IsString()
 	oldPassword: string;
