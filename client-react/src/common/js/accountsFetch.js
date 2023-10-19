@@ -504,32 +504,6 @@ export const requestPasswordReset = async (sendData) => {
 }
 
 /**
- * 메일에 적힌 링크 파라미터 값을 서버와 비교
- */
-export const compareResetPasswordCode = async (sendData) => {
-	const fecthOption = {
-		method: "POST"
-		, body: JSON.stringify(sendData)
-		, headers: {"Content-Type": "application/json",}
-		, credentials: "include", // Don't forget to specify this if you need cookies
-	};
-	const fetchResponse = await fetch(`${process.env.REACT_APP_SERVER}/accounts/verify/reset/password/code`, fecthOption);
-	const [isStatusGood, checkMessage] = isFetchStatusGood(fetchResponse);
-
-	if(isStatusGood === true){
-		const fetchData = await getFetchText(fetchResponse);
-		console.log('compareResetPasswordCode =>', fetchData)
-
-		return fetchData;
-	}
-	else{
-		alert(checkMessage);
-
-		return null;
-	}
-}
-
-/**
  * 비밀번호 초기화
  */
 export const resetPassword = async (sendData) => {
@@ -544,7 +518,32 @@ export const resetPassword = async (sendData) => {
 
 	if(isStatusGood === true){
 		const fetchData = await getFetchText(fetchResponse);
-		console.log('compareResetPasswordCode =>', fetchData)
+		console.log('resetPassword =>', fetchData)
+
+		return fetchData;
+	}
+	else{
+		alert(checkMessage);
+
+		return null;
+	}
+}
+
+/**
+ * 비밀번호 잊어버린 사용자, 이메일로 전달받은 코드 확인
+ */
+export const checkPasswordForgotCode = async (verificationCode) => {
+	const fecthOption = {
+		method: "GET"
+		, headers: {"Content-Type": "application/json",}
+		, credentials: "include", // Don't forget to specify this if you need cookies
+	};
+	const fetchResponse = await fetch(`${process.env.REACT_APP_SERVER}/accounts/verify/reset/password/${verificationCode}`, fecthOption);
+	const [isStatusGood, checkMessage] = isFetchStatusGood(fetchResponse);
+
+	if(isStatusGood === true){
+		const fetchData = await getFetchText(fetchResponse);
+		console.log('checkPasswordForgotCode =>', fetchData)
 
 		return fetchData;
 	}

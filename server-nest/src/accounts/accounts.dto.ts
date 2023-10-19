@@ -20,7 +20,7 @@ export class CreateAccountsDTO extends PickType(Accounts, ["uuid", "id", "passwo
 export class UpdateAccountsDTO extends PartialType(Accounts) {
 	@IsOptional() @IsString()
 	uuid: string;
-	@IsString()
+	@IsOptional() @IsString()
 	id: string;
 	@IsOptional() @IsString()
 	password: string;

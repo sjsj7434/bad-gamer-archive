@@ -921,19 +921,22 @@ export class AccountsService {
 		else {
 			const verificationCode = randomBytes(16).toString("hex");
 			await this.cacheManager.set("PASSWORD_" + verificationCode, account.uuid, this.EMAIL_CODE_TTL);
+			console.log(`http://localhost:3001/accounts/reset/password/${verificationCode}`);
 
 			return "email_sent";
 		}
 	}
 
 	/**
-	 * 메일로 전달한 링크의 값을 확인
+	 * 비밀번호 잊어버린 사용자, 이메일로 전달받은 코드 확인
 	 */
-	async checkResetEmail(updateAccountsDTO: UpdateAccountsDTO): Promise<string> {
+	async checkPasswordForgotCode(updateAccountsDTO: UpdateAccountsDTO, verificationCode: string): Promise<string> {
+		updateAccountsDTO.verificationCode = verificationCode;
+
 		const uuid: string = await this.cacheManager.get("PASSWORD_" + updateAccountsDTO.verificationCode);
 
 		if (uuid === undefined){
-			return "no_user";
+			return "error";
 		}
 		else{
 			const account = await this.accountsRepository.findOne({

@@ -90,9 +90,10 @@ export class  AccountsController {
 		return await this.accountsService.beforeResetPassword(updateAccountsDTO);
 	}
 
-	@Post("verify/reset/password/code")
-	async checkResetEmail(@Body() updateAccountsDTO: UpdateAccountsDTO): Promise<string> {
-		return await this.accountsService.checkResetEmail(updateAccountsDTO);
+	//비밀번호 잊어버린 사용자, 이메일로 전달받은 코드 확인
+	@Get("verify/reset/password/:verificationCode")
+	async checkPasswordForgotCode(@Body() updateAccountsDTO: UpdateAccountsDTO, @Param("verificationCode") verificationCode: string): Promise<string> {
+		return await this.accountsService.checkPasswordForgotCode(updateAccountsDTO, verificationCode);
 	}
 
 	@Patch("reset/password/execute")

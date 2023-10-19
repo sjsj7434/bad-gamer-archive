@@ -9,7 +9,7 @@ import LoadingModal from '../common/LoadingModal.js';
 
 import * as accountsFetch from '../../js/accountsFetch.js'
 
-const PasswordRenewForm = (props) => {
+const RenewPasswordForm = (props) => {
 	const [passwordValid, setPasswordValid] = useState(0);
 	const [rePasswordValid, setRePasswordValid] = useState(0);
 	const [showLoadingModal, setShowLoadingModal] = useState(false);
@@ -255,4 +255,4 @@ const PasswordRenewForm = (props) => {
 	);
 }
 
-export default PasswordRenewForm;
+export default RenewPasswordForm;
