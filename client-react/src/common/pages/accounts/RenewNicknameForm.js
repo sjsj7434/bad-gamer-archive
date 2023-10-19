@@ -43,12 +43,10 @@ const RenewNicknameForm = () => {
 			
 			if(updateResult === true){
 				alert("닉네임이 변경되었습니다");
-
 				navigate("/accounts/mypage");
 			}
 			else if(updateResult === false){
-				alert("닉네임을 변경할 수 없습니다");
-
+				alert("닉네임을 변경할 수 없습니다\n비밀번호를 다시 확인해주세요");
 				form.passwordInput.value = "";
 			}
 		}

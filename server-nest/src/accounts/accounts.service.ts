@@ -24,22 +24,29 @@ export class AccountsService {
 
 	private LOGIN_FAIL_LIMIT: number = 5; //로그인 최대 실패
 	private LOGIN_SESSION: Map<string, string> = new Map(); //로그인 세션
-	private LOGIN_COOKIE_TTL = 1000 * 60 * 60 * 2; //로그인 쿠키 유지 기간 : 2 Hours
-	private STOVE_CODE_TTL = 1000 * 60 * 3; //스토브 인증 코드 캐시 유지 기간 : 3 Minutes
-	private EMAIL_CODE_TTL = 1000 * 60 * 60; //이메일 인증 코드 캐시 유지 기간 : 1 Hour
+	private LOGIN_COOKIE_TTL: number = 1000 * 60 * 60 * 2; //로그인 쿠키 유지 기간 : 2 Hours
+	private STOVE_CODE_TTL: number = 1000 * 60 * 3; //스토브 인증 코드 캐시 유지 기간 : 3 Minutes
+	private EMAIL_CODE_TTL: number = 1000 * 60 * 60; //이메일 인증 코드 캐시 유지 기간 : 1 Hour
 
 	public WHO_USE_API_TODAY: Map<string, Map<string, Date>> = new Map(); //오늘 누가 API를 사용하였는가
 
 	//서울 시간 기준으로 [매일 00:00] 데이터 초기화
-	@Cron(CronExpression.EVERY_DAY_AT_MIDNIGHT, {
+	//서울 시간 기준으로 [1분 마다] 데이터 초기화, 생각해보니 1분에 100번 제한이라 하루에 한번씩만 하도록 하지 않아도 될 듯
+	@Cron(CronExpression.EVERY_MINUTE, {
 		name: "resetCharacterUpdateCount",
 		timeZone: "Asia/Seoul",
 	})
-	resetCharacterUpdateCount(serviceName: string) {
+	resetCharacterUpdateCount() {
 		this.WHO_USE_API_TODAY.clear(); //초기화
 		console.log("[resetCharacterUpdateCount] Reset data : " + new Date());
 	}
 
+	/**
+	 * 해당 서비스를 사용했는지 안했는지 확인, 과도한 API 호출을 방지하기 위함
+	 * @param userName 사용자
+	 * @param serviceName 서비스 이름
+	 * @returns 사용 여부
+	 */
 	isUseApiService(userName: string, serviceName: string): boolean {
 		if (this.WHO_USE_API_TODAY.has(userName) === true) {
 			const whatService = this.WHO_USE_API_TODAY.get(userName);
@@ -58,7 +65,7 @@ export class AccountsService {
 	 * @returns 성공적으로 완료되었다면 True, 실패했다면 False를 반환
 	 */
 	setUseApiService(userName: string, serviceName: string): boolean {
-		if (userName === undefined || userName === null || userName === ""){
+		if (userName === undefined || userName === null || userName === "") {
 			return false;
 		}
 
@@ -78,6 +85,26 @@ export class AccountsService {
 	}
 
 	/**
+	 * WHO_USE_API_TODAY 객체에 이용한 API 서비스 초기화
+	 * @param request 요청
+	 * @param serviceName 초기화 API
+	 * @returns 성공적으로 완료되었다면 True, 실패했다면 False를 반환
+	 */
+	unsetUseApiService(userName: string, serviceName: string): boolean {
+		if (userName === undefined || userName === null || userName === "") {
+			return false;
+		}
+
+		if (this.WHO_USE_API_TODAY.has(userName) === true) {
+			//이미 뭔가 사용함
+			const whatService = this.WHO_USE_API_TODAY.get(userName);
+			whatService.delete(serviceName); //서비스 이용 내역 초기화
+		}
+
+		return true;
+	}
+
+	/**
 	 * 스토브 소개란에 적을 인증 코드(32글자)를 생성한다
 	 */
 	async createStoveVerificationCode(request: Request): Promise<string>{
@@ -90,46 +117,50 @@ export class AccountsService {
 	/**
 	 * 스토브 로아 캐릭터 인증
 	 */
-	async startAuthentication(request: Request, stoveCode: string): Promise<[string, object]> {
+	async authenticateStove(request: Request, stoveCode: string): Promise<{ result: string, characterList: object }> {
 		const stoveCodeWithOutProtocol: string = stoveCode.replace(/https:\/\/|http:\/\//g, "");
 
 		if (isNaN(Number(stoveCodeWithOutProtocol)) === true) {
-			return ["codeError", []];
+			return { result: "codeError", characterList: null };
 		}
 
 		// const isMatched: boolean = await this.compareStoveVerificationCode(request, stoveCodeWithOutProtocol);
 		const isMatched = true;
 
 		if (isMatched) {
-			const characterName = await this.getCharacterName(stoveCode); //api 아니고 web scrap
+			const characterName = await this.getCharacterName(stoveCode); //web page scrapping
 			const characterNameArray = await this.lostarkAPIService.getCharacterList(characterName); //api 호출
 
 			await this.setCacheData("LOSTARK_" + request.cookies["sessionCode"], characterNameArray, 5 * 60); //캐릭터 데이터 cache에 저장
 			await this.setCacheData("STOVE_CODE_" + request.cookies["sessionCode"], stoveCode, 5 * 60); //스토브 코드 cache에 저장
 
 			if (characterNameArray === null) {
-				return ["limit", []];
+				return { result: "limit", characterList: null };
 			}
 			else {
-				return ["success", characterNameArray];
+				return { result: "success", characterList: characterNameArray };
 			}
 		}
 		else {
-			return ["fail", []];
+			return { result: "fail", characterList: null };
 		}
 	}
 
 	/**
 	 * 이미 인증한 계정만 가능한 간편 스토브 로아 캐릭터 인증
 	 */
-	async restartAuthentication(request: Request): Promise<[string, object]> {
+	async changeLostarkChatacter(request: Request): Promise<{ result: string, characterList: object }> {
 		// let hello = await this.authenticationRepository.query("SELECT ? AS TEST", ["dd"]);
 		// console.log(hello);
 		const loginUUID = this.LOGIN_SESSION.get(request.cookies["sessionCode"]); //로그인한 정보
-		console.log(loginUUID);
 
 		if (loginUUID === null || loginUUID === undefined) {
-			return ["fail", []];
+			return { result: "fail", characterList: null };
+		}
+
+		const isUsed: boolean = this.isUseApiService(loginUUID, "change-lostark-character");//cached data 확인해서 이미 진행했으면 튕김
+		if (isUsed === true) {
+			return { result: "wait", characterList: null };
 		}
 		
 		const authenticationData = await this.authenticationRepository.findOne({
@@ -143,20 +174,21 @@ export class AccountsService {
 		});
 
 		if (authenticationData === null) {
-			return ["fail", []];
+			return { result: "fail", characterList: null };
 		}
 
-		const characterName = await this.getCharacterName(authenticationData.data); //api 아니고 web scrap
-		const characterNameArray = await this.lostarkAPIService.getCharacterList(characterName); //api 호출
+		const characterName = await this.getCharacterName(authenticationData.data); //web page scrapping
+		const characterList = await this.lostarkAPIService.getCharacterList(characterName); //api 호출
 
-		await this.setCacheData("LOSTARK_" + request.cookies["sessionCode"], characterNameArray, 5 * 60); //캐릭터 데이터 cache에 저장
+		await this.setCacheData("LOSTARK_" + request.cookies["sessionCode"], characterList, 5 * 60); //캐릭터 데이터 cache에 저장
 		await this.setCacheData("STOVE_CODE_" + request.cookies["sessionCode"], authenticationData.data, 5 * 60); //스토브 코드 cache에 저장
 
-		if (characterNameArray === null) {
-			return ["limit", []];
+		if (characterList === null) {
+			return { result: "limit", characterList: null };
 		}
 		else {
-			return ["success", characterNameArray];
+			this.setUseApiService(loginUUID, "change-lostark-character");//cached data 확인해서 이미 진행했으면 튕김
+			return { result: "success", characterList: characterList };
 		}
 	}
 
@@ -666,7 +698,6 @@ export class AccountsService {
 		const loginUUID = this.LOGIN_SESSION.get(request.cookies["sessionCode"]); //로그인한 정보
 
 		if (loginUUID === null || loginUUID === undefined){
-			response.status(400);
 			return null;
 		}
 
@@ -797,7 +828,7 @@ export class AccountsService {
 	/**
 	 * 로스트아크 캐릭터 인증
 	 */
-	async updateLostarkCharacter(request: Request, lostarkName: string): Promise<string> {
+	async setLostarkCharacter(request: Request, lostarkName: string): Promise<string> {
 		//받아온 캐릭터 정보 저장해놓고, 다시 넘어온 것 비교해서 위조 확인
 		const sessionCode: string = request.cookies["sessionCode"]; //로그인한 세션의 코드 값
 		const loginUUID = this.LOGIN_SESSION.get(sessionCode); //로그인한 정보
@@ -809,12 +840,6 @@ export class AccountsService {
 
 		let isContain: boolean = false;
 		let infoIndex: number = 0;
-
-		const isUsed: boolean = this.isUseApiService(loginUUID, "set-lostark-character");
-		
-		if (isUsed === true){
-			return "0004";
-		}
 
 		for (let index = 0; index < characterList.length; index++) {
 			const element = characterList[index];
@@ -849,18 +874,6 @@ export class AccountsService {
 			await this.cacheManager.del("LOSTARK_" + sessionCode);
 			await this.cacheManager.del("STOVE_CODE_" + sessionCode);
 
-			this.setUseApiService(loginUUID, "set-lostark-character");
-
-			if (this.WHO_USE_API_TODAY.has(loginUUID) === true) {
-				const whatService = this.WHO_USE_API_TODAY.get(loginUUID);
-				whatService.set("updateLostarkCharacter", new Date()); //API 이용자 추가
-			}
-			else {
-				const newService = new Map();
-				newService.set("updateLostarkCharacter", new Date())
-				this.WHO_USE_API_TODAY.set(loginUUID, newService);
-			}
-
 			return "0001";
 		}
 		else{
@@ -889,6 +902,9 @@ export class AccountsService {
 				type: In(["lostark_name", "lostark_item_level", "lostark_server", "lostark_character_level", "stove_code"]),
 				deletedAt: IsNull(),
 			});
+
+			this.unsetUseApiService(loginUUID, "change-lostark-character");
+			this.unsetUseApiService(loginUUID, "renew-lostark-character");
 		}
 
 		return isExists;
@@ -897,7 +913,7 @@ export class AccountsService {
 	/**
 	 * 로스트아크 캐릭터 인증하지 않고 종료할 때 캐시 데이터 삭제
 	 */
-	async exitLostarkAuthentication(request: Request) {
+	async exitLostarkChatacter(request: Request) {
 		const sessionCode = request.cookies["sessionCode"];
 		
 		await this.cacheManager.del("LOSTARK_" + sessionCode);
@@ -1070,14 +1086,12 @@ export class AccountsService {
 		return true;
 	}
 
-	async refreshLostark(request: Request, response: Response): Promise<string> {
+	async renewLostarkChatacter(request: Request, response: Response): Promise<string> {
 		const loginUUID = this.LOGIN_SESSION.get(request.cookies["sessionCode"]); //로그인한 정보
 		const accountData = await this.getMyInfo(request, response);
 		
 		if (accountData !== null) {
-			//cached data 확인해서 이미 진행했으면 튕김
-			const isUsed: boolean = this.isUseApiService(loginUUID, "set-lostark-character");
-
+			const isUsed: boolean = this.isUseApiService(loginUUID, "renew-lostark-character");//cached data 확인해서 이미 진행했으면 튕김
 			if (isUsed === true) {
 				return "0004";
 			}
@@ -1090,12 +1104,13 @@ export class AccountsService {
 			await this.setCacheData("LOSTARK_" + request.cookies["sessionCode"], [lostarkCharacterData], 5 * 60); //캐릭터 데이터 cache에 저장
 			await this.setCacheData("STOVE_CODE_" + request.cookies["sessionCode"], stoveCode, 5 * 60); //스토브 코드 cache에 저장
 
-			const resultCode: string = await this.updateLostarkCharacter(request, lostarkName);
+			const resultCode: string = await this.setLostarkCharacter(request, lostarkName);
+
+			this.setUseApiService(loginUUID, "renew-lostark-character");//cached data 확인해서 이미 진행했으면 튕김
 
 			return resultCode;
 		}
 		else {
-			response.status(400);
 			return "0004";
 		}
 	}

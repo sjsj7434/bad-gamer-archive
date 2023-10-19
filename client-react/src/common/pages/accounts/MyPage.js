@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import Button from 'react-bootstrap/Button';
 import Container from 'react-bootstrap/Container';
 import { useNavigate } from "react-router-dom";
@@ -7,23 +7,35 @@ import Table from 'react-bootstrap/Table';
 import * as accountsFetch from '../../../common/js/accountsFetch.js'
 import Row from 'react-bootstrap/esm/Row.js';
 import Col from 'react-bootstrap/esm/Col.js';
+import LoadingModal from '../common/LoadingModal.js';
 
 const MyPage = () => {
 	const [accountData, setAccountData] = useState(null);
 	const [renderData, setRenderData] = useState(null);
+	const [isLoading, setIsLoading] = useState(false);
+	const [loadingMessage, setLoadingMessage] = useState("");
+
 	const navigate = useNavigate();
+
+	const callMyInfo = useCallback(async () => {
+		const myInfo = await accountsFetch.getMyInfo();
+
+		if(myInfo === null){
+			navigate("/");
+			return;
+		}
+
+		setAccountData(myInfo);
+		setIsLoading(false);
+	}, [navigate])
 
 	useEffect(() => {
 		callMyInfo();
-	}, [])
+	}, [callMyInfo])
 
 	// const clickREQ = async () => {
 	// 	await accountsFetch.requestVerifyEmail();
 	// }
-
-	const callMyInfo = async () => {
-		setAccountData(await accountsFetch.getMyInfo());
-	}
 
 	const stringParser = (value) => {
 		let name = "";
@@ -57,8 +69,10 @@ const MyPage = () => {
 
 	useEffect(() => {
 		//캐릭터 인증 업데이트
-		const refreshLostarkCharacter = async () => {
-			const result = await accountsFetch.refreshLostarkCharacter();
+		const renewLostarkCharacter = async () => {
+			setIsLoading(true);
+			setLoadingMessage("인증 정보를 갱신 중입니다...");
+			const result = await accountsFetch.renewLostarkCharacter();
 		
 			if(result === null){
 				return;
@@ -73,7 +87,9 @@ const MyPage = () => {
 				alert("정보를 업데이트할 수 없습니다(닉네임이 변경되었다면 변경하기를 진행해주세요");
 			}
 			else if(result === "0004"){
-				alert("이미 캐릭터 인증이 진행되었습니다\n내일 다시 진행해주세요");
+				alert("이미 캐릭터 인증 또는 업데이트가 진행되었습니다\n잠시 후 다시 진행해주세요");	
+				setIsLoading(false);
+				return;
 			}
 
 			callMyInfo();
@@ -82,6 +98,8 @@ const MyPage = () => {
 		//캐릭터 인증을 해제
 		const deactivateLostarkCharacter = async () => {
 			if(window.confirm("로스트아크 캐릭터 인증을 해제하시겠습니까?") === true){
+				setIsLoading(true);
+				setLoadingMessage("인증을 해제하는 중입니다...");
 				await accountsFetch.deactivateLostarkCharacter();
 	
 				callMyInfo();
@@ -91,6 +109,7 @@ const MyPage = () => {
 		if(accountData !== null){
 			setRenderData(
 				<Container style={{maxWidth: "600px"}}>
+					<LoadingModal showModal={isLoading} message={loadingMessage}></LoadingModal>
 					<div style={{paddingLeft: "10px", paddingRight: "10px", fontSize: "0.8rem"}}>
 						<Table hover>
 							<colgroup>
@@ -201,7 +220,7 @@ const MyPage = () => {
 												<>
 													<Col>
 														<div className="d-grid gap-2" style={{ margin: "0.4rem" }}>
-															<Button onClick={() => { refreshLostarkCharacter() }} variant="outline-success" style={{ padding: "2px", fontSize: "0.8rem" }}>업데이트</Button>
+															<Button onClick={() => { renewLostarkCharacter() }} variant="outline-success" style={{ padding: "2px", fontSize: "0.8rem" }}>업데이트</Button>
 														</div>
 													</Col>
 													<Col>
@@ -247,7 +266,7 @@ const MyPage = () => {
 				</Container>
 			);
 		}
-	}, [accountData, navigate])
+	}, [accountData, isLoading, loadingMessage, callMyInfo, navigate])
 
 	return renderData;
 }

@@ -74,7 +74,7 @@ const ResetPasswordForm = () => {
 				setRePasswordValid(1);
 			}
 			else if(updateResult === "reset"){
-				alert("비밀번호가 변경되었습니다\n비밀번호가 변경되었으니 다시 로그인해주세요");
+				alert("비밀번호가 변경되었습니다");
 
 				navigate("/accounts/login");
 			}

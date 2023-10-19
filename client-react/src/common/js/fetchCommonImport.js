@@ -10,6 +10,9 @@ export const isFetchStatusGood = (fetchResponse) => {
 	else if(fetchResponse.status === 500){
 		return [false, "요청을 처리하는 중 오류가 발생하였습니다"];
 	}
+	else if(fetchResponse.status === 429){
+		return [false, "너무 많은 요청이 전송되어 요청이 차단되었습니다\n잠시 후 다시 시도해주세요"];
+	}
 	else if(fetchResponse.status === 404){
 		return [false, "올바른 요청이 아닙니다"];
 	}
@@ -38,7 +41,15 @@ export const getFetchText = async (fetchResponse) => {
  * @returns {Promise<JSON>}
  */
 export const getFetchJson = async (fetchResponse) => {
-	const jsonResult = await fetchResponse.json();
+	const textData = await fetchResponse.text();
 
-	return jsonResult;
+	if(textData === "" || textData === undefined || textData === null || textData === "undefined" || textData === "null"){
+		return null;
+	}
+	else{
+		// const jsonResult = await fetchResponse.json(); //null 값이 오면 오류 발생
+		const jsonResult = await JSON.parse(textData);
+	
+		return jsonResult;
+	}
 }

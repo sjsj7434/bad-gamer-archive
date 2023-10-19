@@ -3,8 +3,10 @@ import { AccountsService } from './accounts.service';
 import { CreateAccountsDTO, DeleteAccountsDTO, UpdateAccountsDTO } from './accounts.dto';
 import { Request, Response } from 'express';
 import { Accounts } from './accounts.entity';
-import { UpdateAuthenticationDTO } from './authentication.dto copy';
+import { UpdateAuthenticationDTO } from './authentication.dto';
+import { SkipThrottle, Throttle } from '@nestjs/throttler';
 
+@SkipThrottle()
 @Controller("accounts")
 export class  AccountsController {
 	constructor(private accountsService: AccountsService) { }
@@ -30,36 +32,51 @@ export class  AccountsController {
 		await this.accountsService.deleteAccount(request, response, deleteAccountsDTO);
 	}
 
+	//스토브 로아 캐릭터 인증
+	@SkipThrottle({ default: false })
+	@Throttle({ default: { limit: 10, ttl: 60000 } }) //1분에 10개 이상 금지
 	@Get("stove/verification/api/:stoveCode")
-	async startAuthentication(@Req() request: Request, @Param("stoveCode") stoveCode: string): Promise<[string, object]> {
-		return await this.accountsService.startAuthentication(request, stoveCode);
+	async authenticateStove(@Req() request: Request, @Param("stoveCode") stoveCode: string): Promise<{ result: string, characterList: object }> {
+		return await this.accountsService.authenticateStove(request, stoveCode);
 	}
 
-	@Put("lostark/character")
-	async updateLostarkCharacter(@Req() request: Request, @Body() updateAuthenticationDTO: UpdateAuthenticationDTO): Promise<string> {
-		return await this.accountsService.updateLostarkCharacter(request, updateAuthenticationDTO.data);
+	@SkipThrottle({ default: false })
+	@Throttle({ default: { limit: 10, ttl: 60000 } }) //1분에 10개 이상 금지
+	@Put("lostark/character/set")
+	async setLostarkCharacter(@Req() request: Request, @Body() updateAuthenticationDTO: UpdateAuthenticationDTO): Promise<string> {
+		return await this.accountsService.setLostarkCharacter(request, updateAuthenticationDTO.data);
 	}
 
-	@Put("lostark/character/refresh")
-	async refreshLostark(@Req() request: Request, @Res({ passthrough: true }) response: Response): Promise<string> {
-		return await this.accountsService.refreshLostark(request, response);
+	@SkipThrottle({ default: false })
+	@Throttle({ default: { limit: 10, ttl: 60000 } }) //1분에 10개 이상 금지
+	@Put("lostark/character/change")
+	async changeLostarkChatacter(@Req() request: Request): Promise<{ result: string, characterList: object }> {
+		return await this.accountsService.changeLostarkChatacter(request);
 	}
 
-	@Put("stove/verification/api/again")
-	async restartAuthentication(@Req() request: Request): Promise<[string, object]> {
-		return await this.accountsService.restartAuthentication(request);
+	//인증된 로아 캐릭터 정보 업데이트
+	@SkipThrottle({ default: false })
+	@Throttle({ default: { limit: 10, ttl: 60000 } }) //1분에 10개 이상 금지
+	@Put("lostark/character/renew")
+	async renewLostarkChatacter(@Req() request: Request, @Res({ passthrough: true }) response: Response): Promise<string> {
+		return await this.accountsService.renewLostarkChatacter(request, response);
 	}
 
+	@SkipThrottle({ default: false })
+	@Throttle({ default: { limit: 10, ttl: 60000 } }) //1분에 10개 이상 금지
+	@Post("lostark/character/exit")
+	async exitLostarkChatacter(@Req() request: Request) {
+		await this.accountsService.exitLostarkChatacter(request);
+	}
+
+	//로스트아크 캐릭터 인증 해제
 	@Delete("lostark/character")
 	async deactivateLostarkCharacter(@Req() request: Request): Promise<boolean> {
 		return await this.accountsService.deactivateLostarkCharacter(request);
 	}
 
-	@Post("lostark/character/exit")
-	async exitLostarkAuthentication(@Req() request: Request) {
-		await this.accountsService.exitLostarkAuthentication(request);
-	}
-
+	@SkipThrottle({ default: false })
+	@Throttle({ default: { limit: 20, ttl: 60000 } }) //1분에 20개 이상 금지
 	@Post("login")
 	async loginAccount(@Req() request: Request, @Res({ passthrough: true }) response: Response, @Body() updateAccountsDTO: UpdateAccountsDTO): Promise<string> {
 		return await this.accountsService.loginAccount(updateAccountsDTO, request, response);
@@ -74,7 +91,7 @@ export class  AccountsController {
 	async checkLoginStatus(@Req() request: Request, @Res({ passthrough: true }) response: Response): Promise<{ status: string, id: string, nickname: string }> {
 		return await this.accountsService.checkLoginStatus(request, response);
 	}
-
+	
 	@Get("information/my")
 	async getMyInfo(@Req() request: Request, @Res({ passthrough: true }) response: Response): Promise<Accounts | NotFoundException> {
 		return await this.accountsService.getMyInfo(request, response);

@@ -254,7 +254,7 @@ export const setLostarkCharacter = async (accountInfo) => {
 		, headers: {"Content-Type": "application/json",}
 		, credentials: "include", // Don't forget to specify this if you need cookies
 	};
-	const fetchResponse = await fetch(`${process.env.REACT_APP_SERVER}/accounts/lostark/character`, fecthOption);
+	const fetchResponse = await fetch(`${process.env.REACT_APP_SERVER}/accounts/lostark/character/set`, fecthOption);
 	const [isStatusGood, checkMessage] = isFetchStatusGood(fetchResponse);
 
 	if(isStatusGood === true){
@@ -271,20 +271,20 @@ export const setLostarkCharacter = async (accountInfo) => {
 }
 
 /**
- * lostark 캐릭터 설정
+ * 인증된 lostark 캐릭터 정보 갱신
  */
-export const resetLostarkCharacter = async () => {
+export const changeLostarkCharacter = async () => {
 	const fecthOption = {
 		method: "PUT"
 		, headers: {"Content-Type": "application/json",}
 		, credentials: "include", // Don't forget to specify this if you need cookies
 	};
-	const fetchResponse = await fetch(`${process.env.REACT_APP_SERVER}/accounts/stove/verification/api/again`, fecthOption);
+	const fetchResponse = await fetch(`${process.env.REACT_APP_SERVER}/accounts/lostark/character/change`, fecthOption);
 	const [isStatusGood, checkMessage] = isFetchStatusGood(fetchResponse);
 
 	if(isStatusGood === true){
 		const fetchData = await getFetchJson(fetchResponse);
-		console.log('resetLostarkCharacter =>', fetchData)
+		console.log('changeLostarkCharacter =>', fetchData)
 
 		return fetchData;
 	}
@@ -298,20 +298,18 @@ export const resetLostarkCharacter = async () => {
 /**
  * lostark 캐릭터 인증 업데이트
  */
-export const refreshLostarkCharacter = async (accountInfo) => {
-	console.log(accountInfo)
+export const renewLostarkCharacter = async () => {
 	const fecthOption = {
 		method: "PUT"
-		, body: JSON.stringify(accountInfo)
 		, headers: {"Content-Type": "application/json",}
 		, credentials: "include", // Don't forget to specify this if you need cookies
 	};
-	const fetchResponse = await fetch(`${process.env.REACT_APP_SERVER}/accounts/lostark/character/refresh`, fecthOption);
+	const fetchResponse = await fetch(`${process.env.REACT_APP_SERVER}/accounts/lostark/character/renew`, fecthOption);
 	const [isStatusGood, checkMessage] = isFetchStatusGood(fetchResponse);
 
 	if(isStatusGood === true){
 		const fetchData = await getFetchText(fetchResponse);
-		console.log('refreshLostarkCharacter =>', fetchData)
+		console.log('renewLostarkCharacter =>', fetchData)
 
 		return fetchData;
 	}

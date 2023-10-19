@@ -163,7 +163,10 @@ const ContentView = (props) => {
 				if(contentCode !== null){
 					const voteResult = await contentBoardFetch.upvoteContent(props.boardType, sendData);
 
-					if(voteResult.isVotable === false){
+					if(voteResult === null){
+						return;
+					}
+					else if(voteResult.isVotable === false){
 						alert("오늘은 이미 해당 게시물에 추천, 비추천을 하였습니다");
 					}
 					else{
@@ -197,7 +200,10 @@ const ContentView = (props) => {
 				if(contentCode !== null){
 					const voteResult = await contentBoardFetch.downvoteContent(props.boardType, sendData);
 
-					if(voteResult.isVotable === false){
+					if(voteResult === null){
+						return;
+					}
+					else if(voteResult.isVotable === false){
 						alert("오늘은 이미 해당 게시물에 추천, 비추천을 하였습니다");
 					}
 					else{

@@ -22,7 +22,7 @@ const ActivateLostarkAPI = () => {
 	const [characterList, setcharacterList] = useState([]);
 	const [startTime, setStartTime] = useState(null);
 	const [nowTime, setNowTime] = useState(null);
-	const [showLoadingModal, setShowLoadingModal] = useState(false);
+	const [isLoading, setIsLoading] = useState(false);
 	const [loadingMessage, setLoadingMessage] = useState("");
 	const [isValidStoveURL, setIsValidStoveURL] = useState(0);
 	const intervalRef = useRef(null);
@@ -44,11 +44,11 @@ const ActivateLostarkAPI = () => {
 			setCharacterModalShow(false);
 			controlActivateVerify("done");
 			
-			setShowLoadingModal(true);
+			setIsLoading(true);
 			setLoadingMessage("캐릭터를 설정 중입니다");
 
 			const result = await accountsFetch.setLostarkCharacter({
-				lostarkCharacter: characterInfo.CharacterName,
+				data: characterInfo.CharacterName,
 			});
 
 			if(result === "0001"){
@@ -61,10 +61,10 @@ const ActivateLostarkAPI = () => {
 				alert("정보를 업데이트할 수 없습니다(닉네임이 변경되었다면 변경하기를 진행해주세요");
 			}
 			else if(result === "0004"){
-				alert("이미 캐릭터 인증이 진행되었습니다\n내일 다시 진행해주세요");
+				alert("이미 캐릭터 인증 또는 업데이트가 진행되었습니다\n잠시 후 다시 진행해주세요");
 			}
 
-			setShowLoadingModal(false);
+			setIsLoading(false);
 			navigate("/accounts/mypage")
 		}
 	}, [navigate])
@@ -153,42 +153,6 @@ const ActivateLostarkAPI = () => {
 		setCharacterModalShow(true);
 	}, [noCharacter, setCharacter])
 
-	//TEST용 간편설정
-	useEffect(() => {
-		console.log("Doing Test")
-		setIsValidStoveURL(2); //다시 입력할 필요 없게 OK 처리
-	}, [])
-
-	//로그인 사용자 정보 불러오기
-	useEffect(() => {
-		const callMyInfo = async () => {
-			setAccountData(await accountsFetch.getMyInfo());
-		}
-
-		callMyInfo();
-	}, [])
-	
-	//인증 완료한 사용자 다시 인증하는 경우
-	useEffect(() => {
-		if(accountData !== null){
-			if(accountData.authentication.length > 0){
-				setShowLoadingModal(true);
-				setLoadingMessage("재인증 정보 확인 중입니다");
-
-				accountsFetch.resetLostarkCharacter().then(([matchResult, characterNames]) => {
-					if(matchResult === "success"){
-						setCharacterCardList(characterNames);
-						setShowLoadingModal(false);
-					}
-					else{
-						alert("재인증을 진행할 수 없습니다");
-						navigate("/accounts/mypage");
-					}
-				});
-			}
-		}
-	}, [accountData, setCharacterCardList, navigate])
-
 	const controlActivateVerify = (status) => {
 		if(status === "activate"){
 			document.querySelector("#getCodeButton").disabled = true;
@@ -218,12 +182,6 @@ const ActivateLostarkAPI = () => {
 			controlActivateVerify("deactivate");
 		}
 	}
-
-	useEffect(() => {
-		return() => {
-			clearInterval(intervalRef.current);
-		}
-	}, []);
 
 	const moveToStovePage = async () => {
 		if(isValidStoveURL !== 2){
@@ -270,41 +228,49 @@ const ActivateLostarkAPI = () => {
 			return;
 		}
 
-		setShowLoadingModal(true);
+		setIsLoading(true);
 		setLoadingMessage("스토브 소개 정보를 확인 중입니다");
 		const stoveURL = document.querySelector("#stoveURL").value;
-		const [matchResult, characterNames] = await accountsFetch.checkProfileTokenMatchAPI(stoveURL);
+		const resultData = await accountsFetch.checkProfileTokenMatchAPI(stoveURL);
 
-		if(matchResult === "codeError"){
+		if(resultData === null){
+			alert("인증을 진행할 수 없습니다");
+			setCharacterModalShow(false);
+		}
+		else if(resultData.result === "codeError"){
 			alert("스토브 코드를 다시 확인해주세요");
 			setCharacterModalShow(false);
 		}
-		else if(matchResult === "fail"){
+		else if(resultData.result === "fail"){
 			alert("인증 코드가 올바르지 않습니다");
 			setCharacterModalShow(false);
 		}
-		else if(matchResult === "redo"){
+		else if(resultData.result === "redo"){
 			alert("인증 코드가 만료되었습니다");
 			setCharacterModalShow(false);
 
 			clearInterval(intervalRef.current);
 			controlActivateVerify("deactivate");
 		}
-		else if(matchResult === "limit"){
+		else if(resultData.result === "wait"){
+			alert("과도한 요청이 감지되었습니다\n잠시 후 다시 시도해주세요");
+			setCharacterModalShow(false);
+		}
+		else if(resultData.result === "limit"){
 			alert("스마일게이트 API 서버를 호출할 수 없습니다\n잠시 후 다시 시도해주세요");
 			setCharacterModalShow(false);
 		}
-		else if(matchResult.length === 0){
+		else if(resultData.characterList.length === 0){
 			alert("캐릭터 정보가 존재하지 않습니다");
 			setCharacterModalShow(false);
 		}
 		else{
 			clearInterval(intervalRef.current);
 
-			setCharacterCardList(characterNames);
+			setCharacterCardList(resultData.characterList);
 		}
 		
-		setShowLoadingModal(false);
+		setIsLoading(false);
 	}
 
 	const checkStoveCodeValid = () => {
@@ -354,9 +320,50 @@ const ActivateLostarkAPI = () => {
 		}
 	}
 
+	//로그인 사용자 정보 불러오기
+	useEffect(() => {
+		const callMyInfo = async () => {
+			setAccountData(await accountsFetch.getMyInfo());
+		}
+
+		callMyInfo();
+		setIsValidStoveURL(2); //TEST용 간편설정, 개발 완료 후 제거해야 함, 다시 입력할 필요 없게 OK 처리
+
+		return() => { //페이지 떠날 때 interval 정리
+			clearInterval(intervalRef.current);
+		}
+	}, [])
+	
+	useEffect(() => {
+		const changeLostarkCharacter = async () => {
+			const fetchData = await accountsFetch.changeLostarkCharacter();
+
+			if(fetchData.result === "success"){
+				setCharacterCardList(fetchData.characterList);
+				setIsLoading(false);
+			}
+			else if(fetchData.result === "wait"){
+				alert("이미 캐릭터 인증 또는 업데이트가 진행되었습니다\n잠시 후 다시 진행해주세요");
+				navigate("/accounts/mypage");
+			}
+			else{
+				alert("인증을 진행할 수 없습니다");
+				navigate("/accounts/mypage");
+			}
+		}
+
+		if(accountData !== null){
+			if(accountData.authentication.length > 0){//인증 완료한 사용자가 변경을 진행하는 경우
+				setIsLoading(true);
+				setLoadingMessage("인증 정보 확인 중입니다");
+				changeLostarkCharacter();
+			}
+		}
+	}, [accountData, setCharacterCardList, navigate])
+
 	return (
 		<Container style={{maxWidth: "450px"}}>
-			<LoadingModal showModal={showLoadingModal} message={loadingMessage}></LoadingModal>
+			<LoadingModal showModal={isLoading} message={loadingMessage}></LoadingModal>
 
 			<div style={{ marginTop: "20px", fontSize: "0.8rem", color: "black" }}>
 				<Form.Label style={{fontWeight: "800", fontSize: "0.8rem"}}>

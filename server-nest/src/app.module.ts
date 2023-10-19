@@ -7,6 +7,8 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AccountsModule } from './accounts/accounts.module';
 import { BoardsModule } from './boards/boards.module';
 import { ScheduleModule } from '@nestjs/schedule';
+import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
+import { APP_GUARD } from '@nestjs/core';
 
 @Module({
 	imports: [
@@ -33,8 +35,14 @@ import { ScheduleModule } from '@nestjs/schedule';
 			}),
 			inject: [ConfigService],
 		}),
+		ThrottlerModule.forRoot([
+			{
+				ttl: 60000, //time to live in milliseconds
+				limit: 100, //the maximum number of requests within the ttl
+			}
+		]),
 	],
 	controllers: [],
-	providers: [],
+	providers: [{ provide: APP_GUARD, useClass: ThrottlerGuard }],
 })
 export class AppModule { }

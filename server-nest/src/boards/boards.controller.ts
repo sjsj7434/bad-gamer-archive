@@ -6,10 +6,12 @@ import { CreateRepliesDTO, DeleteRepliesDTO } from './replies.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { Request, Response } from 'express';
 import { BoardsService } from './boards.service';
+import { SkipThrottle, Throttle } from '@nestjs/throttler';
 
 /**
  * 게시판 컨트롤러
  */
+@SkipThrottle()
 @Controller("boards")
 export class BoardsController {
 	constructor(private boardsService: BoardsService) { }
@@ -37,6 +39,7 @@ export class BoardsController {
 	//익명 게시판 목록, page 값이 number가 아니면 호출되지 않음
 	@Get("anonymous/list/:page")
 	async getAnonymousContentList(@Param("page") page: number): Promise<[Boards[], number]> {
+		console.log("getAnonymousContentList")
 		return await this.boardsService.getAnonymousContentList(page);
 	}
 
@@ -77,12 +80,16 @@ export class BoardsController {
 	}
 
 	//익명 게시판 글 추천
+	@SkipThrottle({ default: false })
+	@Throttle({ default: { limit: 20, ttl: 60000 } }) //1분에 20개 이상 금지
 	@Post("anonymous/content/upvote")
 	async upvoteAnonymousContent(@Ip() ipData: string, @Body() sendData: { code: number }): Promise<{ upvote: number, downvote: number, isVotable: boolean }> {
 		return await this.boardsService.upvoteAnonymousContent(sendData.code, ipData);
 	}
 
 	//익명 게시판 글 비추천
+	@SkipThrottle({ default: false })
+	@Throttle({ default: { limit: 20, ttl: 60000 } }) //1분에 20개 이상 금지
 	@Post("anonymous/content/downvote")
 	async downvoteAnonymousContent(@Ip() ipData: string, @Body() sendData: { code: number }): Promise<{ upvote: number, downvote: number, isVotable: boolean }> {
 		return await this.boardsService.downvoteAnonymousContent(sendData.code, ipData);
@@ -152,12 +159,16 @@ export class BoardsController {
 	}
 
 	//게시글 추천
+	@SkipThrottle({ default: false })
+	@Throttle({ default: { limit: 20, ttl: 60000 } }) //1분에 20개 이상 금지
 	@Post("user/content/upvote")
 	async upvoteUserContent(@Ip() ipData: string, @Body() sendData: { code: number }): Promise<{ upvote: number, downvote: number, isVotable: boolean }> {
 		return await this.boardsService.upvoteUserContent(sendData.code, ipData);
 	}
 
 	//게시글 비추천
+	@SkipThrottle({ default: false })
+	@Throttle({ default: { limit: 20, ttl: 60000 } }) //1분에 20개 이상 금지
 	@Post("user/content/downvote")
 	async downvoteUserContent(@Ip() ipData: string, @Body() sendData: { code: number }): Promise<{ upvote: number, downvote: number, isVotable: boolean }> {
 		return await this.boardsService.downvoteUserContent(sendData.code, ipData);
