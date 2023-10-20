@@ -215,6 +215,7 @@ const MyEditor = (props) => {
 				config={editorConfiguration}
 				editor={ClassicEditor}
 				data={props.savedData}
+				disabled={props.editorMode === "read" ? true : false}
 				onReady={(editor) => {
 					props.setEditor(editor);
 					
@@ -227,6 +228,18 @@ const MyEditor = (props) => {
 					// const wordCountPlugin = editor.plugins.get("WordCount");
 					// const wordCountWrapper = document.querySelector("#word-count");
 					// wordCountWrapper.appendChild(wordCountPlugin.wordCountContainer);
+					
+					const toolbarElement = editor.ui.view.toolbar.element;
+					const htmlSizeWrapper = document.querySelector("#html-size");
+					if (props.editorMode === "read") {
+						//읽기 모드
+						toolbarElement.style.display = "none";
+						htmlSizeWrapper.style.display = "none";
+					}
+					else {
+						//작성 모드
+						toolbarElement.style.display = "flex";
+					}
 				}}
 				onChange={(event, editor) => {
 					// KB, 1000, 십진법, 킬로바이트

@@ -187,11 +187,11 @@ const UserContentWrite = (props) => {
 		if(writeMode === "new"){
 			setRenderData(
 				<>
-					유저 게시판 / 신규
+					유저 게시판
 					<Form.Control id="title" type="text" placeholder="제목" style={{marginBottom: "10px", fontSize: "0.8rem"}} defaultValue={""} />
 					
 					<MyEditor
-						writeMode={writeMode}
+						editorMode={"write"}
 						savedData={""}
 						editorMaxKB={editorMaxKB}
 						setEditor={(editor) => {setEditorObject(editor)}}
@@ -241,12 +241,12 @@ const UserContentWrite = (props) => {
 				else{
 					setRenderData(
 						<>
-							유저 게시판 / 수정
+							유저 게시판
 							<br />
 							<Form.Control id="title" type="text" placeholder="제목" style={{marginBottom: "10px", fontSize: "0.8rem"}} defaultValue={contentTitle} />
 
 							<MyEditor
-								writeMode={writeMode}
+								editorMode={"write"}
 								savedData={contentData}
 								editorMaxKB={editorMaxKB}
 								setEditor={(editor) => {setEditorObject(editor)}}

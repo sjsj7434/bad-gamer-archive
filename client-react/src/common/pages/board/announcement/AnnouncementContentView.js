@@ -5,6 +5,7 @@ import Placeholder from 'react-bootstrap/Placeholder';
 import Button from 'react-bootstrap/Button';
 import * as contentBoardFetch from '../../../js/contentBoardFetch';
 import '../../../css/View.css';
+import MyEditor from '../MyEditor';
 
 const AnnouncementContentView = (props) => {
 	const [contentCode, setContentCode] = useState(null);
@@ -205,7 +206,14 @@ const AnnouncementContentView = (props) => {
 						{/*
 							sanitizer libraries for HTML XSS Attacks : DOMPurify
 						*/}
-						<div dangerouslySetInnerHTML={{__html: contentJson.content}} style={{minHeight: "150px", overflowWrap: "anywhere", overflow: "auto", fontSize: "0.8rem"}}></div>
+						{/* <div dangerouslySetInnerHTML={{__html: contentJson.content}} style={{minHeight: "150px", overflowWrap: "anywhere", overflow: "auto", fontSize: "0.8rem"}}></div> */}
+						<MyEditor
+							editorMode={"read"}
+							savedData={contentJson.content}
+							editorMaxKB={100}
+							setEditor={ () => {} }
+							setEditorSizeByte={ () => {} }
+						/>
 
 						<div style={{display: "flex", justifyContent: "center", marginTop: "30px"}}>
 							<Button id={"upvoteButton"} onClick={() => {upvoteContent()}} variant="outline-success" style={{width: "30%", maxWidth: "130px", padding: "2px"}}>

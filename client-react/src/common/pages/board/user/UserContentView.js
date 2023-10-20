@@ -7,6 +7,7 @@ import UserReply from '../user/UserReply';
 import LoadingModal from '../../common/LoadingModal';
 import * as contentBoardFetch from '../../../js/contentBoardFetch';
 import '../../../css/View.css';
+import MyEditor from '../MyEditor';
 
 const UserContentView = (props) => {
 	const [contentCode, setContentCode] = useState(null);
@@ -19,7 +20,7 @@ const UserContentView = (props) => {
 	const [loadingModalMessage, setLoadingModalMessage] = useState("");
 	const navigate = useNavigate();
 	const params = useParams();
-
+	
 	useEffect(() => {
 		setContentCode(params.contentCode);
 	}, [params.contentCode]);
@@ -248,7 +249,14 @@ const UserContentView = (props) => {
 						{/*
 							sanitizer libraries for HTML XSS Attacks : DOMPurify
 						*/}
-						<div dangerouslySetInnerHTML={{__html: contentJson.content}} style={{minHeight: "150px", overflowWrap: "anywhere", overflow: "auto", fontSize: "0.8rem"}}></div>
+						{/* <div dangerouslySetInnerHTML={{__html: contentJson.content}} style={{minHeight: "150px", overflowWrap: "anywhere", overflow: "auto", fontSize: "0.8rem"}}></div> */}
+						<MyEditor
+							editorMode={"read"}
+							savedData={contentJson.content}
+							editorMaxKB={100}
+							setEditor={ () => {} }
+							setEditorSizeByte={ () => {} }
+						/>
 
 						<div style={{display: "flex", justifyContent: "center", marginTop: "30px"}}>
 							<Button id={"upvoteButton"} onClick={() => {upvoteContent()}} variant="outline-success" style={{width: "30%", maxWidth: "130px", padding: "2px"}}>
@@ -271,7 +279,11 @@ const UserContentView = (props) => {
 								<span style={{fontSize: "0.85rem"}}>비추천</span>
 							</Button>
 						</div>
-						
+						<div style={{display: "flex", justifyContent: "center", marginTop: "10px"}}>
+							<Button variant="success" style={{ width: "30%", maxWidth: "130px", padding: "2px", fontSize: "0.85rem" }}>목록 확인</Button>
+							&nbsp;&nbsp;
+							<Button variant="danger" style={{ width: "30%", maxWidth: "130px", padding: "2px", fontSize: "0.85rem" }}>목록 확인</Button>
+						</div>
 						
 						{
 							isContentWriter === true ?

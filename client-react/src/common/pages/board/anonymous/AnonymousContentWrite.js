@@ -198,7 +198,7 @@ const AnonymousContentWrite = (props) => {
 		if(writeMode === "new"){
 			setRenderData(
 				<>
-					익명 게시판 / 신규
+					수라도
 					<Row className="g-2">
 						<Col>
 							<Form.Control id="writer" type="text" placeholder="작성자" defaultValue={"익명"} style={{marginBottom: "10px", fontSize: "0.8rem"}} readOnly />
@@ -210,7 +210,7 @@ const AnonymousContentWrite = (props) => {
 					<Form.Control id="title" type="text" placeholder="제목" style={{marginBottom: "10px", fontSize: "0.8rem"}} defaultValue={""} />
 					
 					<MyEditor
-						writeMode={writeMode}
+						editorMode={"write"}
 						savedData={""}
 						editorMaxKB={editorMaxKB}
 						setEditor={(editor) => {setEditorObject(editor)}}
@@ -296,12 +296,12 @@ const AnonymousContentWrite = (props) => {
 				else{
 					setRenderData(
 						<>
-							익명 게시판 / 수정
+							수라도
 							<br />
 							<Form.Control id="title" type="text" placeholder="제목" style={{marginBottom: "10px", fontSize: "0.8rem"}} defaultValue={contentTitle} />
 
 							<MyEditor
-								writeMode={writeMode}
+								editorMode={"write"}
 								savedData={contentData}
 								editorMaxKB={editorMaxKB}
 								setEditor={(editor) => {setEditorObject(editor)}}
