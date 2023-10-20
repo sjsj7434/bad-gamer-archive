@@ -39,7 +39,6 @@ export class BoardsController {
 	//익명 게시판 목록, page 값이 number가 아니면 호출되지 않음
 	@Get("anonymous/list/:page")
 	async getAnonymousContentList(@Param("page") page: number): Promise<[Boards[], number]> {
-		console.log("getAnonymousContentList")
 		return await this.boardsService.getAnonymousContentList(page);
 	}
 

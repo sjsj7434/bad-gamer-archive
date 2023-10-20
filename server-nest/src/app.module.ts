@@ -9,13 +9,13 @@ import { BoardsModule } from './boards/boards.module';
 import { ScheduleModule } from '@nestjs/schedule';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { APP_GUARD } from '@nestjs/core';
-import { LogModule } from './log/log.module';
+import { ErrorLogModule } from './log/error.log.module';
 
 @Module({
 	imports: [
 		AccountsModule,
 		BoardsModule,
-		LogModule,
+		ErrorLogModule,
 		ScheduleModule.forRoot(),
 		ServeStaticModule.forRoot({
 			rootPath: join(__dirname, "../..", "client-react/build"), //개발할 때에는 매번 빌드 해야 함? => 실제 서버에서만 빌드하고 개발할 때에는 그냥 두개 모두 서버 뛰워서 확인하면 됨

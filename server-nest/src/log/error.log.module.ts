@@ -1,14 +1,14 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Log } from './log.entity';
+import { ErrorLog } from './error.log.entity';
 
 @Module({
 	imports: [
 		TypeOrmModule.forFeature([
-			Log
+			ErrorLog
 		]),
 	],
 	controllers: [],
 	providers: [],
 })
-export class LogModule {}
+export class ErrorLogModule {}

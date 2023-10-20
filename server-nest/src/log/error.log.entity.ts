@@ -3,7 +3,7 @@ import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn } from 'typeor
 // This will create following database table
 // If table is already exsists there could be error
 @Entity()
-export class Log {
+export class ErrorLog {
 	/**
 	 * 자동으로 생성되는 코드
 	 */
@@ -31,7 +31,27 @@ export class Log {
 		length: 500,
 		nullable: false,
 	})
-	data: string;
+	message: string;
+
+	/**
+	 * 로그 내용
+	 */
+	@Column({
+		type: "varchar",
+		length: 500,
+		nullable: false,
+	})
+	name: string;
+
+	/**
+	 * 로그 내용
+	 */
+	@Column({
+		type: "varchar",
+		length: 500,
+		nullable: false,
+	})
+	stack: string;
 
 	/**
 	 * ip
@@ -41,6 +61,15 @@ export class Log {
 		length: 50,
 	})
 	ip: string;
+
+	/**
+	 * id
+	 */
+	@Column({
+		type: "varchar",
+		length: 50,
+	})
+	id: string;
 
 	/**
 	 * 로그 생성일자(자동)

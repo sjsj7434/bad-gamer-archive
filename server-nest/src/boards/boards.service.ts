@@ -8,12 +8,14 @@ import { Cron, CronExpression } from '@nestjs/schedule';
 import { CreateRepliesDTO, DeleteRepliesDTO } from './replies.dto';
 import { AccountsService } from 'src/accounts/accounts.service';
 import { Request, Response } from 'express';
+import { ErrorLog } from 'src/log/error.log.entity';
 
 @Injectable()
 export class BoardsService {
 	constructor(
 		@InjectRepository(Boards) private boardsRepository: Repository<Boards>,
 		@InjectRepository(Replies) private repliesRepository: Repository<Replies>,
+		@InjectRepository(ErrorLog) private errorLogRepository: Repository<ErrorLog>,
 		private accountsService: AccountsService,
 	) { }
 
@@ -31,20 +33,35 @@ export class BoardsService {
 		console.log("[익명 추천 초기화] Reset data every day at 00:00");
 	}
 
-	isVotableContent(contentCode: number, ipData: string): boolean {
-		const ipArray: Array<string> | undefined = this.VOTE_HISTORY.get(contentCode);
+	async createErrorLog(error: Error){
+		try {
+			const logData = this.errorLogRepository.create({ type: "error", message: error.message, ip: "request.ip", id: "id here" });
+			this.errorLogRepository.insert(logData);
+		}
+		catch (error) {
+			console.error("[심각함] 로그를 삽입할 수 없습니다", error);
+		}
+	}
 
-		if (ipArray === undefined) {
-			this.VOTE_HISTORY.set(contentCode, [ipData]);
-			return true;
+	isVotableContent(contentCode: number, ipData: string): boolean {
+		try {
+			const ipArray: Array<string> | undefined = this.VOTE_HISTORY.get(contentCode);
+
+			if (ipArray === undefined) {
+				this.VOTE_HISTORY.set(contentCode, [ipData]);
+				return true;
+			}
+			else if (ipArray.includes(ipData) === false) {
+				ipArray.push(ipData);
+				this.VOTE_HISTORY.set(contentCode, ipArray);
+				return true;
+			}
+			else {
+				return false;
+			}
 		}
-		else if (ipArray.includes(ipData) === false) {
-			ipArray.push(ipData);
-			this.VOTE_HISTORY.set(contentCode, ipArray);
-			return true;
-		}
-		else {
-			return false;
+		catch (error) {
+			this.createErrorLog(error);
 		}
 	}
 
