@@ -3,7 +3,6 @@ import { useNavigate, useParams } from "react-router-dom";
 import Container from 'react-bootstrap/Container';
 import Placeholder from 'react-bootstrap/Placeholder';
 import Button from 'react-bootstrap/Button';
-import LoadingModal from '../../common/LoadingModal';
 import * as contentBoardFetch from '../../../js/contentBoardFetch';
 import '../../../css/View.css';
 
@@ -12,10 +11,7 @@ const AnnouncementContentView = (props) => {
 	const [upvoteCount, setUpvoteCount] = useState(0);
 	const [downvoteCount, setDownvoteCount] = useState(0);
 	const [contentJson, setContentJson] = useState(null);
-	const [isContentWriter, setIsContentWriter] = useState(false);
 	const [renderData, setRenderData] = useState(<></>);
-	const [loadingModalShow, setLoadingModalShow] = useState(false);
-	const [loadingModalMessage, setLoadingModalMessage] = useState("");
 	const navigate = useNavigate();
 	const params = useParams();
 
@@ -38,7 +34,6 @@ const AnnouncementContentView = (props) => {
 			else{
 				setUpvoteCount(contentData.upvote);
 				setDownvoteCount(contentData.downvote);
-				setIsContentWriter(readResult.isWriter);
 				setContentJson(contentData);
 			}
 		}
@@ -92,43 +87,6 @@ const AnnouncementContentView = (props) => {
 			);
 		}
 		else{
-			/**
-			 * code로 게시글 삭제
-			 */
-			const deleteContent = async () => {
-				const sendData = {
-					code: contentCode,
-					password: "",
-				};
-
-				if(window.confirm("게시글을 삭제하시겠습니까?") === false){
-					return;
-				}
-
-				setLoadingModalShow(true);
-				setLoadingModalMessage("게시글을 삭제 중입니다...");
-
-				const deleteResult = await contentBoardFetch.deleteContent("announcement", sendData);
-
-				if(deleteResult === true){
-					navigate(`/board/announcement/1`);
-				}
-				else{
-					alert("정보가 올바르지않아 게시글을 삭제할 수 없습니다");
-
-					setLoadingModalShow(false);
-					setLoadingModalMessage("");
-				}
-			}
-
-			/**
-			 * 게시글 수정으로 이동 전 비밀번호 확인
-			 * 수정은 비밀번호 입력한 사람만 가능한데, 굳이 DB에서 다시 읽어와야하나?
-			 */
-			const editContent = async () => {
-				navigate(`/board/announcement/edit/${contentCode}`);
-			}
-
 			/**
 			 * 게시글 추천
 			 */
@@ -270,36 +228,19 @@ const AnnouncementContentView = (props) => {
 								<span style={{fontSize: "0.85rem"}}>비추천</span>
 							</Button>
 						</div>
-						
-						
-						{
-							isContentWriter === true ?
-							<>
-								<div style={{display: "flex", justifyContent: "flex-end", marginBottom: "15px", marginTop: "30px"}}>
-									<Button onClick={() => {editContent()}} variant="outline-primary" style={{padding: "2px", width: "8%", minWidth: "60px", maxWidth: "100px", fontSize: "0.8rem"}}>수정</Button>
-									&nbsp;
-									<Button onClick={() => {deleteContent()}} variant="outline-danger" style={{padding: "2px", width: "8%", minWidth: "60px", maxWidth: "100px", fontSize: "0.8rem"}}>삭제</Button>
-									&nbsp;
-									<Button onClick={() => {navigate(`/board/announcement/1`)}} variant="outline-secondary" style={{padding: "2px", width: "8%", minWidth: "70px", maxWidth: "100px", fontSize: "0.8rem"}}>목록으로</Button>
-								</div>
-							</>
-							:
-							<>
-								<div style={{display: "flex", justifyContent: "flex-end", marginBottom: "15px", marginTop: "30px"}}>
-									<Button onClick={() => {navigate(`/board/announcement/1`)}} variant="outline-secondary" style={{padding: "2px", width: "8%", minWidth: "70px", maxWidth: "100px", fontSize: "0.8rem"}}>목록으로</Button>
-								</div>
-							</>
-						}
+
+						<div style={{display: "flex", justifyContent: "flex-end", marginBottom: "15px", marginTop: "30px"}}>
+							<Button onClick={() => {navigate(`/board/announcement/1`)}} variant="outline-secondary" style={{padding: "2px", width: "8%", minWidth: "70px", maxWidth: "100px", fontSize: "0.8rem"}}>목록으로</Button>
+						</div>
 					</div>
 				</>
 			);
 		}
-	}, [contentCode, contentJson, upvoteCount, downvoteCount, isContentWriter, navigate, props.accountData]);
+	}, [contentCode, contentJson, upvoteCount, downvoteCount, navigate, props.accountData]);
 	
 	return(
 		<Container style={{maxWidth: "1200px"}}>
 			{renderData}
-			<LoadingModal showModal={loadingModalShow} message={loadingModalMessage}/>
 		</Container>
 	);
 }

@@ -206,6 +206,22 @@ export class BoardsController {
 		return await this.boardsService.readAnnouncementContent(request, response, contentCode);
 	}
 
+	//게시글 추천
+	@SkipThrottle({ default: false })
+	@Throttle({ default: { limit: 20, ttl: 60000 } }) //1분에 20개 이상 금지
+	@Post("announcement/content/upvote")
+	async upvoteAnnouncementContent(@Ip() ipData: string, @Body() sendData: { code: number }): Promise<{ upvote: number, downvote: number, isVotable: boolean }> {
+		return await this.boardsService.upvoteAnnouncementContent(sendData.code, ipData);
+	}
+
+	//게시글 비추천
+	@SkipThrottle({ default: false })
+	@Throttle({ default: { limit: 20, ttl: 60000 } }) //1분에 20개 이상 금지
+	@Post("announcement/content/downvote")
+	async downvoteAnnouncementContent(@Ip() ipData: string, @Body() sendData: { code: number }): Promise<{ upvote: number, downvote: number, isVotable: boolean }> {
+		return await this.boardsService.downvoteAnnouncementContent(sendData.code, ipData);
+	}
+
 	//게시글 이미지 삽입
 	@Post("image")
 	@UseInterceptors(FileInterceptor("upload"))

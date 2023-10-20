@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, IsNull, MoreThanOrEqual, Between, Equal } from 'typeorm';
+import { Repository, IsNull, MoreThanOrEqual, Between, Equal, In } from 'typeorm';
 import { Boards } from './boards.entity';
 import { Replies } from './replies.entity';
 import { CreateBoardsDTO, UpdateBoardsDTO, DeleteBoardsDTO } from './boards.dto';
@@ -139,6 +139,7 @@ export class BoardsService {
 					deletedAt: IsNull(),
 					upvote: MoreThanOrEqual(upvoteCutline),
 					createdAt: Between(searchDate, new Date()),
+					category: In(["anonymous", "user"]),
 				},
 				order: {
 					upvote: "DESC",
@@ -184,6 +185,7 @@ export class BoardsService {
 				deletedAt: IsNull(),
 				downvote: MoreThanOrEqual(downvoteCutline),
 				createdAt: Between(searchDate, new Date()),
+				category: In(["anonymous", "user"]),
 			},
 			order: {
 				downvote: "DESC",
@@ -225,6 +227,7 @@ export class BoardsService {
 				deletedAt: IsNull(),
 				view: MoreThanOrEqual(viewCutline),
 				createdAt: Between(searchDate, new Date()),
+				category: In(["anonymous", "user"]),
 			},
 			order: {
 				view: "DESC",
@@ -724,6 +727,30 @@ export class BoardsService {
 	}
 
 	/**
+	 * 공지 게시판 글 추천
+	 */
+	async upvoteAnnouncementContent(contentCode: number, ipData: string): Promise<{ upvote: number, downvote: number, isVotable: boolean }> {
+		const isVotable: boolean = this.isVotableContent(contentCode, ipData);
+
+		if (isVotable === true) {
+			await this.boardsRepository.increment({ code: Equal(contentCode), category: Equal("announcement") }, "upvote", 1);
+		}
+
+		const contentData = await this.boardsRepository.findOne({
+			select: {
+				upvote: true,
+				downvote: true,
+			},
+			where: {
+				code: Equal(contentCode),
+				category: Equal("announcement"),
+			},
+		});
+
+		return { upvote: contentData.upvote, downvote: contentData.downvote, isVotable: isVotable };
+	}
+
+	/**
 	 * 익명 게시판 글 비추천
 	 */
 	async downvoteAnonymousContent(contentCode: number, ipData: string): Promise<{ upvote: number, downvote: number, isVotable: boolean }> {
@@ -765,6 +792,30 @@ export class BoardsService {
 			where: {
 				code: Equal(contentCode),
 				category: Equal("user"),
+			},
+		});
+
+		return { upvote: contentData.upvote, downvote: contentData.downvote, isVotable: isVotable };
+	}
+
+	/**
+	 * 유저 게시판 글 비추천
+	 */
+	async downvoteAnnouncementContent(contentCode: number, ipData: string): Promise<{ upvote: number, downvote: number, isVotable: boolean }> {
+		const isVotable: boolean = this.isVotableContent(contentCode, ipData);
+
+		if (isVotable === true) {
+			await this.boardsRepository.increment({ code: Equal(contentCode), category: Equal("announcement") }, "downvote", 1);
+		}
+
+		const contentData = await this.boardsRepository.findOne({
+			select: {
+				upvote: true,
+				downvote: true,
+			},
+			where: {
+				code: Equal(contentCode),
+				category: Equal("announcement"),
 			},
 		});
 
