@@ -10,7 +10,7 @@ import LoadingModal from '../../common/LoadingModal';
 import * as contentBoardFetch from '../../../js/contentBoardFetch';
 import '../../../css/View.css';
 
-const ContentWriteUser = (props) => {
+const UserContentWrite = (props) => {
 	const [writeMode, setWriteMode] = useState("");
 	const [contentCode, setContentCode] = useState(null);
 	const [renderData, setRenderData] = useState(<></>);
@@ -111,7 +111,7 @@ const ContentWriteUser = (props) => {
 			writerID: props.accountData.id,
 		};
 
-		let result = await contentBoardFetch.updateContent(props.boardType, sendData);
+		let result = await contentBoardFetch.updateContent("user", sendData);
 
 		if(result === null){
 			alert("문제가 발생하여 게시글을 수정할 수 없습니다(1)");
@@ -127,7 +127,7 @@ const ContentWriteUser = (props) => {
 			//정상적으로 처리 성공
 			navigate(`/lostark/board/user/view/${contentCode}`);
 		}
-	}, [contentCode, contentPassword, editorObject, editorSizeByte, editorMaxKB, navigate, props.accountData.id, props.boardType])
+	}, [contentCode, contentPassword, editorObject, editorSizeByte, editorMaxKB, navigate, props.accountData.id])
 
 	useEffect(() => {
 		if(params.contentCode !== undefined){
@@ -145,7 +145,7 @@ const ContentWriteUser = (props) => {
 		 * 게시글 정보 가져오기
 		 */
 		const readContent = async () => {
-			const readResult = await contentBoardFetch.readContent(props.boardType, contentCode, "edit");
+			const readResult = await contentBoardFetch.readContent("user", contentCode, "edit");
 			const contentData = readResult.contentData;
 	
 			setContentTitle(contentData.title);
@@ -155,7 +155,7 @@ const ContentWriteUser = (props) => {
 		if(contentCode !== null && identity === true){
 			readContent();
 		}
-	}, [contentCode, identity, props.boardType])
+	}, [contentCode, identity])
 
 	useEffect(() => {
 		/**
@@ -169,7 +169,7 @@ const ContentWriteUser = (props) => {
 				code: contentCode,
 			};
 			
-			const checkResult = await contentBoardFetch.checkBeforeEdit(props.boardType, sendData);
+			const checkResult = await contentBoardFetch.checkBeforeEdit("user", sendData);
 
 			if(checkResult === true){
 				setIdentity(true);
@@ -281,7 +281,7 @@ const ContentWriteUser = (props) => {
 				}
 			}
 		}
-	}, [writeMode, contentCode, contentTitle, contentData, identity, editorObject, editorSizeByte, saveEditorData, editEditorData, navigate, props.accountData.id, props.boardType])
+	}, [writeMode, contentCode, contentTitle, contentData, identity, editorObject, editorSizeByte, saveEditorData, editEditorData, navigate, props.accountData.id])
 	
 	return(
 		<Container style={{maxWidth: "1000px"}}>
@@ -291,4 +291,4 @@ const ContentWriteUser = (props) => {
 	);
 }
 
-export default ContentWriteUser;
+export default UserContentWrite;

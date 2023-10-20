@@ -12,20 +12,24 @@ import CommonTopMenu from './CommonTopMenu';
 import MyPage from './accounts/MyPage';
 import * as accountsFetch from '../js/accountsFetch.js'
 import LostarkMain from '../../lostark/pages/LostarkMain';
-import ContentBoard from './board/ContentBoard';
-import ContentView from './board/ContentView';
-import ContentWriteAnonymous from './board/anonymous/ContentWriteAnonymous';
+import AnonymousContentWrite from './board/anonymous/AnonymousContentWrite';
 import UsefulSitesLostark from './common/UsefulSitesLostark';
 import ForgotPasswordForm from './accounts/ForgotPasswordForm';
 import BlockLoginUser from './accounts/BlockLoginUser';
 import BlockLogoutUser from './accounts/BlockLogoutUser';
-import ContentWriteUser from './board/user/ContentWriteUser';
+import UserContentWrite from './board/user/UserContentWrite';
 import SetActiveMenu from './SetActiveMenu';
 import RenewNicknameForm from './accounts/RenewNicknameForm';
 import ActivateLostarkAPI from './accounts/ActivateLostarkAPI';
 import HelpCenter from './common/HelpCenter';
 import ResetPasswordForm from './accounts/ResetPasswordForm';
 import RenewPasswordForm from './accounts/RenewPasswordForm';
+import AnonymousContentList from './board/anonymous/AnonymousContentList';
+import UserContentList from './board/user/UserContentList';
+import AnnouncementContentList from './board/announcement/AnnouncementContentList';
+import AnonymousContentView from './board/anonymous/AnonymousContentView';
+import UserContentView from './board/user/UserContentView';
+import AnnouncementContentView from './board/announcement/AnnouncementContentView';
 // import CharacterInfo from '../../lostark/pages/character/CharacterInfo';
 
 // index.js에서 StrictMode 존재하면 두번 랜더링, 개발 모드에서만 적용됩니다. 생명주기 메서드들은 프로덕션 모드에서 이중으로 호출되지 않습니다.
@@ -79,28 +83,28 @@ const RoutesWrapper = () => {
 								<Route path=":page" element={
 									<>
 										<SetActiveMenu setCurrentMenu={setCurrentMenu} menuCode={"/lostark/board/anonymous"} />
-										<ContentBoard boardType="anonymous" boardTitle="수라도(익명)" />
+										<AnonymousContentList />
 									</>
 								} />
 
 								<Route path="view/:contentCode" element={
 									<>
 										<SetActiveMenu setCurrentMenu={setCurrentMenu} menuCode={"/lostark/board/anonymous"} />
-										<ContentView boardType="anonymous" boardTitle="수라도(익명)" accountData={accountData} />
+										<AnonymousContentView />
 									</>
 								} />
 
 								<Route path="write" element={
 									<>
 										<SetActiveMenu setCurrentMenu={setCurrentMenu} menuCode={"/lostark/board/anonymous"} />
-										<ContentWriteAnonymous boardType="anonymous" />
+										<AnonymousContentWrite />
 									</>
 								} />
 
 								<Route path="edit/:contentCode" element={
 									<>
 										<SetActiveMenu setCurrentMenu={setCurrentMenu} menuCode={"/lostark/board/anonymous"} />
-										<ContentWriteAnonymous boardType="anonymous" />
+										<AnonymousContentWrite />
 									</>
 								} />
 							</Route>
@@ -113,14 +117,14 @@ const RoutesWrapper = () => {
 								<Route path=":page" element={
 									<>
 										<SetActiveMenu setCurrentMenu={setCurrentMenu} menuCode={"/lostark/board/user"} />
-										<ContentBoard boardType="user" boardTitle="유저 게시판" />
+										<UserContentList />
 									</>
 								} />
 
 								<Route path="view/:contentCode" element={
 									<>
 										<SetActiveMenu setCurrentMenu={setCurrentMenu} menuCode={"/lostark/board/user"} />
-										<ContentView boardType="user" boardTitle="유저 게시판" accountData={accountData} />
+										<UserContentView accountData={accountData} />
 									</>
 								} />
 
@@ -130,7 +134,7 @@ const RoutesWrapper = () => {
 										ifAllow={
 											<>
 												<SetActiveMenu setCurrentMenu={setCurrentMenu} menuCode={"/lostark/board/user"} />
-												<ContentWriteUser boardType="user" accountData={accountData} />
+												<UserContentWrite boardType="user" accountData={accountData} />
 											</>
 										}
 									/>
@@ -142,7 +146,7 @@ const RoutesWrapper = () => {
 										ifAllow={
 											<>
 												<SetActiveMenu setCurrentMenu={setCurrentMenu} menuCode={"/lostark/board/user"} />
-												<ContentWriteUser boardType="user" accountData={accountData} />
+												<UserContentWrite boardType="user" accountData={accountData} />
 											</>
 										}
 									/>
@@ -252,12 +256,25 @@ const RoutesWrapper = () => {
 
 					{/* <Route path="/character/:characterName" element={ <CharacterInfo /> } /> */}
 
-					<Route path="board/announcement/:page" element={
-						<>
-							<SetActiveMenu setCurrentMenu={setCurrentMenu} menuCode={"/board/announcement"} />
-							<ContentBoard boardType="announcement" boardTitle="공지사항" />
-						</>
-					} />
+					<Route path="board/announcement">
+						<Route path="" element={
+							<Navigate to="1" replace={true} />
+						} />
+
+						<Route path=":page" element={
+							<>
+								<SetActiveMenu setCurrentMenu={setCurrentMenu} menuCode={"/board/announcement"} />
+								<AnnouncementContentList />
+							</>
+						} />
+
+						<Route path="view/:contentCode" element={
+							<>
+								<SetActiveMenu setCurrentMenu={setCurrentMenu} menuCode={"/board/announcement"} />
+								<AnnouncementContentView accountData={accountData} />
+							</>
+						} />
+					</Route>
 					
 					<Route path="help" element={
 						<BlockLogoutUser

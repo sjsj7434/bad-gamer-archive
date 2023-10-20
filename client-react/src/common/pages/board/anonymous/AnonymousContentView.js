@@ -3,18 +3,16 @@ import { useNavigate, useParams } from "react-router-dom";
 import Container from 'react-bootstrap/Container';
 import Placeholder from 'react-bootstrap/Placeholder';
 import Button from 'react-bootstrap/Button';
-import AnonymousReply from './anonymous/AnonymousReply';
-import UserReply from './user/UserReply';
-import LoadingModal from '../common/LoadingModal';
-import * as contentBoardFetch from '../../js/contentBoardFetch';
-import '../../css/View.css';
+import AnonymousReply from './AnonymousReply';
+import LoadingModal from '../../common/LoadingModal';
+import * as contentBoardFetch from '../../../js/contentBoardFetch';
+import '../../../css/View.css';
 
-const ContentView = (props) => {
+const AnonymousContentView = (props) => {
 	const [contentCode, setContentCode] = useState(null);
 	const [upvoteCount, setUpvoteCount] = useState(0);
 	const [downvoteCount, setDownvoteCount] = useState(0);
 	const [contentJson, setContentJson] = useState(null);
-	const [isContentWriter, setIsContentWriter] = useState(false);
 	const [renderData, setRenderData] = useState(<></>);
 	const [loadingModalShow, setLoadingModalShow] = useState(false);
 	const [loadingModalMessage, setLoadingModalMessage] = useState("");
@@ -30,17 +28,16 @@ const ContentView = (props) => {
 		 * code로 게시글 정보 가져오기
 		 */
 		const getContentData = async () => {
-			const readResult = await contentBoardFetch.readContent(props.boardType, contentCode);
+			const readResult = await contentBoardFetch.readContent("anonymous", contentCode);
 			const contentData = readResult.contentData;
 
 			if(contentData === null){
 				alert("존재하지 않는 게시물입니다");
-				navigate(`/lostark/board/${props.boardType}/1`);
+				navigate(`/lostark/board/anonymous/1`);
 			}
 			else{
 				setUpvoteCount(contentData.upvote);
 				setDownvoteCount(contentData.downvote);
-				setIsContentWriter(readResult.isWriter);
 				setContentJson(contentData);
 			}
 		}
@@ -48,7 +45,7 @@ const ContentView = (props) => {
 		if(contentCode !== null){
 			getContentData();
 		}
-	}, [contentCode, navigate, props.boardType]);
+	}, [contentCode, navigate]);
 
 	useEffect(() => {
 		if(contentJson === null){
@@ -103,31 +100,24 @@ const ContentView = (props) => {
 					password: "",
 				};
 
-				if(props.boardType === "anonymous"){
-					const password = prompt("삭제하시려면 게시글의 비밀번호를 입력해주세요");
-					
-					if(password === null || password === ""){
-						return;
-					}
+				const password = prompt("삭제하시려면 게시글의 비밀번호를 입력해주세요");
+				
+				if(password === null || password === ""){
+					return;
+				}
 
-					sendData.password = password;
-				}
-				else{
-					if(window.confirm("게시글을 삭제하시겠습니까?") === false){
-						return;
-					}
-				}
+				sendData.password = password;
 
 				setLoadingModalShow(true);
 				setLoadingModalMessage("게시글을 삭제 중입니다...");
 
-				const deleteResult = await contentBoardFetch.deleteContent(props.boardType, sendData);
+				const deleteResult = await contentBoardFetch.deleteContent("anonymous", sendData);
 
 				if(deleteResult === true){
-					navigate(`/lostark/board/${props.boardType}/1`);
+					navigate(`/lostark/board/anonymous/1`);
 				}
 				else{
-					alert("게시글이 삭제되지 않았습니다\n올바른 게시글 비밀번호가 아닙니다");
+					alert("정보가 올바르지않아 게시글을 삭제할 수 없습니다");
 
 					setLoadingModalShow(false);
 					setLoadingModalMessage("");
@@ -139,18 +129,13 @@ const ContentView = (props) => {
 			 * 수정은 비밀번호 입력한 사람만 가능한데, 굳이 DB에서 다시 읽어와야하나?
 			 */
 			const editContent = async () => {
-				navigate(`/lostark/board/${props.boardType}/edit/${contentCode}`);
+				navigate(`/lostark/board/anonymous/edit/${contentCode}`);
 			}
 
 			/**
 			 * 게시글 추천
 			 */
 			const upvoteContent = async () => {
-				if(props.accountData.status !== "login" && props.boardType === "user"){
-					alert("로그인이 필요합니다");
-					return;
-				}
-
 				const downvoteButton = document.querySelector("#downvoteButton");
 				const upvoteButton = document.querySelector("#upvoteButton");
 				upvoteButton.disabled = true;
@@ -161,7 +146,7 @@ const ContentView = (props) => {
 				}
 
 				if(contentCode !== null){
-					const voteResult = await contentBoardFetch.upvoteContent(props.boardType, sendData);
+					const voteResult = await contentBoardFetch.upvoteContent("anonymous", sendData);
 
 					if(voteResult === null){
 						return;
@@ -183,11 +168,6 @@ const ContentView = (props) => {
 			 * 게시글 비추천
 			 */
 			const downvoteContent = async () => {
-				if(props.accountData.status !== "login" && props.boardType === "user"){
-					alert("로그인이 필요합니다");
-					return;
-				}
-
 				const downvoteButton = document.querySelector("#downvoteButton");
 				const upvoteButton = document.querySelector("#upvoteButton");
 				upvoteButton.disabled = true;
@@ -198,7 +178,7 @@ const ContentView = (props) => {
 				}
 
 				if(contentCode !== null){
-					const voteResult = await contentBoardFetch.downvoteContent(props.boardType, sendData);
+					const voteResult = await contentBoardFetch.downvoteContent("anonymous", sendData);
 
 					if(voteResult === null){
 						return;
@@ -226,7 +206,7 @@ const ContentView = (props) => {
 									<path d="M4.085 1H3.5A1.5 1.5 0 0 0 2 2.5v12A1.5 1.5 0 0 0 3.5 16h9a1.5 1.5 0 0 0 1.5-1.5v-12A1.5 1.5 0 0 0 12.5 1h-.585c.055.156.085.325.085.5V2a1.5 1.5 0 0 1-1.5 1.5h-5A1.5 1.5 0 0 1 4 2v-.5c0-.175.03-.344.085-.5ZM10 7a1 1 0 1 1 2 0v5a1 1 0 1 1-2 0V7Zm-6 4a1 1 0 1 1 2 0v1a1 1 0 1 1-2 0v-1Zm4-3a1 1 0 0 1 1 1v3a1 1 0 1 1-2 0V9a1 1 0 0 1 1-1Z"/>
 								</svg>
 								&nbsp;
-								{props.boardTitle} 게시판
+								수라도
 							</span>
 
 							<div style={{fontWeight: "800", fontSize: "1.5rem"}}>
@@ -284,43 +264,22 @@ const ContentView = (props) => {
 							</Button>
 						</div>
 						
-						
-						{
-							isContentWriter === true ?
-							<>
-								<div style={{display: "flex", justifyContent: "flex-end", marginBottom: "15px", marginTop: "30px"}}>
-									<Button onClick={() => {editContent()}} variant="outline-primary" style={{padding: "2px", width: "8%", minWidth: "60px", maxWidth: "100px", fontSize: "0.8rem"}}>수정</Button>
-									&nbsp;
-									<Button onClick={() => {deleteContent()}} variant="outline-danger" style={{padding: "2px", width: "8%", minWidth: "60px", maxWidth: "100px", fontSize: "0.8rem"}}>삭제</Button>
-									&nbsp;
-									<Button onClick={() => {navigate(`/lostark/board/${props.boardType}/1`)}} variant="outline-secondary" style={{padding: "2px", width: "8%", minWidth: "70px", maxWidth: "100px", fontSize: "0.8rem"}}>목록으로</Button>
-								</div>
-							</>
-							:
-							<>
-								<div style={{display: "flex", justifyContent: "flex-end", marginBottom: "15px", marginTop: "30px"}}>
-									<Button onClick={() => {navigate(`/lostark/board/${props.boardType}/1`)}} variant="outline-secondary" style={{padding: "2px", width: "8%", minWidth: "70px", maxWidth: "100px", fontSize: "0.8rem"}}>목록으로</Button>
-								</div>
-							</>
-						}
+						<div style={{display: "flex", justifyContent: "flex-end", marginBottom: "15px", marginTop: "30px"}}>
+							<Button onClick={() => {editContent()}} variant="outline-primary" style={{padding: "2px", width: "8%", minWidth: "60px", maxWidth: "100px", fontSize: "0.8rem"}}>수정</Button>
+							&nbsp;
+							<Button onClick={() => {deleteContent()}} variant="outline-danger" style={{padding: "2px", width: "8%", minWidth: "60px", maxWidth: "100px", fontSize: "0.8rem"}}>삭제</Button>
+							&nbsp;
+							<Button onClick={() => {navigate(`/lostark/board/anonymous/1`)}} variant="outline-secondary" style={{padding: "2px", width: "8%", minWidth: "70px", maxWidth: "100px", fontSize: "0.8rem"}}>목록으로</Button>
+						</div>
 
 						<hr style={{border: "1px solid #5893ff"}} />
 						
-						{
-							props.boardType === "anonymous" ?
-							<>
-								<AnonymousReply accountData={props.accountData} contentCode={contentCode} boardType={props.boardType} />
-							</>
-							:
-							<>
-								<UserReply accountData={props.accountData} contentCode={contentCode} boardType={props.boardType} />
-							</>
-						}
+						<AnonymousReply contentCode={contentCode} />
 					</div>
 				</>
 			);
 		}
-	}, [contentCode, contentJson, upvoteCount, downvoteCount, isContentWriter, navigate, props.boardType, props.boardTitle, props.accountData]);
+	}, [contentCode, contentJson, upvoteCount, downvoteCount, navigate, props.boardTitle]);
 	
 	return(
 		<Container style={{maxWidth: "1200px"}}>
@@ -330,4 +289,4 @@ const ContentView = (props) => {
 	);
 }
 
-export default ContentView;
+export default AnonymousContentView;

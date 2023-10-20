@@ -24,34 +24,24 @@ export class ErrorLog {
 	type: string;
 
 	/**
-	 * 로그 내용
+	 * 에러 이름
 	 */
 	@Column({
 		type: "varchar",
-		length: 500,
-		nullable: false,
-	})
-	message: string;
-
-	/**
-	 * 로그 내용
-	 */
-	@Column({
-		type: "varchar",
-		length: 500,
+		length: 100,
 		nullable: false,
 	})
 	name: string;
 
 	/**
-	 * 로그 내용
+	 * 에러 내용
 	 */
 	@Column({
 		type: "varchar",
-		length: 500,
+		length: 2000,
 		nullable: false,
 	})
-	stack: string;
+	message: string;
 
 	/**
 	 * ip

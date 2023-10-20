@@ -193,6 +193,19 @@ export class BoardsController {
 
 	//================================================================================================================================================= common
 
+	//공지 게시판 목록, page 값이 number가 아니면 호출되지 않음
+	@Get("announcement/list/:page")
+	async getAnnouncementContentList(@Param("page") page: number): Promise<[Boards[], number]> {
+		return await this.boardsService.getAnnouncementContentList(page);
+	}
+
+	//공지 게시판 글 조회, contentCode 값이 number가 아니면 호출되지 않음
+	@Get("announcement/content/read/:contentCode")
+	async readAnnouncementContent(@Req() request: Request, @Res({ passthrough: true }) response: Response, @Param("contentCode") contentCode: number): Promise<{ contentData: Boards, isWriter: boolean }> {
+		//set cookies/headers 정도만 사용하고, 나머지는 프레임워크에 떠넘기는 식으로 @Res()를 사용하는 거라면 passthrough: true 옵션은 필수! 그렇지 않으면 fetch 요청이 마무리가 안됨
+		return await this.boardsService.readAnnouncementContent(request, response, contentCode);
+	}
+
 	//게시글 이미지 삽입
 	@Post("image")
 	@UseInterceptors(FileInterceptor("upload"))

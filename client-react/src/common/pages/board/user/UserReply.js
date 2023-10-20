@@ -80,7 +80,7 @@ const UserReply = (props) => {
 						code: replyCode,
 					}
 
-					const deleteResult = await repliesFetch.deleteReply(props.boardType, sendData);
+					const deleteResult = await repliesFetch.deleteReply("user", sendData);
 
 					if(deleteResult === false){
 						alert("댓글 작성자가 아니면 삭제할 수 없습니다");
@@ -151,7 +151,7 @@ const UserReply = (props) => {
 				content: formElement.content.value,
 			}
 
-			const createResult = await repliesFetch.createReply(props.boardType, sendData);
+			const createResult = await repliesFetch.createReply("user", sendData);
 
 			if(createResult === true){
 				formElement.reset();
@@ -165,7 +165,7 @@ const UserReply = (props) => {
 		}
 
 		if(props.contentCode !== null){
-			const replyArray = await repliesFetch.getReplies(props.boardType, props.contentCode, currentPage);
+			const replyArray = await repliesFetch.getReplies("user", props.contentCode, currentPage);
 
 			if(replyArray !== null){
 				if(replyArray[1] === 0){
@@ -304,7 +304,7 @@ const UserReply = (props) => {
 				}
 			}
 		}
-	}, [props.contentCode, props.accountData.nickname, props.boardType])
+	}, [props.contentCode, props.accountData.nickname])
 
 	/**
 	 * 댓글 작성할 떄 글자 수 제한 확인
@@ -350,7 +350,7 @@ const UserReply = (props) => {
 			content: replyDataElement.value,
 		}
 
-		const createResult = await repliesFetch.createReply(props.boardType, sendData);
+		const createResult = await repliesFetch.createReply("user", sendData);
 
 		if(createResult === true){
 			getReplies(1);
@@ -360,7 +360,7 @@ const UserReply = (props) => {
 			alert("댓글을 작성할 수 없습니다");
 			document.querySelector("#replyForm").reset();
 		}
-	}, [props.contentCode, props.boardType, getReplies])
+	}, [props.contentCode, getReplies])
 
 	useEffect(() => {
 		getReplies(1);

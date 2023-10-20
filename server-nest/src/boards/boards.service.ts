@@ -20,8 +20,9 @@ export class BoardsService {
 	) { }
 
 	private VOTE_HISTORY: Map<number, Array<string>> = new Map();
-	private REPlY_MAX_LENG = 300; //댓글 글자 수 제한
-	private REPlY_MAX_ROW = 10; //댓글 줄 수 제한
+	private REPlY_MAX_LENG: number = 300; //댓글 글자 수 제한
+	private REPlY_MAX_ROW: number = 10; //댓글 줄 수 제한
+	private HOW_MANY_CONTENTS_ON_LIST: number = 20;
 
 	//서울 시간 기준으로 [매일 00:00]에 데이터 초기화
 	@Cron(CronExpression.EVERY_DAY_AT_MIDNIGHT, {
@@ -35,7 +36,10 @@ export class BoardsService {
 
 	async createErrorLog(error: Error){
 		try {
-			const logData = this.errorLogRepository.create({ type: "error", message: error.message, ip: "request.ip", id: "id here" });
+			console.debug(typeof error.stack, error.stack.split("at ")[0]);
+			const errorName = error.name.substring(0, 100);
+			const errorMassage = error.stack.substring(0, 2000);
+			const logData = this.errorLogRepository.create({ type: "error", name: errorName, message: errorMassage, ip: "request.ip", id: "id here" });
 			this.errorLogRepository.insert(logData);
 		}
 		catch (error) {
@@ -111,47 +115,46 @@ export class BoardsService {
 	 * 추천 트랜드 게시글 목록 가져오기
 	 */
 	async getUpvoteTrend(page: number, type: string): Promise<[Boards[], number]> {
-		const searchDate: Date = this.setSearchDate(type);
-		const perPage: number = 10;
-		const upvoteCutline: number = 1;
+		try {
+			const searchDate: Date = this.setSearchDate(type);
+			const perPage: number = 10;
+			const upvoteCutline: number = 1;
 
-		const result = await this.boardsRepository.findAndCount({
-			relations: ["replies"], //댓글 정보 join
-			select: {
-				replies: { code: true },
-				code: true,
-				category: true,
-				writerNickname: true,
-				title: true,
-				view: true,
-				upvote: true,
-				downvote: true,
-				ip: true,
-				hasImage: true,
-				createdAt: true,
-			},
-			where: {
-				deletedAt: IsNull(),
-				upvote: MoreThanOrEqual(upvoteCutline),
-				createdAt: Between(searchDate, new Date()),
-			},
-			order: {
-				upvote: "DESC",
-				view: "DESC",
-				createdAt: "DESC",
-			},
-			withDeleted: true,
-			skip: (page - 1) * perPage,
-			take: perPage,
-		});
+			const result = await this.boardsRepository.findAndCount({
+				relations: ["replies"], //댓글 정보 join
+				select: {
+					replies: { code: true },
+					code: true,
+					category: true,
+					writerNickname: true,
+					title: true,
+					view: true,
+					upvote: true,
+					downvote: true,
+					ip: true,
+					hasImage: true,
+					createdAt: true,
+				},
+				where: {
+					deletedAt: IsNull(),
+					upvote: MoreThanOrEqual(upvoteCutline),
+					createdAt: Between(searchDate, new Date()),
+				},
+				order: {
+					upvote: "DESC",
+					view: "DESC",
+					createdAt: "DESC",
+				},
+				withDeleted: true,
+				skip: (page - 1) * perPage,
+				take: perPage,
+			});
 
-		if (result !== null) {
-			for (let index: number = 0; index < result[0].length; index++) {
-				result[0][index]["ip"] = result[0][index]["ip"].split(".")[0] + (result[0][index]["ip"].split(".")[1] !== undefined ? "." + result[0][index]["ip"].split(".")[1] : "");
-			}
+			return result;
 		}
-
-		return result;
+		catch (error) {
+			this.createErrorLog(error);
+		}
 	}
 
 	/**
@@ -191,12 +194,6 @@ export class BoardsService {
 			skip: (page - 1) * perPage,
 			take: perPage,
 		});
-
-		if (result !== null) {
-			for (let index: number = 0; index < result[0].length; index++) {
-				result[0][index]["ip"] = result[0][index]["ip"].split(".")[0] + (result[0][index]["ip"].split(".")[1] !== undefined ? "." + result[0][index]["ip"].split(".")[1] : "");
-			}
-		}
 
 		return result;
 	}
@@ -240,12 +237,6 @@ export class BoardsService {
 			take: perPage,
 		});
 
-		if (result !== null) {
-			for (let index: number = 0; index < result[0].length; index++) {
-				result[0][index]["ip"] = result[0][index]["ip"].split(".")[0] + (result[0][index]["ip"].split(".")[1] !== undefined ? "." + result[0][index]["ip"].split(".")[1] : "");
-			}
-		}
-
 		return result;
 	}
 
@@ -255,47 +246,51 @@ export class BoardsService {
 	 * 익명 게시판 목록 가져오기
 	 */
 	async getAnonymousContentList(page: number): Promise<[Boards[], number]> {
-		const perPage = 20;
-		const result = await this.boardsRepository.findAndCount({
-			relations: ["replies"], //댓글 정보 join
-			select: {
-				replies: { code: true },
-				code: true,
-				writerNickname: true,
-				title: true,
-				view: true,
-				upvote: true,
-				downvote: true,
-				ip: true,
-				hasImage: true,
-				createdAt: true,
-			},
-			where: {
-				category: Equal("anonymous"),
-				deletedAt: IsNull(),
-			},
-			order: {
-				code: "DESC",
-			},
-			withDeleted: true,
-			skip: (page - 1) * perPage,
-			take: perPage,
-		});
+		try {
+			const result = await this.boardsRepository.findAndCount({
+				relations: ["replies"], //댓글 정보 join
+				select: {
+					replies: { code: true },
+					code: true,
+					writerNickname: true,
+					title: true,
+					view: true,
+					upvote: true,
+					downvote: true,
+					ip: true,
+					hasImage: true,
+					createdAt: true,
+				},
+				where: {
+					category: Equal("anonymous"),
+					deletedAt: IsNull(),
+				},
+				order: {
+					code: "DESC",
+				},
+				withDeleted: true,
+				skip: (page - 1) * this.HOW_MANY_CONTENTS_ON_LIST,
+				take: this.HOW_MANY_CONTENTS_ON_LIST,
+			});
 
-		if (result !== null) {
-			for (let index: number = 0; index < result[0].length; index++) {
-				result[0][index]["ip"] = result[0][index]["ip"].split(".")[0] + (result[0][index]["ip"].split(".")[1] !== undefined ? "." + result[0][index]["ip"].split(".")[1] : "");
+			if (result !== null) {
+				//ip 전체 노출하지 않고 앞부분만 노출
+				for (let index: number = 0; index < result[0].length; index++) {
+					result[0][index]["ip"] = result[0][index]["ip"].split(".")[0] + (result[0][index]["ip"].split(".")[1] !== undefined ? "." + result[0][index]["ip"].split(".")[1] : "");
+				}
 			}
-		}
 
-		return result;
+			return result;
+		}
+		catch (error) {
+			this.createErrorLog(error);
+		}
 	}
 
 	/**
 	 * 유저 게시판 목록 가져오기
 	 */
 	async getUserContentList(page: number): Promise<[Boards[], number]> {
-		const perPage = 20;
 		const result = await this.boardsRepository.findAndCount({
 			relations: ["replies"], //댓글 정보 join
 			select: {
@@ -306,7 +301,6 @@ export class BoardsService {
 				view: true,
 				upvote: true,
 				downvote: true,
-				ip: true,
 				hasImage: true,
 				createdAt: true,
 			},
@@ -318,15 +312,9 @@ export class BoardsService {
 				code: "DESC",
 			},
 			withDeleted: true,
-			skip: (page - 1) * perPage,
-			take: perPage,
+			skip: (page - 1) * this.HOW_MANY_CONTENTS_ON_LIST,
+			take: this.HOW_MANY_CONTENTS_ON_LIST,
 		});
-
-		if (result !== null) {
-			for (let index: number = 0; index < result[0].length; index++) {
-				result[0][index]["ip"] = result[0][index]["ip"].split(".")[0] + (result[0][index]["ip"].split(".")[1] !== undefined ? "." + result[0][index]["ip"].split(".")[1] : "");
-			}
-		}
 
 		return result;
 	}
@@ -669,8 +657,8 @@ export class BoardsService {
 				where: {
 					code: Equal(deleteBoardsDTO.code),
 					category: Equal("user"),
-					password: Equal(deleteBoardsDTO.password),
-					writerID: Equal(""),
+					password: Equal(""),
+					writerID: Equal(loginCookie.id),
 				}
 			});
 
@@ -817,8 +805,6 @@ export class BoardsService {
 
 		if (repliesData[1] !== 0) {
 			for (let index: number = 0; index < repliesData[0].length; index++) {
-				repliesData[0][index]["ip"] = repliesData[0][index]["ip"].split(".")[0] + (repliesData[0][index]["ip"].split(".")[1] !== undefined ? "." + repliesData[0][index]["ip"].split(".")[1] : "");
-
 				if (repliesData[0][index]["deletedAt"] !== null) {
 					repliesData[0][index]["content"] = new Date(repliesData[0][index]["deletedAt"]).toLocaleString("sv-SE") + " 삭제되었습니다";
 				}
@@ -862,8 +848,6 @@ export class BoardsService {
 
 		if (repliesData[1] !== 0) {
 			for (let index: number = 0; index < repliesData[0].length; index++) {
-				repliesData[0][index]["ip"] = repliesData[0][index]["ip"].split(".")[0] + (repliesData[0][index]["ip"].split(".")[1] !== undefined ? "." + repliesData[0][index]["ip"].split(".")[1] : "");
-
 				if (repliesData[0][index]["deletedAt"] !== null) {
 					repliesData[0][index]["content"] = new Date(repliesData[0][index]["deletedAt"]).toLocaleString("sv-SE") + " 삭제되었습니다";
 				}
@@ -1043,8 +1027,76 @@ export class BoardsService {
 		}
 	}
 
+	//===================================
+
 	/**
-	 * 유저 게시판 글 이미지 삽입
+	 * 공지 게시판 목록 가져오기
+	 */
+	async getAnnouncementContentList(page: number): Promise<[Boards[], number]> {
+		const result = await this.boardsRepository.findAndCount({
+			relations: ["replies"], //댓글 정보 join
+			select: {
+				replies: { code: true },
+				code: true,
+				writerNickname: true,
+				title: true,
+				view: true,
+				upvote: true,
+				downvote: true,
+				hasImage: true,
+				createdAt: true,
+			},
+			where: {
+				category: Equal("announcement"),
+				deletedAt: IsNull(),
+			},
+			order: {
+				code: "DESC",
+			},
+			withDeleted: true,
+			skip: (page - 1) * this.HOW_MANY_CONTENTS_ON_LIST,
+			take: this.HOW_MANY_CONTENTS_ON_LIST,
+		});
+
+		return result;
+	}
+
+	/**
+	 * 공지 게시판 글 읽기, 조회수 + 1
+	 */
+	async readAnnouncementContent(request: Request, response: Response, contentCode: number): Promise<{ contentData: Boards, isWriter: boolean }> {
+		if (isNaN(contentCode) === true) {
+			return null;
+		}
+
+		await this.boardsRepository.increment({ code: contentCode }, "view", 1);
+
+		const contentData = await this.boardsRepository.findOne({
+			select: {
+				code: true,
+				category: true,
+				title: true,
+				content: true,
+				view: true,
+				upvote: true,
+				downvote: true,
+				writerID: true,
+				writerNickname: true,
+				ip: true,
+				createdAt: true,
+				updatedAt: true,
+			},
+			where: {
+				code: Equal(contentCode),
+				category: Equal("announcement"),
+			},
+		});
+
+		return { contentData: contentData, isWriter: false };
+	}
+
+	/**
+	 * 게시판 글 이미지 삽입
 	 */
 	async uploadImage(file: Express.Multer.File): Promise<{ url: string } | { error: { message: string } }> {
 		// const timeOfNow = new Date();

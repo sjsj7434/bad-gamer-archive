@@ -2,10 +2,10 @@ import { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from "react-router-dom";
 import Container from 'react-bootstrap/Container';
 import Button from 'react-bootstrap/Button';
-import CustomPagination from './CustomPagination';
-import * as contentBoardFetch from '../../js/contentBoardFetch';
+import CustomPagination from '../CustomPagination';
+import * as contentBoardFetch from '../../../js/contentBoardFetch';
 
-const ContentBoard = (props) => {
+const UserContentList = () => {
 	const [page, setPage] = useState(null);
 	const [renderData, setRenderData] = useState(<></>);
 	
@@ -28,7 +28,7 @@ const ContentBoard = (props) => {
 
 	useEffect(() => {
 		const readContentList = async () => {
-			const contentListData = await contentBoardFetch.readContentList(props.boardType, page);
+			const contentListData = await contentBoardFetch.readContentList("user", page);
 
 			setContentList(contentListData[0]);
 			setContentCount(contentListData[1]);
@@ -37,7 +37,7 @@ const ContentBoard = (props) => {
 		if(page !== null){
 			readContentList();
 		}
-	}, [page, props.boardType])
+	}, [page])
 
 	useEffect(() => {
 		if(contentList !== null && contentCount !== null){
@@ -46,7 +46,7 @@ const ContentBoard = (props) => {
 			if(contentList !== null){
 				if(contentList.length === 0){
 					renderList.push(
-						<div key={"noContent"}>
+						<div key={"noContent"} style={{ height: 300 }}>
 							<span style={{color: "gray", fontSize: "0.85rem"}}>작성된 게시글이 없습니다</span>
 						</div>
 					);
@@ -56,7 +56,7 @@ const ContentBoard = (props) => {
 						return(
 							<Link
 								key={"content" + data.code}
-								to={`/lostark/board/${props.boardType}/view/${data.code}`}
+								to={`/lostark/board/user/view/${data.code}`}
 								style={{
 									textDecoration: "none",
 								}}
@@ -100,7 +100,7 @@ const ContentBoard = (props) => {
 												</div>
 											</div>
 											<div style={{fontSize: "0.75rem", color: "#5a5a5a", maxWidth: "95%", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap"}}>
-												<span>{data.writerNickname === "" ? `익명 (${data.ip})` : data.writerNickname}</span>
+												<span>{data.writerNickname}</span>
 												&nbsp;|&nbsp;
 												<span>{new Date(data.createdAt).toLocaleDateString("sv-SE").replace(/-/g, ".")}</span>
 												&nbsp;
@@ -133,12 +133,12 @@ const ContentBoard = (props) => {
 				setRenderData(renderList);
 			}
 		}
-	}, [contentCount, contentList, props.boardType])
+	}, [contentCount, contentList])
 
 	useEffect(() => {
 		const pageMoveFunc = (pageIndex) => {
 			document.querySelector("h5").scrollIntoView({ behavior: "smooth", block: "center" });
-			navigate(`/lostark/board/${props.boardType}/${pageIndex}`);
+			navigate(`/lostark/board/user/${pageIndex}`);
 		}
 
 		setPaginationData(
@@ -146,7 +146,7 @@ const ContentBoard = (props) => {
 				<CustomPagination currentPage={page} contentPerPage={contentPerPage} contentCount={contentCount} howManyPages={howManyPages} pageMoveFunc={pageMoveFunc}/>
 			</div>
 		);
-	}, [page, contentCount, navigate, props.boardType])
+	}, [page, contentCount, navigate])
 	
 	return(
 		<Container style={{maxWidth: "1200px"}}>
@@ -156,7 +156,7 @@ const ContentBoard = (props) => {
 						<path d="M.5 0a.5.5 0 0 1 .5.5v15a.5.5 0 0 1-1 0V.5A.5.5 0 0 1 .5 0zM2 1.5a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-4a.5.5 0 0 1-.5-.5v-1zm2 4a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-7a.5.5 0 0 1-.5-.5v-1zm2 4a.5.5 0 0 1 .5-.5h6a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-6a.5.5 0 0 1-.5-.5v-1zm2 4a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-7a.5.5 0 0 1-.5-.5v-1z"/>
 					</svg>
 					&nbsp;
-					{props.boardTitle}
+					인증된 유저
 				</h5>
 				<hr/>
 			</div>
@@ -167,7 +167,7 @@ const ContentBoard = (props) => {
 				</div>
 
 				<div style={{display: "flex", justifyContent: "flex-end"}}>
-					<Link to={`/lostark/board/${props.boardType}/write`} style={{width: "30%", maxWidth: "200px"}}>
+					<Link to={`/lostark/board/user/write`} style={{width: "30%", maxWidth: "200px"}}>
 						<Button id={"createReply"} variant="outline-primary" style={{width: "100%", padding: "1px"}}>
 							<span style={{fontSize: "0.8rem"}}>글쓰기</span>
 						</Button>
@@ -180,4 +180,4 @@ const ContentBoard = (props) => {
 	);
 }
 
-export default ContentBoard;
+export default UserContentList;

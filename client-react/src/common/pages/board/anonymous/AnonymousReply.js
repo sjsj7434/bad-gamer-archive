@@ -86,7 +86,7 @@ const AnonymousReply = (props) => {
 						password: deletePassword,
 					}
 
-					const deleteResult = await repliesFetch.deleteReply(props.boardType, sendData);
+					const deleteResult = await repliesFetch.deleteReply("anonymous", sendData);
 
 					if(deleteResult === null){
 						alert("댓글 삭제 중 오류가 발생하였습니다(1)");
@@ -158,7 +158,7 @@ const AnonymousReply = (props) => {
 				content: formElement.content.value,
 			}
 
-			const createResult = await repliesFetch.createReply(props.boardType, sendData);
+			const createResult = await repliesFetch.createReply("anonymous", sendData);
 
 			if(createResult === null){
 				alert("답글 작성 중 오류가 발생하였습니다(1)");
@@ -174,7 +174,7 @@ const AnonymousReply = (props) => {
 		}
 
 		if(props.contentCode !== null){
-			const replyArray = await repliesFetch.getReplies(props.boardType, props.contentCode, currentPage);
+			const replyArray = await repliesFetch.getReplies("anonymous", props.contentCode, currentPage);
 
 			if(replyArray !== null){
 				if(replyArray[1] === 0){
@@ -306,7 +306,7 @@ const AnonymousReply = (props) => {
 				}
 			}
 		}
-	}, [props.contentCode, props.boardType])
+	}, [props.contentCode])
 
 	/**
 	 * 댓글 작성할 떄 글자 수 제한 확인
@@ -355,7 +355,7 @@ const AnonymousReply = (props) => {
 				content: replyDataElement.value,
 			}
 
-			const createResult = await repliesFetch.createReply(props.boardType, sendData);
+			const createResult = await repliesFetch.createReply("anonymous", sendData);
 
 			if(createResult === null){
 				alert("댓글 작성 중 오류가 발생하였습니다(1)");
@@ -368,7 +368,7 @@ const AnonymousReply = (props) => {
 				document.querySelector("#replyForm").reset();
 			}
 		}
-	}, [props.contentCode, props.boardType, getReplies])
+	}, [props.contentCode, getReplies])
 
 	useEffect(() => {
 		getReplies(1);

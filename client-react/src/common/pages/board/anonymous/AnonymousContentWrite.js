@@ -13,7 +13,7 @@ import LoadingModal from '../../common/LoadingModal';
 import * as contentBoardFetch from '../../../js/contentBoardFetch';
 import '../../../css/View.css';
 
-const ContentWriteAnonymous = (props) => {
+const AnonymousContentWrite = (props) => {
 	const [writeMode, setWriteMode] = useState("");
 	const [contentCode, setContentCode] = useState(null);
 	const [renderData, setRenderData] = useState(<></>);
@@ -72,10 +72,10 @@ const ContentWriteAnonymous = (props) => {
 			writerNickname: "",
 		};
 
-		await contentBoardFetch.createContent(props.boardType, sendData);
+		await contentBoardFetch.createContent("anonymous", sendData);
 
 		navigate(`/lostark/board/anonymous/1`);
-	}, [editorObject, editorSizeByte, editorMaxKB, navigate, props.boardType])
+	}, [editorObject, editorSizeByte, editorMaxKB, navigate])
 
 	/**
 	 * 게시글 수정
@@ -113,7 +113,7 @@ const ContentWriteAnonymous = (props) => {
 			writerID: "",
 		};
 
-		let result = await contentBoardFetch.updateContent(props.boardType, sendData);
+		let result = await contentBoardFetch.updateContent("anonymous", sendData);
 
 		if(result === null){
 			alert("문제가 발생하여 게시글을 수정할 수 없습니다(1)");
@@ -129,7 +129,7 @@ const ContentWriteAnonymous = (props) => {
 			//정상적으로 처리 성공
 			navigate(`/lostark/board/anonymous/view/${contentCode}`);
 		}
-	}, [contentCode, contentPassword, editorObject, editorSizeByte, editorMaxKB, navigate, props.boardType])
+	}, [contentCode, contentPassword, editorObject, editorSizeByte, editorMaxKB, navigate])
 
 	useEffect(() => {
 		if(params.contentCode !== undefined){
@@ -147,7 +147,7 @@ const ContentWriteAnonymous = (props) => {
 		 * 게시글 정보 가져오기
 		 */
 		const getContentData = async () => {
-			const readResult = await contentBoardFetch.getContentData(props.boardType, contentCode);
+			const readResult = await contentBoardFetch.getContentData("anonymous", contentCode);
 			const contentData = readResult.contentData;
 	
 			setContentTitle(contentData.title);
@@ -157,7 +157,7 @@ const ContentWriteAnonymous = (props) => {
 		if(contentCode !== null && identity === true){
 			getContentData();
 		}
-	}, [contentCode, identity, props.boardType])
+	}, [contentCode, identity])
 
 	useEffect(() => {
 		/**
@@ -181,7 +181,7 @@ const ContentWriteAnonymous = (props) => {
 				password: contentPasswordElement.value,
 			};
 			
-			const checkResult = await contentBoardFetch.checkBeforeEdit(props.boardType, sendData)
+			const checkResult = await contentBoardFetch.checkBeforeEdit("anonymous", sendData)
 
 			if(checkResult === true){
 				setIdentity(true);
@@ -336,7 +336,7 @@ const ContentWriteAnonymous = (props) => {
 				}
 			}
 		}
-	}, [writeMode, contentCode, contentTitle, contentData, identity, failMessage, editorObject, editorSizeByte, saveEditorData, editEditorData, navigate, props.boardType])
+	}, [writeMode, contentCode, contentTitle, contentData, identity, failMessage, editorObject, editorSizeByte, saveEditorData, editEditorData, navigate])
 	
 	return(
 		<Container style={{maxWidth: "1000px"}}>
@@ -346,4 +346,4 @@ const ContentWriteAnonymous = (props) => {
 	);
 }
 
-export default ContentWriteAnonymous;
+export default AnonymousContentWrite;
