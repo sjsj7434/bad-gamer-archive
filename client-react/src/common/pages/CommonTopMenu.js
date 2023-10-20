@@ -63,9 +63,9 @@ const CommonTopMenu = (props) => {
 						<Button variant="dark" style={{ fontSize: "0.8rem", padding: "0px" }}>
 							<Nav.Link active={props.currentMenu === "/lostark/useful" ? true : false} onClick={() => menuClick("/lostark/useful")}>유용한 사이트</Nav.Link>
 						</Button>
-						<Button variant="dark" style={{ fontSize: "0.8rem", padding: "0px" }}>
+						{/* <Button variant="dark" style={{ fontSize: "0.8rem", padding: "0px" }}>
 							<Nav.Link active={props.currentMenu === "/help" ? true : false} onClick={() => menuClick("/help")}>고객센터</Nav.Link>
-						</Button>
+						</Button> */}
 					</Nav>
 
 					<Nav style={{ flexDirection: "row" }}>
@@ -194,7 +194,7 @@ const CommonTopMenu = (props) => {
 								<Nav.Link active={props.currentMenu === "/lostark/board/anonymous" ? true : false} onClick={() => menuClick("/lostark/board/anonymous/1")}>수라도</Nav.Link>
 								<Nav.Link active={props.currentMenu === "/lostark/board/user" ? true : false} onClick={() => menuClick("/lostark/board/user/1")}>유저 게시판</Nav.Link>
 								<Nav.Link active={props.currentMenu === "/lostark/useful" ? true : false} onClick={() => menuClick("/lostark/useful")}>유용한 사이트</Nav.Link>
-								<Nav.Link active={props.currentMenu === "/help" ? true : false} onClick={() => menuClick("/help")}>고객센터</Nav.Link>
+								{/* <Nav.Link active={props.currentMenu === "/help" ? true : false} onClick={() => menuClick("/help")}>고객센터</Nav.Link> */}
 								
 								<hr style={{ width: "100%" }}></hr>
 
@@ -261,7 +261,7 @@ const CommonTopMenu = (props) => {
 							<Nav.Link style={{ marginRight: "1.4rem" }} active={props.currentMenu === "/lostark/board/anonymous" ? true : false} onClick={() => menuClick("/lostark/board/anonymous/1")}>수라도</Nav.Link>
 							<Nav.Link style={{ marginRight: "1.4rem" }} active={props.currentMenu === "/lostark/board/user" ? true : false} onClick={() => menuClick("/lostark/board/user/1")}>유저 게시판</Nav.Link>
 							<Nav.Link style={{ marginRight: "1.4rem" }} active={props.currentMenu === "/lostark/useful" ? true : false} onClick={() => menuClick("/lostark/useful")}>유용한 사이트</Nav.Link>
-							<Nav.Link style={{ marginRight: "0.6rem" }} active={props.currentMenu === "/help" ? true : false} onClick={() => menuClick("/help")}>고객센터</Nav.Link>
+							{/* <Nav.Link style={{ marginRight: "0.6rem" }} active={props.currentMenu === "/help" ? true : false} onClick={() => menuClick("/help")}>고객센터</Nav.Link> */}
 						</Nav>
 						&nbsp;
 						<svg xmlns="http://www.w3.org/2000/svg" width="1rem" height="1rem" fill="lightgray" className="bi bi-arrow-right-square" viewBox="0 0 16 16">
