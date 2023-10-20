@@ -12,11 +12,9 @@ export class CreateBoardsDTO extends OmitType(Boards, ["code", "createdAt"] as c
 	password: string;
 	@IsBoolean()
 	hasImage: boolean;
-	@IsOptional()
-	@IsString()
+	@IsOptional() @IsString()
 	writerID: string;
-	@IsOptional()
-	@IsString()
+	@IsOptional() @IsString()
 	writerNickname: string;
 }
 
@@ -33,6 +31,8 @@ export class UpdateBoardsDTO extends PartialType(Boards) {
 	hasImage: boolean;
 	@IsOptional() @IsString()
 	writerID: string;
+	@IsOptional() @IsString()
+	writerNickname: string;
 }
 
 export class DeleteBoardsDTO extends PickType(Boards, ["code", "password", "writerID"] as const) {

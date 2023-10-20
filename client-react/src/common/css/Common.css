@@ -15,6 +15,7 @@
 	}
 	.tabletOver{
 		display: block;
+		height: 60px;
 	}
 	.mobileOver{
 		display: block;
@@ -42,6 +43,7 @@
 	}
 	.tabletOver{
 		display: block;
+		height: 60px;
 	}
 	.mobileOver{
 		display: block;
@@ -62,6 +64,7 @@
 	}
 	.mobileOnly{
 		display: block;
+		height: 54px;
 	}
 
 	.desktopOver{

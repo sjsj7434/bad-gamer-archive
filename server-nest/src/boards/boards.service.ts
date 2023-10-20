@@ -598,6 +598,7 @@ export class BoardsService {
 		const loginCookie = await this.accountsService.checkLoginStatus(request, response);
 
 		if (loginCookie.status === "login") {
+			console.log(loginCookie.id, updateBoardsDTO.writerID)
 			if (loginCookie.id !== updateBoardsDTO.writerID) {
 				//위의 값이 아니면 누군가 값을 조작하여 전송했을 가능성이 있으므로 게시글 저장 차단
 				return false;
@@ -609,7 +610,7 @@ export class BoardsService {
 				where: {
 					code: Equal(updateBoardsDTO.code),
 					category: Equal("user"),
-					password: Equal(updateBoardsDTO.password),
+					password: Equal(""),
 					writerID: Equal(updateBoardsDTO.writerID),
 				}
 			});

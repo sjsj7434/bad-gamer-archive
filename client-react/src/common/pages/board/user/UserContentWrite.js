@@ -104,11 +104,12 @@ const UserContentWrite = (props) => {
 
 		const sendData = {
 			code: contentCode,
-			password: contentPassword,
 			title: titleElement.value,
 			content: editorContet,
+			password: "",
 			hasImage: editorContet.indexOf("<img") > -1 ? true : false,
 			writerID: props.accountData.id,
+			writerNickname: props.accountData.nickname,
 		};
 
 		let result = await contentBoardFetch.updateContent("user", sendData);
