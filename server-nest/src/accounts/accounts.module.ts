@@ -1,6 +1,5 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { CacheModule } from '@nestjs/cache-manager';
 import { AccountsController } from './accounts.controller';
 import { AccountsService } from './accounts.service';
 import { Accounts } from './accounts.entity';
@@ -15,7 +14,6 @@ import { Authentication } from './authentication.entity';
 		TypeOrmModule.forFeature([
 			Accounts, Level, Authentication
 		]),
-		CacheModule.register(),
 	],
 	controllers: [ AccountsController ],
 	providers: [ AccountsService ],

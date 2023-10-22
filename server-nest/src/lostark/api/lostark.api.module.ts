@@ -13,8 +13,8 @@ import { LostarkAPIService } from './lostark.api.service';
 	imports: [
 		HttpModule,
 	],
-	controllers: [LostarkAPIController],
-	providers: [LostarkAPIService],
-	exports: [LostarkAPIService],
+	controllers: [ LostarkAPIController ],
+	providers: [ LostarkAPIService ],
+	exports: [ LostarkAPIService ],
 })
 export class LostarkApiModule {}

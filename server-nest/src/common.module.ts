@@ -5,13 +5,14 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ScheduleModule } from '@nestjs/schedule';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
+import { CacheModule } from '@nestjs/cache-manager';
 
 const environmentHere: string = "dev"; //작업 환경 변수 : dev, prod
 
 /**
  * 공통으로 사용하는 기능 모듈
  * 
- * imports: ConfigModule, DB Connection, ServeStaticModule, ScheduleModule
+ * imports: ConfigModule(Global), DB Connection, ServeStaticModule, ScheduleModule, CacheModule(Global)
  */
 @Module({
 	imports: [
@@ -44,6 +45,10 @@ const environmentHere: string = "dev"; //작업 환경 변수 : dev, prod
 		}),
 
 		ScheduleModule.forRoot(), //Cron 작업
+
+		CacheModule.register({ //It acts as a temporary data store providing high performance data access
+			isGlobal: true, //When you want to use CacheModule in other modules
+		})
 	],
 	controllers: [],
 	providers: [],
