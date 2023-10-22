@@ -16,7 +16,6 @@ const UserContentWrite = (props) => {
 	const [renderData, setRenderData] = useState(<></>);
 	const [contentTitle, setContentTitle] = useState("");
 	const [contentData, setContentData] = useState("");
-	const [contentPassword, setContentPassword] = useState("");
 	const [identity, setIdentity] = useState(false);
 	const [editorSizeByte, setEditorSizeByte] = useState(0);
 	const [loadingModalShow, setLoadingModalShow] = useState(false);
@@ -128,7 +127,7 @@ const UserContentWrite = (props) => {
 			//정상적으로 처리 성공
 			navigate(`/lostark/board/user/view/${contentCode}`);
 		}
-	}, [contentCode, contentPassword, editorObject, editorSizeByte, editorMaxKB, navigate, props.accountData.id])
+	}, [contentCode, editorObject, editorSizeByte, editorMaxKB, navigate, props.accountData.id, props.accountData.nickname])
 
 	useEffect(() => {
 		if(params.contentCode !== undefined){
@@ -174,7 +173,6 @@ const UserContentWrite = (props) => {
 
 			if(checkResult === true){
 				setIdentity(true);
-				setContentPassword(props.accountData.id);
 			}
 			else{
 				alert("작성자가 아닙니다");
