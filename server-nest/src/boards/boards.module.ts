@@ -5,14 +5,15 @@ import { Replies } from './replies.entity';
 import { AccountsModule } from 'src/accounts/accounts.module';
 import { BoardsController } from './boards.controller';
 import { BoardsService } from './boards.service';
-import { ErrorLog } from 'src/log/error.log.entity';
+import { ErrorLogModule } from 'src/log/error.log.module';
 
 @Module({
 	imports: [
 		AccountsModule,
+		ErrorLogModule,
 
 		TypeOrmModule.forFeature([
-			Boards, Replies, ErrorLog
+			Boards, Replies
 		]),
 	],
 	controllers: [ BoardsController ],

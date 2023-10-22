@@ -8,15 +8,15 @@ import { Cron, CronExpression } from '@nestjs/schedule';
 import { CreateRepliesDTO, DeleteRepliesDTO } from './replies.dto';
 import { AccountsService } from 'src/accounts/accounts.service';
 import { Request, Response } from 'express';
-import { ErrorLog } from 'src/log/error.log.entity';
+import { ErrorLogService } from 'src/log/error.log.service';
 
 @Injectable()
 export class BoardsService {
 	constructor(
 		@InjectRepository(Boards) private boardsRepository: Repository<Boards>,
 		@InjectRepository(Replies) private repliesRepository: Repository<Replies>,
-		@InjectRepository(ErrorLog) private errorLogRepository: Repository<ErrorLog>,
 		private accountsService: AccountsService,
+		private errorLogService: ErrorLogService,
 	) { }
 
 	private VOTE_HISTORY: Map<number, Array<string>> = new Map();
@@ -32,19 +32,6 @@ export class BoardsService {
 	resetAnonymousVoteData() {
 		this.VOTE_HISTORY.clear();
 		console.log("[익명 추천 초기화] Reset data every day at 00:00");
-	}
-
-	async createErrorLog(error: Error){
-		try {
-			console.debug(typeof error.stack, error.stack.split("at ")[0]);
-			const errorName = error.name.substring(0, 100);
-			const errorMassage = error.stack.substring(0, 2000);
-			const logData = this.errorLogRepository.create({ type: "error", name: errorName, message: errorMassage, ip: "request.ip", id: "id here" });
-			this.errorLogRepository.insert(logData);
-		}
-		catch (error) {
-			console.error("[심각함] 로그를 삽입할 수 없습니다", error);
-		}
 	}
 
 	isVotableContent(contentCode: number, ipData: string): boolean {
@@ -65,7 +52,7 @@ export class BoardsService {
 			}
 		}
 		catch (error) {
-			this.createErrorLog(error);
+			this.errorLogService.createErrorLog(error);
 		}
 	}
 
@@ -154,7 +141,7 @@ export class BoardsService {
 			return result;
 		}
 		catch (error) {
-			this.createErrorLog(error);
+			this.errorLogService.createErrorLog(error);
 		}
 	}
 
@@ -286,7 +273,7 @@ export class BoardsService {
 			return result;
 		}
 		catch (error) {
-			this.createErrorLog(error);
+			this.errorLogService.createErrorLog(error);
 		}
 	}
 

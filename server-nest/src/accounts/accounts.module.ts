@@ -19,8 +19,8 @@ import { ErrorLogModule } from 'src/log/error.log.module';
 		]),
 		CacheModule.register(),
 	],
-	controllers: [AccountsController,],
-	providers: [AccountsService],
-	exports: [AccountsService],
+	controllers: [ AccountsController ],
+	providers: [ AccountsService ],
+	exports: [ AccountsService ],
 })
 export class AccountsModule {}

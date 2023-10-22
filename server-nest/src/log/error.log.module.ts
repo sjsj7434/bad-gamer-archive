@@ -10,7 +10,7 @@ import { ErrorLogService } from './error.log.service';
 		]),
 	],
 	controllers: [],
-	providers: [ErrorLogService],
-	exports: [ErrorLogService],
+	providers: [ ErrorLogService ],
+	exports: [ ErrorLogService ],
 })
 export class ErrorLogModule {}
