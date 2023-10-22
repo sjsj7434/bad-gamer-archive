@@ -5,6 +5,7 @@ import { ErrorLogService } from './error.log.service';
 
 /**
  * 오류 로그 남기는 모듈(전역 모듈)
+ * 
  * GlobalModule에 포함되어 있음
  */
 @Global()

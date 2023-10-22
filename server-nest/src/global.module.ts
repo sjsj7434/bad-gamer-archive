@@ -4,7 +4,8 @@ import { LostarkApiModule } from './lostark/api/lostark.api.module';
 
 /**
  * Global 모듈
- * ErrorLogModule, LostarkApiModule
+ * 
+ * imports: ErrorLogModule, LostarkApiModule
  */
 @Module({
 	imports: [

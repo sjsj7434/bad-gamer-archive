@@ -8,6 +8,8 @@ import { Replies } from './replies.entity';
 
 /**
  * 게시판 관련 기능 모듈
+ * 
+ * imports: AccountsModule
  */
 @Module({
 	imports: [

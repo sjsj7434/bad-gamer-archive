@@ -5,6 +5,7 @@ import { LostarkAPIService } from './lostark.api.service';
 
 /**
  * 로스트아크 API 호출(전역 모듈)
+ * 
  * GlobalModule에 포함되어 있음
  */
 @Global()

@@ -10,7 +10,8 @@ const environmentHere: string = "dev"; //작업 환경 변수 : dev, prod
 
 /**
  * 공통으로 사용하는 기능 모듈
- * GlobalModule, ConfigModule, DB Connection, ServeStaticModule, ScheduleModule
+ * 
+ * imports: ConfigModule, DB Connection, ServeStaticModule, ScheduleModule
  */
 @Module({
 	imports: [
