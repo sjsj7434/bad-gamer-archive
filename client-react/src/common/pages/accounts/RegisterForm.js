@@ -36,7 +36,7 @@ const RegisterForm = () => {
 		}
 		else if(emailValid !== 2){
 			alert("이메일을 확인해주세요");
-			form.nicknameInput.focus();
+			form.emailInput.focus();
 			return false;
 		}
 		else if(passwordValid !== 2){
