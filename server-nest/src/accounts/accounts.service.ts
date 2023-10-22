@@ -489,16 +489,14 @@ export class AccountsService {
 	 * code에 맞는 계정을 삭제(논리 삭제)
 	 * find > 정보 수정 > softDelete 처리
 	 */
-	async deleteAccount(request: Request, response: Response, deleteAccountsDTO: DeleteAccountsDTO) {
+	async deleteAccount(request: Request, response: Response): Promise<boolean> {
 		const loginUUID = this.LOGIN_SESSION.get(request.cookies["sessionCode"]); //로그인한 정보
 
-		const isExists: boolean = await this.accountsRepository.exist({ where: { uuid: Equal(loginUUID), id: Equal(deleteAccountsDTO.id), password: Equal(deleteAccountsDTO.password) } });
+		const isExists: boolean = await this.accountsRepository.exist({ where: { uuid: Equal(loginUUID) } });
 
 		if (isExists === true){
 			await this.accountsRepository.softDelete({
 				uuid: loginUUID,
-				id: deleteAccountsDTO.id,
-				password: deleteAccountsDTO.password
 			});
 		}
 

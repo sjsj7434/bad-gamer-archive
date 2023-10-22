@@ -28,8 +28,8 @@ export class  AccountsController {
 	}
 
 	@Delete()
-	async deleteAccount(@Req() request: Request, @Res({ passthrough: true }) response: Response, deleteAccountsDTO: DeleteAccountsDTO) {
-		await this.accountsService.deleteAccount(request, response, deleteAccountsDTO);
+	async deleteAccount(@Req() request: Request, @Res({ passthrough: true }) response: Response): Promise<boolean> {
+		return await this.accountsService.deleteAccount(request, response);
 	}
 
 	//스토브 로아 캐릭터 인증

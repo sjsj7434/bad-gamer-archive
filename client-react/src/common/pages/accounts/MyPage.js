@@ -33,6 +33,23 @@ const MyPage = () => {
 		callMyInfo();
 	}, [callMyInfo])
 
+	const deleteAccount = useCallback(async () => {
+		if(window.confirm("탈퇴를 진행하시겠습니까?") === false){
+			return;
+		}
+
+		const deleteResult = await accountsFetch.deleteAccount();
+		console.log("deleteResult : ", deleteResult);
+
+		if(deleteResult === true){
+			alert("정상적으로 탈퇴 처리되었습니다");
+		}
+		else{
+			alert("게정을 탈퇴 처리할 수 없습니다");
+		}
+		navigate("/");
+	}, [navigate])
+
 	// const clickREQ = async () => {
 	// 	await accountsFetch.requestVerifyEmail();
 	// }
@@ -260,13 +277,13 @@ const MyPage = () => {
 						</Row>
 
 						<div className="d-grid gap-2" style={{ marginTop: "1.5rem" }}>
-							<Button variant="danger" size="lg" onClick={() => {navigate("leave")}} style={{ fontSize: "0.8rem" }}>회원탈퇴</Button>
+							<Button variant="danger" size="lg" onClick={() => { deleteAccount() }} style={{ fontSize: "0.8rem" }}>회원탈퇴</Button>
 						</div>
 					</div>
 				</Container>
 			);
 		}
-	}, [accountData, isLoading, loadingMessage, callMyInfo, navigate])
+	}, [accountData, isLoading, loadingMessage, callMyInfo, deleteAccount, navigate])
 
 	return renderData;
 }

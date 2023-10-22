@@ -551,3 +551,28 @@ export const checkPasswordForgotCode = async (verificationCode) => {
 		return null;
 	}
 }
+
+/**
+ * 회원탈퇴
+ */
+export const deleteAccount = async () => {
+	const fecthOption = {
+		method: "DELETE"
+		, headers: {"Content-Type": "application/json",}
+		, credentials: "include", // Don't forget to specify this if you need cookies
+	};
+	const fetchResponse = await fetch(`${process.env.REACT_APP_SERVER}/accounts`, fecthOption);
+	const [isStatusGood, checkMessage] = isFetchStatusGood(fetchResponse);
+
+	if(isStatusGood === true){
+		const fetchData = await getFetchText(fetchResponse);
+		console.log('deleteAccount =>', fetchData)
+
+		return fetchData;
+	}
+	else{
+		alert(checkMessage);
+
+		return null;
+	}
+}
