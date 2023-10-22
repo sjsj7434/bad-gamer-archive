@@ -1,19 +1,17 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Accounts } from './accounts.entity';
+import { CacheModule } from '@nestjs/cache-manager';
 import { AccountsController } from './accounts.controller';
 import { AccountsService } from './accounts.service';
-import { CacheModule } from '@nestjs/cache-manager';
+import { Accounts } from './accounts.entity';
 import { Level } from './level.entity';
 import { Authentication } from './authentication.entity';
-import { LostarkModule } from '../lostark/api/lostark.module';
-import { ErrorLogModule } from 'src/log/error.log.module';
 
+/**
+ * 사용자 계정 관련 기능 모듈
+ */
 @Module({
 	imports: [
-		LostarkModule,
-		ErrorLogModule,
-
 		TypeOrmModule.forFeature([
 			Accounts, Level, Authentication
 		]),
