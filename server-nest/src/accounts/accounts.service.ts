@@ -12,6 +12,7 @@ import { Request, Response } from 'express';
 import { Authentication } from './authentication.entity';
 import { LostarkAPIService } from 'src/lostark/api/lostark.api.service';
 import { Cron, CronExpression } from '@nestjs/schedule';
+import { ErrorLogService } from 'src/log/error.log.service';
 
 @Injectable()
 export class AccountsService {
@@ -20,6 +21,7 @@ export class AccountsService {
 		@InjectRepository(Authentication) private authenticationRepository: Repository<Authentication>,
 		@Inject(CACHE_MANAGER) private cacheManager: Cache,
 		private lostarkAPIService: LostarkAPIService,
+		private errorLogService: ErrorLogService,
 	) { }
 
 	private LOGIN_FAIL_LIMIT: number = 5; //로그인 최대 실패
@@ -431,7 +433,7 @@ export class AccountsService {
 			where: {
 				id: Equal(accountID),
 			},
-			withDeleted: true,
+			// withDeleted: true, //에러 로그 쌓이는 것 테스트 중
 		});
 	}
 
@@ -489,7 +491,8 @@ export class AccountsService {
 			}
 		}
 		catch (error) {
-			console.error(error);
+			// console.error(error);
+			this.errorLogService.createErrorLog(error);
 		}
 	}
 
