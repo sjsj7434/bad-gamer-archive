@@ -2,7 +2,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Equal, In, IsNull, Not, Repository } from 'typeorm';
 import { Accounts } from './accounts.entity';
-import { CreateAccountsDTO, DeleteAccountsDTO, UpdateAccountsDTO } from './accounts.dto';
+import { CreateAccountsDTO, UpdateAccountsDTO } from './accounts.dto';
 import { randomBytes } from 'crypto';
 import puppeteer from 'puppeteer';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
@@ -431,6 +431,7 @@ export class AccountsService {
 			where: {
 				id: Equal(accountID),
 			},
+			withDeleted: true,
 		});
 	}
 
@@ -442,6 +443,7 @@ export class AccountsService {
 			where: {
 				nickname: Equal(accountNickname),
 			},
+			withDeleted: true,
 		});
 	}
 
@@ -449,39 +451,45 @@ export class AccountsService {
 	 * 중복되는 정보가 있는지 확인 후 계정을 생성한다
 	 */
 	async createAccount(createAccountsDTO: CreateAccountsDTO): Promise<number> {
-		const uniqueUUID: string = await this.getUniqueUUID();
-		const idExists: boolean = await this.isExistsID(createAccountsDTO.id);
-		const nicknameExists: boolean = await this.isExistsNickname(createAccountsDTO.nickname);
-		if (idExists === true && nicknameExists === true) {
-			return 0; //이미 ID & Nickname 존재
-		}
-		else if (idExists === true) {
-			return 1; //이미 ID 존재
-		}
-		else if (nicknameExists === true) {
-			return 2; //이미 Nickname 존재
-		}
-		else if (uniqueUUID === ""){
-			return 5; //unique uuid를 생성할 수 없음
-		}
-		else{
-			const saltRounds: number = 10;
-			const password: string = createAccountsDTO.password;
-			const encryptSalt: string = await bcrypt.genSalt(saltRounds);
-			const hash = await bcrypt.hash(password, encryptSalt);
-			const isMatch = await bcrypt.compare(password, hash);
+		try {
+			const uniqueUUID: string = await this.getUniqueUUID();
+			const idExists: boolean = await this.isExistsID(createAccountsDTO.id);
+			const nicknameExists: boolean = await this.isExistsNickname(createAccountsDTO.nickname);
 
-			if (isMatch === false){
-				return 3; //비밀번호 암호화 도중 오류 발생
+			if (idExists === true && nicknameExists === true) {
+				return 0; //이미 ID & Nickname 존재
 			}
-			else {
-				createAccountsDTO.uuid = uniqueUUID;
-				createAccountsDTO.password = hash;
-
-				await this.accountsRepository.save(createAccountsDTO);
-
-				return 4; //정상 처리
+			else if (idExists === true) {
+				return 1; //이미 ID 존재
 			}
+			else if (nicknameExists === true) {
+				return 2; //이미 Nickname 존재
+			}
+			else if (uniqueUUID === ""){
+				return 5; //unique uuid를 생성할 수 없음
+			}
+			else{
+				const saltRounds: number = 10;
+				const password: string = createAccountsDTO.password;
+				const encryptSalt: string = await bcrypt.genSalt(saltRounds);
+				const hash = await bcrypt.hash(password, encryptSalt);
+				const isMatch = await bcrypt.compare(password, hash);
+
+				if (isMatch === false){
+					return 3; //비밀번호 암호화 도중 오류 발생
+				}
+				else {
+					createAccountsDTO.uuid = uniqueUUID;
+					createAccountsDTO.password = hash;
+
+					await this.accountsRepository.save(createAccountsDTO);
+
+					return 4; //정상 처리
+				}
+			}
+		}
+		catch (error) {
+			console.error(error);
 		}
 	}
 

@@ -1,6 +1,6 @@
 import { Param, Controller, Get, Post, Put, Delete, Body, Res, Req, Patch, NotFoundException } from '@nestjs/common';
 import { AccountsService } from './accounts.service';
-import { CreateAccountsDTO, DeleteAccountsDTO, UpdateAccountsDTO } from './accounts.dto';
+import { CreateAccountsDTO, UpdateAccountsDTO } from './accounts.dto';
 import { Request, Response } from 'express';
 import { Accounts } from './accounts.entity';
 import { UpdateAuthenticationDTO } from './authentication.dto';

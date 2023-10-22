@@ -7,10 +7,12 @@ import { CacheModule } from '@nestjs/cache-manager';
 import { Level } from './level.entity';
 import { Authentication } from './authentication.entity';
 import { LostarkModule } from '../lostark/api/lostark.module';
+import { ErrorLogModule } from 'src/log/error.log.module';
 
 @Module({
 	imports: [
 		LostarkModule,
+		ErrorLogModule,
 
 		TypeOrmModule.forFeature([
 			Accounts, Level, Authentication
@@ -18,7 +20,7 @@ import { LostarkModule } from '../lostark/api/lostark.module';
 		CacheModule.register(),
 	],
 	controllers: [AccountsController,],
-	providers: [AccountsService,],
+	providers: [AccountsService],
 	exports: [AccountsService],
 })
 export class AccountsModule {}
