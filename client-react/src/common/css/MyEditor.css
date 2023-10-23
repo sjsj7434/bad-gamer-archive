@@ -1,6 +1,6 @@
 .ck.ck-content:not(.ck-comment__input *) {
     /* 작성 모드 */
-    height: 500px;
+    height: 20rem;
     overflow-y: auto;
     margin: 0px;
 }
@@ -20,6 +20,6 @@
 
 .ck.ck-sticky-panel__content.ck-sticky-panel__content_sticky {
     /* 읽기 모드 */
-    top: 61px;
+    top: 1rem;
     z-index: 1021;
 }

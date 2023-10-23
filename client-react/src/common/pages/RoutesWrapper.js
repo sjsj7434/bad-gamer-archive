@@ -62,14 +62,14 @@ const RoutesWrapper = () => {
 						} />
 						<Route path="main" element={
 							<>
-								<SetActiveMenu setCurrentMenu={setCurrentMenu} menuCode={"/lostark/main"} />
+								<SetActiveMenu pageTitle="Agora(LA)" setCurrentMenu={setCurrentMenu} menuCode={"/lostark/main"} />
 								<LostarkMain />
 							</>
 						} />
 
 						<Route path="useful" element={
 							<>
-								<SetActiveMenu setCurrentMenu={setCurrentMenu} menuCode={"/lostark/useful"} />
+								<SetActiveMenu pageTitle="Agora(LA)" setCurrentMenu={setCurrentMenu} menuCode={"/lostark/useful"} />
 								<UsefulSitesLostark />
 							</>
 						} />
@@ -82,28 +82,28 @@ const RoutesWrapper = () => {
 
 								<Route path=":page" element={
 									<>
-										<SetActiveMenu setCurrentMenu={setCurrentMenu} menuCode={"/lostark/board/anonymous"} />
+										<SetActiveMenu pageTitle="Agora(LA)" setCurrentMenu={setCurrentMenu} menuCode={"/lostark/board/anonymous"} />
 										<AnonymousContentList />
 									</>
 								} />
 
 								<Route path="view/:contentCode" element={
 									<>
-										<SetActiveMenu setCurrentMenu={setCurrentMenu} menuCode={"/lostark/board/anonymous"} />
+										<SetActiveMenu pageTitle="Agora(LA)" setCurrentMenu={setCurrentMenu} menuCode={"/lostark/board/anonymous"} />
 										<AnonymousContentView />
 									</>
 								} />
 
 								<Route path="write" element={
 									<>
-										<SetActiveMenu setCurrentMenu={setCurrentMenu} menuCode={"/lostark/board/anonymous"} />
+										<SetActiveMenu pageTitle="Agora(LA)" setCurrentMenu={setCurrentMenu} menuCode={"/lostark/board/anonymous"} />
 										<AnonymousContentWrite />
 									</>
 								} />
 
 								<Route path="edit/:contentCode" element={
 									<>
-										<SetActiveMenu setCurrentMenu={setCurrentMenu} menuCode={"/lostark/board/anonymous"} />
+										<SetActiveMenu pageTitle="Agora(LA)" setCurrentMenu={setCurrentMenu} menuCode={"/lostark/board/anonymous"} />
 										<AnonymousContentWrite />
 									</>
 								} />
@@ -116,14 +116,14 @@ const RoutesWrapper = () => {
 
 								<Route path=":page" element={
 									<>
-										<SetActiveMenu setCurrentMenu={setCurrentMenu} menuCode={"/lostark/board/user"} />
+										<SetActiveMenu pageTitle="Agora(LA)" setCurrentMenu={setCurrentMenu} menuCode={"/lostark/board/user"} />
 										<UserContentList />
 									</>
 								} />
 
 								<Route path="view/:contentCode" element={
 									<>
-										<SetActiveMenu setCurrentMenu={setCurrentMenu} menuCode={"/lostark/board/user"} />
+										<SetActiveMenu pageTitle="Agora(LA)" setCurrentMenu={setCurrentMenu} menuCode={"/lostark/board/user"} />
 										<UserContentView accountData={accountData} />
 									</>
 								} />
@@ -133,7 +133,7 @@ const RoutesWrapper = () => {
 										accountData={accountData}
 										ifAllow={
 											<>
-												<SetActiveMenu setCurrentMenu={setCurrentMenu} menuCode={"/lostark/board/user"} />
+												<SetActiveMenu pageTitle="Agora(LA)" setCurrentMenu={setCurrentMenu} menuCode={"/lostark/board/user"} />
 												<UserContentWrite boardType="user" accountData={accountData} />
 											</>
 										}
@@ -145,7 +145,7 @@ const RoutesWrapper = () => {
 										accountData={accountData}
 										ifAllow={
 											<>
-												<SetActiveMenu setCurrentMenu={setCurrentMenu} menuCode={"/lostark/board/user"} />
+												<SetActiveMenu pageTitle="Agora(LA)" setCurrentMenu={setCurrentMenu} menuCode={"/lostark/board/user"} />
 												<UserContentWrite boardType="user" accountData={accountData} />
 											</>
 										}
@@ -161,7 +161,7 @@ const RoutesWrapper = () => {
 								accountData={accountData}
 								ifAllow={
 									<>
-										<SetActiveMenu setCurrentMenu={setCurrentMenu} menuCode={"/accounts/register"} />
+										<SetActiveMenu pageTitle="" setCurrentMenu={setCurrentMenu} menuCode={"/accounts/register"} />
 										<RegisterForm />
 									</>
 								}
@@ -172,7 +172,7 @@ const RoutesWrapper = () => {
 								accountData={accountData}
 								ifAllow={
 									<>
-										<SetActiveMenu setCurrentMenu={setCurrentMenu} menuCode={"/accounts/login"} />
+										<SetActiveMenu pageTitle="" setCurrentMenu={setCurrentMenu} menuCode={"/accounts/login"} />
 										<LoginForm />
 									</>
 								}
@@ -184,7 +184,7 @@ const RoutesWrapper = () => {
 								accountData={accountData}
 								ifAllow={
 									<>
-										<SetActiveMenu setCurrentMenu={setCurrentMenu} menuCode={"/accounts/find/password"} />
+										<SetActiveMenu pageTitle="" setCurrentMenu={setCurrentMenu} menuCode={"/accounts/find/password"} />
 										<ForgotPasswordForm />
 									</>
 								}
@@ -208,7 +208,7 @@ const RoutesWrapper = () => {
 									accountData={accountData}
 									ifAllow={
 										<>
-											<SetActiveMenu setCurrentMenu={setCurrentMenu} menuCode={"/accounts/mypage"} />
+											<SetActiveMenu pageTitle="Agora(My)" setCurrentMenu={setCurrentMenu} menuCode={"/accounts/mypage"} />
 											<MyPage />
 										</>
 									}
@@ -220,7 +220,7 @@ const RoutesWrapper = () => {
 									accountData={accountData}
 									ifAllow={
 										<>
-											<SetActiveMenu setCurrentMenu={setCurrentMenu} menuCode={"/accounts/activate/lostark"} />
+											<SetActiveMenu pageTitle="Agora(LA 인증)" setCurrentMenu={setCurrentMenu} menuCode={"/accounts/activate/lostark"} />
 											{/* <ActivateLostarkScrap /> */}
 											<ActivateLostarkAPI />
 										</>
@@ -233,7 +233,7 @@ const RoutesWrapper = () => {
 									accountData={accountData}
 									ifAllow={
 										<>
-											<SetActiveMenu setCurrentMenu={setCurrentMenu} menuCode={"/accounts/renew/password"} />
+											<SetActiveMenu pageTitle="Agora(LA)" setCurrentMenu={setCurrentMenu} menuCode={"/accounts/renew/password"} />
 											<RenewPasswordForm checkLoginStatus={checkLoginStatus} />
 										</>
 									}
@@ -245,7 +245,7 @@ const RoutesWrapper = () => {
 									accountData={accountData}
 									ifAllow={
 										<>
-											<SetActiveMenu setCurrentMenu={setCurrentMenu} menuCode={"/accounts/renew/nickname"} />
+											<SetActiveMenu pageTitle="Agora(LA)" setCurrentMenu={setCurrentMenu} menuCode={"/accounts/renew/nickname"} />
 											<RenewNicknameForm />
 										</>
 									}
@@ -263,14 +263,14 @@ const RoutesWrapper = () => {
 
 						<Route path=":page" element={
 							<>
-								<SetActiveMenu setCurrentMenu={setCurrentMenu} menuCode={"/board/announcement"} />
+								<SetActiveMenu pageTitle="Agora(LA)" setCurrentMenu={setCurrentMenu} menuCode={"/board/announcement"} />
 								<AnnouncementContentList />
 							</>
 						} />
 
 						<Route path="view/:contentCode" element={
 							<>
-								<SetActiveMenu setCurrentMenu={setCurrentMenu} menuCode={"/board/announcement"} />
+								<SetActiveMenu pageTitle="Agora(LA)" setCurrentMenu={setCurrentMenu} menuCode={"/board/announcement"} />
 								<AnnouncementContentView accountData={accountData} />
 							</>
 						} />
@@ -281,7 +281,7 @@ const RoutesWrapper = () => {
 							accountData={accountData}
 							ifAllow={
 								<>
-									<SetActiveMenu setCurrentMenu={setCurrentMenu} menuCode={"/help"} />
+									<SetActiveMenu pageTitle="Agora(LA)" setCurrentMenu={setCurrentMenu} menuCode={"/help"} />
 									<HelpCenter />
 								</>
 							}
@@ -291,7 +291,7 @@ const RoutesWrapper = () => {
 					{/* 상단에 위치하는 라우트들의 규칙을 모두 확인, 일치하는 라우트가 없는경우 처리 */}
 					<Route path="*" element={
 						<>
-							<SetActiveMenu setCurrentMenu={setCurrentMenu} menuCode={""} />
+							<SetActiveMenu pageTitle="Agora(LA)" setCurrentMenu={setCurrentMenu} menuCode={""} />
 							<Error404 />
 						</>
 					} />
