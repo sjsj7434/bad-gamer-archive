@@ -85,3 +85,11 @@ npm run start
 웹 스크래핑 기술 필요
 캐릭터 정보 가져오는 곳 : https://lostark.game.onstove.com/Board/GetExpandInfo?memberNo=12345678
 ```
+
+## CK Editor5 설치 방법
+```bash
+1. 공식 사이트 방문해서 다운로드 (https://ckeditor.com/ckeditor-5/online-builder/)
+2. react root 폴더에 ckeditor 폴더 넣기 (https://stackoverflow.com/questions/62243323/reactjs-import-ckeditor-5-from-online-build)
+3. npm add file:./myCkEditorFolderName
+4. 공식 문서 따라서 소스에 import 후 사용
+```
