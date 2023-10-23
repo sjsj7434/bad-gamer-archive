@@ -18,6 +18,16 @@
     border: 0px;
 }
 
+.ck.ck-content.ck-editor__editable.ck-read-only.ck-focused {
+    color: red;
+    border: 0px;
+    box-shadow: none;
+}
+
+.ck-widget.ck-widget_selected {
+    outline-color: white !important;
+}
+
 .ck.ck-sticky-panel__content.ck-sticky-panel__content_sticky {
     /* 읽기 모드 */
     top: 1rem;
