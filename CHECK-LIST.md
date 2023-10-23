@@ -51,6 +51,7 @@ npm run start
 - <input type='checkbox' checked> ckEditor5 게시글 작성 기능(인증 전용)
 - <input type='checkbox' checked> ckEditor5 게시글 수정 기능(인증 전용)
 - <input type='checkbox' checked> Rate Limiting, protect applications from brute-force attacks
+- <input type='checkbox'> ckEditor5 Media embed 추가 / https://ckeditor.com/docs/ckeditor5/latest/features/media-embed.html
 - <input type='checkbox'> 게시글 작성자 IP차단 & 아이디 차단 기능(회원 전용)
 - <input type='checkbox'> 게시글 신고 기능
 - <input type='checkbox'> 자기소개 및 인장 시스템
