@@ -6,8 +6,8 @@ import Button from 'react-bootstrap/Button';
 import AnonymousReply from './AnonymousReply';
 import LoadingModal from '../../common/LoadingModal';
 import * as contentBoardFetch from '../../../js/contentBoardFetch';
-import '../../../css/View.css';
 import MyEditor from '../MyEditor';
+import '../../../css/View.css';
 
 const AnonymousContentView = (props) => {
 	const [contentCode, setContentCode] = useState(null);
@@ -241,7 +241,10 @@ const AnonymousContentView = (props) => {
 						{/*
 							sanitizer libraries for HTML XSS Attacks : DOMPurify
 						*/}
-						{/* <div dangerouslySetInnerHTML={{__html: contentJson.content}} style={{minHeight: "150px", overflowWrap: "anywhere", overflow: "auto", fontSize: "0.8rem"}}></div> */}
+						<div className="ck ck-editor__main" style={{minHeight: "150px", overflowWrap: "anywhere", overflow: "auto"}}>
+							<div className="ck-blurred ck ck-content ck-editor__editable ck-rounded-corners ck-editor__editable_inline ck-read-only ck-column-resize_disabled" dangerouslySetInnerHTML={{__html: contentJson.content}}></div>
+						</div>
+						<br/><br/><br/><br/>
 						<MyEditor
 							editorMode={"read"}
 							savedData={contentJson.content}

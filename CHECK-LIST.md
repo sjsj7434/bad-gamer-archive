@@ -90,6 +90,6 @@ npm run start
 ```bash
 1. 공식 사이트 방문해서 다운로드 (https://ckeditor.com/ckeditor-5/online-builder/)
 2. react root 폴더에 ckeditor 폴더 넣기 (https://stackoverflow.com/questions/62243323/reactjs-import-ckeditor-5-from-online-build)
-3. npm add file:./myCkEditorFolderName
+3. npm add file:./ckeditor5
 4. 공식 문서 따라서 소스에 import 후 사용
 ```
