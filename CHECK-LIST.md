@@ -25,13 +25,43 @@
 2023-10-10 : 개발자도구 네트워크 탭에서 해당 댓글 생성 요청을 fetch 복사하여 수정하면 임의로 인증 정보 수정하여 인증 진행 가능한 오류
 ```
 
+## 초기 실행(설치) 순서
+```bash
+cd server-nest
+npm install
+
+cd client-react
+npm install
+
+[CK Editor5 설치 방법] 실행
+
+server-nest\.dev.env 파일 내용 수정
 ```
-[실행 순서]
+
+## 실행 순서
+```bash
 cd server-nest
 npm run start:dev
 
 cd client-react
 npm run start
+```
+
+## CK Editor5 설치 방법
+```bash
+0. npm install --save @ckeditor/ckeditor5-react @ckeditor/ckeditor5-build-classic
+1. 공식 사이트 방문해서 다운로드 (https://ckeditor.com/ckeditor-5/online-builder/)
+2. react root 폴더에 ckeditor 폴더 넣기 (https://stackoverflow.com/questions/62243323/reactjs-import-ckeditor-5-from-online-build)
+3. npm add file:./ckeditor5
+4. 공식 문서 따라서 소스에 import 후 사용
+```
+
+## 파일 용량
+```bash
+server-nest : 228 MB
+
+client-react : 276 MB
+client-react build : 6 MB
 ```
 
 ## 기능 목록
@@ -84,12 +114,4 @@ npm run start
 ```bash
 웹 스크래핑 기술 필요
 캐릭터 정보 가져오는 곳 : https://lostark.game.onstove.com/Board/GetExpandInfo?memberNo=12345678
-```
-
-## CK Editor5 설치 방법
-```bash
-1. 공식 사이트 방문해서 다운로드 (https://ckeditor.com/ckeditor-5/online-builder/)
-2. react root 폴더에 ckeditor 폴더 넣기 (https://stackoverflow.com/questions/62243323/reactjs-import-ckeditor-5-from-online-build)
-3. npm add file:./ckeditor5
-4. 공식 문서 따라서 소스에 import 후 사용
 ```

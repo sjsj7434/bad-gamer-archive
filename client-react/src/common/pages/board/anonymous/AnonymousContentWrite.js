@@ -339,7 +339,7 @@ const AnonymousContentWrite = (props) => {
 	}, [writeMode, contentCode, contentTitle, contentData, identity, failMessage, editorObject, editorSizeByte, saveEditorData, editEditorData, navigate])
 	
 	return(
-		<Container style={{maxWidth: "1000px"}}>
+		<Container style={{maxWidth: "1200px"}}>
 			{renderData}
 			<LoadingModal showModal={loadingModalShow} message={loadingModalMessage}/>
 		</Container>
