@@ -1,4 +1,3 @@
-import Container from 'react-bootstrap/Container';
 import { useNavigate } from "react-router-dom";
 import * as contentBoardFetch from '../../common/js/contentBoardFetch';
 import { useEffect, useState } from 'react';
@@ -152,7 +151,7 @@ const ViewTrend = (props) => {
 	}, [dailyList, navigate])
 
 	return(
-		<Container style={{maxWidth: "1440px"}}>
+		<>
 			<Tabs
 				onSelect={(key) => {console.log(key)}}
 				defaultActiveKey="hot"
@@ -205,7 +204,7 @@ const ViewTrend = (props) => {
 					</Table>
 				</Tab>
 			</Tabs>
-		</Container>
+		</>
 	);
 }
 

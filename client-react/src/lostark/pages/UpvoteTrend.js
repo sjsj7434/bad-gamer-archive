@@ -1,4 +1,3 @@
-import Container from 'react-bootstrap/Container';
 import { useNavigate } from "react-router-dom";
 import * as contentBoardFetch from '../../common/js/contentBoardFetch';
 import { useEffect, useState } from 'react';
@@ -152,7 +151,7 @@ const UpvoteTrend = (props) => {
 	}, [dailyList, navigate])
 
 	return(
-		<Container style={{maxWidth: "1440px"}}>
+		<>
 			<Tabs
 				onSelect={(key) => {console.log(key)}}
 				defaultActiveKey="hot"
@@ -161,8 +160,14 @@ const UpvoteTrend = (props) => {
 			>
 				<Tab eventKey="hot" title="월간" mountOnEnter={true} unmountOnExit={false}>
 					<Table bordered hover style={{fontSize: "0.85rem"}}>
+						<colgroup>
+							<col width="15%"></col>
+							<col width="*"></col>
+							<col width="15%"></col>
+							<col width="15%"></col>
+						</colgroup>
 						<thead>
-							<tr>
+							<tr style={{ textAlign: "center", backgroundColor: "#b9b9b9", color: "white" }}>
 								<th>구분</th>
 								<th>제목</th>
 								<th>up</th>
@@ -176,8 +181,14 @@ const UpvoteTrend = (props) => {
 				</Tab>
 				<Tab eventKey="none" title="주간" mountOnEnter={true} unmountOnExit={false}>
 					<Table bordered hover style={{fontSize: "0.85rem"}}>
+						<colgroup>
+							<col width="15%"></col>
+							<col width="*"></col>
+							<col width="15%"></col>
+							<col width="15%"></col>
+						</colgroup>
 						<thead>
-							<tr>
+							<tr style={{ textAlign: "center", backgroundColor: "#b9b9b9", color: "white" }}>
 								<th>구분</th>
 								<th>제목</th>
 								<th>up</th>
@@ -191,8 +202,14 @@ const UpvoteTrend = (props) => {
 				</Tab>
 				<Tab eventKey="class" title="일간" mountOnEnter={true} unmountOnExit={false}>
 					<Table bordered hover style={{fontSize: "0.85rem"}}>
+						<colgroup>
+							<col width="15%"></col>
+							<col width="*"></col>
+							<col width="15%"></col>
+							<col width="15%"></col>
+						</colgroup>
 						<thead>
-							<tr>
+							<tr style={{ textAlign: "center", backgroundColor: "#b9b9b9", color: "white" }}>
 								<th>구분</th>
 								<th>제목</th>
 								<th>up</th>
@@ -205,7 +222,7 @@ const UpvoteTrend = (props) => {
 					</Table>
 				</Tab>
 			</Tabs>
-		</Container>
+		</>
 	);
 }
 

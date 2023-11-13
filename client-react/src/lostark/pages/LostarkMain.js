@@ -44,7 +44,7 @@ const LostarkMain = () => {
 
 						<hr/>
 						
-						<div style={{ backgroundColor: "#f3f3f3", padding: "0.5rem" }}>
+						<div style={{ backgroundColor: "", padding: "0.5rem" }}>
 							<Tabs
 								onSelect={(key) => {tabOnSelect(key)}}
 								defaultActiveKey="hot"
