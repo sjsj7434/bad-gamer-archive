@@ -281,10 +281,56 @@ export class BoardsService {
 	 * 유저 게시판 목록 가져오기
 	 */
 	async getUserContentList(page: number): Promise<[Boards[], number]> {
+		/*
+		const queryOBJ = this.boardsRepository
+		.createQueryBuilder("boards")
+		.leftJoinAndSelect("boards.replies", "replies", "replies.parentContentCode = boards.code")
+		.leftJoinAndSelect("boards.accounts", "accounts", "accounts.id = boards.writerID")
+		.innerJoinAndSelect("accounts.authentication", "authentication", "authentication.uuid = accounts.uuid AND authentication.type = 'lostark_item_level'")
+
+		.select("boards.code", "code")
+		.addSelect("boards.writerNickname", "writerNickname")
+		.addSelect("boards.title", "title")
+		.addSelect("boards.view", "view")
+		.addSelect("boards.upvote", "upvote")
+		.addSelect("boards.downvote", "downvote")
+		.addSelect("boards.hasImage", "hasImage")
+		.addSelect("boards.createdAt", "createdAt")
+		.addSelect("REPLACE(authentication.data, ',', '')", 'simpleItemLevel')
+		.addSelect("COUNT(replies.code)", "repliesCount")
+
+		.where("boards.category = :category", { category: "user" })
+		.groupBy(`
+			boards.code
+			, boards.writerNickname
+			, boards.title
+			, boards.view
+			, boards.upvote
+			, boards.downvote
+			, boards.hasImage
+			, boards.createdAt
+		`)
+		.orderBy("boards.code", "DESC")
+		.withDeleted()
+		.skip((page - 1) * this.HOW_MANY_CONTENTS_ON_LIST)
+		.take(this.HOW_MANY_CONTENTS_ON_LIST)
+
+		// const queryData = queryOBJ.getSql();
+		// console.log(queryData)
+
+		const result3 = await queryOBJ.getRawMany(); // getMany를 하게 되면 entity와 같은 값만 나옴, getRawMany를 해야 위와 같은 연산 처리가 가능하다.
+		console.log(result3)
+
+		// return result2;
+		return [result3, result3.length];
+		*/
+
+
 		const result = await this.boardsRepository.findAndCount({
-			relations: ["replies"], //댓글 정보 join
+			relations: ["replies", "accounts", "accounts.authentication"], //댓글 정보 join
 			select: {
 				replies: { code: true },
+				accounts: { email: true, authentication: { type: true, data: true } },
 				code: true,
 				writerNickname: true,
 				title: true,
@@ -297,6 +343,11 @@ export class BoardsService {
 			where: {
 				category: Equal("user"),
 				deletedAt: IsNull(),
+				accounts: {
+					authentication: {
+						type: Equal("lostark_item_level")
+					}
+				}
 			},
 			order: {
 				code: "DESC",

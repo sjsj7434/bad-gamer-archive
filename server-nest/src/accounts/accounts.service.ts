@@ -868,13 +868,16 @@ export class AccountsService {
 			});
 
 			const stoveCode: string = await this.cacheManager.get("STOVE_CODE_" + sessionCode);
+			
+			let simpleItemLevel = characterList[infoIndex].ItemMaxLevel.replace(",", "").split(".")[0];
+			simpleItemLevel = simpleItemLevel.slice(0, simpleItemLevel.length -1) + "0+"; //끝자리 0으로 변경
 
 			await this.authenticationRepository.upsert(
 				[
 					{ uuid: loginUUID, type: "stove_code", data: stoveCode },
 					{ uuid: loginUUID, type: "lostark_name", data: characterList[infoIndex].CharacterName },
 					{ uuid: loginUUID, type: "lostark_character_level", data: characterList[infoIndex].CharacterLevel },
-					{ uuid: loginUUID, type: "lostark_item_level", data: characterList[infoIndex].ItemMaxLevel },
+					{ uuid: loginUUID, type: "lostark_item_level", data: simpleItemLevel },
 					{ uuid: loginUUID, type: "lostark_server", data: characterList[infoIndex].ServerName },
 				],
 				["uuid", "type"]

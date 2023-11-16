@@ -100,7 +100,7 @@ const UserContentList = () => {
 												</div>
 											</div>
 											<div style={{fontSize: "0.75rem", color: "#5a5a5a", maxWidth: "95%", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap"}}>
-												<span>{data.writerNickname}</span>
+												<span>{data.writerNickname} ({data.accounts.authentication[0].data.replace(",", "")})</span>
 												&nbsp;|&nbsp;
 												<span>{new Date(data.createdAt).toLocaleDateString("sv-SE").replace(/-/g, ".")}</span>
 												&nbsp;
