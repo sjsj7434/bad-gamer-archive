@@ -1,6 +1,7 @@
 import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, DeleteDateColumn, OneToMany, ManyToOne, JoinColumn } from 'typeorm';
 import { Replies } from './replies.entity';
 import { Accounts } from 'src/accounts/accounts.entity';
+import { VoteHistory } from './voteHistory.entity';
 
 // This will create following database table
 // If table is already exsists there could be error
@@ -17,6 +18,9 @@ export class Boards {
 	@ManyToOne(() => Accounts, (accounts) => accounts.boards)
 	@JoinColumn({ name: "writerID", referencedColumnName: "id" })
 	accounts: Accounts;
+
+	@OneToMany(() => VoteHistory, (voteHistory) => voteHistory.boards)
+	voteHistory: VoteHistory[];
 
 	/**
 	 * 자동으로 생성되는 코드

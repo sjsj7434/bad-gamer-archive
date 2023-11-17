@@ -5,6 +5,7 @@ import { BoardsController } from './boards.controller';
 import { BoardsService } from './boards.service';
 import { Boards } from './boards.entity';
 import { Replies } from './replies.entity';
+import { VoteHistory } from './voteHistory.entity';
 
 /**
  * 게시판 관련 기능 모듈
@@ -16,7 +17,7 @@ import { Replies } from './replies.entity';
 		AccountsModule,
 
 		TypeOrmModule.forFeature([
-			Boards, Replies
+			Boards, Replies, VoteHistory
 		]),
 	],
 	controllers: [ BoardsController ],
