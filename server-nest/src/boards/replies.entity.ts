@@ -104,6 +104,7 @@ export class Replies {
 		type: "varchar",
 		length: 20,
 		nullable: true,
+		select: false,
 	})
 	password: string;
 
@@ -114,6 +115,7 @@ export class Replies {
 		type: "varchar",
 		length: 50,
 		nullable: false,
+		select: false,
 	})
 	writerID: string;
 
@@ -133,6 +135,7 @@ export class Replies {
 	@Column({
 		type: "varchar",
 		length: 50,
+		select: false,
 	})
 	ip: string;
 

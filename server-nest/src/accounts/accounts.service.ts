@@ -426,7 +426,7 @@ export class AccountsService {
 	}
 
 	/**
-	 * 이미 존재하는 email인지 확인
+	 * 이미 존재하는 id인지 확인
 	 */
 	isExistsID(accountID: string): Promise<boolean> {
 		return this.accountsRepository.exist({
@@ -503,7 +503,11 @@ export class AccountsService {
 	async deleteAccount(request: Request, response: Response): Promise<boolean> {
 		const loginUUID = this.LOGIN_SESSION.get(request.cookies["sessionCode"]); //로그인한 정보
 
-		const isExists: boolean = await this.accountsRepository.exist({ where: { uuid: Equal(loginUUID) } });
+		const isExists: boolean = await this.accountsRepository.exist({
+			where: {
+				uuid: Equal(loginUUID)
+			}
+		});
 
 		if (isExists === true){
 			await this.accountsRepository.softDelete({
@@ -535,6 +539,12 @@ export class AccountsService {
 			const loginUUID = this.LOGIN_SESSION.get(request.cookies["sessionCode"]); //로그인한 정보
 
 			const account = await this.accountsRepository.findOne({
+				select: {
+					id: true,
+					nickname: true,
+					isLocked: true,
+					isBanned: true,
+				},
 				where: {
 					uuid: Equal(loginUUID),
 				},
@@ -595,6 +605,14 @@ export class AccountsService {
 		response.clearCookie("sessionCode");
 
 		const account = await this.accountsRepository.findOne({
+			select: {
+				uuid: true,
+				password: true,
+				loginFailCount: true,
+				isBanned: true,
+				isLocked: true,
+				isSleep: true,
+			},
 			where: {
 				id: Equal(updateAccountsDTO.id),
 			}
@@ -937,6 +955,9 @@ export class AccountsService {
 	 */
 	async beforeResetPassword(updateAccountsDTO: UpdateAccountsDTO): Promise<string> {
 		const account = await this.accountsRepository.findOne({
+			select: {
+				uuid: true
+			},
 			where: {
 				id: Equal(updateAccountsDTO.id),
 				isBanned: Equal(false),
@@ -968,6 +989,9 @@ export class AccountsService {
 		}
 		else{
 			const account = await this.accountsRepository.findOne({
+				select: {
+					uuid: true
+				},
 				where: {
 					uuid: Equal(uuid),
 				},
@@ -997,6 +1021,9 @@ export class AccountsService {
 			const encryptSalt: string = await bcrypt.genSalt(saltRounds);
 
 			const account = await this.accountsRepository.findOne({
+				select: {
+					password: true
+				},
 				where: {
 					uuid: Equal(uuid),
 				}

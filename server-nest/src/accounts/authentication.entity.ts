@@ -16,9 +16,10 @@ export class Authentication {
 	 * 유저 uuid, 서버에서 랜덤 생성값을 부여함, 사용자에게 공개하지 않는 것이 중요
 	 */
 	@PrimaryColumn({
-		type: "varchar"
-		, length: 50
-		, nullable: false
+		type: "varchar",
+		length: 50,
+		nullable: false,
+		select: false,
 	})
 	uuid: string;
 
@@ -26,8 +27,8 @@ export class Authentication {
 	 * 분류 : stove 인증 계정 코드, lostark 캐릭, 스팀 플레이타임...
 	 */
 	@PrimaryColumn({
-		type: "varchar"
-		, length: 100
+		type: "varchar",
+		length: 100,
 	})
 	type: string;
 
@@ -35,8 +36,8 @@ export class Authentication {
 	 * 인증 내용
 	 */
 	@Column({
-		type: "varchar"
-		, length: 100
+		type: "varchar",
+		length: 100,
 	})
 	data: string;
 

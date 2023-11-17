@@ -14,10 +14,10 @@ export class Level {
 	 * 등급
 	 */
 	@Column({
-		type: "int"
-		, nullable: false
-		, unsigned: true
-		, unique: true
+		type: "int",
+		nullable: false,
+		unsigned: true,
+		unique: true,
 	})
 	level: number;
 
@@ -25,10 +25,10 @@ export class Level {
 	 * 등급 최소 요구치
 	 */
 	@Column({
-		type: "int"
-		, nullable: false
-		, unsigned: true
-		, unique: true
+		type: "int",
+		nullable: false,
+		unsigned: true,
+		unique: true,
 	})
 	minumumEXP: number;
 
@@ -36,10 +36,10 @@ export class Level {
 	 * 등급 최대 요구치
 	 */
 	@Column({
-		type: "int"
-		, nullable: false
-		, unsigned: true
-		, unique: true
+		type: "int",
+		nullable: false,
+		unsigned: true,
+		unique: true,
 	})
 	maximumEXP: number;
 
@@ -47,9 +47,9 @@ export class Level {
 	 * 등급 활성활
 	 */
 	@Column({
-		type: "boolean"
-		, nullable: false
-		, default: true
+		type: "boolean",
+		nullable: false,
+		default: true,
 	})
 	isActive: boolean;
 

@@ -344,9 +344,10 @@ export class BoardsService {
 				category: Equal("user"),
 				deletedAt: IsNull(),
 				accounts: {
-					authentication: {
-						type: Equal("lostark_item_level")
-					}
+					authentication: [
+						{ type: Equal("lostark_item_level") },
+						{ type: IsNull() },
+					]
 				}
 			},
 			order: {
@@ -356,6 +357,7 @@ export class BoardsService {
 			skip: (page - 1) * this.HOW_MANY_CONTENTS_ON_LIST,
 			take: this.HOW_MANY_CONTENTS_ON_LIST,
 		});
+		console.log(result)
 
 		return result;
 	}
@@ -532,6 +534,9 @@ export class BoardsService {
 		}
 
 		const isExists = await this.boardsRepository.exist({
+			select: {
+				code: true,
+			},
 			where: {
 				code: Equal(inputCode),
 				category: Equal("anonymous"),
@@ -1095,7 +1100,7 @@ export class BoardsService {
 			return false;
 		}
 		
-		const replyData = await this.repliesRepository.findOne({
+		const replyData = await this.repliesRepository.exist({
 			where: {
 				code: Equal(deleteRepliesDTO.code),
 				writerID: Equal(loginCookie.id),
@@ -1103,7 +1108,7 @@ export class BoardsService {
 			}
 		});
 
-		if (replyData === null) {
+		if (replyData === false) {
 			return false;
 		}
 		else {
