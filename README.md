@@ -40,7 +40,7 @@ Back-End : server-nest
 [2023-11-20 서버 생성 일지]
 아마존 EC2 linux t4.nano로 임시 생성
 
-client-react\.env.development : 파일 서버 IP 넣기
+client-react\.env.production : 파일에 서버 IP 넣기
 server-nest\.dev.env : DATABASE_PASSWORD 넣기
 
 * Amazon EC2 인스턴스에서 Node.js 설정
