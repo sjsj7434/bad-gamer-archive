@@ -578,7 +578,7 @@ export class AccountsService {
 				}
 			}
 			else{ //정상적인 상태
-				response.cookie("sessionCode", request.cookies["sessionCode"], { maxAge: this.LOGIN_COOKIE_TTL, httpOnly: true, secure: true }); //expire 갱신
+				response.cookie("sessionCode", request.cookies["sessionCode"], { maxAge: this.LOGIN_COOKIE_TTL, httpOnly: true }); //expire 갱신 / secure: true 옵션은 http일 때에는 사용할 수 없다, 사용하면 쿠키가 생성되지 않게 됨
 
 				return {
 					status: "login",
@@ -702,7 +702,7 @@ export class AccountsService {
 
 		this.LOGIN_SESSION.set(sessionCode, account.uuid);
 
-		response.cookie("sessionCode", sessionCode, { maxAge: this.LOGIN_COOKIE_TTL, httpOnly: true, secure: true });
+		response.cookie("sessionCode", sessionCode, { maxAge: this.LOGIN_COOKIE_TTL, httpOnly: true }); //secure: true 옵션은 http일 때에는 사용할 수 없다, 사용하면 쿠키가 생성되지 않게 됨
 	}
 
 	/**
@@ -1120,7 +1120,7 @@ export class AccountsService {
 
 		let cacheTTL: number = 1000 * cookieLiveSeconds;
 
-		response.cookie(cookieName, cookieValue, { maxAge: cacheTTL, httpOnly: true, secure: true });
+		response.cookie(cookieName, cookieValue, { maxAge: cacheTTL, httpOnly: true }); //secure: true 옵션은 http일 때에는 사용할 수 없다, 사용하면 쿠키가 생성되지 않게 됨
 
 		return true;
 	}
