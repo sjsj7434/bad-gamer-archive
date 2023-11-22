@@ -161,16 +161,24 @@ export class BoardsController {
 	@SkipThrottle({ default: false })
 	@Throttle({ default: { limit: 20, ttl: 60000 } }) //1분에 20개 이상 금지
 	@Post("user/content/upvote")
-	async upvoteUserContent(@Ip() ipData: string, @Body() sendData: { code: number }): Promise<{ upvote: number, downvote: number, isVotable: boolean }> {
-		return await this.boardsService.upvoteUserContent(sendData.code, ipData);
+	async upvoteUserContent(@Req() request: Request, @Res({ passthrough: true }) response: Response, @Ip() ipData: string, @Body() sendData: { code: number }): Promise<{ upvote: number, downvote: number, isVotable: boolean }> {
+		return await this.boardsService.upvoteUserContent(request, response, sendData.code, ipData);
 	}
 
 	//게시글 비추천
 	@SkipThrottle({ default: false })
 	@Throttle({ default: { limit: 20, ttl: 60000 } }) //1분에 20개 이상 금지
 	@Post("user/content/downvote")
-	async downvoteUserContent(@Ip() ipData: string, @Body() sendData: { code: number }): Promise<{ upvote: number, downvote: number, isVotable: boolean }> {
-		return await this.boardsService.downvoteUserContent(sendData.code, ipData);
+	async downvoteUserContent(@Req() request: Request, @Res({ passthrough: true }) response: Response, @Ip() ipData: string, @Body() sendData: { code: number }): Promise<{ upvote: number, downvote: number, isVotable: boolean }> {
+		return await this.boardsService.downvoteUserContent(request, response, sendData.code, ipData);
+	}
+
+	//게시글 추천
+	@SkipThrottle({ default: false })
+	@Throttle({ default: { limit: 20, ttl: 60000 } }) //1분에 20개 이상 금지
+	@Get("user/content/upvote/list/:contentCode")
+	async getUserContentUpvoteList(@Req() request: Request, @Res({ passthrough: true }) response: Response, @Param("contentCode") contentCode: number): Promise<{ writerNickname: string, createdAt: Date }> {
+		return await this.boardsService.getUserContentUpvoteList(request, response, contentCode);
 	}
 
 	//게시글 댓글 조회

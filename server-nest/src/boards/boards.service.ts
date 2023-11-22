@@ -9,12 +9,14 @@ import { CreateRepliesDTO, DeleteRepliesDTO } from './replies.dto';
 import { AccountsService } from 'src/accounts/accounts.service';
 import { Request, Response } from 'express';
 import { ErrorLogService } from 'src/log/error.log.service';
+import { VoteHistory } from './voteHistory.entity';
 
 @Injectable()
 export class BoardsService {
 	constructor(
 		@InjectRepository(Boards) private boardsRepository: Repository<Boards>,
 		@InjectRepository(Replies) private repliesRepository: Repository<Replies>,
+		@InjectRepository(VoteHistory) private voteHistoryRepository: Repository<VoteHistory>,
 		private accountsService: AccountsService,
 		private errorLogService: ErrorLogService,
 	) { }
@@ -357,7 +359,6 @@ export class BoardsService {
 			skip: (page - 1) * this.HOW_MANY_CONTENTS_ON_LIST,
 			take: this.HOW_MANY_CONTENTS_ON_LIST,
 		});
-		console.log(result)
 
 		return result;
 	}
@@ -641,7 +642,6 @@ export class BoardsService {
 		const loginCookie = await this.accountsService.checkLoginStatus(request, response);
 
 		if (loginCookie.status === "login") {
-			console.log(loginCookie.id, updateBoardsDTO.writerID)
 			if (loginCookie.id !== updateBoardsDTO.writerID) {
 				//위의 값이 아니면 누군가 값을 조작하여 전송했을 가능성이 있으므로 게시글 저장 차단
 				return false;
@@ -747,54 +747,6 @@ export class BoardsService {
 	}
 
 	/**
-	 * 유저 게시판 글 추천
-	 */
-	async upvoteUserContent(contentCode: number, ipData: string): Promise<{ upvote: number, downvote: number, isVotable: boolean }> {
-		const isVotable: boolean = this.isVotableContent(contentCode, ipData);
-
-		if (isVotable === true) {
-			await this.boardsRepository.increment({ code: Equal(contentCode), category: Equal("user") }, "upvote", 1);
-		}
-
-		const contentData = await this.boardsRepository.findOne({
-			select: {
-				upvote: true,
-				downvote: true,
-			},
-			where: {
-				code: Equal(contentCode),
-				category: Equal("user"),
-			},
-		});
-
-		return { upvote: contentData.upvote, downvote: contentData.downvote, isVotable: isVotable };
-	}
-
-	/**
-	 * 공지 게시판 글 추천
-	 */
-	async upvoteAnnouncementContent(contentCode: number, ipData: string): Promise<{ upvote: number, downvote: number, isVotable: boolean }> {
-		const isVotable: boolean = this.isVotableContent(contentCode, ipData);
-
-		if (isVotable === true) {
-			await this.boardsRepository.increment({ code: Equal(contentCode), category: Equal("announcement") }, "upvote", 1);
-		}
-
-		const contentData = await this.boardsRepository.findOne({
-			select: {
-				upvote: true,
-				downvote: true,
-			},
-			where: {
-				code: Equal(contentCode),
-				category: Equal("announcement"),
-			},
-		});
-
-		return { upvote: contentData.upvote, downvote: contentData.downvote, isVotable: isVotable };
-	}
-
-	/**
 	 * 익명 게시판 글 비추천
 	 */
 	async downvoteAnonymousContent(contentCode: number, ipData: string): Promise<{ upvote: number, downvote: number, isVotable: boolean }> {
@@ -819,13 +771,23 @@ export class BoardsService {
 	}
 
 	/**
-	 * 유저 게시판 글 비추천
+	 * 유저 게시판 글 추천
 	 */
-	async downvoteUserContent(contentCode: number, ipData: string): Promise<{ upvote: number, downvote: number, isVotable: boolean }> {
+	async upvoteUserContent(request: Request, response: Response, contentCode: number, ipData: string): Promise<{ upvote: number, downvote: number, isVotable: boolean }> {
 		const isVotable: boolean = this.isVotableContent(contentCode, ipData);
+		const loginCookie = await this.accountsService.checkLoginStatus(request, response);
 
-		if (isVotable === true) {
-			await this.boardsRepository.increment({ code: Equal(contentCode), category: Equal("user") }, "downvote", 1);
+		if (isVotable === true && loginCookie !== null) {
+			await this.boardsRepository.increment({ code: Equal(contentCode), category: Equal("user") }, "upvote", 1);
+			
+			const insertHistory = this.voteHistoryRepository.create({
+				parentContentCode: contentCode,
+				voteType: "up",
+				writerID: loginCookie.id,
+				writerNickname: loginCookie.nickname,
+				ip: ipData,
+			});
+			await this.voteHistoryRepository.insert(insertHistory);
 		}
 
 		const contentData = await this.boardsRepository.findOne({
@@ -845,11 +807,21 @@ export class BoardsService {
 	/**
 	 * 유저 게시판 글 비추천
 	 */
-	async downvoteAnnouncementContent(contentCode: number, ipData: string): Promise<{ upvote: number, downvote: number, isVotable: boolean }> {
+	async downvoteUserContent(request: Request, response: Response, contentCode: number, ipData: string): Promise<{ upvote: number, downvote: number, isVotable: boolean }> {
 		const isVotable: boolean = this.isVotableContent(contentCode, ipData);
+		const loginCookie = await this.accountsService.checkLoginStatus(request, response);
 
 		if (isVotable === true) {
-			await this.boardsRepository.increment({ code: Equal(contentCode), category: Equal("announcement") }, "downvote", 1);
+			await this.boardsRepository.increment({ code: Equal(contentCode), category: Equal("user") }, "downvote", 1);
+
+			const insertHistory = this.voteHistoryRepository.create({
+				parentContentCode: contentCode,
+				voteType: "down",
+				writerID: loginCookie.id,
+				writerNickname: loginCookie.nickname,
+				ip: ipData,
+			});
+			await this.voteHistoryRepository.insert(insertHistory);
 		}
 
 		const contentData = await this.boardsRepository.findOne({
@@ -859,11 +831,31 @@ export class BoardsService {
 			},
 			where: {
 				code: Equal(contentCode),
-				category: Equal("announcement"),
+				category: Equal("user"),
 			},
 		});
 
 		return { upvote: contentData.upvote, downvote: contentData.downvote, isVotable: isVotable };
+	}
+
+	/**
+	 * 유저 게시판 추천 목록 확인
+	 */
+	async getUserContentUpvoteList(request: Request, response: Response, contentCode: number): Promise<{ writerNickname: string, createdAt: Date }> {
+		// const loginCookie = await this.accountsService.checkLoginStatus(request, response);
+
+		const contentData = await this.voteHistoryRepository.findOne({
+			select: {
+				writerNickname: true,
+				createdAt: true,
+			},
+			where: {
+				parentContentCode: Equal(contentCode),
+				voteType: Equal("up"),
+			},
+		});
+
+		return { writerNickname: contentData.writerNickname, createdAt: contentData.createdAt };
 	}
 
 	/**
@@ -1188,6 +1180,54 @@ export class BoardsService {
 		});
 
 		return { contentData: contentData, isWriter: false };
+	}
+
+	/**
+	 * 공지 게시판 글 추천
+	 */
+	async upvoteAnnouncementContent(contentCode: number, ipData: string): Promise<{ upvote: number, downvote: number, isVotable: boolean }> {
+		const isVotable: boolean = this.isVotableContent(contentCode, ipData);
+
+		if (isVotable === true) {
+			await this.boardsRepository.increment({ code: Equal(contentCode), category: Equal("announcement") }, "upvote", 1);
+		}
+
+		const contentData = await this.boardsRepository.findOne({
+			select: {
+				upvote: true,
+				downvote: true,
+			},
+			where: {
+				code: Equal(contentCode),
+				category: Equal("announcement"),
+			},
+		});
+
+		return { upvote: contentData.upvote, downvote: contentData.downvote, isVotable: isVotable };
+	}
+
+	/**
+	 * 공지 게시판 글 비추천
+	 */
+	async downvoteAnnouncementContent(contentCode: number, ipData: string): Promise<{ upvote: number, downvote: number, isVotable: boolean }> {
+		const isVotable: boolean = this.isVotableContent(contentCode, ipData);
+
+		if (isVotable === true) {
+			await this.boardsRepository.increment({ code: Equal(contentCode), category: Equal("announcement") }, "downvote", 1);
+		}
+
+		const contentData = await this.boardsRepository.findOne({
+			select: {
+				upvote: true,
+				downvote: true,
+			},
+			where: {
+				code: Equal(contentCode),
+				category: Equal("announcement"),
+			},
+		});
+
+		return { upvote: contentData.upvote, downvote: contentData.downvote, isVotable: isVotable };
 	}
 
 	/**
