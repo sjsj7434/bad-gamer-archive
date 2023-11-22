@@ -62,6 +62,9 @@ mysql -u root -p
 alter user 'root'@'localhost' identified with mysql_native_password by '비밀번호';
 CREATE DATABASE game_agora;
 grant all privileges on *.* to 'root'@'%' with grant option;
+create user 'home_user'@'%' identified by 'Tkdwns27381!';
+GRANT ALL PRIVILEGES ON game_agora.* TO 'home_user'@'%';
+권한 부여 후 연결 껐다가 켜야 권한 적용됨
 
 sudo yum install git
 
