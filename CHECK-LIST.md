@@ -81,6 +81,7 @@ client-react build : 6 MB
 - <input type='checkbox' checked> ckEditor5 게시글 작성 기능(인증 전용)
 - <input type='checkbox' checked> ckEditor5 게시글 수정 기능(인증 전용)
 - <input type='checkbox' checked> Rate Limiting, protect applications from brute-force attacks
+- <input type='checkbox' checked> 게시글 조회 시 CSS 안먹는지 테두리 박스 생김
 - <input type='checkbox'> 현재 익명 글 작성 시 외래키 오류 발생 중
 - <input type='checkbox'> 서버에 배포하면 배포된 웹에서는 로그인이 되지 않음
 - <input type='checkbox'> ckEditor5 Media embed 추가 / https://ckeditor.com/docs/ckeditor5/latest/features/media-embed.html
