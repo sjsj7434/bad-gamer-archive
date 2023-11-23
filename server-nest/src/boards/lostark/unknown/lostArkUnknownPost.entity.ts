@@ -1,6 +1,5 @@
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, DeleteDateColumn, OneToMany, ManyToOne, JoinColumn } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, DeleteDateColumn, OneToMany } from 'typeorm';
 import { LostArkUnknownReply } from './lostArkUnknownReply.entity';
-import { Accounts } from 'src/accounts/accounts.entity';
 
 // This will create following database table
 // If table is already exsists there could be error
@@ -13,10 +12,6 @@ import { Accounts } from 'src/accounts/accounts.entity';
 export class LostArkUnknownPost {
 	@OneToMany(() => LostArkUnknownReply, (lostArkUnknownReply) => lostArkUnknownReply.lostArkUnknownPost)
 	lostArkUnknownReply: LostArkUnknownReply[];
-
-	// @ManyToOne(() => Accounts, (accounts) => accounts.lostArkUnknownPost)
-	// @JoinColumn({ name: "writerID", referencedColumnName: "id" })
-	// accounts: Accounts;
 
 	/**
 	 * 자동으로 생성되는 코드
@@ -109,27 +104,6 @@ export class LostArkUnknownPost {
 		select: false,
 	})
 	password: string;
-
-	/**
-	 * 작성자 ID
-	 */
-	@Column({
-		type: "varchar",
-		length: 50,
-		nullable: false,
-		select: false,
-	})
-	writerID: string;
-
-	/**
-	 * 작성자 Nickname
-	 */
-	@Column({
-		type: "varchar",
-		length: 50,
-		nullable: false,
-	})
-	writerNickname: string;
 
 	/**
 	 * 작성자 ip
