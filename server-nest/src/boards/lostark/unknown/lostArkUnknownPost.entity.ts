@@ -11,7 +11,7 @@ import { LostArkUnknownReply } from './lostArkUnknownReply.entity';
 @Entity()
 export class LostArkUnknownPost {
 	@OneToMany(() => LostArkUnknownReply, (lostArkUnknownReply) => lostArkUnknownReply.lostArkUnknownPost)
-	lostArkUnknownReply: LostArkUnknownReply[];
+	reply: LostArkUnknownReply[];
 
 	/**
 	 * 자동으로 생성되는 코드

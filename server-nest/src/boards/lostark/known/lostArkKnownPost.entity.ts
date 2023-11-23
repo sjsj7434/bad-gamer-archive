@@ -12,15 +12,15 @@ import { Accounts } from 'src/accounts/accounts.entity';
 
 @Entity()
 export class LostArkKnownPost {
-	@OneToMany(() => LostArkKnownReply, (lostArkKnownReply) => lostArkKnownReply.lostArkKnownPost)
-	lostArkKnownReply: LostArkKnownReply[];
+	@OneToMany(() => LostArkKnownReply, (reply) => reply.lostArkKnownPost)
+	reply: LostArkKnownReply[];
 
 	@OneToMany(() => LostArkKnownVoteHistory, (lostArkKnownVoteHistory) => lostArkKnownVoteHistory.lostArkKnownPost)
 	lostArkKnownVoteHistory: LostArkKnownVoteHistory[];
 
-	// @ManyToOne(() => Accounts, (accounts) => accounts.lostArkKnownPost)
-	// @JoinColumn({ name: "writerID", referencedColumnName: "id" })
-	// accounts: Accounts;
+	@ManyToOne(() => Accounts, (accounts) => accounts.lostArkKnownPost)
+	@JoinColumn({ name: "writerID", referencedColumnName: "id" })
+	accounts: Accounts;
 
 	/**
 	 * 자동으로 생성되는 코드

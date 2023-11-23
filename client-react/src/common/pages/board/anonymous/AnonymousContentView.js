@@ -241,10 +241,10 @@ const AnonymousContentView = (props) => {
 						{/*
 							sanitizer libraries for HTML XSS Attacks : DOMPurify
 						*/}
-						<div className="ck ck-editor__main" style={{minHeight: "150px", overflowWrap: "anywhere", overflow: "auto"}}>
+						{/* <div className="ck ck-editor__main" style={{minHeight: "150px", overflowWrap: "anywhere", overflow: "auto"}}>
 							<div className="ck-blurred ck ck-content ck-editor__editable ck-rounded-corners ck-editor__editable_inline ck-read-only ck-column-resize_disabled" dangerouslySetInnerHTML={{__html: contentJson.content}}></div>
-						</div>
-						<br/><br/><br/><br/>
+						</div> */}
+						{/* <br/><br/><br/><br/> */}
 						<MyEditor
 							editorMode={"read"}
 							savedData={contentJson.content}

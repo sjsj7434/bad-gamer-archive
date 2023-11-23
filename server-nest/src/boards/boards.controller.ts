@@ -7,6 +7,8 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { Request, Response } from 'express';
 import { BoardsService } from './boards.service';
 import { SkipThrottle, Throttle } from '@nestjs/throttler';
+import { CreateLostArkUnknownPostDTO } from './lostark/unknown/lostArkUnknownPost.dto';
+import { LostArkUnknownPost } from './lostark/unknown/lostArkUnknownPost.entity';
 
 /**
  * 게시판 컨트롤러
@@ -38,26 +40,26 @@ export class BoardsController {
 
 	//익명 게시판 목록, page 값이 number가 아니면 호출되지 않음
 	@Get("anonymous/list/:page")
-	async getAnonymousContentList(@Param("page") page: number): Promise<[Boards[], number]> {
+	async getAnonymousContentList(@Param("page") page: number): Promise<[LostArkUnknownPost[], number]> {
 		return await this.boardsService.getAnonymousContentList(page);
 	}
 
 	//익명 게시판 글 조회, contentCode 값이 number가 아니면 호출되지 않음
 	@Get("anonymous/content/read/:contentCode")
-	async readAnonymousContent(@Param("contentCode") contentCode: number): Promise<{ contentData: Boards, isWriter: boolean }> {
+	async readAnonymousContent(@Param("contentCode") contentCode: number): Promise<{ contentData: LostArkUnknownPost, isWriter: boolean }> {
 		return await this.boardsService.readAnonymousContent(contentCode);
 	}
 
 	//익명 게시판 글 데이터 가져오기, contentCode 값이 number가 아니면 호출되지 않음
 	@Get("anonymous/content/data/:contentCode")
-	async getAnonymousContentData(@Param("contentCode") contentCode: number): Promise<{ contentData: Boards, isWriter: boolean }> {
+	async getAnonymousContentData(@Param("contentCode") contentCode: number): Promise<{ contentData: LostArkUnknownPost, isWriter: boolean }> {
 		return await this.boardsService.getAnonymousContentData(contentCode);
 	}
 
 	//익명 게시판 글 작성
 	@Post("anonymous/content")
-	async createAnonymousContent(@Ip() ipData: string, @Body() createBoardsDTO: CreateBoardsDTO) {
-		await this.boardsService.createAnonymousContent(createBoardsDTO, ipData);
+	async createAnonymousContent(@Ip() ipData: string, @Body() createLostArkUnknownPostDTO: CreateLostArkUnknownPostDTO) {
+		await this.boardsService.createAnonymousContent(createLostArkUnknownPostDTO, ipData);
 	}
 
 	//익명 게시판 글 수정 진입 시 작성자 확인

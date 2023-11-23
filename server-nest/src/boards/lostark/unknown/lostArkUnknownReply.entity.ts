@@ -10,7 +10,7 @@ import { LostArkUnknownPost } from './lostArkUnknownPost.entity';
 
 @Entity()
 export class LostArkUnknownReply {
-	@ManyToOne(() => LostArkUnknownPost, (lostArkUnknownPost) => lostArkUnknownPost.lostArkUnknownReply)
+	@ManyToOne(() => LostArkUnknownPost, (lostArkUnknownPost) => lostArkUnknownPost.reply)
 	@JoinColumn({ name: "parentContentCode", referencedColumnName: "code" }) //this code reference the boards.code column
 	lostArkUnknownPost: LostArkUnknownPost;
 	

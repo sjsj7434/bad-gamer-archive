@@ -6,6 +6,11 @@ import { BoardsService } from './boards.service';
 import { Boards } from './boards.entity';
 import { Replies } from './replies.entity';
 import { VoteHistory } from './voteHistory.entity';
+import { LostArkKnownPost } from './lostark/known/lostArkKnownPost.entity';
+import { LostArkKnownReply } from './lostark/known/lostArkKnownReply.entity';
+import { LostArkKnownVoteHistory } from './lostark/known/lostArkKnownVoteHistory.entity';
+import { LostArkUnknownPost } from './lostark/unknown/lostArkUnknownPost.entity';
+import { LostArkUnknownReply } from './lostark/unknown/lostArkUnknownReply.entity';
 
 /**
  * 게시판 관련 기능 모듈
@@ -18,6 +23,8 @@ import { VoteHistory } from './voteHistory.entity';
 
 		TypeOrmModule.forFeature([
 			Boards, Replies, VoteHistory
+			, LostArkKnownPost, LostArkKnownReply, LostArkKnownVoteHistory
+			, LostArkUnknownPost, LostArkUnknownReply
 		]),
 	],
 	controllers: [ BoardsController ],

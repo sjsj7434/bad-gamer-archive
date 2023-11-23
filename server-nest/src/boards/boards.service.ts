@@ -10,6 +10,9 @@ import { AccountsService } from 'src/accounts/accounts.service';
 import { Request, Response } from 'express';
 import { ErrorLogService } from 'src/log/error.log.service';
 import { VoteHistory } from './voteHistory.entity';
+import { CreateLostArkUnknownPostDTO } from './lostark/unknown/lostArkUnknownPost.dto';
+import { LostArkUnknownPost } from './lostark/unknown/lostArkUnknownPost.entity';
+import { LostArkKnownPost } from './lostark/known/lostArkKnownPost.entity';
 
 @Injectable()
 export class BoardsService {
@@ -17,6 +20,8 @@ export class BoardsService {
 		@InjectRepository(Boards) private boardsRepository: Repository<Boards>,
 		@InjectRepository(Replies) private repliesRepository: Repository<Replies>,
 		@InjectRepository(VoteHistory) private voteHistoryRepository: Repository<VoteHistory>,
+		@InjectRepository(LostArkUnknownPost) private lostArkUnknownPostRepository: Repository<LostArkUnknownPost>,
+		@InjectRepository(LostArkKnownPost) private lostArkKnownPostRepository: Repository<LostArkKnownPost>,
 		private accountsService: AccountsService,
 		private errorLogService: ErrorLogService,
 	) { }
@@ -237,14 +242,13 @@ export class BoardsService {
 	/**
 	 * 익명 게시판 목록 가져오기
 	 */
-	async getAnonymousContentList(page: number): Promise<[Boards[], number]> {
+	async getAnonymousContentList(page: number): Promise<[LostArkUnknownPost[], number]> {
 		try {
-			const result = await this.boardsRepository.findAndCount({
-				relations: ["replies"], //댓글 정보 join
+			const result = await this.lostArkUnknownPostRepository.findAndCount({
+				relations: ["reply"], //댓글 정보 join
 				select: {
-					replies: { code: true },
+					reply: { code: true },
 					code: true,
-					writerNickname: true,
 					title: true,
 					view: true,
 					upvote: true,
@@ -254,7 +258,6 @@ export class BoardsService {
 					createdAt: true,
 				},
 				where: {
-					category: Equal("anonymous"),
 					deletedAt: IsNull(),
 				},
 				order: {
@@ -366,16 +369,16 @@ export class BoardsService {
 	/**
 	 * 익명 게시판 글 읽기, 조회수 + 1
 	 */
-	async readAnonymousContent(contentCode: number): Promise<{ contentData: Boards, isWriter: boolean }> {
+	async readAnonymousContent(contentCode: number): Promise<{ contentData: LostArkUnknownPost, isWriter: boolean }> {
 		if (isNaN(contentCode) === true) {
 			return null;
 		}
 
 		let isAuthor: boolean = false;
 
-		await this.boardsRepository.increment({ code: contentCode }, "view", 1);
+		await this.lostArkUnknownPostRepository.increment({ code: contentCode }, "view", 1);
 
-		const contentData = await this.boardsRepository.findOne({
+		const lostArkUnknownPost = await this.lostArkUnknownPostRepository.findOne({
 			select: {
 				code: true,
 				category: true,
@@ -384,8 +387,6 @@ export class BoardsService {
 				view: true,
 				upvote: true,
 				downvote: true,
-				writerID: true,
-				writerNickname: true,
 				ip: true,
 				createdAt: true,
 				updatedAt: true,
@@ -396,25 +397,25 @@ export class BoardsService {
 			},
 		});
 
-		if (contentData !== null) {
-			contentData.ip = contentData.ip.split(".")[0] + (contentData.ip.split(".")[1] !== undefined ? "." + contentData.ip.split(".")[1] : "");
-			isAuthor = contentData.writerID === "";
+		if (lostArkUnknownPost !== null) {
+			lostArkUnknownPost.ip = lostArkUnknownPost.ip.split(".")[0] + (lostArkUnknownPost.ip.split(".")[1] !== undefined ? "." + lostArkUnknownPost.ip.split(".")[1] : "");
+			isAuthor = true;
 		}
 
-		return { contentData: contentData, isWriter: isAuthor };
+		return { contentData: lostArkUnknownPost, isWriter: isAuthor };
 	}
 
 	/**
 	 * 익명 게시판 글 데이터 가져오기
 	 */
-	async getAnonymousContentData(contentCode: number): Promise<{ contentData: Boards, isWriter: boolean }> {
+	async getAnonymousContentData(contentCode: number): Promise<{ contentData: LostArkUnknownPost, isWriter: boolean }> {
 		if (isNaN(contentCode) === true) {
 			return null;
 		}
 
 		let isAuthor: boolean = false;
 
-		const contentData = await this.boardsRepository.findOne({
+		const lostArkUnknownPost = await this.lostArkUnknownPostRepository.findOne({
 			select: {
 				code: true,
 				category: true,
@@ -423,8 +424,6 @@ export class BoardsService {
 				view: true,
 				upvote: true,
 				downvote: true,
-				writerID: true,
-				writerNickname: true,
 				ip: true,
 				createdAt: true,
 				updatedAt: true,
@@ -435,12 +434,12 @@ export class BoardsService {
 			},
 		});
 
-		if (contentData !== null) {
-			contentData.ip = contentData.ip.split(".")[0] + (contentData.ip.split(".")[1] !== undefined ? "." + contentData.ip.split(".")[1] : "");
-			isAuthor = contentData.writerID === "";
+		if (lostArkUnknownPost !== null) {
+			lostArkUnknownPost.ip = lostArkUnknownPost.ip.split(".")[0] + (lostArkUnknownPost.ip.split(".")[1] !== undefined ? "." + lostArkUnknownPost.ip.split(".")[1] : "");
+			isAuthor = true;
 		}
 
-		return { contentData: contentData, isWriter: isAuthor };
+		return { contentData: lostArkUnknownPost, isWriter: isAuthor };
 	}
 
 	/**
@@ -534,7 +533,7 @@ export class BoardsService {
 			return false;
 		}
 
-		const isExists = await this.boardsRepository.exist({
+		const isExists = await this.lostArkUnknownPostRepository.exist({
 			select: {
 				code: true,
 			},
@@ -581,14 +580,14 @@ export class BoardsService {
 	/**
 	 * 익명 게시판에 게시글을 생성한다
 	 */
-	async createAnonymousContent(createBoardsDTO: CreateBoardsDTO, ipData: string) {
-		createBoardsDTO.category = "anonymous";
-		createBoardsDTO.writerID = "";
-		createBoardsDTO.writerNickname = "";
-		createBoardsDTO.ip = ipData; //개발서버에서는 로컬만 찍혀서 임시로 비활성
-		createBoardsDTO.ip = Math.random().toString().substring(2, 5) + "." + Math.random().toString().substring(2, 5) + "." + Math.random().toString().substring(2, 5) + "." + Math.random().toString().substring(2, 5);
+	async createAnonymousContent(createLostArkUnknownPostDTO: CreateLostArkUnknownPostDTO, ipData: string) {
+		createLostArkUnknownPostDTO.category = "anonymous";
+		createLostArkUnknownPostDTO.writerID = "";
+		createLostArkUnknownPostDTO.writerNickname = "";
+		createLostArkUnknownPostDTO.ip = ipData; //개발서버에서는 로컬만 찍혀서 임시로 비활성
+		createLostArkUnknownPostDTO.ip = Math.random().toString().substring(2, 5) + "." + Math.random().toString().substring(2, 5) + "." + Math.random().toString().substring(2, 5) + "." + Math.random().toString().substring(2, 5);
 
-		await this.boardsRepository.save(createBoardsDTO);
+		await this.lostArkUnknownPostRepository.save(createLostArkUnknownPostDTO);
 	}
 
 	/**
