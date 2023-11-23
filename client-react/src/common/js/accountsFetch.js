@@ -9,7 +9,7 @@ export const getVerificationCode = async () => {
 		, headers: {"Content-Type": "application/json",}
 		, credentials: "include", // Don't forget to specify this if you need cookies
 	};
-	const fetchResponse = await fetch(`${process.env.REACT_APP_SERVER}/accounts/stove/verification/code`, fecthOption);
+	const fetchResponse = await fetch(`/accounts/stove/verification/code`, fecthOption);
 	const [isStatusGood, checkMessage] = isFetchStatusGood(fetchResponse);
 
 	if(isStatusGood === true){
@@ -34,7 +34,7 @@ export const checkProfileTokenMatchAPI = async (stoveCode) => {
 		, headers: {"Content-Type": "application/json",}
 		, credentials: "include", // Don't forget to specify this if you need cookies
 	};
-	const fetchResponse = await fetch(`${process.env.REACT_APP_SERVER}/accounts/stove/verification/api/${stoveCode}`, fecthOption);
+	const fetchResponse = await fetch(`/accounts/stove/verification/api/${stoveCode}`, fecthOption);
 	const [isStatusGood, checkMessage] = isFetchStatusGood(fetchResponse);
 
 	if(isStatusGood === true){
@@ -59,7 +59,7 @@ export const checkProfileTokenMatchScrap = async (stoveCode) => {
 		, headers: {"Content-Type": "application/json",}
 		, credentials: "include", // Don't forget to specify this if you need cookies
 	};
-	const fetchResponse = await fetch(`${process.env.REACT_APP_SERVER}/accounts/stove/verification/scrap/${stoveCode}`, fecthOption);
+	const fetchResponse = await fetch(`/accounts/stove/verification/scrap/${stoveCode}`, fecthOption);
 	const [isStatusGood, checkMessage] = isFetchStatusGood(fetchResponse);
 
 	if(isStatusGood === true){
@@ -84,7 +84,7 @@ export const isDuplicatedID = async (id) => {
 		, headers: {"Content-Type": "application/json",}
 		, credentials: "include", // Don't forget to specify this if you need cookies
 	};
-	const fetchResponse = await fetch(`${process.env.REACT_APP_SERVER}/accounts/id/${id}`, fecthOption);
+	const fetchResponse = await fetch(`/accounts/id/${id}`, fecthOption);
 	const [isStatusGood, checkMessage] = isFetchStatusGood(fetchResponse);
 
 	if(isStatusGood === true){
@@ -109,7 +109,7 @@ export const isDuplicatedNickname = async (nickname) => {
 		, headers: {"Content-Type": "application/json",}
 		, credentials: "include", // Don't forget to specify this if you need cookies
 	};
-	const fetchResponse = await fetch(`${process.env.REACT_APP_SERVER}/accounts/nickname/${nickname}`, fecthOption);
+	const fetchResponse = await fetch(`/accounts/nickname/${nickname}`, fecthOption);
 	const [isStatusGood, checkMessage] = isFetchStatusGood(fetchResponse);
 
 	if(isStatusGood === true){
@@ -136,7 +136,7 @@ export const createAccount = async (accountInfo) => {
 		, headers: {"Content-Type": "application/json",}
 		, credentials: "include", // Don't forget to specify this if you need cookies
 	};
-	const fetchResponse = await fetch(`${process.env.REACT_APP_SERVER}/accounts`, fecthOption);
+	const fetchResponse = await fetch(`/accounts`, fecthOption);
 	const [isStatusGood, checkMessage] = isFetchStatusGood(fetchResponse);
 
 	if(isStatusGood === true){
@@ -167,7 +167,7 @@ export const loginAccount = async (accountInfo) => {
 		, headers: {"Content-Type": "application/json",}
 		, credentials: "include", // Don't forget to specify this if you need cookies
 	};
-	const fetchResponse = await fetch(`${process.env.REACT_APP_SERVER}/accounts/login`, fecthOption);
+	const fetchResponse = await fetch(`/accounts/login`, fecthOption);
 	const [isStatusGood] = isFetchStatusGood(fetchResponse);
 
 	if(isStatusGood === true){
@@ -191,7 +191,7 @@ export const checkLoginStatus = async () => {
 		method: "GET"
 		, credentials: "include", // Don't forget to specify this if you need cookies
 	};
-	const fetchResponse = await fetch(`${process.env.REACT_APP_SERVER}/accounts/login/status`, fecthOption);
+	const fetchResponse = await fetch(`/accounts/login/status`, fecthOption);
 	const [isStatusGood, checkMessage] = isFetchStatusGood(fetchResponse);
 
 	if(isStatusGood === true){
@@ -215,7 +215,7 @@ export const logoutAccount = async () => {
 		method: "POST"
 		, credentials: "include", // Don't forget to specify this if you need cookies
 	};
-	await fetch(`${process.env.REACT_APP_SERVER}/accounts/logout`, fecthOption);
+	await fetch(`/accounts/logout`, fecthOption);
 }
 
 /**
@@ -227,7 +227,7 @@ export const getCharacterInfoScrap = async (characterName) => {
 		, headers: {"Content-Type": "application/json",}
 		, credentials: "include", // Don't forget to specify this if you need cookies
 	};
-	const fetchResponse = await fetch(`${process.env.REACT_APP_SERVER}/accounts/stove/character/scrap/${characterName}`, fecthOption);
+	const fetchResponse = await fetch(`/accounts/stove/character/scrap/${characterName}`, fecthOption);
 	const [isStatusGood, checkMessage] = isFetchStatusGood(fetchResponse);
 
 	if(isStatusGood === true){
@@ -254,7 +254,7 @@ export const setLostarkCharacter = async (accountInfo) => {
 		, headers: {"Content-Type": "application/json",}
 		, credentials: "include", // Don't forget to specify this if you need cookies
 	};
-	const fetchResponse = await fetch(`${process.env.REACT_APP_SERVER}/accounts/lostark/character/set`, fecthOption);
+	const fetchResponse = await fetch(`/accounts/lostark/character/set`, fecthOption);
 	const [isStatusGood, checkMessage] = isFetchStatusGood(fetchResponse);
 
 	if(isStatusGood === true){
@@ -279,7 +279,7 @@ export const changeLostarkCharacter = async () => {
 		, headers: {"Content-Type": "application/json",}
 		, credentials: "include", // Don't forget to specify this if you need cookies
 	};
-	const fetchResponse = await fetch(`${process.env.REACT_APP_SERVER}/accounts/lostark/character/change`, fecthOption);
+	const fetchResponse = await fetch(`/accounts/lostark/character/change`, fecthOption);
 	const [isStatusGood, checkMessage] = isFetchStatusGood(fetchResponse);
 
 	if(isStatusGood === true){
@@ -304,7 +304,7 @@ export const renewLostarkCharacter = async () => {
 		, headers: {"Content-Type": "application/json",}
 		, credentials: "include", // Don't forget to specify this if you need cookies
 	};
-	const fetchResponse = await fetch(`${process.env.REACT_APP_SERVER}/accounts/lostark/character/renew`, fecthOption);
+	const fetchResponse = await fetch(`/accounts/lostark/character/renew`, fecthOption);
 	const [isStatusGood, checkMessage] = isFetchStatusGood(fetchResponse);
 
 	if(isStatusGood === true){
@@ -331,7 +331,7 @@ export const exitLostarkAuthentication = async (accountInfo) => {
 		, headers: {"Content-Type": "application/json",}
 		, credentials: "include", // Don't forget to specify this if you need cookies
 	};
-	const fetchResponse = await fetch(`${process.env.REACT_APP_SERVER}/accounts/lostark/character/exit`, fecthOption);
+	const fetchResponse = await fetch(`/accounts/lostark/character/exit`, fecthOption);
 	const [isStatusGood, checkMessage] = isFetchStatusGood(fetchResponse);
 
 	if(isStatusGood === true){
@@ -357,7 +357,7 @@ export const deactivateLostarkCharacter = async (sendData) => {
 		, headers: {"Content-Type": "application/json",}
 		, credentials: "include", // Don't forget to specify this if you need cookies
 	};
-	const fetchResponse = await fetch(`${process.env.REACT_APP_SERVER}/accounts/lostark/character`, fecthOption);
+	const fetchResponse = await fetch(`/accounts/lostark/character`, fecthOption);
 	const [isStatusGood, checkMessage] = isFetchStatusGood(fetchResponse);
 
 	if(isStatusGood === true){
@@ -382,7 +382,7 @@ export const getMyInfo = async () => {
 		, headers: {"Content-Type": "application/json",}
 		, credentials: "include", // Don't forget to specify this if you need cookies
 	};
-	const fetchResponse = await fetch(`${process.env.REACT_APP_SERVER}/accounts/information/my`, fecthOption);
+	const fetchResponse = await fetch(`/accounts/information/my`, fecthOption);
 	const [isStatusGood, checkMessage] = isFetchStatusGood(fetchResponse);
 
 	if(isStatusGood === true){
@@ -408,7 +408,7 @@ export const renewPassword = async (sendData) => {
 		, headers: {"Content-Type": "application/json",}
 		, credentials: "include", // Don't forget to specify this if you need cookies
 	};
-	const fetchResponse = await fetch(`${process.env.REACT_APP_SERVER}/accounts/password`, fecthOption);
+	const fetchResponse = await fetch(`/accounts/password`, fecthOption);
 	const [isStatusGood, checkMessage] = isFetchStatusGood(fetchResponse);
 
 	if(isStatusGood === true){
@@ -434,7 +434,7 @@ export const renewNickname = async (sendData) => {
 		, headers: {"Content-Type": "application/json",}
 		, credentials: "include", // Don't forget to specify this if you need cookies
 	};
-	const fetchResponse = await fetch(`${process.env.REACT_APP_SERVER}/accounts/nickname`, fecthOption);
+	const fetchResponse = await fetch(`/accounts/nickname`, fecthOption);
 	const [isStatusGood, checkMessage] = isFetchStatusGood(fetchResponse);
 
 	if(isStatusGood === true){
@@ -459,7 +459,7 @@ export const requestVerifyEmail = async () => {
 		, headers: {"Content-Type": "application/json",}
 		, credentials: "include", // Don't forget to specify this if you need cookies
 	};
-	const fetchResponse = await fetch(`${process.env.REACT_APP_SERVER}/accounts/verify/send/email`, fecthOption);
+	const fetchResponse = await fetch(`/accounts/verify/send/email`, fecthOption);
 	const [isStatusGood, checkMessage] = isFetchStatusGood(fetchResponse);
 
 	if(isStatusGood === true){
@@ -485,7 +485,7 @@ export const requestPasswordReset = async (sendData) => {
 		, headers: {"Content-Type": "application/json",}
 		, credentials: "include", // Don't forget to specify this if you need cookies
 	};
-	const fetchResponse = await fetch(`${process.env.REACT_APP_SERVER}/accounts/reset/password/request`, fecthOption);
+	const fetchResponse = await fetch(`/accounts/reset/password/request`, fecthOption);
 	const [isStatusGood, checkMessage] = isFetchStatusGood(fetchResponse);
 
 	if(isStatusGood === true){
@@ -511,7 +511,7 @@ export const resetPassword = async (sendData) => {
 		, headers: {"Content-Type": "application/json",}
 		, credentials: "include", // Don't forget to specify this if you need cookies
 	};
-	const fetchResponse = await fetch(`${process.env.REACT_APP_SERVER}/accounts/reset/password/execute`, fecthOption);
+	const fetchResponse = await fetch(`/accounts/reset/password/execute`, fecthOption);
 	const [isStatusGood, checkMessage] = isFetchStatusGood(fetchResponse);
 
 	if(isStatusGood === true){
@@ -536,7 +536,7 @@ export const checkPasswordForgotCode = async (verificationCode) => {
 		, headers: {"Content-Type": "application/json",}
 		, credentials: "include", // Don't forget to specify this if you need cookies
 	};
-	const fetchResponse = await fetch(`${process.env.REACT_APP_SERVER}/accounts/verify/reset/password/${verificationCode}`, fecthOption);
+	const fetchResponse = await fetch(`/accounts/verify/reset/password/${verificationCode}`, fecthOption);
 	const [isStatusGood, checkMessage] = isFetchStatusGood(fetchResponse);
 
 	if(isStatusGood === true){
@@ -561,7 +561,7 @@ export const deleteAccount = async () => {
 		, headers: {"Content-Type": "application/json",}
 		, credentials: "include", // Don't forget to specify this if you need cookies
 	};
-	const fetchResponse = await fetch(`${process.env.REACT_APP_SERVER}/accounts`, fecthOption);
+	const fetchResponse = await fetch(`/accounts`, fecthOption);
 	const [isStatusGood, checkMessage] = isFetchStatusGood(fetchResponse);
 
 	if(isStatusGood === true){

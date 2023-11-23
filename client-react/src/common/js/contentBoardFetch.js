@@ -9,7 +9,7 @@ export const readContentList = async (boardType, page) => {
 		, headers: {"Content-Type": "application/json",}
 		, credentials: "include", // Don't forget to specify this if you need cookies
 	};
-	const fetchResponse = await fetch(`${process.env.REACT_APP_SERVER}/boards/${boardType}/list/${page}`, fecthOption);
+	const fetchResponse = await fetch(`/boards/${boardType}/list/${page}`, fecthOption);
 	const [isStatusGood, checkMessage] = isFetchStatusGood(fetchResponse);
 
 	if(isStatusGood === true){
@@ -34,7 +34,7 @@ export const readContent = async (boardType, contentCode) => {
 		, headers: {"Content-Type": "application/json",}
 		, credentials: "include", // Don't forget to specify this if you need cookies
 	};
-	const fetchResponse = await fetch(`${process.env.REACT_APP_SERVER}/boards/${boardType}/content/read/${contentCode}`, fecthOption);
+	const fetchResponse = await fetch(`/boards/${boardType}/content/read/${contentCode}`, fecthOption);
 	const [isStatusGood, checkMessage] = isFetchStatusGood(fetchResponse);
 
 	if(isStatusGood === true){
@@ -59,7 +59,7 @@ export const getContentData = async (boardType, contentCode) => {
 		, headers: {"Content-Type": "application/json",}
 		, credentials: "include", // Don't forget to specify this if you need cookies
 	};
-	const fetchResponse = await fetch(`${process.env.REACT_APP_SERVER}/boards/${boardType}/content/data/${contentCode}`, fecthOption);
+	const fetchResponse = await fetch(`/boards/${boardType}/content/data/${contentCode}`, fecthOption);
 	const [isStatusGood, checkMessage] = isFetchStatusGood(fetchResponse);
 
 	if(isStatusGood === true){
@@ -85,7 +85,7 @@ export const deleteContent = async (boardType, sendData) => {
 		, headers: {"Content-Type": "application/json",}
 		, credentials: "include", // Don't forget to specify this if you need cookies
 	};
-	const fetchResponse = await fetch(`${process.env.REACT_APP_SERVER}/boards/${boardType}/content`, fecthOption);
+	const fetchResponse = await fetch(`/boards/${boardType}/content`, fecthOption);
 	const [isStatusGood, checkMessage] = isFetchStatusGood(fetchResponse);
 
 	if(isStatusGood === true){
@@ -111,7 +111,7 @@ export const upvoteContent = async (boardType, sendData) => {
 		, headers: {"Content-Type": "application/json",}
 		, credentials: "include", // Don't forget to specify this if you need cookies
 	};
-	const fetchResponse = await fetch(`${process.env.REACT_APP_SERVER}/boards/${boardType}/content/upvote`, fecthOption);
+	const fetchResponse = await fetch(`/boards/${boardType}/content/upvote`, fecthOption);
 	const [isStatusGood, checkMessage] = isFetchStatusGood(fetchResponse);
 
 	if(isStatusGood === true){
@@ -137,7 +137,7 @@ export const downvoteContent = async (boardType, sendData) => {
 		, headers: {"Content-Type": "application/json",}
 		, credentials: "include", // Don't forget to specify this if you need cookies
 	};
-	const fetchResponse = await fetch(`${process.env.REACT_APP_SERVER}/boards/${boardType}/content/downvote`, fecthOption);
+	const fetchResponse = await fetch(`/boards/${boardType}/content/downvote`, fecthOption);
 	const [isStatusGood, checkMessage] = isFetchStatusGood(fetchResponse);
 
 	if(isStatusGood === true){
@@ -163,7 +163,7 @@ export const createContent = async (boardType, sendData) => {
 		, headers: {"Content-Type": "application/json",}
 		, credentials: "include", // Don't forget to specify this if you need cookies
 	};
-	const fetchResponse = await fetch(`${process.env.REACT_APP_SERVER}/boards/${boardType}/content`, fecthOption);
+	const fetchResponse = await fetch(`/boards/${boardType}/content`, fecthOption);
 	const [isStatusGood, checkMessage] = isFetchStatusGood(fetchResponse);
 
 	if(isStatusGood !== true){
@@ -181,7 +181,7 @@ export const updateContent = async (boardType, sendData) => {
 		, headers: {"Content-Type": "application/json",}
 		, credentials: "include", // Don't forget to specify this if you need cookies
 	};
-	const fetchResponse = await fetch(`${process.env.REACT_APP_SERVER}/boards/${boardType}/content`, fecthOption);
+	const fetchResponse = await fetch(`/boards/${boardType}/content`, fecthOption);
 	const [isStatusGood, checkMessage] = isFetchStatusGood(fetchResponse);
 
 	if(isStatusGood === true){
@@ -207,7 +207,7 @@ export const checkBeforeEdit = async (boardType, sendData) => {
 		, headers: {"Content-Type": "application/json",}
 		, credentials: "include", // Don't forget to specify this if you need cookies
 	};
-	const fetchResponse = await fetch(`${process.env.REACT_APP_SERVER}/boards/${boardType}/content/check/author`, fecthOption);
+	const fetchResponse = await fetch(`/boards/${boardType}/content/check/author`, fecthOption);
 	const [isStatusGood, checkMessage] = isFetchStatusGood(fetchResponse);
 
 	if(isStatusGood === true){
@@ -238,7 +238,7 @@ export const createContentUserBoard = async (sendData) => {
 		, headers: {"Content-Type": "application/json",}
 		, credentials: "include", // Don't forget to specify this if you need cookies
 	};
-	const fetchResponse = await fetch(`${process.env.REACT_APP_SERVER}/boards/user/content`, fecthOption);
+	const fetchResponse = await fetch(`/boards/user/content`, fecthOption);
 	const [isStatusGood, checkMessage] = isFetchStatusGood(fetchResponse);
 
 	if(isStatusGood === true){

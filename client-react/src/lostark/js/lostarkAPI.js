@@ -36,24 +36,12 @@ const fatchTemplate = async (method, destination) => {
 }
 
 /**
- * 입력한 캐릭터 이름의 기본 정보를 가져온다
- * @param {string} characterNickName 캐릭터 이름
- * @returns {object} 가져온 캐릭터 정보 JSON
- */
-export const getTestJson = async (characterNickName) => {
-	const result = await fatchTemplate('GET', `${process.env.REACT_APP_SERVER}/test/${encodeURIComponent(characterNickName)}`);
-	console.log('getTestJson', result);
-
-	return result;
-}
-
-/**
  * 입력한 서버의 순위권 길드의 정보를 가져온다
  * @param {string} serverName 서버 이름
  * @returns {object} 가져온 길드 정보 JSON
  */
 export const getServerGuildList = async (serverName) => {
-	const result = await fatchTemplate('GET', `${process.env.REACT_APP_SERVER}/guilds/${encodeURIComponent(serverName)}`);
+	const result = await fatchTemplate('GET', `/guilds/${encodeURIComponent(serverName)}`);
 	console.log('getServerGuildList', result);
 
 	return result;
@@ -65,7 +53,7 @@ export const getServerGuildList = async (serverName) => {
  * @returns {object} 가져온 캐릭터 정보 JSON
  */
 export const getCharacterInfo = async (characterNickName) => {
-	const result = await fatchTemplate('GET', `${process.env.REACT_APP_SERVER}/character/${encodeURIComponent(characterNickName)}`);
+	const result = await fatchTemplate('GET', `/character/${encodeURIComponent(characterNickName)}`);
 	console.log('getCharacterInfo', result);
 
 	return result;
@@ -77,7 +65,7 @@ export const getCharacterInfo = async (characterNickName) => {
  * @returns {object} 가져온 캐릭터 정보 JSON
  */
 export const getEquipmentInfo = async (characterNickName) => {
-	const result = await fatchTemplate('GET', `${process.env.REACT_APP_SERVER}/equipment/${encodeURIComponent(characterNickName)}`);
+	const result = await fatchTemplate('GET', `/equipment/${encodeURIComponent(characterNickName)}`);
 	console.log('getEquipmentInfo', result);
 
 	return result;
@@ -89,7 +77,7 @@ export const getEquipmentInfo = async (characterNickName) => {
  * @returns {object} 가져온 캐릭터 정보 JSON
  */
 export const getEngravingsInfo = async (characterNickName) => {
-	const result = await fatchTemplate('GET', `${process.env.REACT_APP_SERVER}/engravings/${encodeURIComponent(characterNickName)}`);
+	const result = await fatchTemplate('GET', `/engravings/${encodeURIComponent(characterNickName)}`);
 	console.log('getEngravingsInfo', result);
 
 	return result;
@@ -101,7 +89,7 @@ export const getEngravingsInfo = async (characterNickName) => {
  * @returns {object} 가져온 캐릭터 정보 JSON
  */
 export const getCardsInfo = async (characterNickName) => {
-	const result = await fatchTemplate('GET', `${process.env.REACT_APP_SERVER}/cards/${encodeURIComponent(characterNickName)}`);
+	const result = await fatchTemplate('GET', `/cards/${encodeURIComponent(characterNickName)}`);
 	console.log('getCardsInfo', result);
 
 	return result;
@@ -113,7 +101,7 @@ export const getCardsInfo = async (characterNickName) => {
  * @returns {object} 가져온 캐릭터 정보 JSON
  */
 export const getGemsInfo = async (characterNickName) => {
-	const result = await fatchTemplate('GET', `${process.env.REACT_APP_SERVER}/gems/${encodeURIComponent(characterNickName)}`);
+	const result = await fatchTemplate('GET', `/gems/${encodeURIComponent(characterNickName)}`);
 	console.log('getGemsInfo', result);
 
 	return result;
@@ -125,7 +113,7 @@ export const getGemsInfo = async (characterNickName) => {
  * @returns {object} 가져온 캐릭터들 정보 JSON
  */
 export const getCharacterList = async (characterNickName) => {
-	const result = await fatchTemplate('GET', `${process.env.REACT_APP_SERVER}/characters/${encodeURIComponent(characterNickName)}`);
+	const result = await fatchTemplate('GET', `/characters/${encodeURIComponent(characterNickName)}`);
 	console.log('getCharacterList', result);
 
 	return result;
