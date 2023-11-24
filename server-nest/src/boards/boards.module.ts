@@ -11,6 +11,8 @@ import { LostArkKnownReply } from './lostark/known/lostArkKnownReply.entity';
 import { LostArkKnownVoteHistory } from './lostark/known/lostArkKnownVoteHistory.entity';
 import { LostArkUnknownPost } from './lostark/unknown/lostArkUnknownPost.entity';
 import { LostArkUnknownReply } from './lostark/unknown/lostArkUnknownReply.entity';
+import { LostArkKnownPostService } from './lostark/known/lostArkKnownPost.service';
+import { LostArkUnknownPostService } from './lostark/unknown/lostArkUnknownPost.service';
 
 /**
  * 게시판 관련 기능 모듈
@@ -28,6 +30,6 @@ import { LostArkUnknownReply } from './lostark/unknown/lostArkUnknownReply.entit
 		]),
 	],
 	controllers: [ BoardsController ],
-	providers: [ BoardsService ],
+	providers: [BoardsService, LostArkKnownPostService, LostArkUnknownPostService, ],
 })
 export class BoardsModule {}
