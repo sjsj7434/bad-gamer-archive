@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { APP_GUARD } from '@nestjs/core';
 import { CommonModule } from './common.module';
-import { BoardsModule } from './boards/boards.module';
+import { PostModule } from './boards/post.module';
 import { AccountsModule } from './accounts/accounts.module';
 import { GlobalModule } from './global.module';
 
@@ -14,7 +14,7 @@ import { GlobalModule } from './global.module';
 		CommonModule,
 		GlobalModule,
 		AccountsModule,
-		BoardsModule,
+		PostModule,
 		ThrottlerModule.forRoot([ //과다 호출 방지 쓰로틀러
 			{
 				ttl: 60000, //time to live in milliseconds

@@ -20,7 +20,7 @@ import { CreateLostArkKnownPostDTO, DeleteLostArkKnownPostDTO, UpdateLostArkKnow
  */
 @SkipThrottle()
 @Controller("boards")
-export class BoardsController {
+export class PostController {
 	constructor(
 		private boardsService: BoardsService,
 		private lostArkUnknownPostService: LostArkUnknownPostService,

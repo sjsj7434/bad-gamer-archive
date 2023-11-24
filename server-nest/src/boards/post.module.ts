@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AccountsModule } from 'src/accounts/accounts.module';
-import { BoardsController } from './boards.controller';
+import { PostController } from './post.controller';
 import { BoardsService } from './boards.service';
 import { Boards } from './boards.entity';
 import { Replies } from './replies.entity';
@@ -29,7 +29,7 @@ import { LostArkUnknownPostService } from './lostark/unknown/lostArkUnknownPost.
 			, LostArkUnknownPost, LostArkUnknownReply
 		]),
 	],
-	controllers: [ BoardsController ],
-	providers: [BoardsService, LostArkKnownPostService, LostArkUnknownPostService, ],
+	controllers: [ PostController ],
+	providers: [ BoardsService, LostArkKnownPostService, LostArkUnknownPostService, ],
 })
-export class BoardsModule {}
+export class PostModule {}
