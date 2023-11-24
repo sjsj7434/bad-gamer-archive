@@ -56,34 +56,12 @@ npm run start
 4. 공식 문서 따라서 소스에 import 후 사용
 ```
 
-## 파일 용량
-```bash
-server-nest : 228 MB
-
-client-react : 276 MB
-client-react build : 6 MB
-```
-
 ## 기능 목록
-- <input type='checkbox' checked> 본캐 인증 절차 수립(공홈)
-- <input type='checkbox' checked> 회원가입
-- <input type='checkbox' checked> 회원 비밀번호 암호화
-- <input type='checkbox' checked> 로그인 구현
-- <input type='checkbox' checked> 회원가입 후, 본캐 인증
-- <input type='checkbox' checked> 댓글 작성 기능
-- <input type='checkbox' checked> ckEditor5 게시글 작성 기능(인증 필요없는 자유)
-- <input type='checkbox' checked> ckEditor5 게시글 수정 기능(인증 필요없는 자유)
 - <input type='checkbox' checked> 가입할 때 이메일을 받지만 인증은 하지 않음
 - <input type='checkbox' checked> 마이페이지 비밀번호 변경(기존 비밀번호 입력 후 변경)
-- <input type='checkbox' checked> 마이페이지 본캐 인증 정보 조회
 - <input type='checkbox' checked> 마이페이지 본캐 인증 정보 업데이트
 - <input type='checkbox' checked> 마이페이지 본캐 인증 정보 캐릭 변경
-- <input type='checkbox' checked> ckEditor5 게시글 작성 기능(인증 전용)
-- <input type='checkbox' checked> ckEditor5 게시글 수정 기능(인증 전용)
-- <input type='checkbox' checked> Rate Limiting, protect applications from brute-force attacks
-- <input type='checkbox' checked> 게시글 조회 시 CSS 안먹는지 테두리 박스 생김
-- <input type='checkbox' checked> 현재 익명 글 작성 시 외래키 오류 발생 중
-- <input type='checkbox'> react에 프록시 설정하니까 서버랑 통신이 느려진 느낌이 있음
+- <input type='checkbox' checked> react에 프록시 설정하니까 서버랑 통신이 느려진 느낌이 있음 / build된 환경은 빠른 듯?
 - <input type='checkbox'> 서버에 배포하면 배포된 웹에서는 로그인이 되지 않음
 - <input type='checkbox'> ckEditor5 Media embed 추가 / https://ckeditor.com/docs/ckeditor5/latest/features/media-embed.html
 - <input type='checkbox'> 게시글 작성자 IP차단 & 아이디 차단 기능(회원 전용)
