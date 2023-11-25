@@ -5,15 +5,15 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { Request, Response } from 'express';
 import { BoardsService } from './boards.service';
 import { SkipThrottle, Throttle } from '@nestjs/throttler';
-import { CreateLostArkUnknownPostDTO, DeleteLostArkUnknownPostDTO, UpdateLostArkUnknownPostDTO } from './lostark/unknown/lostArkUnknownPost.dto';
-import { LostArkUnknownPost } from './lostark/unknown/lostArkUnknownPost.entity';
-import { LostArkUnknownReply } from './lostark/unknown/lostArkUnknownReply.entity';
-import { CreateLostArkUnknownReplyDTO, DeleteLostArkUnknownReplyDTO } from './lostark/unknown/lostArkUnknownReply.dto';
-import { LostArkKnownPostService } from './lostark/known/lostArkKnownPost.service';
-import { LostArkUnknownPostService } from './lostark/unknown/lostArkUnknownPost.service';
-import { LostArkKnownPost } from './lostark/known/lostArkKnownPost.entity';
-import { LostArkKnownReply } from './lostark/known/lostArkKnownReply.entity';
-import { CreateLostArkKnownPostDTO, DeleteLostArkKnownPostDTO, UpdateLostArkKnownPostDTO } from './lostark/known/lostArkKnownPost.dto';
+import { CreateLostArkUnknownPostDTO, DeleteLostArkUnknownPostDTO, UpdateLostArkUnknownPostDTO } from './unknown/lostArkUnknownPost.dto';
+import { LostArkUnknownPost } from './unknown/lostArkUnknownPost.entity';
+import { LostArkUnknownReply } from './unknown/lostArkUnknownReply.entity';
+import { CreateLostArkUnknownReplyDTO, DeleteLostArkUnknownReplyDTO } from './unknown/lostArkUnknownReply.dto';
+import { LostArkKnownPostService } from './known/lostArkKnownPost.service';
+import { LostArkUnknownPostService } from './unknown/lostArkUnknownPost.service';
+import { LostArkKnownPost } from './known/lostArkKnownPost.entity';
+import { LostArkKnownReply } from './known/lostArkKnownReply.entity';
+import { CreateLostArkKnownPostDTO, DeleteLostArkKnownPostDTO, UpdateLostArkKnownPostDTO } from './known/lostArkKnownPost.dto';
 
 /**
  * 게시판 컨트롤러

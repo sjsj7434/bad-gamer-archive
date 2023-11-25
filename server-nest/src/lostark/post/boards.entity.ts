@@ -1,6 +1,5 @@
 import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, DeleteDateColumn, OneToMany, ManyToOne, JoinColumn } from 'typeorm';
 import { Replies } from './replies.entity';
-import { Accounts } from 'src/accounts/accounts.entity';
 import { VoteHistory } from './voteHistory.entity';
 
 // This will create following database table
@@ -14,10 +13,6 @@ import { VoteHistory } from './voteHistory.entity';
 export class Boards {
 	@OneToMany(() => Replies, (replies) => replies.boards)
 	replies: Replies[];
-	
-	@ManyToOne(() => Accounts, (accounts) => accounts.boards)
-	@JoinColumn({ name: "writerID", referencedColumnName: "id" })
-	accounts: Accounts;
 
 	@OneToMany(() => VoteHistory, (voteHistory) => voteHistory.boards)
 	voteHistory: VoteHistory[];

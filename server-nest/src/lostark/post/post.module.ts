@@ -6,13 +6,13 @@ import { BoardsService } from './boards.service';
 import { Boards } from './boards.entity';
 import { Replies } from './replies.entity';
 import { VoteHistory } from './voteHistory.entity';
-import { LostArkKnownPost } from './lostark/known/lostArkKnownPost.entity';
-import { LostArkKnownReply } from './lostark/known/lostArkKnownReply.entity';
-import { LostArkKnownVoteHistory } from './lostark/known/lostArkKnownVoteHistory.entity';
-import { LostArkUnknownPost } from './lostark/unknown/lostArkUnknownPost.entity';
-import { LostArkUnknownReply } from './lostark/unknown/lostArkUnknownReply.entity';
-import { LostArkKnownPostService } from './lostark/known/lostArkKnownPost.service';
-import { LostArkUnknownPostService } from './lostark/unknown/lostArkUnknownPost.service';
+import { LostArkKnownPost } from './known/lostArkKnownPost.entity';
+import { LostArkKnownReply } from './known/lostArkKnownReply.entity';
+import { LostArkKnownVoteHistory } from './known/lostArkKnownVoteHistory.entity';
+import { LostArkUnknownPost } from './unknown/lostArkUnknownPost.entity';
+import { LostArkUnknownReply } from './unknown/lostArkUnknownReply.entity';
+import { LostArkKnownPostService } from './known/lostArkKnownPost.service';
+import { LostArkUnknownPostService } from './unknown/lostArkUnknownPost.service';
 
 /**
  * 게시판 관련 기능 모듈

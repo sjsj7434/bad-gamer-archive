@@ -1,7 +1,6 @@
 import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, DeleteDateColumn, OneToMany } from 'typeorm';
 import { Authentication } from './authentication.entity';
-import { Boards } from 'src/boards/boards.entity';
-import { LostArkKnownPost } from 'src/boards/lostark/known/lostArkKnownPost.entity';
+import { LostArkKnownPost } from 'src/lostark/post/known/lostArkKnownPost.entity';
 
 // This will create following database table
 // If table is already exsists there could be error
@@ -9,9 +8,6 @@ import { LostArkKnownPost } from 'src/boards/lostark/known/lostArkKnownPost.enti
 export class Accounts {
 	@OneToMany(() => Authentication, (authentication) => authentication.accounts)
 	authentication: Authentication[];
-
-	@OneToMany(() => Boards, (boards) => boards.accounts)
-	boards: Boards[];
 
 	@OneToMany(() => LostArkKnownPost, (lostArkKnownPost) => lostArkKnownPost.accounts)
 	lostArkKnownPost: LostArkKnownPost[];

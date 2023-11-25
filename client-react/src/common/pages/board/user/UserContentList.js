@@ -116,13 +116,13 @@ const UserContentList = () => {
 										</div>
 										<div style={{textAlign: "end"}}>
 											{
-												data.replies.length > 999 ?
+												data.reply.length > 999 ?
 												<span style={{fontSize: "0.85rem", color: "palevioletred"}}>
 													999+
 												</span>
 												:
 												<span style={{fontSize: "0.85rem", color: "darkseagreen"}}>
-													{data.replies.length}
+													{data.reply.length}
 												</span>
 											}
 										</div>
