@@ -255,7 +255,7 @@ export const createContentUserBoard = async (sendData) => {
 }
 
 /**
- * 유저 게시판 게시글 생성
+ * 유저 게시글 추천자 목록
  */
 export const showUpvoteUserList = async (contentCode) => {
 	const fecthOption = {
@@ -269,6 +269,31 @@ export const showUpvoteUserList = async (contentCode) => {
 	if(isStatusGood === true){
 		const fetchData = await getFetchJson(fetchResponse);
 		console.log('showUpvoteUserList =>', fetchData)
+
+		return fetchData;
+	}
+	else{
+		alert(checkMessage);
+
+		return null;
+	}
+}
+
+/**
+ * 유저 게시글 비추천자 목록
+ */
+export const showDownvoteUserList = async (contentCode) => {
+	const fecthOption = {
+		method: "GET"
+		, headers: {"Content-Type": "application/json",}
+		, credentials: "include", // Don't forget to specify this if you need cookies
+	};
+	const fetchResponse = await fetch(`/boards/user/content/downvote/list/${contentCode}`, fecthOption);
+	const [isStatusGood, checkMessage] = isFetchStatusGood(fetchResponse);
+
+	if(isStatusGood === true){
+		const fetchData = await getFetchJson(fetchResponse);
+		console.log('showDownvoteUserList =>', fetchData)
 
 		return fetchData;
 	}

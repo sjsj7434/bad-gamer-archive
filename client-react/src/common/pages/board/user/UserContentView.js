@@ -157,7 +157,7 @@ const UserContentView = (props) => {
 						return;
 					}
 					else if(voteResult.isVotable === false){
-						alert("오늘은 이미 해당 게시물에 추천, 비추천을 하였습니다");
+						alert("이미 게시물에 추천을 하였습니다");
 					}
 					else{
 						setUpvoteCount(voteResult.upvote);
@@ -194,7 +194,7 @@ const UserContentView = (props) => {
 						return;
 					}
 					else if(voteResult.isVotable === false){
-						alert("오늘은 이미 해당 게시물에 추천, 비추천을 하였습니다");
+						alert("이미 게시물에 비추천을 하였습니다");
 					}
 					else{
 						setUpvoteCount(voteResult.upvote);
@@ -211,11 +211,33 @@ const UserContentView = (props) => {
 
 				const voteResult = await contentBoardFetch.showUpvoteUserList(contentCode);
 
-				const test = voteResult.map((element) => {
+				const voteListElement = voteResult.map((element) => {
 					return <li>{element.writerNickname} | {element.createdAt.substring(0, 10)}</li>;
-				})
+				});
 
-				setVoteHistory(test);
+				if(voteListElement.length > 0){
+					setVoteHistory(voteListElement);
+				}
+				else{
+					setVoteHistory(<>추천자가 존재하지 않습니다</>);
+				}
+			}
+
+			const showDownvoteUserList = async () => {
+				setVoteHistory(<></>);
+
+				const voteResult = await contentBoardFetch.showDownvoteUserList(contentCode);
+
+				const voteListElement = voteResult.map((element) => {
+					return <li>{element.writerNickname} | {element.createdAt.substring(0, 10)}</li>;
+				});
+
+				if(voteListElement.length > 0){
+					setVoteHistory(voteListElement);
+				}
+				else{
+					setVoteHistory(<>비추천자가 존재하지 않습니다</>);
+				}
 			}
 
 			setRenderData(
@@ -295,7 +317,7 @@ const UserContentView = (props) => {
 						<div style={{display: "flex", justifyContent: "center", marginTop: "10px"}}>
 							<Button variant="success" onClick={() => { showUpvoteUserList() }} style={{ width: "30%", maxWidth: "130px", padding: "2px", fontSize: "0.85rem" }}>목록 확인</Button>
 							&nbsp;&nbsp;
-							<Button variant="danger" onClick={() => { showUpvoteUserList() }} style={{ width: "30%", maxWidth: "130px", padding: "2px", fontSize: "0.85rem" }}>목록 확인</Button>
+							<Button variant="danger" onClick={() => { showDownvoteUserList() }} style={{ width: "30%", maxWidth: "130px", padding: "2px", fontSize: "0.85rem" }}>목록 확인</Button>
 						</div>
 
 						<div id="voteList" style={{ textAlign: "center", borderTop: "0.5rem" }}>

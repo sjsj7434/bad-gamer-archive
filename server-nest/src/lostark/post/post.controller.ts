@@ -192,6 +192,14 @@ export class PostController {
 		return await this.lostArkKnownPostService.getPostUpvoteList(request, response, contentCode);
 	}
 
+	//유저 게시글 비추천자 목록
+	@SkipThrottle({ default: false })
+	@Throttle({ default: { limit: 20, ttl: 60000 } }) //1분에 20개 이상 금지
+	@Get("user/content/downvote/list/:contentCode")
+	async getUserPostDownvoteList(@Req() request: Request, @Res({ passthrough: true }) response: Response, @Param("contentCode") contentCode: number): Promise<LostArkKnownVoteHistory[]> {
+		return await this.lostArkKnownPostService.getPostDownvoteList(request, response, contentCode);
+	}
+
 	//유저 게시글 댓글 조회
 	@Get("user/reply/:contentCode/:page")
 	async getUserReplies(@Param("contentCode") contentCode: number, @Param("page") page: number): Promise<[LostArkKnownReply[], number]> {
