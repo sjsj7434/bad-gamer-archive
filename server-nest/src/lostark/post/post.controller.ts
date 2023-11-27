@@ -1,9 +1,7 @@
 import { Param, Controller, Get, Post, Body, Ip, Req, Res, Delete, Patch, UseInterceptors, UploadedFile } from '@nestjs/common';
-import { Boards } from './boards.entity';
 import { CreateRepliesDTO, DeleteRepliesDTO } from './replies.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { Request, Response } from 'express';
-import { BoardsService } from './boards.service';
 import { SkipThrottle, Throttle } from '@nestjs/throttler';
 import { CreateLostArkUnknownPostDTO, DeleteLostArkUnknownPostDTO, UpdateLostArkUnknownPostDTO } from './unknown/lostArkUnknownPost.dto';
 import { LostArkUnknownPost } from './unknown/lostArkUnknownPost.entity';
@@ -14,6 +12,7 @@ import { LostArkUnknownPostService } from './unknown/lostArkUnknownPost.service'
 import { LostArkKnownPost } from './known/lostArkKnownPost.entity';
 import { LostArkKnownReply } from './known/lostArkKnownReply.entity';
 import { CreateLostArkKnownPostDTO, DeleteLostArkKnownPostDTO, UpdateLostArkKnownPostDTO } from './known/lostArkKnownPost.dto';
+import { CommonPostService } from './common/commonPost.service';
 
 /**
  * 게시판 컨트롤러
@@ -22,7 +21,7 @@ import { CreateLostArkKnownPostDTO, DeleteLostArkKnownPostDTO, UpdateLostArkKnow
 @Controller("boards")
 export class PostController {
 	constructor(
-		private boardsService: BoardsService,
+		private commonPost: CommonPostService,
 		private lostArkUnknownPostService: LostArkUnknownPostService,
 		private lostArkKnownPostService: LostArkKnownPostService,
 	) { }
@@ -212,34 +211,34 @@ export class PostController {
 
 	//================================================================================================================================================= common
 
-	//공지 게시판 목록, page 값이 number가 아니면 호출되지 않음
-	@Get("announcement/list/:page")
-	async getAnnouncementContentList(@Param("page") page: number): Promise<[Boards[], number]> {
-		return await this.boardsService.getAnnouncementContentList(page);
-	}
+	// //공지 게시판 목록, page 값이 number가 아니면 호출되지 않음
+	// @Get("announcement/list/:page")
+	// async getAnnouncementContentList(@Param("page") page: number): Promise<[Boards[], number]> {
+	// 	return await this.boardsService.getAnnouncementContentList(page);
+	// }
 
-	//공지 게시판 글 조회, contentCode 값이 number가 아니면 호출되지 않음
-	@Get("announcement/content/read/:contentCode")
-	async readAnnouncementContent(@Req() request: Request, @Res({ passthrough: true }) response: Response, @Param("contentCode") contentCode: number): Promise<{ contentData: Boards, isWriter: boolean }> {
-		//set cookies/headers 정도만 사용하고, 나머지는 프레임워크에 떠넘기는 식으로 @Res()를 사용하는 거라면 passthrough: true 옵션은 필수! 그렇지 않으면 fetch 요청이 마무리가 안됨
-		return await this.boardsService.readAnnouncementContent(request, response, contentCode);
-	}
+	// //공지 게시판 글 조회, contentCode 값이 number가 아니면 호출되지 않음
+	// @Get("announcement/content/read/:contentCode")
+	// async readAnnouncementContent(@Req() request: Request, @Res({ passthrough: true }) response: Response, @Param("contentCode") contentCode: number): Promise<{ contentData: Boards, isWriter: boolean }> {
+	// 	//set cookies/headers 정도만 사용하고, 나머지는 프레임워크에 떠넘기는 식으로 @Res()를 사용하는 거라면 passthrough: true 옵션은 필수! 그렇지 않으면 fetch 요청이 마무리가 안됨
+	// 	return await this.boardsService.readAnnouncementContent(request, response, contentCode);
+	// }
 
-	//게시글 추천
-	@SkipThrottle({ default: false })
-	@Throttle({ default: { limit: 20, ttl: 60000 } }) //1분에 20개 이상 금지
-	@Post("announcement/content/upvote")
-	async upvoteAnnouncementContent(@Ip() ipData: string, @Body() sendData: { code: number }): Promise<{ upvote: number, downvote: number, isVotable: boolean }> {
-		return await this.boardsService.upvoteAnnouncementContent(sendData.code, ipData);
-	}
+	// //게시글 추천
+	// @SkipThrottle({ default: false })
+	// @Throttle({ default: { limit: 20, ttl: 60000 } }) //1분에 20개 이상 금지
+	// @Post("announcement/content/upvote")
+	// async upvoteAnnouncementContent(@Ip() ipData: string, @Body() sendData: { code: number }): Promise<{ upvote: number, downvote: number, isVotable: boolean }> {
+	// 	return await this.boardsService.upvoteAnnouncementContent(sendData.code, ipData);
+	// }
 
-	//게시글 비추천
-	@SkipThrottle({ default: false })
-	@Throttle({ default: { limit: 20, ttl: 60000 } }) //1분에 20개 이상 금지
-	@Post("announcement/content/downvote")
-	async downvoteAnnouncementContent(@Ip() ipData: string, @Body() sendData: { code: number }): Promise<{ upvote: number, downvote: number, isVotable: boolean }> {
-		return await this.boardsService.downvoteAnnouncementContent(sendData.code, ipData);
-	}
+	// //게시글 비추천
+	// @SkipThrottle({ default: false })
+	// @Throttle({ default: { limit: 20, ttl: 60000 } }) //1분에 20개 이상 금지
+	// @Post("announcement/content/downvote")
+	// async downvoteAnnouncementContent(@Ip() ipData: string, @Body() sendData: { code: number }): Promise<{ upvote: number, downvote: number, isVotable: boolean }> {
+	// 	return await this.boardsService.downvoteAnnouncementContent(sendData.code, ipData);
+	// }
 
 	//게시글 이미지 삽입
 	@Post("image")
@@ -249,6 +248,6 @@ export class PostController {
 		//If the upload is successful, the server should return: An object containing [the url property] which points to the uploaded image on the server
 		//이미지 업로드가 성공했으면 서버가 이미지 주소 정보가 담긴 오브젝트(url 프로퍼티를 가진)를 반환해야만 함
 
-		return await this.boardsService.uploadImage(file);
+		return await this.commonPost.uploadImage(file);
 	}
 }

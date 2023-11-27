@@ -2,7 +2,6 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AccountsModule } from 'src/accounts/accounts.module';
 import { PostController } from './post.controller';
-import { BoardsService } from './boards.service';
 import { Boards } from './boards.entity';
 import { Replies } from './replies.entity';
 import { VoteHistory } from './voteHistory.entity';
@@ -13,6 +12,7 @@ import { LostArkUnknownPost } from './unknown/lostArkUnknownPost.entity';
 import { LostArkUnknownReply } from './unknown/lostArkUnknownReply.entity';
 import { LostArkKnownPostService } from './known/lostArkKnownPost.service';
 import { LostArkUnknownPostService } from './unknown/lostArkUnknownPost.service';
+import { CommonPostService } from './common/commonPost.service';
 
 /**
  * 게시판 관련 기능 모듈
@@ -30,6 +30,6 @@ import { LostArkUnknownPostService } from './unknown/lostArkUnknownPost.service'
 		]),
 	],
 	controllers: [ PostController ],
-	providers: [ BoardsService, LostArkKnownPostService, LostArkUnknownPostService, ],
+	providers: [ CommonPostService, LostArkKnownPostService, LostArkUnknownPostService, ],
 })
 export class PostModule {}
