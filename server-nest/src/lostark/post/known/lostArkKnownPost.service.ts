@@ -577,10 +577,10 @@ export class LostArkKnownPostService {
 	/**
 	 * 유저 게시판 추천 목록 확인
 	 */
-	async getPostUpvoteList(request: Request, response: Response, contentCode: number): Promise<{ writerNickname: string, createdAt: Date }> {
+	async getPostUpvoteList(request: Request, response: Response, contentCode: number): Promise<LostArkKnownVoteHistory[]> {
 		// const loginCookie = await this.accountsService.checkLoginStatus(request, response);
 
-		const contentData = await this.lostArkKnownVoteHistoryRepository.findOne({
+		const contentData = await this.lostArkKnownVoteHistoryRepository.find({
 			select: {
 				writerNickname: true,
 				createdAt: true,
@@ -591,7 +591,7 @@ export class LostArkKnownPostService {
 			},
 		});
 
-		return { writerNickname: contentData.writerNickname, createdAt: contentData.createdAt };
+		return contentData;
 	}
 
 	/**
@@ -713,7 +713,6 @@ export class LostArkKnownPostService {
 			where: {
 				code: Equal(deleteReplyDTO.code),
 				writerID: Equal(loginCookie.id),
-				password: Equal(deleteReplyDTO.password),
 			}
 		});
 
@@ -724,7 +723,6 @@ export class LostArkKnownPostService {
 			await this.lostArkKnownReplyRepository.softDelete({
 				code: Equal(deleteReplyDTO.code),
 				writerID: Equal(loginCookie.id),
-				password: Equal(deleteReplyDTO.password),
 			});
 
 			return true;

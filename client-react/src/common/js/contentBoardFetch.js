@@ -227,7 +227,6 @@ export const checkBeforeEdit = async (boardType, sendData) => {
 	From here, it is for the User Board ---------------------------------------------------------------------------------
 */
 
-
 /**
  * 유저 게시판 게시글 생성
  */
@@ -245,6 +244,31 @@ export const createContentUserBoard = async (sendData) => {
 		console.log("kick!", fetchResponse)
 		const fetchData = await getFetchJson(fetchResponse);
 		console.log('createContent =>', fetchData)
+
+		return fetchData;
+	}
+	else{
+		alert(checkMessage);
+
+		return null;
+	}
+}
+
+/**
+ * 유저 게시판 게시글 생성
+ */
+export const showUpvoteUserList = async (contentCode) => {
+	const fecthOption = {
+		method: "GET"
+		, headers: {"Content-Type": "application/json",}
+		, credentials: "include", // Don't forget to specify this if you need cookies
+	};
+	const fetchResponse = await fetch(`/boards/user/content/upvote/list/${contentCode}`, fecthOption);
+	const [isStatusGood, checkMessage] = isFetchStatusGood(fetchResponse);
+
+	if(isStatusGood === true){
+		const fetchData = await getFetchJson(fetchResponse);
+		console.log('showUpvoteUserList =>', fetchData)
 
 		return fetchData;
 	}

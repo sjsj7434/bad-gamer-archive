@@ -2,9 +2,6 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AccountsModule } from 'src/accounts/accounts.module';
 import { PostController } from './post.controller';
-import { Boards } from './boards.entity';
-import { Replies } from './replies.entity';
-import { VoteHistory } from './voteHistory.entity';
 import { LostArkKnownPost } from './known/lostArkKnownPost.entity';
 import { LostArkKnownReply } from './known/lostArkKnownReply.entity';
 import { LostArkKnownVoteHistory } from './known/lostArkKnownVoteHistory.entity';
@@ -24,8 +21,7 @@ import { CommonPostService } from './common/commonPost.service';
 		AccountsModule,
 
 		TypeOrmModule.forFeature([
-			Boards, Replies, VoteHistory
-			, LostArkKnownPost, LostArkKnownReply, LostArkKnownVoteHistory
+			LostArkKnownPost, LostArkKnownReply, LostArkKnownVoteHistory
 			, LostArkUnknownPost, LostArkUnknownReply
 		]),
 	],

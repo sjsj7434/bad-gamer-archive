@@ -1,5 +1,4 @@
 import { Param, Controller, Get, Post, Body, Ip, Req, Res, Delete, Patch, UseInterceptors, UploadedFile } from '@nestjs/common';
-import { CreateRepliesDTO, DeleteRepliesDTO } from './replies.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { Request, Response } from 'express';
 import { SkipThrottle, Throttle } from '@nestjs/throttler';
@@ -13,6 +12,8 @@ import { LostArkKnownPost } from './known/lostArkKnownPost.entity';
 import { LostArkKnownReply } from './known/lostArkKnownReply.entity';
 import { CreateLostArkKnownPostDTO, DeleteLostArkKnownPostDTO, UpdateLostArkKnownPostDTO } from './known/lostArkKnownPost.dto';
 import { CommonPostService } from './common/commonPost.service';
+import { CreateLostArkKnownReplyDTO, DeleteLostArkKnownReplyDTO } from './known/lostArkKnownReply.dto';
+import { LostArkKnownVoteHistory } from './known/lostArkKnownVoteHistory.entity';
 
 /**
  * 게시판 컨트롤러
@@ -183,11 +184,11 @@ export class PostController {
 		return await this.lostArkKnownPostService.downvotePost(request, response, sendData.code, ipData);
 	}
 
-	//유저 게시글 추천
+	//유저 게시글 추천자 목록
 	@SkipThrottle({ default: false })
 	@Throttle({ default: { limit: 20, ttl: 60000 } }) //1분에 20개 이상 금지
 	@Get("user/content/upvote/list/:contentCode")
-	async getUserContentUpvoteList(@Req() request: Request, @Res({ passthrough: true }) response: Response, @Param("contentCode") contentCode: number): Promise<{ writerNickname: string, createdAt: Date }> {
+	async getUserPostUpvoteList(@Req() request: Request, @Res({ passthrough: true }) response: Response, @Param("contentCode") contentCode: number): Promise<LostArkKnownVoteHistory[]> {
 		return await this.lostArkKnownPostService.getPostUpvoteList(request, response, contentCode);
 	}
 
@@ -199,14 +200,14 @@ export class PostController {
 
 	//유저 게시글 댓글 작성
 	@Post("user/reply")
-	async createUserReply(@Req() request: Request, @Res({ passthrough: true }) response: Response, @Ip() ipData: string, @Body() createRepliesDTO: CreateRepliesDTO): Promise<boolean> {
-		return await this.lostArkKnownPostService.createReply(request, response, createRepliesDTO, ipData);
+	async createUserReply(@Req() request: Request, @Res({ passthrough: true }) response: Response, @Ip() ipData: string, @Body() createReplyDTO: CreateLostArkKnownReplyDTO): Promise<boolean> {
+		return await this.lostArkKnownPostService.createReply(request, response, createReplyDTO, ipData);
 	}
 
 	//유저 게시글 댓글 삭제
 	@Delete("user/reply")
-	async deleteUserReply(@Req() request: Request, @Res({ passthrough: true }) response: Response, @Body() deleteRepliesDTO: DeleteRepliesDTO): Promise<boolean> {
-		return await this.lostArkKnownPostService.deleteReply(request, response, deleteRepliesDTO);
+	async deleteUserReply(@Req() request: Request, @Res({ passthrough: true }) response: Response, @Body() deleteReplyDTO: DeleteLostArkKnownReplyDTO): Promise<boolean> {
+		return await this.lostArkKnownPostService.deleteReply(request, response, deleteReplyDTO);
 	}
 
 	//================================================================================================================================================= common

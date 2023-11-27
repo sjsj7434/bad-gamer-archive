@@ -18,6 +18,7 @@ const UserContentView = (props) => {
 	const [renderData, setRenderData] = useState(<></>);
 	const [loadingModalShow, setLoadingModalShow] = useState(false);
 	const [loadingModalMessage, setLoadingModalMessage] = useState("");
+	const [voteHistory, setVoteHistory] = useState(<></>);
 	const navigate = useNavigate();
 	const params = useParams();
 	
@@ -205,6 +206,18 @@ const UserContentView = (props) => {
 				}
 			}
 
+			const showUpvoteUserList = async () => {
+				setVoteHistory(<></>);
+
+				const voteResult = await contentBoardFetch.showUpvoteUserList(contentCode);
+
+				const test = voteResult.map((element) => {
+					return <li>{element.writerNickname} | {element.createdAt.substring(0, 10)}</li>;
+				})
+
+				setVoteHistory(test);
+			}
+
 			setRenderData(
 				<>
 					<div style={{margin: 10}}>
@@ -280,9 +293,13 @@ const UserContentView = (props) => {
 							</Button>
 						</div>
 						<div style={{display: "flex", justifyContent: "center", marginTop: "10px"}}>
-							<Button variant="success" style={{ width: "30%", maxWidth: "130px", padding: "2px", fontSize: "0.85rem" }}>목록 확인</Button>
+							<Button variant="success" onClick={() => { showUpvoteUserList() }} style={{ width: "30%", maxWidth: "130px", padding: "2px", fontSize: "0.85rem" }}>목록 확인</Button>
 							&nbsp;&nbsp;
-							<Button variant="danger" style={{ width: "30%", maxWidth: "130px", padding: "2px", fontSize: "0.85rem" }}>목록 확인</Button>
+							<Button variant="danger" onClick={() => { showUpvoteUserList() }} style={{ width: "30%", maxWidth: "130px", padding: "2px", fontSize: "0.85rem" }}>목록 확인</Button>
+						</div>
+
+						<div id="voteList" style={{ textAlign: "center", borderTop: "0.5rem" }}>
+							{voteHistory}
 						</div>
 						
 						{
@@ -311,7 +328,7 @@ const UserContentView = (props) => {
 				</>
 			);
 		}
-	}, [contentCode, contentJson, upvoteCount, downvoteCount, isContentWriter, navigate, props.accountData]);
+	}, [contentCode, contentJson, upvoteCount, downvoteCount, isContentWriter, voteHistory, navigate, props.accountData]);
 	
 	return(
 		<Container style={{maxWidth: "1200px"}}>
