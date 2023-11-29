@@ -8,6 +8,9 @@ import LoadingModal from '../../common/LoadingModal';
 import * as contentBoardFetch from '../../../js/contentBoardFetch';
 import '../../../css/View.css';
 import MyEditor from '../MyEditor';
+import Modal from 'react-bootstrap/Modal';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
 
 const UserContentView = (props) => {
 	const [contentCode, setContentCode] = useState(null);
@@ -19,8 +22,13 @@ const UserContentView = (props) => {
 	const [loadingModalShow, setLoadingModalShow] = useState(false);
 	const [loadingModalMessage, setLoadingModalMessage] = useState("");
 	const [voteHistory, setVoteHistory] = useState(<></>);
+	const [showVote, setShowVote] = useState(false);
+	const [voteModalTitle, setVoteModalTitle] = useState("");
 	const navigate = useNavigate();
 	const params = useParams();
+
+	const closeVoteModal = () => setShowVote(false);
+	const showVoteModal = () => setShowVote(true);
 	
 	useEffect(() => {
 		setContentCode(params.contentCode);
@@ -157,7 +165,7 @@ const UserContentView = (props) => {
 						return;
 					}
 					else if(voteResult.isVotable === false){
-						alert("이미 게시물에 추천을 하였습니다");
+						alert("이미 게시물에 추천 또는 비추천을 하였습니다");
 					}
 					else{
 						setUpvoteCount(voteResult.upvote);
@@ -194,7 +202,7 @@ const UserContentView = (props) => {
 						return;
 					}
 					else if(voteResult.isVotable === false){
-						alert("이미 게시물에 비추천을 하였습니다");
+						alert("이미 게시물에 추천 또는 비추천을 하였습니다");
 					}
 					else{
 						setUpvoteCount(voteResult.upvote);
@@ -207,12 +215,19 @@ const UserContentView = (props) => {
 			}
 
 			const showUpvoteUserList = async () => {
-				setVoteHistory(<></>);
+				setVoteHistory(<><Placeholder xs={3} /> <Placeholder xs={1} /> <Placeholder xs={4} /></>);
+				showVoteModal();
+				setVoteModalTitle("추천 목록");
 
 				const voteResult = await contentBoardFetch.showUpvoteUserList(contentCode);
 
 				const voteListElement = voteResult.map((element) => {
-					return <li>{element.writerNickname} | {element.createdAt.substring(0, 10)}</li>;
+					return <>
+						<Row key={element.writerNickname}>
+							<Col>{element.writerNickname}</Col>
+							<Col>{element.createdAt.substring(0, 10)}</Col>
+						</Row>
+					</>;
 				});
 
 				if(voteListElement.length > 0){
@@ -224,12 +239,19 @@ const UserContentView = (props) => {
 			}
 
 			const showDownvoteUserList = async () => {
-				setVoteHistory(<></>);
+				setVoteHistory(<><Placeholder xs={3} /> <Placeholder xs={1} /> <Placeholder xs={4} /></>);
+				showVoteModal();
+				setVoteModalTitle("비추천 목록");
 
 				const voteResult = await contentBoardFetch.showDownvoteUserList(contentCode);
 
 				const voteListElement = voteResult.map((element) => {
-					return <li>{element.writerNickname} | {element.createdAt.substring(0, 10)}</li>;
+					return <>
+						<Row key={element.writerNickname}>
+							<Col>{element.writerNickname}</Col>
+							<Col>{element.createdAt.substring(0, 10)}</Col>
+						</Row>
+					</>;
 				});
 
 				if(voteListElement.length > 0){
@@ -319,10 +341,6 @@ const UserContentView = (props) => {
 							&nbsp;&nbsp;
 							<Button variant="danger" onClick={() => { showDownvoteUserList() }} style={{ width: "30%", maxWidth: "130px", padding: "2px", fontSize: "0.85rem" }}>목록 확인</Button>
 						</div>
-
-						<div id="voteList" style={{ textAlign: "center", borderTop: "0.5rem" }}>
-							{voteHistory}
-						</div>
 						
 						{
 							isContentWriter === true ?
@@ -355,7 +373,22 @@ const UserContentView = (props) => {
 	return(
 		<Container style={{maxWidth: "1200px"}}>
 			{renderData}
+
 			<LoadingModal showModal={loadingModalShow} message={loadingModalMessage}/>
+			
+			<Modal show={showVote} onHide={closeVoteModal} backdrop="static" keyboard={false} centered>
+				<Modal.Header closeButton>
+					<Modal.Title>{voteModalTitle}</Modal.Title>
+				</Modal.Header>
+
+				<Modal.Body style={{ maxHeight: "20rem", overflow: "auto" }}>{voteHistory}</Modal.Body>
+
+				<Modal.Footer>
+					<Button variant="secondary" onClick={closeVoteModal}>
+						닫기
+					</Button>
+				</Modal.Footer>
+			</Modal>
 		</Container>
 	);
 }
