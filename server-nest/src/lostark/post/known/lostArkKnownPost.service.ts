@@ -35,7 +35,7 @@ export class LostArkKnownPostService {
 						writerNickname: true
 					},
 					where: {
-						code: Equal(contentCode),
+						parentContentCode: Equal(contentCode),
 						writerID: Equal(userId),
 					},
 				});
