@@ -3,13 +3,13 @@ import { useNavigate, useParams } from "react-router-dom";
 import Container from 'react-bootstrap/Container';
 import Placeholder from 'react-bootstrap/Placeholder';
 import Button from 'react-bootstrap/Button';
-import AnonymousReply from './AnonymousReply';
+import AnonymousReply from './UnknownReply';
 import LoadingModal from '../../common/LoadingModal';
 import * as contentBoardFetch from '../../../js/contentBoardFetch';
 import MyEditor from '../MyEditor';
 import '../../../css/View.css';
 
-const AnonymousContentView = (props) => {
+const UnknownContentView = (props) => {
 	const [contentCode, setContentCode] = useState(null);
 	const [upvoteCount, setUpvoteCount] = useState(0);
 	const [downvoteCount, setDownvoteCount] = useState(0);
@@ -300,4 +300,4 @@ const AnonymousContentView = (props) => {
 	);
 }
 
-export default AnonymousContentView;
+export default UnknownContentView;

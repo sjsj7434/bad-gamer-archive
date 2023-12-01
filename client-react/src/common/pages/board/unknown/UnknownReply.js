@@ -7,7 +7,7 @@ import Col from 'react-bootstrap/Col';
 import CustomPagination from '../CustomPagination';
 import * as repliesFetch from '../../../js/repliesFetch';
 
-const AnonymousReply = (props) => {
+const UnknownReply = (props) => {
 	// const [upvoteCount, setUpvoteCount] = useState(0);
 	// const [downvoteCount, setDownvoteCount] = useState(0);
 	const [renderData, setRenderData] = useState(<></>);
@@ -408,4 +408,4 @@ const AnonymousReply = (props) => {
 	);
 }
 
-export default AnonymousReply;
+export default UnknownReply;

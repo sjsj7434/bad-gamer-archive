@@ -13,7 +13,7 @@ import LoadingModal from '../../common/LoadingModal';
 import * as contentBoardFetch from '../../../js/contentBoardFetch';
 import '../../../css/View.css';
 
-const AnonymousContentWrite = (props) => {
+const UnknownContentWrite = (props) => {
 	const [writeMode, setWriteMode] = useState("");
 	const [contentCode, setContentCode] = useState(null);
 	const [renderData, setRenderData] = useState(<></>);
@@ -346,4 +346,4 @@ const AnonymousContentWrite = (props) => {
 	);
 }
 
-export default AnonymousContentWrite;
+export default UnknownContentWrite;

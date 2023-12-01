@@ -5,7 +5,7 @@ import Button from 'react-bootstrap/Button';
 import CustomPagination from '../CustomPagination';
 import * as contentBoardFetch from '../../../js/contentBoardFetch';
 
-const AnonymousContentList = () => {
+const UnknownContentList = () => {
 	const [page, setPage] = useState(null);
 	const [renderData, setRenderData] = useState(<></>);
 	
@@ -180,4 +180,4 @@ const AnonymousContentList = () => {
 	);
 }
 
-export default AnonymousContentList;
+export default UnknownContentList;

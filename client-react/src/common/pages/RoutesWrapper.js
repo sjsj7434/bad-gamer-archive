@@ -12,24 +12,28 @@ import CommonTopMenu from './CommonTopMenu';
 import MyPage from './accounts/MyPage';
 import * as accountsFetch from '../js/accountsFetch.js'
 import LostarkMain from '../../lostark/pages/LostarkMain';
-import AnonymousContentWrite from './board/anonymous/AnonymousContentWrite';
 import UsefulSitesLostark from './common/UsefulSitesLostark';
 import ForgotPasswordForm from './accounts/ForgotPasswordForm';
 import BlockLoginUser from './accounts/BlockLoginUser';
 import BlockLogoutUser from './accounts/BlockLogoutUser';
-import UserContentWrite from './board/user/UserContentWrite';
 import SetActiveMenu from './SetActiveMenu';
 import RenewNicknameForm from './accounts/RenewNicknameForm';
 import ActivateLostarkAPI from './accounts/ActivateLostarkAPI';
 import HelpCenter from './common/HelpCenter';
 import ResetPasswordForm from './accounts/ResetPasswordForm';
 import RenewPasswordForm from './accounts/RenewPasswordForm';
-import AnonymousContentList from './board/anonymous/AnonymousContentList';
-import UserContentList from './board/user/UserContentList';
-import AnonymousContentView from './board/anonymous/AnonymousContentView';
-import UserContentView from './board/user/UserContentView';
+
 import AnnounceContentList from './board/announce/AnnounceContentList.js';
 import AnnounceContentView from './board/announce/AnnounceContentView.js';
+
+import UnknownContentList from './board/unknown/UnknownContentList.js';
+import UnknownContentView from './board/unknown/UnknownContentView.js';
+import UnknownContentWrite from './board/unknown/UnknownContentWrite.js';
+
+import UserContentList from './board/user/UserContentList';
+import UserContentView from './board/user/UserContentView';
+import UserContentWrite from './board/user/UserContentWrite';
+
 // import CharacterInfo from '../../lostark/pages/character/CharacterInfo';
 
 // index.js에서 StrictMode 존재하면 두번 랜더링, 개발 모드에서만 적용됩니다. 생명주기 메서드들은 프로덕션 모드에서 이중으로 호출되지 않습니다.
@@ -83,28 +87,28 @@ const RoutesWrapper = () => {
 								<Route path=":page" element={
 									<>
 										<SetActiveMenu pageTitle="Agora(LA)" setCurrentMenu={setCurrentMenu} menuCode={"/lostark/board/anonymous"} />
-										<AnonymousContentList />
+										<UnknownContentList />
 									</>
 								} />
 
 								<Route path="view/:contentCode" element={
 									<>
 										<SetActiveMenu pageTitle="Agora(LA)" setCurrentMenu={setCurrentMenu} menuCode={"/lostark/board/anonymous"} />
-										<AnonymousContentView />
+										<UnknownContentView />
 									</>
 								} />
 
 								<Route path="write" element={
 									<>
 										<SetActiveMenu pageTitle="Agora(LA)" setCurrentMenu={setCurrentMenu} menuCode={"/lostark/board/anonymous"} />
-										<AnonymousContentWrite />
+										<UnknownContentWrite />
 									</>
 								} />
 
 								<Route path="edit/:contentCode" element={
 									<>
 										<SetActiveMenu pageTitle="Agora(LA)" setCurrentMenu={setCurrentMenu} menuCode={"/lostark/board/anonymous"} />
-										<AnonymousContentWrite />
+										<UnknownContentWrite />
 									</>
 								} />
 							</Route>
