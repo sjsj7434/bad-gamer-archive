@@ -109,7 +109,6 @@ const UserContentView = (props) => {
 			const deleteContent = async () => {
 				const sendData = {
 					code: contentCode,
-					password: "",
 				};
 
 				if(window.confirm("게시글을 삭제하시겠습니까?") === false){
@@ -222,12 +221,12 @@ const UserContentView = (props) => {
 				const voteResult = await contentBoardFetch.showUpvoteUserList(contentCode);
 
 				const voteListElement = voteResult.map((element) => {
-					return <>
-						<Row key={element.writerNickname}>
-							<Col>{element.writerNickname}</Col>
+					return(
+						<Row key={element.voterNickname}>
+							<Col>{element.voterNickname}</Col>
 							<Col>{element.createdAt.substring(0, 10)}</Col>
 						</Row>
-					</>;
+					);
 				});
 
 				if(voteListElement.length > 0){
@@ -246,12 +245,12 @@ const UserContentView = (props) => {
 				const voteResult = await contentBoardFetch.showDownvoteUserList(contentCode);
 
 				const voteListElement = voteResult.map((element) => {
-					return <>
-						<Row key={element.writerNickname}>
-							<Col>{element.writerNickname}</Col>
+					return(
+						<Row key={element.voterNickname}>
+							<Col>{element.voterNickname}</Col>
 							<Col>{element.createdAt.substring(0, 10)}</Col>
 						</Row>
-					</>;
+					);
 				});
 
 				if(voteListElement.length > 0){

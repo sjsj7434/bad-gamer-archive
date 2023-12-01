@@ -104,17 +104,6 @@ export class LostArkKnownPost {
 	downvote: number;
 
 	/**
-	 * 익명 게시글 수정&삭제 비밀번호
-	 */
-	@Column({
-		type: "varchar",
-		length: 20,
-		nullable: true,
-		select: false,
-	})
-	password: string;
-
-	/**
 	 * 작성자 ID
 	 */
 	@Column({

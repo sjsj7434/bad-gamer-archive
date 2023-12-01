@@ -32,11 +32,11 @@ export class LostArkKnownPostService {
 			else{
 				return !await this.lostArkKnownVoteHistoryRepository.exist({
 					select: {
-						writerNickname: true
+						voterNickname: true
 					},
 					where: {
 						parentContentCode: Equal(contentCode),
-						writerID: Equal(userId),
+						voterID: Equal(userId),
 					},
 				});
 			}
@@ -116,7 +116,6 @@ export class LostArkKnownPostService {
 					deletedAt: IsNull(),
 					upvote: MoreThanOrEqual(upvoteCutline),
 					createdAt: Between(searchDate, new Date()),
-					category: In(["anonymous", "user"]),
 				},
 				order: {
 					upvote: "DESC",
@@ -162,7 +161,6 @@ export class LostArkKnownPostService {
 				deletedAt: IsNull(),
 				downvote: MoreThanOrEqual(downvoteCutline),
 				createdAt: Between(searchDate, new Date()),
-				category: In(["anonymous", "user"]),
 			},
 			order: {
 				downvote: "DESC",
@@ -204,7 +202,6 @@ export class LostArkKnownPostService {
 				deletedAt: IsNull(),
 				view: MoreThanOrEqual(viewCutline),
 				createdAt: Between(searchDate, new Date()),
-				category: In(["anonymous", "user"]),
 			},
 			order: {
 				view: "DESC",
@@ -285,7 +282,6 @@ export class LostArkKnownPostService {
 				createdAt: true,
 			},
 			where: {
-				category: Equal("user"),
 				deletedAt: IsNull(),
 				accounts: {
 					authentication: [
@@ -336,7 +332,6 @@ export class LostArkKnownPostService {
 			},
 			where: {
 				code: Equal(contentCode),
-				category: Equal("user"),
 			},
 		});
 
@@ -376,7 +371,6 @@ export class LostArkKnownPostService {
 			},
 			where: {
 				code: Equal(contentCode),
-				category: Equal("user"),
 			},
 		});
 
@@ -406,7 +400,6 @@ export class LostArkKnownPostService {
 				},
 				where: {
 					code: Equal(code),
-					category: Equal("user"),
 					writerID: Equal(loginCookie.id),
 				},
 			});
@@ -425,7 +418,7 @@ export class LostArkKnownPostService {
 		const loginCookie = await this.accountsService.checkLoginStatus(request, response);
 
 		if (loginCookie.status === "login") {
-			createPostDTO.category = "user";
+			createPostDTO.category = "normal";
 			createPostDTO.writerID = loginCookie.id;
 			createPostDTO.writerNickname = loginCookie.nickname;
 			createPostDTO.ip = ipData; //개발서버에서는 로컬만 찍혀서 임시로 비활성
@@ -457,8 +450,6 @@ export class LostArkKnownPostService {
 			const isExists = await this.lostArkKnownPostRepository.exist({
 				where: {
 					code: Equal(updatePostDTO.code),
-					category: Equal("user"),
-					password: Equal(""),
 					writerID: Equal(updatePostDTO.writerID),
 				}
 			});
@@ -486,8 +477,6 @@ export class LostArkKnownPostService {
 			const isExists = await this.lostArkKnownPostRepository.exist({
 				where: {
 					code: Equal(deletePostDTO.code),
-					category: Equal("user"),
-					password: Equal(""),
 					writerID: Equal(loginCookie.id),
 				}
 			});
@@ -513,13 +502,13 @@ export class LostArkKnownPostService {
 		const isVotable: boolean = await this.isVotablePost(contentCode, loginCookie.id);
 
 		if (isVotable === true && loginCookie !== null) {
-			await this.lostArkKnownPostRepository.increment({ code: Equal(contentCode), category: Equal("user") }, "upvote", 1);
+			await this.lostArkKnownPostRepository.increment({ code: Equal(contentCode) }, "upvote", 1);
 			
 			const insertHistory = this.lostArkKnownVoteHistoryRepository.create({
 				parentContentCode: contentCode,
 				voteType: "up",
-				writerID: loginCookie.id,
-				writerNickname: loginCookie.nickname,
+				voterID: loginCookie.id,
+				voterNickname: loginCookie.nickname,
 				ip: ipData,
 			});
 			await this.lostArkKnownVoteHistoryRepository.insert(insertHistory);
@@ -532,7 +521,6 @@ export class LostArkKnownPostService {
 			},
 			where: {
 				code: Equal(contentCode),
-				category: Equal("user"),
 			},
 		});
 
@@ -547,13 +535,13 @@ export class LostArkKnownPostService {
 		const isVotable: boolean = await this.isVotablePost(contentCode, loginCookie.id);
 
 		if (isVotable === true) {
-			await this.lostArkKnownPostRepository.increment({ code: Equal(contentCode), category: Equal("user") }, "downvote", 1);
+			await this.lostArkKnownPostRepository.increment({ code: Equal(contentCode) }, "downvote", 1);
 
 			const insertHistory = this.lostArkKnownVoteHistoryRepository.create({
 				parentContentCode: contentCode,
 				voteType: "down",
-				writerID: loginCookie.id,
-				writerNickname: loginCookie.nickname,
+				voterID: loginCookie.id,
+				voterNickname: loginCookie.nickname,
 				ip: ipData,
 			});
 			await this.lostArkKnownVoteHistoryRepository.insert(insertHistory);
@@ -566,7 +554,6 @@ export class LostArkKnownPostService {
 			},
 			where: {
 				code: Equal(contentCode),
-				category: Equal("user"),
 			},
 		});
 
@@ -581,7 +568,7 @@ export class LostArkKnownPostService {
 
 		const contentData = await this.lostArkKnownVoteHistoryRepository.find({
 			select: {
-				writerNickname: true,
+				voterNickname: true,
 				createdAt: true,
 			},
 			where: {
@@ -601,7 +588,7 @@ export class LostArkKnownPostService {
 
 		const contentData = await this.lostArkKnownVoteHistoryRepository.find({
 			select: {
-				writerNickname: true,
+				voterNickname: true,
 				createdAt: true,
 			},
 			where: {
@@ -689,7 +676,6 @@ export class LostArkKnownPostService {
 			const contentData = await this.lostArkKnownPostRepository.exist({
 				where: {
 					code: Equal(createReplyDTO.parentContentCode),
-					category: Equal("user"),
 				},
 			});
 

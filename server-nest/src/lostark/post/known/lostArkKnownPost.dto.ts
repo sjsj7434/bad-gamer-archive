@@ -35,9 +35,7 @@ export class UpdateLostArkKnownPostDTO extends PartialType(LostArkKnownPost) {
 	writerNickname: string;
 }
 
-export class DeleteLostArkKnownPostDTO extends PickType(LostArkKnownPost, ["code", "password", "writerID"] as const) {
+export class DeleteLostArkKnownPostDTO extends PickType(LostArkKnownPost, ["code", "writerID"] as const) {
 	@IsNumber()
 	code: number;
-	@IsOptional() @IsString()
-	password: string;
 }
