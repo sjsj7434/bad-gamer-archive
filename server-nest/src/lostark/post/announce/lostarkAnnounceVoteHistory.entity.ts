@@ -47,7 +47,7 @@ export class LostarkAnnounceVoteHistory {
 		nullable: false,
 		select: false,
 	})
-	writerID: string;
+	voterID: string;
 
 	/**
 	 * 작성자 Nickname
@@ -57,7 +57,7 @@ export class LostarkAnnounceVoteHistory {
 		length: 50,
 		nullable: false,
 	})
-	writerNickname: string;
+	voterNickname: string;
 
 	/**
 	 * 작성자 ip

@@ -95,17 +95,6 @@ export class LostarkAnnouncePost {
 	downvote: number;
 
 	/**
-	 * 익명 게시글 수정&삭제 비밀번호
-	 */
-	@Column({
-		type: "varchar",
-		length: 20,
-		nullable: true,
-		select: false,
-	})
-	password: string;
-
-	/**
 	 * 작성자 ID
 	 */
 	@Column({
@@ -115,16 +104,6 @@ export class LostarkAnnouncePost {
 		select: false,
 	})
 	writerID: string;
-
-	/**
-	 * 작성자 Nickname
-	 */
-	@Column({
-		type: "varchar",
-		length: 50,
-		nullable: false,
-	})
-	writerNickname: string;
 
 	/**
 	 * 작성자 ip

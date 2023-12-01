@@ -26,11 +26,11 @@ export class LostarkAnnouncePostService {
 			else {
 				return !await this.lostarkAnnounceVoteHistoryRepository.exist({
 					select: {
-						writerNickname: true
+						voterNickname: true
 					},
 					where: {
 						parentContentCode: Equal(contentCode),
-						writerID: Equal(userId),
+						voterID: Equal(userId),
 					},
 				});
 			}
@@ -49,7 +49,6 @@ export class LostarkAnnouncePostService {
 		const result = await this.lostarkAnnouncePostRepository.findAndCount({
 			select: {
 				code: true,
-				writerNickname: true,
 				title: true,
 				view: true,
 				upvote: true,
@@ -58,7 +57,6 @@ export class LostarkAnnouncePostService {
 				createdAt: true,
 			},
 			where: {
-				category: Equal("user"),
 				deletedAt: IsNull(),
 			},
 			order: {
@@ -96,14 +94,12 @@ export class LostarkAnnouncePostService {
 				upvote: true,
 				downvote: true,
 				writerID: true,
-				writerNickname: true,
 				ip: true,
 				createdAt: true,
 				updatedAt: true,
 			},
 			where: {
 				code: Equal(contentCode),
-				category: Equal("user"),
 			},
 		});
 
@@ -136,14 +132,12 @@ export class LostarkAnnouncePostService {
 				upvote: true,
 				downvote: true,
 				writerID: true,
-				writerNickname: true,
 				ip: true,
 				createdAt: true,
 				updatedAt: true,
 			},
 			where: {
 				code: Equal(contentCode),
-				category: Equal("user"),
 			},
 		});
 
@@ -163,13 +157,13 @@ export class LostarkAnnouncePostService {
 		const isVotable: boolean = await this.isVotablePost(contentCode, loginCookie.id);
 
 		if (isVotable === true && loginCookie !== null) {
-			await this.lostarkAnnouncePostRepository.increment({ code: Equal(contentCode), category: Equal("user") }, "upvote", 1);
+			await this.lostarkAnnouncePostRepository.increment({ code: Equal(contentCode) }, "upvote", 1);
 
 			const insertHistory = this.lostarkAnnounceVoteHistoryRepository.create({
 				parentContentCode: contentCode,
 				voteType: "up",
-				writerID: loginCookie.id,
-				writerNickname: loginCookie.nickname,
+				voterID: loginCookie.id,
+				voterNickname: loginCookie.nickname,
 				ip: ipData,
 			});
 			await this.lostarkAnnounceVoteHistoryRepository.insert(insertHistory);
@@ -182,7 +176,6 @@ export class LostarkAnnouncePostService {
 			},
 			where: {
 				code: Equal(contentCode),
-				category: Equal("user"),
 			},
 		});
 
@@ -197,13 +190,13 @@ export class LostarkAnnouncePostService {
 		const isVotable: boolean = await this.isVotablePost(contentCode, loginCookie.id);
 
 		if (isVotable === true) {
-			await this.lostarkAnnouncePostRepository.increment({ code: Equal(contentCode), category: Equal("user") }, "downvote", 1);
+			await this.lostarkAnnouncePostRepository.increment({ code: Equal(contentCode) }, "downvote", 1);
 
 			const insertHistory = this.lostarkAnnounceVoteHistoryRepository.create({
 				parentContentCode: contentCode,
 				voteType: "down",
-				writerID: loginCookie.id,
-				writerNickname: loginCookie.nickname,
+				voterID: loginCookie.id,
+				voterNickname: loginCookie.nickname,
 				ip: ipData,
 			});
 			await this.lostarkAnnounceVoteHistoryRepository.insert(insertHistory);
@@ -216,7 +209,6 @@ export class LostarkAnnouncePostService {
 			},
 			where: {
 				code: Equal(contentCode),
-				category: Equal("user"),
 			},
 		});
 
@@ -231,7 +223,7 @@ export class LostarkAnnouncePostService {
 
 		const contentData = await this.lostarkAnnounceVoteHistoryRepository.find({
 			select: {
-				writerNickname: true,
+				voterNickname: true,
 				createdAt: true,
 			},
 			where: {
@@ -251,7 +243,7 @@ export class LostarkAnnouncePostService {
 
 		const contentData = await this.lostarkAnnounceVoteHistoryRepository.find({
 			select: {
-				writerNickname: true,
+				voterNickname: true,
 				createdAt: true,
 			},
 			where: {
