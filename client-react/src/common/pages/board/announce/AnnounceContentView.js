@@ -7,7 +7,7 @@ import * as contentBoardFetch from '../../../js/contentBoardFetch';
 import '../../../css/View.css';
 import MyEditor from '../MyEditor';
 
-const AnnouncementContentView = (props) => {
+const AnnounceContentView = (props) => {
 	const [contentCode, setContentCode] = useState(null);
 	const [upvoteCount, setUpvoteCount] = useState(0);
 	const [downvoteCount, setDownvoteCount] = useState(0);
@@ -253,4 +253,4 @@ const AnnouncementContentView = (props) => {
 	);
 }
 
-export default AnnouncementContentView;
+export default AnnounceContentView;

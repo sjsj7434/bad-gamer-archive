@@ -4,7 +4,7 @@ import Container from 'react-bootstrap/Container';
 import CustomPagination from '../CustomPagination';
 import * as contentBoardFetch from '../../../js/contentBoardFetch';
 
-const AnnouncementContentList = (props) => {
+const AnnounceContentList = () => {
 	const [page, setPage] = useState(null);
 	const [renderData, setRenderData] = useState(<></>);
 	
@@ -141,4 +141,4 @@ const AnnouncementContentList = (props) => {
 	);
 }
 
-export default AnnouncementContentList;
+export default AnnounceContentList;
