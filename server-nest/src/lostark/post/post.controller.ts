@@ -11,9 +11,10 @@ import { LostArkUnknownPostService } from './unknown/lostArkUnknownPost.service'
 import { LostArkKnownPost } from './known/lostArkKnownPost.entity';
 import { LostArkKnownReply } from './known/lostArkKnownReply.entity';
 import { CreateLostArkKnownPostDTO, DeleteLostArkKnownPostDTO, UpdateLostArkKnownPostDTO } from './known/lostArkKnownPost.dto';
-import { CommonPostService } from './common/commonPost.service';
+import { LostarkAnnouncePostService } from './announce/lostarkAnnouncePost.service';
 import { CreateLostArkKnownReplyDTO, DeleteLostArkKnownReplyDTO } from './known/lostArkKnownReply.dto';
 import { LostArkKnownVoteHistory } from './known/lostArkKnownVoteHistory.entity';
+import { LostarkAnnouncePost } from './announce/lostarkAnnouncePost.entity';
 
 /**
  * 게시판 컨트롤러
@@ -22,7 +23,7 @@ import { LostArkKnownVoteHistory } from './known/lostArkKnownVoteHistory.entity'
 @Controller("boards")
 export class PostController {
 	constructor(
-		private commonPost: CommonPostService,
+		private lostarkAnnouncePostService: LostarkAnnouncePostService,
 		private lostArkUnknownPostService: LostArkUnknownPostService,
 		private lostArkKnownPostService: LostArkKnownPostService,
 	) { }
@@ -220,18 +221,18 @@ export class PostController {
 
 	//================================================================================================================================================= common
 
-	// //공지 게시판 목록, page 값이 number가 아니면 호출되지 않음
-	// @Get("announcement/list/:page")
-	// async getAnnouncementContentList(@Param("page") page: number): Promise<[Boards[], number]> {
-	// 	return await this.boardsService.getAnnouncementContentList(page);
-	// }
+	//공지 게시판 목록, page 값이 number가 아니면 호출되지 않음
+	@Get("announcement/list/:page")
+	async getAnnouncementContentList(@Param("page") page: number): Promise<[LostarkAnnouncePost[], number]> {
+		return await this.lostarkAnnouncePostService.getPostList(page);
+	}
 
-	// //공지 게시판 글 조회, contentCode 값이 number가 아니면 호출되지 않음
-	// @Get("announcement/content/read/:contentCode")
-	// async readAnnouncementContent(@Req() request: Request, @Res({ passthrough: true }) response: Response, @Param("contentCode") contentCode: number): Promise<{ contentData: Boards, isWriter: boolean }> {
-	// 	//set cookies/headers 정도만 사용하고, 나머지는 프레임워크에 떠넘기는 식으로 @Res()를 사용하는 거라면 passthrough: true 옵션은 필수! 그렇지 않으면 fetch 요청이 마무리가 안됨
-	// 	return await this.boardsService.readAnnouncementContent(request, response, contentCode);
-	// }
+	//공지 게시판 글 조회, contentCode 값이 number가 아니면 호출되지 않음
+	@Get("announcement/content/read/:contentCode")
+	async readAnnouncementContent(@Req() request: Request, @Res({ passthrough: true }) response: Response, @Param("contentCode") contentCode: number): Promise<{ contentData: LostarkAnnouncePost, isWriter: boolean }> {
+		//set cookies/headers 정도만 사용하고, 나머지는 프레임워크에 떠넘기는 식으로 @Res()를 사용하는 거라면 passthrough: true 옵션은 필수! 그렇지 않으면 fetch 요청이 마무리가 안됨
+		return await this.lostarkAnnouncePostService.readPost(request, response, contentCode);
+	}
 
 	// //게시글 추천
 	// @SkipThrottle({ default: false })
@@ -257,6 +258,6 @@ export class PostController {
 		//If the upload is successful, the server should return: An object containing [the url property] which points to the uploaded image on the server
 		//이미지 업로드가 성공했으면 서버가 이미지 주소 정보가 담긴 오브젝트(url 프로퍼티를 가진)를 반환해야만 함
 
-		return await this.commonPost.uploadImage(file);
+		return await this.lostarkAnnouncePostService.uploadImage(file);
 	}
 }
