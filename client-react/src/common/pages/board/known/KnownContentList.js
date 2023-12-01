@@ -5,7 +5,7 @@ import Button from 'react-bootstrap/Button';
 import CustomPagination from '../CustomPagination';
 import * as contentBoardFetch from '../../../js/contentBoardFetch';
 
-const UserContentList = () => {
+const KnownContentList = () => {
 	const [page, setPage] = useState(null);
 	const [renderData, setRenderData] = useState(<></>);
 	
@@ -183,4 +183,4 @@ const UserContentList = () => {
 	);
 }
 
-export default UserContentList;
+export default KnownContentList;

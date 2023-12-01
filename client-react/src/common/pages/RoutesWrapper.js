@@ -6,20 +6,22 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import '../css/Common.css';
 
 import Error404 from './errors/Error404';
-import RegisterForm from './accounts/RegisterForm';
-import LoginForm from './accounts/LoginForm';
-import CommonTopMenu from './CommonTopMenu';
-import MyPage from './accounts/MyPage';
 import * as accountsFetch from '../js/accountsFetch.js'
 import LostarkMain from '../../lostark/pages/LostarkMain';
+import SetActiveMenu from './SetActiveMenu';
+import CommonTopMenu from './CommonTopMenu';
+
 import UsefulSitesLostark from './common/UsefulSitesLostark';
+import HelpCenter from './common/HelpCenter';
+
+import RegisterForm from './accounts/RegisterForm';
+import LoginForm from './accounts/LoginForm';
+import MyPage from './accounts/MyPage';
 import ForgotPasswordForm from './accounts/ForgotPasswordForm';
 import BlockLoginUser from './accounts/BlockLoginUser';
 import BlockLogoutUser from './accounts/BlockLogoutUser';
-import SetActiveMenu from './SetActiveMenu';
 import RenewNicknameForm from './accounts/RenewNicknameForm';
 import ActivateLostarkAPI from './accounts/ActivateLostarkAPI';
-import HelpCenter from './common/HelpCenter';
 import ResetPasswordForm from './accounts/ResetPasswordForm';
 import RenewPasswordForm from './accounts/RenewPasswordForm';
 
@@ -30,9 +32,9 @@ import UnknownContentList from './board/unknown/UnknownContentList.js';
 import UnknownContentView from './board/unknown/UnknownContentView.js';
 import UnknownContentWrite from './board/unknown/UnknownContentWrite.js';
 
-import UserContentList from './board/user/UserContentList';
-import UserContentView from './board/user/UserContentView';
-import UserContentWrite from './board/user/UserContentWrite';
+import KnownContentList from './board/known/KnownContentList.js';
+import KnownContentView from './board/known/KnownContentView.js';
+import KnownContentWrite from './board/known/KnownContentWrite.js';
 
 // import CharacterInfo from '../../lostark/pages/character/CharacterInfo';
 
@@ -121,14 +123,14 @@ const RoutesWrapper = () => {
 								<Route path=":page" element={
 									<>
 										<SetActiveMenu pageTitle="Agora(LA)" setCurrentMenu={setCurrentMenu} menuCode={"/lostark/board/user"} />
-										<UserContentList />
+										<KnownContentList />
 									</>
 								} />
 
 								<Route path="view/:contentCode" element={
 									<>
 										<SetActiveMenu pageTitle="Agora(LA)" setCurrentMenu={setCurrentMenu} menuCode={"/lostark/board/user"} />
-										<UserContentView accountData={accountData} />
+										<KnownContentView accountData={accountData} />
 									</>
 								} />
 
@@ -138,7 +140,7 @@ const RoutesWrapper = () => {
 										ifAllow={
 											<>
 												<SetActiveMenu pageTitle="Agora(LA)" setCurrentMenu={setCurrentMenu} menuCode={"/lostark/board/user"} />
-												<UserContentWrite boardType="user" accountData={accountData} />
+												<KnownContentWrite boardType="user" accountData={accountData} />
 											</>
 										}
 									/>
@@ -150,7 +152,7 @@ const RoutesWrapper = () => {
 										ifAllow={
 											<>
 												<SetActiveMenu pageTitle="Agora(LA)" setCurrentMenu={setCurrentMenu} menuCode={"/lostark/board/user"} />
-												<UserContentWrite boardType="user" accountData={accountData} />
+												<KnownContentWrite boardType="user" accountData={accountData} />
 											</>
 										}
 									/>

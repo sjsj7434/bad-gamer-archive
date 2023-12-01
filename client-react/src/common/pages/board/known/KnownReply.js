@@ -7,7 +7,7 @@ import Col from 'react-bootstrap/Col';
 import CustomPagination from '../CustomPagination';
 import * as repliesFetch from '../../../js/repliesFetch';
 
-const UserReply = (props) => {
+const KnownReply = (props) => {
 	// const [upvoteCount, setUpvoteCount] = useState(0);
 	// const [downvoteCount, setDownvoteCount] = useState(0);
 	const [renderData, setRenderData] = useState(<></>);
@@ -431,4 +431,4 @@ const UserReply = (props) => {
 	}
 }
 
-export default UserReply;
+export default KnownReply;

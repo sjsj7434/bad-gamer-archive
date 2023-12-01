@@ -10,7 +10,7 @@ import LoadingModal from '../../common/LoadingModal';
 import * as contentBoardFetch from '../../../js/contentBoardFetch';
 import '../../../css/View.css';
 
-const UserContentWrite = (props) => {
+const KnownContentWrite = (props) => {
 	const [writeMode, setWriteMode] = useState("");
 	const [contentCode, setContentCode] = useState(null);
 	const [renderData, setRenderData] = useState(<></>);
@@ -290,4 +290,4 @@ const UserContentWrite = (props) => {
 	);
 }
 
-export default UserContentWrite;
+export default KnownContentWrite;
