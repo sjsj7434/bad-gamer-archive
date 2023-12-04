@@ -1,26 +1,12 @@
 /* desktop 규격 */
 @media screen and (min-width: 1024px) {
-	.desktopOnly{
+	.desktopMode{
 		display: block;
 	}
-	.tabletOnly{
-		display: none;
-	}
-	.mobileOnly{
+	.mobileMode{
 		display: none;
 	}
 
-	.desktopOver{
-		display: block;
-	}
-	.tabletOver{
-		display: block;
-		height: 60px;
-	}
-	.mobileOver{
-		display: block;
-	}
-	/* ------------------------------------------------------ */
 	.carouselImageBox {
 		height: 26rem;
 	}
@@ -28,59 +14,48 @@
 
 /* tablet 규격 */
 @media screen and (max-width: 1023px) {
-	.desktopOnly{
+	.desktopMode{
 		display: none;
 	}
-	.tabletOnly{
+	.mobileMode{
 		display: block;
-	}
-	.mobileOnly{
-		display: none;
 	}
 
-	.desktopOver{
-		display: none;
-	}
-	.tabletOver{
-		display: block;
-		/* height: 60px; */
-	}
-	.mobileOver{
-		display: block;
-	}
-	/* ------------------------------------------------------ */
 	.carouselImageBox {
 		height: 17rem;
 	}
 }
 
 /* mobile 규격 */
-@media screen and (max-width: 767px) {
-	.desktopOnly{
+/* @media screen and (max-width: 767px) {
+	.desktopOnly {
 		display: none;
-	}
-	.tabletOnly{
-		display: none;
-	}
-	.mobileOnly{
-		display: block;
-		/* height: 54px; */
 	}
 
-	.desktopOver{
+	.tabletOnly {
 		display: none;
 	}
-	.tabletOver{
-		display: none;
-	}
-	.mobileOver{
+
+	.mobileOnly {
 		display: block;
 	}
-	/* ------------------------------------------------------ */
+
+	.desktopOver {
+		display: none;
+	}
+
+	.tabletOver {
+		display: none;
+	}
+
+	.mobileOver {
+		display: block;
+	}
+
 	.carouselImageBox {
 		height: 9rem;
 	}
-}
+} */
 
 p {
 	margin: 0px;
