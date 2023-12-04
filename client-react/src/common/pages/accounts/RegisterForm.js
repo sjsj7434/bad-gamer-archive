@@ -181,14 +181,7 @@ const RegisterForm = () => {
 		<Container style={{maxWidth: "450px"}}>
 			<LoadingModal showModal={showLoadingModal} message={loadingMessage}></LoadingModal>
 
-			<div style={{ marginTop: "30px" }}>
-				<div style={{ display: "flex", alignItems: "center", marginBottom: "20px", paddingBottom: "10px", borderBottom: "2px solid lightgray" }}>
-					<svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="green" className="bi bi-person-square" viewBox="0 0 16 16">
-						<path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0z"/>
-						<path d="M2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2zm12 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1v-1c0-1-1-4-6-4s-6 3-6 4v1a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h12z"/>
-					</svg>
-					<span style={{fontSize: "1.2rem", marginLeft: "12px"}}>회원가입</span>
-				</div>
+			<div style={{ marginTop: "50px" }}>
 				<Form noValidate onSubmit={createAccount}>
 					<Form.Group as={Row} className="mb-3">
 						<Form.Label style={{fontWeight: "800", fontSize: "0.8rem"}}>
@@ -196,9 +189,9 @@ const RegisterForm = () => {
 						</Form.Label>
 						<Col>
 							<Form.Control className={statusParser(idValid)} id="idInput" maxLength={20} type="id" placeholder="아이디를 입력해주세요" onChange={() => {isValidID()}} autoComplete="off" style={{fontSize: "0.9rem"}} />
-							<Form.Text muted style={{fontSize: "0.72rem"}}>
+							{/* <Form.Text muted style={{fontSize: "0.72rem"}}>
 								로그인할 때 사용할 아이디를 적어주세요
-							</Form.Text>
+							</Form.Text> */}
 							<Form.Control.Feedback type="valid" style={{fontSize: "0.8rem"}}>
 								<div style={{display: "flex", alignItems: "center", marginTop: "5px"}}>
 									<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-check-circle" viewBox="0 0 16 16">
@@ -225,10 +218,10 @@ const RegisterForm = () => {
 							닉네임 (Nickname)
 						</Form.Label>
 						<Col>
-							<Form.Control className={statusParser(nicknameValid)} id="nicknameInput" maxLength={20} type="text" placeholder="닉네임을 입력해주세요" onChange={() => {isValidNickname()}} autoComplete="off" style={{fontSize: "0.9rem"}} />
-							<Form.Text muted style={{fontSize: "0.72rem"}}>
+							<Form.Control className={statusParser(nicknameValid)} id="nicknameInput" maxLength={20} type="text" placeholder="닉네임을 입력해주세요 (1~20자)" onChange={() => {isValidNickname()}} autoComplete="off" style={{fontSize: "0.9rem"}} />
+							{/* <Form.Text muted style={{fontSize: "0.72rem"}}>
 								닉네임은 1~20글자 제한이며 특수문자와 띄어쓰기는 사용 불가능합니다
-							</Form.Text>
+							</Form.Text> */}
 							<Form.Control.Feedback type="valid" style={{fontSize: "0.8rem"}}>
 								<div style={{display: "flex", alignItems: "center", marginTop: "5px"}}>
 									<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-check-circle" viewBox="0 0 16 16">
@@ -256,9 +249,9 @@ const RegisterForm = () => {
 						</Form.Label>
 						<Col>
 							<Form.Control className={statusParser(emailValid)} id="emailInput" maxLength={20} type="text" placeholder="이메일을 입력해주세요" onChange={() => {isValidEmail()}} autoComplete="off" style={{fontSize: "0.9rem"}} />
-							<Form.Text muted style={{fontSize: "0.72rem"}}>
+							{/* <Form.Text muted style={{fontSize: "0.72rem"}}>
 								비밀번호를 찾을 때 사용됩니다
-							</Form.Text>
+							</Form.Text> */}
 							<Form.Control.Feedback type="valid" style={{fontSize: "0.8rem"}}>
 								<div style={{display: "flex", alignItems: "center", marginTop: "5px"}}>
 									<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-check-circle" viewBox="0 0 16 16">
@@ -285,10 +278,10 @@ const RegisterForm = () => {
 							비밀번호 (Password)
 						</Form.Label>
 						<Col>
-							<Form.Control className={statusParser(passwordValid)} id="passwordInput" autoComplete="off" maxLength={20} type="password" placeholder="비밀번호를 입력해주세요" onChange={() => {isValidPassword()}} style={{fontSize: "0.9rem"}} />
-							<Form.Text muted style={{fontSize: "0.72rem"}}>
+							<Form.Control className={statusParser(passwordValid)} id="passwordInput" autoComplete="off" maxLength={20} type="password" placeholder="비밀번호를 입력해주세요 (8~20자)" onChange={() => {isValidPassword()}} style={{fontSize: "0.9rem"}} />
+							{/* <Form.Text muted style={{fontSize: "0.72rem"}}>
 								알파벳 대문자와 소문자, 숫자, 특수문자를 조합하여 8~20자로 생성해주세요
-							</Form.Text>
+							</Form.Text> */}
 							<Form.Control.Feedback type="valid" style={{fontSize: "0.8rem"}}>
 								<div style={{display: "flex", alignItems: "center", marginTop: "5px"}}>
 									<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-check-circle" viewBox="0 0 16 16">
@@ -304,7 +297,7 @@ const RegisterForm = () => {
 										<path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
 										<path d="M7.002 11a1 1 0 1 1 2 0 1 1 0 0 1-2 0zM7.1 4.995a.905.905 0 1 1 1.8 0l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 4.995z"/>
 									</svg>
-									<span style={{marginLeft: "8px"}}>강력하지 못한 비밀번호입니다</span>
+									<span style={{marginLeft: "8px"}}>강력하지 않은 비밀번호입니다</span>
 								</div>
 							</Form.Control.Feedback>
 						</Col>
@@ -315,9 +308,9 @@ const RegisterForm = () => {
 						</Form.Label>
 						<Col>
 							<Form.Control className={statusParser(rePasswordValid)} id="rePasswordInput" autoComplete="off" maxLength={20} type="password" placeholder="비밀번호를 한번 더 입력해주세요" onChange={() => {checkRePassword()}} style={{fontSize: "0.9rem"}} />
-							<Form.Text muted style={{fontSize: "0.72rem"}}>
+							{/* <Form.Text muted style={{fontSize: "0.72rem"}}>
 								확인을 위해 비밀번호를 한번 더 입력해주세요
-							</Form.Text>
+							</Form.Text> */}
 							<Form.Control.Feedback type="valid" style={{fontSize: "0.8rem"}}>
 								<div style={{display: "flex", alignItems: "center", marginTop: "5px"}}>
 									<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-check-circle" viewBox="0 0 16 16">
@@ -333,18 +326,18 @@ const RegisterForm = () => {
 										<path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
 										<path d="M7.002 11a1 1 0 1 1 2 0 1 1 0 0 1-2 0zM7.1 4.995a.905.905 0 1 1 1.8 0l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 4.995z"/>
 									</svg>
-									<span style={{marginLeft: "8px"}}>비밀번호가 일치하지 않거나 강력하지 않은 비밀번호입니다</span>
+									<span style={{marginLeft: "8px"}}>비밀번호가 일치하지 않습니다</span>
 								</div>
 							</Form.Control.Feedback>
 						</Col>
 					</Form.Group>
 
-					<Button type="submit" variant="success" size="lg" style={{width: "100%", marginTop: "20px", fontSize: "0.9rem"}}>가입하기</Button>
-					<span style={{fontSize: "0.75rem"}}>
+					<Button type="submit" variant="success" size="lg" style={{ width: "100%", marginTop: "10px", marginBottom: "200px", fontSize: "1.1rem", fontWeight: 800 }}>가입하기</Button>
+					{/* <span style={{fontSize: "0.75rem"}}>
 						사용자의 비밀번호는 <strong>단방향 암호화</strong> 되어 보관됩니다
 						<br />
 						관리자가 사용자의 비밀번호를 알아낼 수 없습니다
-					</span>
+					</span> */}
 				</Form>
 			</div>
 		</Container>

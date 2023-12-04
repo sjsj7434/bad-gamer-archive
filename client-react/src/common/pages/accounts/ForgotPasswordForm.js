@@ -57,11 +57,11 @@ const ForgotPasswordForm = (props) => {
 			<LoadingModal showModal={showLoadingModal} message={loadingMessage}></LoadingModal>
 
 			<div style={{ marginTop: "30px" }}>
-				<div style={{ display: "flex", alignItems: "center", marginBottom: "20px", paddingBottom: "10px", borderBottom: "2px solid lightgray" }}>
-					<svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="currentColor" className="bi bi-search" viewBox="0 0 16 16">
+				<div style={{ display: "flex", alignItems: "center", marginBottom: "20px", paddingBottom: "10px", borderBottom: "1px solid lightgray" }}>
+					<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor" className="bi bi-search" viewBox="0 0 16 16">
 						<path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
 					</svg>
-					<span style={{fontSize: "1.2rem", marginLeft: "12px"}}>비밀번호를 잊으셨나요?</span>
+					<span style={{fontSize: "0.8rem", marginLeft: "12px"}}>비밀번호를 잊으셨나요?</span>
 				</div>
 				<Form noValidate onSubmit={handleSubmit}>
 					<Form.Group as={Row} className="mb-3">
@@ -72,13 +72,13 @@ const ForgotPasswordForm = (props) => {
 							<Form.Control id="idInput" maxLength={20} type="text" placeholder="아이디를 입력해주세요" style={{fontSize: "0.9rem"}} />
 						</InputGroup>
 						<Form.Text muted style={{fontSize: "0.72rem"}}>
-							가입하신 계정의 이메일로 비밀번호 재설정 메일이 발송됩니다
-							<br />
+							가입하신 계정의 이메일로 메일이 발송됩니다
+							<br /><br />
 							아이디 없으면 없다고 알림창 / 해당 메일의 링크를 클릭하면 해당 계정 비밀번호 변경하는 페이지로 이동
 						</Form.Text>
 					</Form.Group>
 
-					<Button type="submit" variant="success" size="lg" style={{width: "100%", marginTop: "10px", fontSize: "0.9rem"}}>메일 보내기</Button>
+					<Button type="submit" variant="success" size="lg" style={{ width: "100%", marginTop: "10px", marginBottom: "200px", fontSize: "1.1rem", fontWeight: 800 }}>메일 보내기</Button>
 				</Form>
 			</div>
 		</Container>
