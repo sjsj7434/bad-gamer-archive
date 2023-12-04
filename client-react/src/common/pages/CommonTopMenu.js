@@ -142,7 +142,8 @@ const CommonTopMenu = (props) => {
 			</Navbar>
 			
 			{/* 모바일용 상단 고정 메뉴 */}
-			<Navbar collapseOnSelect bg="dark" variant="dark" className="mobileOnly" expand="">
+			<Navbar bg="dark" variant="dark" className="mb-3 mobileOnly" expand="" sticky="top">
+			{/* <Navbar collapseOnSelect bg="dark" variant="dark" className="mobileOnly" expand=""> */}
 				<Container>
 					{/* 모바일용 상단 고정 메뉴 */}
 					<Navbar.Brand onClick={() => menuClick("/lostark/main")} style={{cursor: "pointer"}}>
@@ -157,34 +158,20 @@ const CommonTopMenu = (props) => {
 						{
 							props.accountData.status === "login" ?
 							<>
-								<div style={{ padding: "8px", color: "#ffaa3d" }} onClick={() => { logoutAccount() }}>
-									<div style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
-										<strong style={{ marginRight: "0.3rem" }}>로그아웃</strong>
-										<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor" className="bi bi-box-arrow-right" viewBox="0 0 16 16">
-											<path fillRule="evenodd" d="M10 12.5a.5.5 0 0 1-.5.5h-8a.5.5 0 0 1-.5-.5v-9a.5.5 0 0 1 .5-.5h8a.5.5 0 0 1 .5.5v2a.5.5 0 0 0 1 0v-2A1.5 1.5 0 0 0 9.5 2h-8A1.5 1.5 0 0 0 0 3.5v9A1.5 1.5 0 0 0 1.5 14h8a1.5 1.5 0 0 0 1.5-1.5v-2a.5.5 0 0 0-1 0v2z"/>
-											<path fillRule="evenodd" d="M15.854 8.354a.5.5 0 0 0 0-.708l-3-3a.5.5 0 0 0-.708.708L14.293 7.5H5.5a.5.5 0 0 0 0 1h8.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3z"/>
-										</svg>
-									</div>
+								<div onClick={() => { logoutAccount() }} style={{ display: "flex", flexDirection: "row", alignItems: "center", marginRight: "0.3rem" }}>
+									<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="#9b9d9e" className="bi bi-box-arrow-right" viewBox="0 0 16 16">
+										<path fillRule="evenodd" d="M10 12.5a.5.5 0 0 1-.5.5h-8a.5.5 0 0 1-.5-.5v-9a.5.5 0 0 1 .5-.5h8a.5.5 0 0 1 .5.5v2a.5.5 0 0 0 1 0v-2A1.5 1.5 0 0 0 9.5 2h-8A1.5 1.5 0 0 0 0 3.5v9A1.5 1.5 0 0 0 1.5 14h8a1.5 1.5 0 0 0 1.5-1.5v-2a.5.5 0 0 0-1 0v2z"/>
+										<path fillRule="evenodd" d="M15.854 8.354a.5.5 0 0 0 0-.708l-3-3a.5.5 0 0 0-.708.708L14.293 7.5H5.5a.5.5 0 0 0 0 1h8.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3z"/>
+									</svg>
 								</div>
 							</>
 							:
 							<>
-								<Nav.Link active={props.currentMenu === "/accounts/register" ? true : false} onClick={() => menuClick("/accounts/register")}>
-									<div style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
-										<p style={{ marginRight: "0.3rem" }}>회원가입</p>
-										<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor" className="bi bi-person-square" viewBox="0 0 16 16">
+								<Nav.Link active={props.currentMenu === "/accounts/login" ? true : false} onClick={() => menuClick("/accounts/login")}>
+									<div style={{ display: "flex", flexDirection: "row", alignItems: "center", marginRight: "0.3rem" }}>
+										<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="#9b9d9e" className="bi bi-person-square" viewBox="0 0 16 16">
 											<path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0z"/>
 											<path d="M2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2zm12 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1v-1c0-1-1-4-6-4s-6 3-6 4v1a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h12z"/>
-										</svg>
-									</div>
-								</Nav.Link>
-								&nbsp;&nbsp;
-								<Nav.Link active={props.currentMenu === "/accounts/login" ? true : false} onClick={() => menuClick("/accounts/login")}>
-									<div style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
-										<p style={{ marginRight: "0.3rem" }}>로그인</p>
-										<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor" className="bi bi-box-arrow-in-up-right" viewBox="0 0 16 16">
-											<path fillRule="evenodd" d="M6.364 13.5a.5.5 0 0 0 .5.5H13.5a1.5 1.5 0 0 0 1.5-1.5v-10A1.5 1.5 0 0 0 13.5 1h-10A1.5 1.5 0 0 0 2 2.5v6.636a.5.5 0 1 0 1 0V2.5a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 .5.5v10a.5.5 0 0 1-.5.5H6.864a.5.5 0 0 0-.5.5z"/>
-											<path fillRule="evenodd" d="M11 5.5a.5.5 0 0 0-.5-.5h-5a.5.5 0 0 0 0 1h3.793l-8.147 8.146a.5.5 0 0 0 .708.708L10 6.707V10.5a.5.5 0 0 0 1 0v-5z"/>
 										</svg>
 									</div>
 								</Nav.Link>
@@ -192,7 +179,7 @@ const CommonTopMenu = (props) => {
 						}
 						&nbsp;&nbsp;
 
-						<Navbar.Toggle onClick={() => setShowOffcanvas(true)} />
+						<Navbar.Toggle onClick={() => setShowOffcanvas(true)} style={{ padding: "1px 6px", border: "0px" }} />
 					</Nav>
 
 					{/* 모바일용 우측 캔버스 메뉴 */}
@@ -223,19 +210,20 @@ const CommonTopMenu = (props) => {
 									<>
 										<Nav.Link active={props.currentMenu === "/accounts/mypage" ? true : false} onClick={() => menuClick("/accounts/mypage")}>
 											<div style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
-												<p style={{ marginRight: "0.3rem" }}>나의 정보</p>
 												<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor" className="bi bi-person-fill-gear" viewBox="0 0 16 16">
 													<path d="M11 5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm-9 8c0 1 1 1 1 1h5.256A4.493 4.493 0 0 1 8 12.5a4.49 4.49 0 0 1 1.544-3.393C9.077 9.038 8.564 9 8 9c-5 0-6 3-6 4Zm9.886-3.54c.18-.613 1.048-.613 1.229 0l.043.148a.64.64 0 0 0 .921.382l.136-.074c.561-.306 1.175.308.87.869l-.075.136a.64.64 0 0 0 .382.92l.149.045c.612.18.612 1.048 0 1.229l-.15.043a.64.64 0 0 0-.38.921l.074.136c.305.561-.309 1.175-.87.87l-.136-.075a.64.64 0 0 0-.92.382l-.045.149c-.18.612-1.048.612-1.229 0l-.043-.15a.64.64 0 0 0-.921-.38l-.136.074c-.561.305-1.175-.309-.87-.87l.075-.136a.64.64 0 0 0-.382-.92l-.148-.045c-.613-.18-.613-1.048 0-1.229l.148-.043a.64.64 0 0 0 .382-.921l-.074-.136c-.306-.561.308-1.175.869-.87l.136.075a.64.64 0 0 0 .92-.382l.045-.148ZM14 12.5a1.5 1.5 0 1 0-3 0 1.5 1.5 0 0 0 3 0Z"/>
 												</svg>
+												<p style={{ marginLeft: "0.7rem" }}>나의 정보</p>
 											</div>
 										</Nav.Link>
-										<div style={{ paddingTop: "8px", color: "#ffaa3d" }}>
+										
+										<div style={{ paddingTop: "8px" }} onClick={() => { logoutAccount() }}>
 											<div style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
-												<strong style={{ marginRight: "0.3rem" }}>로그아웃</strong>
 												<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor" className="bi bi-box-arrow-right" viewBox="0 0 16 16">
 													<path fillRule="evenodd" d="M10 12.5a.5.5 0 0 1-.5.5h-8a.5.5 0 0 1-.5-.5v-9a.5.5 0 0 1 .5-.5h8a.5.5 0 0 1 .5.5v2a.5.5 0 0 0 1 0v-2A1.5 1.5 0 0 0 9.5 2h-8A1.5 1.5 0 0 0 0 3.5v9A1.5 1.5 0 0 0 1.5 14h8a1.5 1.5 0 0 0 1.5-1.5v-2a.5.5 0 0 0-1 0v2z"/>
 													<path fillRule="evenodd" d="M15.854 8.354a.5.5 0 0 0 0-.708l-3-3a.5.5 0 0 0-.708.708L14.293 7.5H5.5a.5.5 0 0 0 0 1h8.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3z"/>
 												</svg>
+												<p style={{ marginLeft: "0.7rem" }}>로그아웃</p>
 											</div>
 										</div>
 									</>
@@ -243,20 +231,20 @@ const CommonTopMenu = (props) => {
 									<>
 										<Nav.Link active={props.currentMenu === "/accounts/register" ? true : false} onClick={() => menuClick("/accounts/register")}>
 											<div style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
-												<p style={{ marginRight: "0.3rem" }}>회원가입</p>
 												<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor" className="bi bi-person-square" viewBox="0 0 16 16">
 													<path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0z"/>
 													<path d="M2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2zm12 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1v-1c0-1-1-4-6-4s-6 3-6 4v1a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h12z"/>
 												</svg>
+												<p style={{ marginLeft: "0.7rem" }}>회원가입</p>
 											</div>
 										</Nav.Link>
 										<Nav.Link active={props.currentMenu === "/accounts/login" ? true : false} onClick={() => menuClick("/accounts/login")}>
 											<div style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
-												<p style={{ marginRight: "0.3rem" }}>로그인</p>
 												<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor" className="bi bi-box-arrow-in-up-right" viewBox="0 0 16 16">
 													<path fillRule="evenodd" d="M6.364 13.5a.5.5 0 0 0 .5.5H13.5a1.5 1.5 0 0 0 1.5-1.5v-10A1.5 1.5 0 0 0 13.5 1h-10A1.5 1.5 0 0 0 2 2.5v6.636a.5.5 0 1 0 1 0V2.5a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 .5.5v10a.5.5 0 0 1-.5.5H6.864a.5.5 0 0 0-.5.5z"/>
 													<path fillRule="evenodd" d="M11 5.5a.5.5 0 0 0-.5-.5h-5a.5.5 0 0 0 0 1h3.793l-8.147 8.146a.5.5 0 0 0 .708.708L10 6.707V10.5a.5.5 0 0 0 1 0v-5z"/>
 												</svg>
+												<p style={{ marginLeft: "0.7rem" }}>로그인</p>
 											</div>
 										</Nav.Link>
 									</>
@@ -267,9 +255,9 @@ const CommonTopMenu = (props) => {
 				</Container>
 			</Navbar>
 			
-			<Navbar bg="dark" variant="dark" className="mb-3 mobileOnly" expand="" sticky="top">
+			{/* 모바일용 상단 고정 퀵 메뉴 */}
+			{/* <Navbar bg="dark" variant="dark" className="mb-3 mobileOnly" expand="" sticky="top">
 				<Container>
-					{/* 모바일용 상단 고정 퀵 메뉴 */}
 					<div style={{ display: "flex", flexDirection: "row", alignItems: "center", width: "100%" }}>
 						<svg xmlns="http://www.w3.org/2000/svg" width="1rem" height="1rem" fill="lightgray" className="bi bi-arrow-left-square" viewBox="0 0 16 16">
 							<path fillRule="evenodd" d="M15 2a1 1 0 0 0-1-1H2a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V2zM0 2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V2zm11.5 5.5a.5.5 0 0 1 0 1H5.707l2.147 2.146a.5.5 0 0 1-.708.708l-3-3a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L5.707 7.5H11.5z"/>
@@ -294,10 +282,10 @@ const CommonTopMenu = (props) => {
 						</svg>
 					</div>
 				</Container>
-			</Navbar>
+			</Navbar> */}
 			
 			{/* 모바일용 하단 퀵 스크롤 메뉴 */}
-			<div className="mobileOnly" style={{ display: "none", position: "sticky", top: "94%" }}>
+			{/* <div className="mobileOnly" style={{ display: "none", position: "sticky", top: "94%" }}>
 				<div style={{ display: "flex", flexDirection: "row", justifyContent: "flex-end", marginRight: "1rem" }}>
 					<Button variant="dark" style={{ fontSize: "0.8rem", padding: "3px" }} onClick={() => { window.scrollTo({ top: "0%", behavior: "smooth" }) }}>
 						<svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" className="bi bi-arrow-up-circle-fill" viewBox="0 0 16 16">
@@ -311,7 +299,7 @@ const CommonTopMenu = (props) => {
 						</svg>
 					</Button>
 				</div>
-			</div>
+			</div> */}
 		</>
 	);
 }
