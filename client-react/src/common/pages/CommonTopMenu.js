@@ -21,7 +21,6 @@ const CommonTopMenu = (props) => {
 
 	const setTest = (subMenu) => {
 		const renderData = subMenuData.get(subMenu).map((element) => {
-			console.log(element.name);
 			return(
 				<div
 					key={element.name}
