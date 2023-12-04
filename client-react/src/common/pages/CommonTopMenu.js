@@ -4,14 +4,47 @@ import { useCallback, useState } from 'react';
 import Container from 'react-bootstrap/Container';
 import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
-import Button from 'react-bootstrap/Button';
 import Offcanvas from 'react-bootstrap/Offcanvas';
 
 import * as accountsFetch from '../js/accountsFetch.js'
 
 const CommonTopMenu = (props) => {
 	const [showOffcanvas, setShowOffcanvas] = useState(false);
+	const [subMenuRender, setSubMenuRender] = useState(<></>);
 	const navigate = useNavigate();
+
+	const subMenuData = new Map(); //서브 메뉴 데이터
+	subMenuData.set("post", [
+		{ "name": "익명 게시판", "url": "/lostark/post/unknown/1", "currentMenu": "/lostark/post/unknown" }
+		, { "name": "자유 게시판", "url": "/lostark/post/known/1", "currentMenu": "/lostark/post/known" }
+	])
+
+	const setTest = (subMenu) => {
+		const renderData = subMenuData.get(subMenu).map((element) => {
+			console.log(element.name);
+			return(
+				<div
+					key={element.name}
+					onClick={() => { menuClick(element.url); document.querySelector("#subMenuArea").style.display = "none" }}
+					style={{
+						display: "flex"
+						, alignItems: "center"
+						, fontSize: "0.8rem"
+						, fontWeight: props.currentMenu === element.currentMenu ? 800 : 400
+						, color: props.currentMenu === element.currentMenu ? "white" : "lightgray"
+						, height: "100%"
+						, cursor: "pointer"
+						, paddingLeft: "1rem"
+						, paddingRight: "1rem"
+					}}
+					onMouseOver={ () => {document.querySelector("#subMenuArea").style.display = "block"} }
+				>
+					{element.name}
+				</div>
+			);
+		})
+		setSubMenuRender(renderData);
+	}
 	
 	const menuClick = useCallback((url) => {
 		setShowOffcanvas(false);
@@ -86,7 +119,7 @@ const CommonTopMenu = (props) => {
 						</div>
 						
 						<div
-							onClick={() => { document.querySelector("#subMenuArea").style.display = "block" } }
+							onClick={() => { document.querySelector("#subMenuArea").style.display = "block"; setTest("post"); } }
 							style={{
 								display: "flex"
 								, alignItems: "center"
@@ -98,7 +131,7 @@ const CommonTopMenu = (props) => {
 								, paddingLeft: "1rem"
 								, paddingRight: "1rem"
 							}}
-							onMouseOver={ () => {document.querySelector("#subMenuArea").style.display = "block"} }
+							onMouseOver={ () => { document.querySelector("#subMenuArea").style.display = "block"; setTest("post"); } }
 						>
 							게시판 ▼
 						</div>
@@ -232,7 +265,8 @@ const CommonTopMenu = (props) => {
 					onMouseOut={ () => {document.querySelector("#subMenuArea").style.display = "none"} }
 				>
 					<div style={{ display: "flex", alignItems: "center", justifyContent: "center", backgroundColor: "#212529", height: "fit-content", paddingTop: "20px", paddingBottom: "20px" }}>
-						<div
+						{subMenuRender}
+						{/* <div
 							onClick={() => { menuClick("/lostark/post/unknown/1"); document.querySelector("#subMenuArea").style.display = "none" }}
 							style={{
 								display: "flex"
@@ -266,7 +300,7 @@ const CommonTopMenu = (props) => {
 							onMouseOver={ () => {document.querySelector("#subMenuArea").style.display = "block"} }
 						>
 							자유 게시판
-						</div>
+						</div> */}
 					</div>
 				</div>
 				<br></br><br></br><br></br>
