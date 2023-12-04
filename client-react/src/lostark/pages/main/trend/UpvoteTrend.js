@@ -1,11 +1,11 @@
 import { useNavigate } from "react-router-dom";
-import * as contentBoardFetch from '../../common/js/contentBoardFetch';
+import * as contentBoardFetch from '../../../../common/js/contentBoardFetch';
 import { useEffect, useState } from 'react';
 import Table from 'react-bootstrap/Table';
 import Tab from 'react-bootstrap/Tab';
 import Tabs from 'react-bootstrap/Tabs';
 
-const DownvoteTrend = (props) => {
+const UpvoteTrend = (props) => {
 	const [monthlyRender, setMonthlyRender] = useState(<></>);
 	const [weeklyRender, setWeeklyRender] = useState(<></>);
 	const [dailyRender, setDailyRender] = useState(<></>);
@@ -18,9 +18,9 @@ const DownvoteTrend = (props) => {
 	
 	useEffect(() => {
 		const readContentList = async () => {
-			const monthlyData = await contentBoardFetch.readContentList("downvote/trend/monthly", 1);
-			const weeklyData = await contentBoardFetch.readContentList("downvote/trend/weekly", 1);
-			const dailyData = await contentBoardFetch.readContentList("downvote/trend/daily", 1);
+			const monthlyData = await contentBoardFetch.readContentList("upvote/trend/monthly", 1);
+			const weeklyData = await contentBoardFetch.readContentList("upvote/trend/weekly", 1);
+			const dailyData = await contentBoardFetch.readContentList("upvote/trend/daily", 1);
 
 			setMonthlyList(monthlyData[0]);
 			setWeeklyList(weeklyData[0]);
@@ -160,12 +160,18 @@ const DownvoteTrend = (props) => {
 			>
 				<Tab eventKey="hot" title="월간" mountOnEnter={true} unmountOnExit={false}>
 					<Table bordered hover style={{fontSize: "0.85rem"}}>
+						<colgroup>
+							<col width="20%"></col>
+							<col width="*"></col>
+							<col width="20%"></col>
+							<col width="20%"></col>
+						</colgroup>
 						<thead>
-							<tr>
+							<tr style={{ textAlign: "center", backgroundColor: "#b9b9b9", color: "white" }}>
 								<th>구분</th>
 								<th>제목</th>
-								<th>up</th>
-								<th>view</th>
+								<th>추천</th>
+								<th>조회</th>
 							</tr>
 						</thead>
 						<tbody>
@@ -175,12 +181,18 @@ const DownvoteTrend = (props) => {
 				</Tab>
 				<Tab eventKey="none" title="주간" mountOnEnter={true} unmountOnExit={false}>
 					<Table bordered hover style={{fontSize: "0.85rem"}}>
+						<colgroup>
+							<col width="20%"></col>
+							<col width="*"></col>
+							<col width="20%"></col>
+							<col width="20%"></col>
+						</colgroup>
 						<thead>
-							<tr>
+							<tr style={{ textAlign: "center", backgroundColor: "#b9b9b9", color: "white" }}>
 								<th>구분</th>
 								<th>제목</th>
-								<th>up</th>
-								<th>view</th>
+								<th>추천</th>
+								<th>조회</th>
 							</tr>
 						</thead>
 						<tbody>
@@ -190,12 +202,18 @@ const DownvoteTrend = (props) => {
 				</Tab>
 				<Tab eventKey="class" title="일간" mountOnEnter={true} unmountOnExit={false}>
 					<Table bordered hover style={{fontSize: "0.85rem"}}>
+						<colgroup>
+							<col width="20%"></col>
+							<col width="*"></col>
+							<col width="20%"></col>
+							<col width="20%"></col>
+						</colgroup>
 						<thead>
-							<tr>
+							<tr style={{ textAlign: "center", backgroundColor: "#b9b9b9", color: "white" }}>
 								<th>구분</th>
 								<th>제목</th>
-								<th>up</th>
-								<th>view</th>
+								<th>추천</th>
+								<th>조회</th>
 							</tr>
 						</thead>
 						<tbody>
@@ -208,4 +226,4 @@ const DownvoteTrend = (props) => {
 	);
 }
 
-export default DownvoteTrend;
+export default UpvoteTrend;

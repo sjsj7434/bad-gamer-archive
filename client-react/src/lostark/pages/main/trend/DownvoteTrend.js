@@ -1,11 +1,11 @@
 import { useNavigate } from "react-router-dom";
-import * as contentBoardFetch from '../../common/js/contentBoardFetch';
+import * as contentBoardFetch from '../../../../common/js/contentBoardFetch';
 import { useEffect, useState } from 'react';
 import Table from 'react-bootstrap/Table';
 import Tab from 'react-bootstrap/Tab';
 import Tabs from 'react-bootstrap/Tabs';
 
-const UpvoteTrend = (props) => {
+const DownvoteTrend = (props) => {
 	const [monthlyRender, setMonthlyRender] = useState(<></>);
 	const [weeklyRender, setWeeklyRender] = useState(<></>);
 	const [dailyRender, setDailyRender] = useState(<></>);
@@ -18,9 +18,9 @@ const UpvoteTrend = (props) => {
 	
 	useEffect(() => {
 		const readContentList = async () => {
-			const monthlyData = await contentBoardFetch.readContentList("upvote/trend/monthly", 1);
-			const weeklyData = await contentBoardFetch.readContentList("upvote/trend/weekly", 1);
-			const dailyData = await contentBoardFetch.readContentList("upvote/trend/daily", 1);
+			const monthlyData = await contentBoardFetch.readContentList("downvote/trend/monthly", 1);
+			const weeklyData = await contentBoardFetch.readContentList("downvote/trend/weekly", 1);
+			const dailyData = await contentBoardFetch.readContentList("downvote/trend/daily", 1);
 
 			setMonthlyList(monthlyData[0]);
 			setWeeklyList(weeklyData[0]);
@@ -38,7 +38,7 @@ const UpvoteTrend = (props) => {
 				ren.push(
 					<tr key="monthlyEmpty">
 						<td colSpan={4} style={{padding: "20px", textAlign: "center"}}>
-							월간 뜨는 게시글이 존재하지 않습니다
+							월간 지는 게시글이 존재하지 않습니다
 						</td>
 					</tr>
 				);
@@ -78,7 +78,7 @@ const UpvoteTrend = (props) => {
 				ren.push(
 					<tr key="weeklyEmpty">
 						<td colSpan={4} style={{padding: "20px", textAlign: "center"}}>
-							주간 뜨는 게시글이 존재하지 않습니다
+							주간 지는 게시글이 존재하지 않습니다
 						</td>
 					</tr>
 				);
@@ -118,7 +118,7 @@ const UpvoteTrend = (props) => {
 				ren.push(
 					<tr key="dailyEmpty">
 						<td colSpan={4} style={{padding: "20px", textAlign: "center"}}>
-							일간 뜨는 게시글이 존재하지 않습니다
+							일간 지는 게시글이 존재하지 않습니다
 						</td>
 					</tr>
 				);
@@ -226,4 +226,4 @@ const UpvoteTrend = (props) => {
 	);
 }
 
-export default UpvoteTrend;
+export default DownvoteTrend;

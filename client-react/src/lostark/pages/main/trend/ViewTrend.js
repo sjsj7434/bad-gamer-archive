@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import * as contentBoardFetch from '../../common/js/contentBoardFetch';
+import * as contentBoardFetch from '../../../../common/js/contentBoardFetch';
 import { useEffect, useState } from 'react';
 import Table from 'react-bootstrap/Table';
 import Tab from 'react-bootstrap/Tab';
@@ -38,7 +38,7 @@ const ViewTrend = (props) => {
 				ren.push(
 					<tr key="monthlyEmpty">
 						<td colSpan={4} style={{padding: "20px", textAlign: "center"}}>
-							월간 뜨는 게시글이 존재하지 않습니다
+							월간 게시글이 존재하지 않습니다
 						</td>
 					</tr>
 				);
@@ -78,7 +78,7 @@ const ViewTrend = (props) => {
 				ren.push(
 					<tr key="weeklyEmpty">
 						<td colSpan={4} style={{padding: "20px", textAlign: "center"}}>
-							주간 뜨는 게시글이 존재하지 않습니다
+							주간 게시글이 존재하지 않습니다
 						</td>
 					</tr>
 				);
@@ -118,7 +118,7 @@ const ViewTrend = (props) => {
 				ren.push(
 					<tr key="dailyEmpty">
 						<td colSpan={4} style={{padding: "20px", textAlign: "center"}}>
-							일간 뜨는 게시글이 존재하지 않습니다
+							일간 게시글이 존재하지 않습니다
 						</td>
 					</tr>
 				);
@@ -160,8 +160,14 @@ const ViewTrend = (props) => {
 			>
 				<Tab eventKey="hot" title="월간" mountOnEnter={true} unmountOnExit={false}>
 					<Table bordered hover style={{fontSize: "0.85rem"}}>
+						<colgroup>
+							<col width="15%"></col>
+							<col width="*"></col>
+							<col width="15%"></col>
+							<col width="15%"></col>
+						</colgroup>
 						<thead>
-							<tr>
+							<tr style={{ textAlign: "center", backgroundColor: "#b9b9b9", color: "white" }}>
 								<th>구분</th>
 								<th>제목</th>
 								<th>up</th>
@@ -175,8 +181,14 @@ const ViewTrend = (props) => {
 				</Tab>
 				<Tab eventKey="none" title="주간" mountOnEnter={true} unmountOnExit={false}>
 					<Table bordered hover style={{fontSize: "0.85rem"}}>
+						<colgroup>
+							<col width="15%"></col>
+							<col width="*"></col>
+							<col width="15%"></col>
+							<col width="15%"></col>
+						</colgroup>
 						<thead>
-							<tr>
+							<tr style={{ textAlign: "center", backgroundColor: "#b9b9b9", color: "white" }}>
 								<th>구분</th>
 								<th>제목</th>
 								<th>up</th>
@@ -190,8 +202,14 @@ const ViewTrend = (props) => {
 				</Tab>
 				<Tab eventKey="class" title="일간" mountOnEnter={true} unmountOnExit={false}>
 					<Table bordered hover style={{fontSize: "0.85rem"}}>
+						<colgroup>
+							<col width="15%"></col>
+							<col width="*"></col>
+							<col width="15%"></col>
+							<col width="15%"></col>
+						</colgroup>
 						<thead>
-							<tr>
+							<tr style={{ textAlign: "center", backgroundColor: "#b9b9b9", color: "white" }}>
 								<th>구분</th>
 								<th>제목</th>
 								<th>up</th>

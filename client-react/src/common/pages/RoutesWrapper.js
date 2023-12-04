@@ -7,7 +7,7 @@ import '../css/Common.css';
 
 import Error404 from './errors/Error404';
 import * as accountsFetch from '../js/accountsFetch.js'
-import LostarkMain from '../../lostark/pages/LostarkMain';
+import LostarkMain from '../../lostark/pages/main/LostarkMain.js';
 import SetActiveMenu from './SetActiveMenu';
 import CommonTopMenu from './CommonTopMenu';
 
