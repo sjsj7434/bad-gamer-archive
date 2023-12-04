@@ -78,7 +78,7 @@ const LoginForm = () => {
 		<Container style={{ maxWidth: "450px" }}>
 			<LoadingModal showModal={showLoadingModal} message={loadingMessage}></LoadingModal>
 
-			<div style={{ marginTop: "30px" }}>
+			<div style={{ marginTop: "50px" }}>
 				<Form noValidate onSubmit={handleSubmit}>
 					<Form.Group as={Row} className="mb-3">
 						<Form.Label style={{fontWeight: "800", fontSize: "0.8rem"}}>
