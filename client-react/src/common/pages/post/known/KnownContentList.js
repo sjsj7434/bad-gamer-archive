@@ -5,7 +5,7 @@ import Button from 'react-bootstrap/Button';
 import CustomPagination from '../CustomPagination';
 import * as contentBoardFetch from '../../../js/contentBoardFetch';
 
-const UnknownContentList = () => {
+const KnownContentList = () => {
 	const [page, setPage] = useState(null);
 	const [renderData, setRenderData] = useState(<></>);
 	
@@ -28,7 +28,7 @@ const UnknownContentList = () => {
 
 	useEffect(() => {
 		const readContentList = async () => {
-			const contentListData = await contentBoardFetch.readContentList("anonymous", page);
+			const contentListData = await contentBoardFetch.readContentList("user", page);
 
 			setContentList(contentListData[0]);
 			setContentCount(contentListData[1]);
@@ -56,7 +56,7 @@ const UnknownContentList = () => {
 						return(
 							<Link
 								key={"content" + data.code}
-								to={`/lostark/board/anonymous/view/${data.code}`}
+								to={`/lostark/post/known/view/${data.code}`}
 								style={{
 									textDecoration: "none",
 								}}
@@ -100,7 +100,10 @@ const UnknownContentList = () => {
 												</div>
 											</div>
 											<div style={{fontSize: "0.75rem", color: "#5a5a5a", maxWidth: "95%", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap"}}>
-												<span>익명 ({data.ip})</span>
+												<span>
+													{data.writerNickname}
+													{ data.accounts.authentication[0] !== undefined ? `(${data.accounts.authentication[0].data.replace(",", "")})` : "" }
+												</span>
 												&nbsp;|&nbsp;
 												<span>{new Date(data.createdAt).toLocaleDateString("sv-SE").replace(/-/g, ".")}</span>
 												&nbsp;
@@ -138,7 +141,7 @@ const UnknownContentList = () => {
 	useEffect(() => {
 		const pageMoveFunc = (pageIndex) => {
 			document.querySelector("h5").scrollIntoView({ behavior: "smooth", block: "center" });
-			navigate(`/lostark/board/anonymous/${pageIndex}`);
+			navigate(`/lostark/post/known/${pageIndex}`);
 		}
 
 		setPaginationData(
@@ -156,7 +159,7 @@ const UnknownContentList = () => {
 						<path d="M.5 0a.5.5 0 0 1 .5.5v15a.5.5 0 0 1-1 0V.5A.5.5 0 0 1 .5 0zM2 1.5a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-4a.5.5 0 0 1-.5-.5v-1zm2 4a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-7a.5.5 0 0 1-.5-.5v-1zm2 4a.5.5 0 0 1 .5-.5h6a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-6a.5.5 0 0 1-.5-.5v-1zm2 4a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-7a.5.5 0 0 1-.5-.5v-1z"/>
 					</svg>
 					&nbsp;
-					수라도
+					자유 게시판
 				</h5>
 				<hr/>
 			</div>
@@ -167,7 +170,7 @@ const UnknownContentList = () => {
 				</div>
 
 				<div style={{display: "flex", justifyContent: "flex-end"}}>
-					<Link to={`/lostark/board/anonymous/write`} style={{width: "30%", maxWidth: "200px"}}>
+					<Link to={`/lostark/post/known/write`} style={{width: "30%", maxWidth: "200px"}}>
 						<Button id={"createReply"} variant="outline-primary" style={{width: "100%", padding: "1px"}}>
 							<span style={{fontSize: "0.8rem"}}>글쓰기</span>
 						</Button>
@@ -180,4 +183,4 @@ const UnknownContentList = () => {
 	);
 }
 
-export default UnknownContentList;
+export default KnownContentList;

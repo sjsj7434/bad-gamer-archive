@@ -3,16 +3,20 @@ import { useNavigate, useParams } from "react-router-dom";
 import Container from 'react-bootstrap/Container';
 import Placeholder from 'react-bootstrap/Placeholder';
 import Button from 'react-bootstrap/Button';
+import AnonymousReply from './UnknownReply';
+import LoadingModal from '../../common/LoadingModal';
 import * as contentBoardFetch from '../../../js/contentBoardFetch';
-import '../../../css/View.css';
 import MyEditor from '../MyEditor';
+import '../../../css/View.css';
 
-const AnnounceContentView = (props) => {
+const UnknownContentView = (props) => {
 	const [contentCode, setContentCode] = useState(null);
 	const [upvoteCount, setUpvoteCount] = useState(0);
 	const [downvoteCount, setDownvoteCount] = useState(0);
 	const [contentJson, setContentJson] = useState(null);
 	const [renderData, setRenderData] = useState(<></>);
+	const [loadingModalShow, setLoadingModalShow] = useState(false);
+	const [loadingModalMessage, setLoadingModalMessage] = useState("");
 	const navigate = useNavigate();
 	const params = useParams();
 
@@ -25,12 +29,12 @@ const AnnounceContentView = (props) => {
 		 * code로 게시글 정보 가져오기
 		 */
 		const getContentData = async () => {
-			const readResult = await contentBoardFetch.readContent("announcement", contentCode);
+			const readResult = await contentBoardFetch.readContent("anonymous", contentCode);
 			const contentData = readResult.contentData;
 
 			if(contentData === null){
 				alert("존재하지 않는 게시물입니다");
-				navigate(`/board/announcement/1`);
+				navigate(`/lostark/post/unknown/1`);
 			}
 			else{
 				setUpvoteCount(contentData.upvote);
@@ -56,7 +60,7 @@ const AnnounceContentView = (props) => {
 									<path d="M4.085 1H3.5A1.5 1.5 0 0 0 2 2.5v12A1.5 1.5 0 0 0 3.5 16h9a1.5 1.5 0 0 0 1.5-1.5v-12A1.5 1.5 0 0 0 12.5 1h-.585c.055.156.085.325.085.5V2a1.5 1.5 0 0 1-1.5 1.5h-5A1.5 1.5 0 0 1 4 2v-.5c0-.175.03-.344.085-.5ZM10 7a1 1 0 1 1 2 0v5a1 1 0 1 1-2 0V7Zm-6 4a1 1 0 1 1 2 0v1a1 1 0 1 1-2 0v-1Zm4-3a1 1 0 0 1 1 1v3a1 1 0 1 1-2 0V9a1 1 0 0 1 1-1Z"/>
 								</svg>
 								&nbsp;
-								공지사항
+								{props.boardTitle}
 							</span>
 
 							<Placeholder as={"p"} animation="glow">
@@ -89,14 +93,50 @@ const AnnounceContentView = (props) => {
 		}
 		else{
 			/**
-			 * 게시글 추천
+			 * code로 게시글 삭제
 			 */
-			const upvoteContent = async () => {
-				if(props.accountData.status !== "login"){
-					alert("로그인이 필요합니다");
+			const deleteContent = async () => {
+				const sendData = {
+					code: contentCode,
+					password: "",
+				};
+
+				const password = prompt("삭제하시려면 게시글의 비밀번호를 입력해주세요");
+				
+				if(password === null || password === ""){
 					return;
 				}
 
+				sendData.password = password;
+
+				setLoadingModalShow(true);
+				setLoadingModalMessage("게시글을 삭제 중입니다...");
+
+				const deleteResult = await contentBoardFetch.deleteContent("anonymous", sendData);
+
+				if(deleteResult === true){
+					navigate(`/lostark/post/unknown/1`);
+				}
+				else{
+					alert("정보가 올바르지않아 게시글을 삭제할 수 없습니다");
+
+					setLoadingModalShow(false);
+					setLoadingModalMessage("");
+				}
+			}
+
+			/**
+			 * 게시글 수정으로 이동 전 비밀번호 확인
+			 * 수정은 비밀번호 입력한 사람만 가능한데, 굳이 DB에서 다시 읽어와야하나?
+			 */
+			const editContent = async () => {
+				navigate(`/lostark/post/unknown/edit/${contentCode}`);
+			}
+
+			/**
+			 * 게시글 추천
+			 */
+			const upvoteContent = async () => {
 				const downvoteButton = document.querySelector("#downvoteButton");
 				const upvoteButton = document.querySelector("#upvoteButton");
 				upvoteButton.disabled = true;
@@ -107,7 +147,7 @@ const AnnounceContentView = (props) => {
 				}
 
 				if(contentCode !== null){
-					const voteResult = await contentBoardFetch.upvoteContent("announcement", sendData);
+					const voteResult = await contentBoardFetch.upvoteContent("anonymous", sendData);
 
 					if(voteResult === null){
 						return;
@@ -129,11 +169,6 @@ const AnnounceContentView = (props) => {
 			 * 게시글 비추천
 			 */
 			const downvoteContent = async () => {
-				if(props.accountData.status !== "login"){
-					alert("로그인이 필요합니다");
-					return;
-				}
-
 				const downvoteButton = document.querySelector("#downvoteButton");
 				const upvoteButton = document.querySelector("#upvoteButton");
 				upvoteButton.disabled = true;
@@ -144,7 +179,7 @@ const AnnounceContentView = (props) => {
 				}
 
 				if(contentCode !== null){
-					const voteResult = await contentBoardFetch.downvoteContent("announcement", sendData);
+					const voteResult = await contentBoardFetch.downvoteContent("anonymous", sendData);
 
 					if(voteResult === null){
 						return;
@@ -172,7 +207,7 @@ const AnnounceContentView = (props) => {
 									<path d="M4.085 1H3.5A1.5 1.5 0 0 0 2 2.5v12A1.5 1.5 0 0 0 3.5 16h9a1.5 1.5 0 0 0 1.5-1.5v-12A1.5 1.5 0 0 0 12.5 1h-.585c.055.156.085.325.085.5V2a1.5 1.5 0 0 1-1.5 1.5h-5A1.5 1.5 0 0 1 4 2v-.5c0-.175.03-.344.085-.5ZM10 7a1 1 0 1 1 2 0v5a1 1 0 1 1-2 0V7Zm-6 4a1 1 0 1 1 2 0v1a1 1 0 1 1-2 0v-1Zm4-3a1 1 0 0 1 1 1v3a1 1 0 1 1-2 0V9a1 1 0 0 1 1-1Z"/>
 								</svg>
 								&nbsp;
-								공지사항
+								익명 게시판
 							</span>
 
 							<div style={{fontWeight: "800", fontSize: "1.5rem"}}>
@@ -180,7 +215,7 @@ const AnnounceContentView = (props) => {
 							</div>
 							<div style={{fontWeight: "400", fontSize: "0.8rem"}}>
 								<span>
-									관리자
+									{contentJson.writerNickname === "" ? `익명 (${contentJson.ip})` : contentJson.writerNickname}
 								</span>
 								&nbsp;|&nbsp;
 								<span>
@@ -206,7 +241,10 @@ const AnnounceContentView = (props) => {
 						{/*
 							sanitizer libraries for HTML XSS Attacks : DOMPurify
 						*/}
-						{/* <div dangerouslySetInnerHTML={{__html: contentJson.content}} style={{minHeight: "150px", overflowWrap: "anywhere", overflow: "auto", fontSize: "0.8rem"}}></div> */}
+						{/* <div className="ck ck-editor__main" style={{minHeight: "150px", overflowWrap: "anywhere", overflow: "auto"}}>
+							<div className="ck-blurred ck ck-content ck-editor__editable ck-rounded-corners ck-editor__editable_inline ck-read-only ck-column-resize_disabled" dangerouslySetInnerHTML={{__html: contentJson.content}}></div>
+						</div> */}
+						{/* <br/><br/><br/><br/> */}
 						<MyEditor
 							editorMode={"read"}
 							savedData={contentJson.content}
@@ -236,21 +274,30 @@ const AnnounceContentView = (props) => {
 								<span style={{fontSize: "0.85rem"}}>비추천</span>
 							</Button>
 						</div>
-
+						
 						<div style={{display: "flex", justifyContent: "flex-end", marginBottom: "15px", marginTop: "30px"}}>
-							<Button onClick={() => {navigate(`/board/announcement/1`)}} variant="outline-secondary" style={{padding: "2px", width: "8%", minWidth: "70px", maxWidth: "100px", fontSize: "0.8rem"}}>목록으로</Button>
+							<Button onClick={() => {editContent()}} variant="outline-primary" style={{padding: "2px", width: "8%", minWidth: "60px", maxWidth: "100px", fontSize: "0.8rem"}}>수정</Button>
+							&nbsp;
+							<Button onClick={() => {deleteContent()}} variant="outline-danger" style={{padding: "2px", width: "8%", minWidth: "60px", maxWidth: "100px", fontSize: "0.8rem"}}>삭제</Button>
+							&nbsp;
+							<Button onClick={() => {navigate(`/lostark/post/unknown/1`)}} variant="outline-secondary" style={{padding: "2px", width: "8%", minWidth: "70px", maxWidth: "100px", fontSize: "0.8rem"}}>목록으로</Button>
 						</div>
+
+						<hr style={{border: "1px solid #5893ff"}} />
+						
+						<AnonymousReply contentCode={contentCode} />
 					</div>
 				</>
 			);
 		}
-	}, [contentCode, contentJson, upvoteCount, downvoteCount, navigate, props.accountData]);
+	}, [contentCode, contentJson, upvoteCount, downvoteCount, navigate, props.boardTitle]);
 	
 	return(
 		<Container style={{maxWidth: "1200px"}}>
 			{renderData}
+			<LoadingModal showModal={loadingModalShow} message={loadingModalMessage}/>
 		</Container>
 	);
 }
 
-export default AnnounceContentView;
+export default UnknownContentView;

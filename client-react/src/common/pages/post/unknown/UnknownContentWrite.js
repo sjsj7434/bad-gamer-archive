@@ -74,7 +74,7 @@ const UnknownContentWrite = (props) => {
 
 		await contentBoardFetch.createContent("anonymous", sendData);
 
-		navigate(`/lostark/board/anonymous/1`);
+		navigate(`/lostark/post/unknown/1`);
 	}, [editorObject, editorSizeByte, editorMaxKB, navigate])
 
 	/**
@@ -127,7 +127,7 @@ const UnknownContentWrite = (props) => {
 		}
 		else{
 			//정상적으로 처리 성공
-			navigate(`/lostark/board/anonymous/view/${contentCode}`);
+			navigate(`/lostark/post/unknown/view/${contentCode}`);
 		}
 	}, [contentCode, contentPassword, editorObject, editorSizeByte, editorMaxKB, navigate])
 
@@ -198,7 +198,7 @@ const UnknownContentWrite = (props) => {
 		if(writeMode === "new"){
 			setRenderData(
 				<>
-					수라도
+					익명 게시판
 					<Row className="g-2">
 						<Col>
 							<Form.Control id="writer" type="text" placeholder="작성자" defaultValue={"익명"} style={{marginBottom: "10px", fontSize: "0.8rem"}} readOnly />
@@ -228,7 +228,7 @@ const UnknownContentWrite = (props) => {
 						&nbsp;
 						<Button onClick={() => {if(window.confirm("작성한 내용을 전부 비우시겠습니까?") === true){editorObject.setData("")}}} variant="outline-danger" style={{width: "20%", minWidth: "60px", maxWidth: "200px", fontSize: "0.8rem"}}>비우기</Button>
 						&nbsp;
-						<Button onClick={() => {if(window.confirm("작성한 내용을 저장하지않고 나가시겠습니까?") === true){navigate("/lostark/board/anonymous/1")}}} variant="outline-secondary" style={{width: "20%", minWidth: "60px", maxWidth: "200px", fontSize: "0.8rem"}}>취소</Button>
+						<Button onClick={() => {if(window.confirm("작성한 내용을 저장하지않고 나가시겠습니까?") === true){navigate("/lostark/post/unknown/1")}}} variant="outline-secondary" style={{width: "20%", minWidth: "60px", maxWidth: "200px", fontSize: "0.8rem"}}>취소</Button>
 					</div>
 				</>
 			)
@@ -263,7 +263,7 @@ const UnknownContentWrite = (props) => {
 							</Button>
 							&nbsp;
 							<Button
-								onClick={() => {if(window.confirm("내용을 수정하지않고 나가시겠습니까?") === true){navigate(`/lostark/board/anonymous/view/${contentCode}`)}}}
+								onClick={() => {if(window.confirm("내용을 수정하지않고 나가시겠습니까?") === true){navigate(`/lostark/post/unknown/view/${contentCode}`)}}}
 								variant="outline-secondary"
 								style={{width: "20%", minWidth: "60px", maxWidth: "200px", fontSize: "0.8rem"}}
 							>
@@ -296,7 +296,7 @@ const UnknownContentWrite = (props) => {
 				else{
 					setRenderData(
 						<>
-							수라도
+							익명 게시판
 							<br />
 							<Form.Control id="title" type="text" placeholder="제목" style={{marginBottom: "10px", fontSize: "0.8rem"}} defaultValue={contentTitle} />
 
@@ -324,7 +324,7 @@ const UnknownContentWrite = (props) => {
 								</Button>
 								&nbsp;
 								<Button
-									onClick={() => {if(window.confirm("내용을 수정하지않고 나가시겠습니까?") === true){navigate(`/lostark/board/anonymous/view/${contentCode}`)}}}
+									onClick={() => {if(window.confirm("내용을 수정하지않고 나가시겠습니까?") === true){navigate(`/lostark/post/unknown/view/${contentCode}`)}}}
 									variant="outline-secondary"
 									style={{width: "20%", minWidth: "60px", maxWidth: "200px", fontSize: "0.8rem"}}
 								>

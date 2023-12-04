@@ -55,7 +55,7 @@ const AnnounceContentList = () => {
 						return(
 							<Link
 								key={"content" + data.code}
-								to={`/board/announcement/view/${data.code}`}
+								to={`/post/announce/view/${data.code}`}
 								style={{
 									textDecoration: "none",
 								}}
@@ -107,7 +107,7 @@ const AnnounceContentList = () => {
 	useEffect(() => {
 		const pageMoveFunc = (pageIndex) => {
 			document.querySelector("h5").scrollIntoView({ behavior: "smooth", block: "center" });
-			navigate(`/board/announcement/${pageIndex}`);
+			navigate(`/post/announce/${pageIndex}`);
 		}
 
 		setPaginationData(

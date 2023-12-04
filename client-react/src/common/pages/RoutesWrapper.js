@@ -25,16 +25,16 @@ import ActivateLostarkAPI from './accounts/ActivateLostarkAPI';
 import ResetPasswordForm from './accounts/ResetPasswordForm';
 import RenewPasswordForm from './accounts/RenewPasswordForm';
 
-import AnnounceContentList from './board/announce/AnnounceContentList.js';
-import AnnounceContentView from './board/announce/AnnounceContentView.js';
+import AnnounceContentList from './post/announce/AnnounceContentList.js';
+import AnnounceContentView from './post/announce/AnnounceContentView.js';
 
-import UnknownContentList from './board/unknown/UnknownContentList.js';
-import UnknownContentView from './board/unknown/UnknownContentView.js';
-import UnknownContentWrite from './board/unknown/UnknownContentWrite.js';
+import UnknownContentList from './post/unknown/UnknownContentList.js';
+import UnknownContentView from './post/unknown/UnknownContentView.js';
+import UnknownContentWrite from './post/unknown/UnknownContentWrite.js';
 
-import KnownContentList from './board/known/KnownContentList.js';
-import KnownContentView from './board/known/KnownContentView.js';
-import KnownContentWrite from './board/known/KnownContentWrite.js';
+import KnownContentList from './post/known/KnownContentList.js';
+import KnownContentView from './post/known/KnownContentView.js';
+import KnownContentWrite from './post/known/KnownContentWrite.js';
 
 // import CharacterInfo from '../../lostark/pages/character/CharacterInfo';
 
@@ -80,56 +80,56 @@ const RoutesWrapper = () => {
 							</>
 						} />
 
-						<Route path="board">
-							<Route path="anonymous">
+						<Route path="post">
+							<Route path="unknown">
 								<Route path="" element={
 									<Navigate to="1" replace={true} />
 								} />
 
 								<Route path=":page" element={
 									<>
-										<SetActiveMenu pageTitle="Agora(LA)" setCurrentMenu={setCurrentMenu} menuCode={"/lostark/board/anonymous"} />
+										<SetActiveMenu pageTitle="Agora(LA)" setCurrentMenu={setCurrentMenu} menuCode={"/lostark/post/unknown"} />
 										<UnknownContentList />
 									</>
 								} />
 
 								<Route path="view/:contentCode" element={
 									<>
-										<SetActiveMenu pageTitle="Agora(LA)" setCurrentMenu={setCurrentMenu} menuCode={"/lostark/board/anonymous"} />
+										<SetActiveMenu pageTitle="Agora(LA)" setCurrentMenu={setCurrentMenu} menuCode={"/lostark/post/unknown"} />
 										<UnknownContentView />
 									</>
 								} />
 
 								<Route path="write" element={
 									<>
-										<SetActiveMenu pageTitle="Agora(LA)" setCurrentMenu={setCurrentMenu} menuCode={"/lostark/board/anonymous"} />
+										<SetActiveMenu pageTitle="Agora(LA)" setCurrentMenu={setCurrentMenu} menuCode={"/lostark/post/unknown"} />
 										<UnknownContentWrite />
 									</>
 								} />
 
 								<Route path="edit/:contentCode" element={
 									<>
-										<SetActiveMenu pageTitle="Agora(LA)" setCurrentMenu={setCurrentMenu} menuCode={"/lostark/board/anonymous"} />
+										<SetActiveMenu pageTitle="Agora(LA)" setCurrentMenu={setCurrentMenu} menuCode={"/lostark/post/unknown"} />
 										<UnknownContentWrite />
 									</>
 								} />
 							</Route>
 
-							<Route path="user">
+							<Route path="known">
 								<Route path="" element={
 									<Navigate to="1" replace={true} />
 								} />
 
 								<Route path=":page" element={
 									<>
-										<SetActiveMenu pageTitle="Agora(LA)" setCurrentMenu={setCurrentMenu} menuCode={"/lostark/board/user"} />
+										<SetActiveMenu pageTitle="Agora(LA)" setCurrentMenu={setCurrentMenu} menuCode={"/lostark/post/known"} />
 										<KnownContentList />
 									</>
 								} />
 
 								<Route path="view/:contentCode" element={
 									<>
-										<SetActiveMenu pageTitle="Agora(LA)" setCurrentMenu={setCurrentMenu} menuCode={"/lostark/board/user"} />
+										<SetActiveMenu pageTitle="Agora(LA)" setCurrentMenu={setCurrentMenu} menuCode={"/lostark/post/known"} />
 										<KnownContentView accountData={accountData} />
 									</>
 								} />
@@ -139,8 +139,8 @@ const RoutesWrapper = () => {
 										accountData={accountData}
 										ifAllow={
 											<>
-												<SetActiveMenu pageTitle="Agora(LA)" setCurrentMenu={setCurrentMenu} menuCode={"/lostark/board/user"} />
-												<KnownContentWrite boardType="user" accountData={accountData} />
+												<SetActiveMenu pageTitle="Agora(LA)" setCurrentMenu={setCurrentMenu} menuCode={"/lostark/post/known"} />
+												<KnownContentWrite accountData={accountData} />
 											</>
 										}
 									/>
@@ -151,8 +151,8 @@ const RoutesWrapper = () => {
 										accountData={accountData}
 										ifAllow={
 											<>
-												<SetActiveMenu pageTitle="Agora(LA)" setCurrentMenu={setCurrentMenu} menuCode={"/lostark/board/user"} />
-												<KnownContentWrite boardType="user" accountData={accountData} />
+												<SetActiveMenu pageTitle="Agora(LA)" setCurrentMenu={setCurrentMenu} menuCode={"/lostark/post/known"} />
+												<KnownContentWrite accountData={accountData} />
 											</>
 										}
 									/>
@@ -262,21 +262,21 @@ const RoutesWrapper = () => {
 
 					{/* <Route path="/character/:characterName" element={ <CharacterInfo /> } /> */}
 
-					<Route path="board/announcement">
+					<Route path="post/announce">
 						<Route path="" element={
 							<Navigate to="1" replace={true} />
 						} />
 
 						<Route path=":page" element={
 							<>
-								<SetActiveMenu pageTitle="Agora(LA)" setCurrentMenu={setCurrentMenu} menuCode={"/board/announcement"} />
+								<SetActiveMenu pageTitle="Agora(LA)" setCurrentMenu={setCurrentMenu} menuCode={"/post/announce"} />
 								<AnnounceContentList />
 							</>
 						} />
 
 						<Route path="view/:contentCode" element={
 							<>
-								<SetActiveMenu pageTitle="Agora(LA)" setCurrentMenu={setCurrentMenu} menuCode={"/board/announcement"} />
+								<SetActiveMenu pageTitle="Agora(LA)" setCurrentMenu={setCurrentMenu} menuCode={"/post/announce"} />
 								<AnnounceContentView accountData={accountData} />
 							</>
 						} />

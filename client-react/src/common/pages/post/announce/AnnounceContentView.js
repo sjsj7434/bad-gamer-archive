@@ -3,33 +3,19 @@ import { useNavigate, useParams } from "react-router-dom";
 import Container from 'react-bootstrap/Container';
 import Placeholder from 'react-bootstrap/Placeholder';
 import Button from 'react-bootstrap/Button';
-import UserReply from './KnownReply';
-import LoadingModal from '../../common/LoadingModal';
 import * as contentBoardFetch from '../../../js/contentBoardFetch';
 import '../../../css/View.css';
 import MyEditor from '../MyEditor';
-import Modal from 'react-bootstrap/Modal';
-import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
 
-const KnownContentView = (props) => {
+const AnnounceContentView = (props) => {
 	const [contentCode, setContentCode] = useState(null);
 	const [upvoteCount, setUpvoteCount] = useState(0);
 	const [downvoteCount, setDownvoteCount] = useState(0);
 	const [contentJson, setContentJson] = useState(null);
-	const [isContentWriter, setIsContentWriter] = useState(false);
 	const [renderData, setRenderData] = useState(<></>);
-	const [loadingModalShow, setLoadingModalShow] = useState(false);
-	const [loadingModalMessage, setLoadingModalMessage] = useState("");
-	const [voteHistory, setVoteHistory] = useState(<></>);
-	const [showVote, setShowVote] = useState(false);
-	const [voteModalTitle, setVoteModalTitle] = useState("");
 	const navigate = useNavigate();
 	const params = useParams();
 
-	const closeVoteModal = () => setShowVote(false);
-	const showVoteModal = () => setShowVote(true);
-	
 	useEffect(() => {
 		setContentCode(params.contentCode);
 	}, [params.contentCode]);
@@ -39,17 +25,16 @@ const KnownContentView = (props) => {
 		 * code로 게시글 정보 가져오기
 		 */
 		const getContentData = async () => {
-			const readResult = await contentBoardFetch.readContent("user", contentCode);
+			const readResult = await contentBoardFetch.readContent("announcement", contentCode);
 			const contentData = readResult.contentData;
 
 			if(contentData === null){
 				alert("존재하지 않는 게시물입니다");
-				navigate(`/lostark/board/user/1`);
+				navigate(`/post/announce/1`);
 			}
 			else{
 				setUpvoteCount(contentData.upvote);
 				setDownvoteCount(contentData.downvote);
-				setIsContentWriter(readResult.isWriter);
 				setContentJson(contentData);
 			}
 		}
@@ -71,7 +56,7 @@ const KnownContentView = (props) => {
 									<path d="M4.085 1H3.5A1.5 1.5 0 0 0 2 2.5v12A1.5 1.5 0 0 0 3.5 16h9a1.5 1.5 0 0 0 1.5-1.5v-12A1.5 1.5 0 0 0 12.5 1h-.585c.055.156.085.325.085.5V2a1.5 1.5 0 0 1-1.5 1.5h-5A1.5 1.5 0 0 1 4 2v-.5c0-.175.03-.344.085-.5ZM10 7a1 1 0 1 1 2 0v5a1 1 0 1 1-2 0V7Zm-6 4a1 1 0 1 1 2 0v1a1 1 0 1 1-2 0v-1Zm4-3a1 1 0 0 1 1 1v3a1 1 0 1 1-2 0V9a1 1 0 0 1 1-1Z"/>
 								</svg>
 								&nbsp;
-								유저 게시판
+								공지사항
 							</span>
 
 							<Placeholder as={"p"} animation="glow">
@@ -104,42 +89,6 @@ const KnownContentView = (props) => {
 		}
 		else{
 			/**
-			 * code로 게시글 삭제
-			 */
-			const deleteContent = async () => {
-				const sendData = {
-					code: contentCode,
-				};
-
-				if(window.confirm("게시글을 삭제하시겠습니까?") === false){
-					return;
-				}
-
-				setLoadingModalShow(true);
-				setLoadingModalMessage("게시글을 삭제 중입니다...");
-
-				const deleteResult = await contentBoardFetch.deleteContent("user", sendData);
-
-				if(deleteResult === true){
-					navigate(`/lostark/board/user/1`);
-				}
-				else{
-					alert("정보가 올바르지않아 게시글을 삭제할 수 없습니다");
-
-					setLoadingModalShow(false);
-					setLoadingModalMessage("");
-				}
-			}
-
-			/**
-			 * 게시글 수정으로 이동 전 비밀번호 확인
-			 * 수정은 비밀번호 입력한 사람만 가능한데, 굳이 DB에서 다시 읽어와야하나?
-			 */
-			const editContent = async () => {
-				navigate(`/lostark/board/user/edit/${contentCode}`);
-			}
-
-			/**
 			 * 게시글 추천
 			 */
 			const upvoteContent = async () => {
@@ -158,13 +107,13 @@ const KnownContentView = (props) => {
 				}
 
 				if(contentCode !== null){
-					const voteResult = await contentBoardFetch.upvoteContent("user", sendData);
+					const voteResult = await contentBoardFetch.upvoteContent("announcement", sendData);
 
 					if(voteResult === null){
 						return;
 					}
 					else if(voteResult.isVotable === false){
-						alert("이미 게시물에 추천 또는 비추천을 하였습니다");
+						alert("오늘은 이미 해당 게시물에 추천, 비추천을 하였습니다");
 					}
 					else{
 						setUpvoteCount(voteResult.upvote);
@@ -195,13 +144,13 @@ const KnownContentView = (props) => {
 				}
 
 				if(contentCode !== null){
-					const voteResult = await contentBoardFetch.downvoteContent("user", sendData);
+					const voteResult = await contentBoardFetch.downvoteContent("announcement", sendData);
 
 					if(voteResult === null){
 						return;
 					}
 					else if(voteResult.isVotable === false){
-						alert("이미 게시물에 추천 또는 비추천을 하였습니다");
+						alert("오늘은 이미 해당 게시물에 추천, 비추천을 하였습니다");
 					}
 					else{
 						setUpvoteCount(voteResult.upvote);
@@ -210,54 +159,6 @@ const KnownContentView = (props) => {
 					
 					upvoteButton.disabled = false;
 					downvoteButton.disabled = false;
-				}
-			}
-
-			const showUpvoteUserList = async () => {
-				setVoteHistory(<><Placeholder xs={3} /> <Placeholder xs={1} /> <Placeholder xs={4} /></>);
-				showVoteModal();
-				setVoteModalTitle("추천 목록");
-
-				const voteResult = await contentBoardFetch.showUpvoteUserList(contentCode);
-
-				const voteListElement = voteResult.map((element) => {
-					return(
-						<Row key={element.voterNickname}>
-							<Col>{element.voterNickname}</Col>
-							<Col>{element.createdAt.substring(0, 10)}</Col>
-						</Row>
-					);
-				});
-
-				if(voteListElement.length > 0){
-					setVoteHistory(voteListElement);
-				}
-				else{
-					setVoteHistory(<>추천자가 존재하지 않습니다</>);
-				}
-			}
-
-			const showDownvoteUserList = async () => {
-				setVoteHistory(<><Placeholder xs={3} /> <Placeholder xs={1} /> <Placeholder xs={4} /></>);
-				showVoteModal();
-				setVoteModalTitle("비추천 목록");
-
-				const voteResult = await contentBoardFetch.showDownvoteUserList(contentCode);
-
-				const voteListElement = voteResult.map((element) => {
-					return(
-						<Row key={element.voterNickname}>
-							<Col>{element.voterNickname}</Col>
-							<Col>{element.createdAt.substring(0, 10)}</Col>
-						</Row>
-					);
-				});
-
-				if(voteListElement.length > 0){
-					setVoteHistory(voteListElement);
-				}
-				else{
-					setVoteHistory(<>비추천자가 존재하지 않습니다</>);
 				}
 			}
 
@@ -271,7 +172,7 @@ const KnownContentView = (props) => {
 									<path d="M4.085 1H3.5A1.5 1.5 0 0 0 2 2.5v12A1.5 1.5 0 0 0 3.5 16h9a1.5 1.5 0 0 0 1.5-1.5v-12A1.5 1.5 0 0 0 12.5 1h-.585c.055.156.085.325.085.5V2a1.5 1.5 0 0 1-1.5 1.5h-5A1.5 1.5 0 0 1 4 2v-.5c0-.175.03-.344.085-.5ZM10 7a1 1 0 1 1 2 0v5a1 1 0 1 1-2 0V7Zm-6 4a1 1 0 1 1 2 0v1a1 1 0 1 1-2 0v-1Zm4-3a1 1 0 0 1 1 1v3a1 1 0 1 1-2 0V9a1 1 0 0 1 1-1Z"/>
 								</svg>
 								&nbsp;
-								유저 게시판
+								공지사항
 							</span>
 
 							<div style={{fontWeight: "800", fontSize: "1.5rem"}}>
@@ -279,7 +180,7 @@ const KnownContentView = (props) => {
 							</div>
 							<div style={{fontWeight: "400", fontSize: "0.8rem"}}>
 								<span>
-									{contentJson.writerNickname}
+									관리자
 								</span>
 								&nbsp;|&nbsp;
 								<span>
@@ -335,61 +236,21 @@ const KnownContentView = (props) => {
 								<span style={{fontSize: "0.85rem"}}>비추천</span>
 							</Button>
 						</div>
-						<div style={{display: "flex", justifyContent: "center", marginTop: "10px"}}>
-							<Button variant="success" onClick={() => { showUpvoteUserList() }} style={{ width: "30%", maxWidth: "130px", padding: "2px", fontSize: "0.85rem" }}>목록 확인</Button>
-							&nbsp;&nbsp;
-							<Button variant="danger" onClick={() => { showDownvoteUserList() }} style={{ width: "30%", maxWidth: "130px", padding: "2px", fontSize: "0.85rem" }}>목록 확인</Button>
-						</div>
-						
-						{
-							isContentWriter === true ?
-							<>
-								<div style={{display: "flex", justifyContent: "flex-end", marginBottom: "15px", marginTop: "30px"}}>
-									<Button onClick={() => {editContent()}} variant="outline-primary" style={{padding: "2px", width: "8%", minWidth: "60px", maxWidth: "100px", fontSize: "0.8rem"}}>수정</Button>
-									&nbsp;
-									<Button onClick={() => {deleteContent()}} variant="outline-danger" style={{padding: "2px", width: "8%", minWidth: "60px", maxWidth: "100px", fontSize: "0.8rem"}}>삭제</Button>
-									&nbsp;
-									<Button onClick={() => {navigate(`/lostark/board/user/1`)}} variant="outline-secondary" style={{padding: "2px", width: "8%", minWidth: "70px", maxWidth: "100px", fontSize: "0.8rem"}}>목록으로</Button>
-								</div>
-							</>
-							:
-							<>
-								<div style={{display: "flex", justifyContent: "flex-end", marginBottom: "15px", marginTop: "30px"}}>
-									<Button onClick={() => {navigate(`/lostark/board/user/1`)}} variant="outline-secondary" style={{padding: "2px", width: "8%", minWidth: "70px", maxWidth: "100px", fontSize: "0.8rem"}}>목록으로</Button>
-								</div>
-							</>
-						}
 
-						<hr style={{border: "1px solid #5893ff"}} />
-						
-						<UserReply accountData={props.accountData} contentCode={contentCode} />
+						<div style={{display: "flex", justifyContent: "flex-end", marginBottom: "15px", marginTop: "30px"}}>
+							<Button onClick={() => {navigate(`/post/announce/1`)}} variant="outline-secondary" style={{padding: "2px", width: "8%", minWidth: "70px", maxWidth: "100px", fontSize: "0.8rem"}}>목록으로</Button>
+						</div>
 					</div>
 				</>
 			);
 		}
-	}, [contentCode, contentJson, upvoteCount, downvoteCount, isContentWriter, voteHistory, navigate, props.accountData]);
+	}, [contentCode, contentJson, upvoteCount, downvoteCount, navigate, props.accountData]);
 	
 	return(
 		<Container style={{maxWidth: "1200px"}}>
 			{renderData}
-
-			<LoadingModal showModal={loadingModalShow} message={loadingModalMessage}/>
-			
-			<Modal show={showVote} onHide={closeVoteModal} backdrop="static" keyboard={false} centered>
-				<Modal.Header closeButton>
-					<Modal.Title>{voteModalTitle}</Modal.Title>
-				</Modal.Header>
-
-				<Modal.Body style={{ maxHeight: "20rem", overflow: "auto" }}>{voteHistory}</Modal.Body>
-
-				<Modal.Footer>
-					<Button variant="secondary" onClick={closeVoteModal}>
-						닫기
-					</Button>
-				</Modal.Footer>
-			</Modal>
 		</Container>
 	);
 }
 
-export default KnownContentView;
+export default AnnounceContentView;

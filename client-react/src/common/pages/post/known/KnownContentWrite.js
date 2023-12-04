@@ -67,10 +67,10 @@ const KnownContentWrite = (props) => {
 		}
 		else if(createResult === false){
 			alert("게시글 저장이 실패하였습니다");
-			navigate(`/lostark/board/user/1`);
+			navigate(`/lostark/post/known/1`);
 		}
 		else{
-			navigate(`/lostark/board/user/1`);
+			navigate(`/lostark/post/known/1`);
 		}
 	}, [editorObject, editorSizeByte, editorMaxKB, navigate, props.accountData])
 
@@ -125,7 +125,7 @@ const KnownContentWrite = (props) => {
 		}
 		else{
 			//정상적으로 처리 성공
-			navigate(`/lostark/board/user/view/${contentCode}`);
+			navigate(`/lostark/post/known/view/${contentCode}`);
 		}
 	}, [contentCode, editorObject, editorSizeByte, editorMaxKB, navigate, props.accountData.id, props.accountData.nickname])
 
@@ -186,7 +186,7 @@ const KnownContentWrite = (props) => {
 		if(writeMode === "new"){
 			setRenderData(
 				<>
-					유저 게시판
+					자유 게시판
 					<Form.Control id="title" type="text" placeholder="제목" style={{marginBottom: "10px", fontSize: "0.8rem"}} defaultValue={""} />
 					
 					<MyEditor
@@ -208,7 +208,7 @@ const KnownContentWrite = (props) => {
 						&nbsp;
 						<Button onClick={() => {if(window.confirm("작성한 내용을 전부 비우시겠습니까?") === true){editorObject.setData("")}}} variant="outline-danger" style={{width: "20%", minWidth: "60px", maxWidth: "200px", fontSize: "0.8rem"}}>비우기</Button>
 						&nbsp;
-						<Button onClick={() => {if(window.confirm("작성한 내용을 저장하지않고 나가시겠습니까?") === true){navigate("/lostark/board/user/1")}}} variant="outline-secondary" style={{width: "20%", minWidth: "60px", maxWidth: "200px", fontSize: "0.8rem"}}>취소</Button>
+						<Button onClick={() => {if(window.confirm("작성한 내용을 저장하지않고 나가시겠습니까?") === true){navigate("/lostark/post/known/1")}}} variant="outline-secondary" style={{width: "20%", minWidth: "60px", maxWidth: "200px", fontSize: "0.8rem"}}>취소</Button>
 					</div>
 				</>
 			)
@@ -268,7 +268,7 @@ const KnownContentWrite = (props) => {
 								</Button>
 								&nbsp;
 								<Button
-									onClick={() => {if(window.confirm("내용을 수정하지않고 나가시겠습니까?") === true){navigate(`/lostark/board/user/view/${contentCode}`)}}}
+									onClick={() => {if(window.confirm("내용을 수정하지않고 나가시겠습니까?") === true){navigate(`/lostark/post/known/view/${contentCode}`)}}}
 									variant="outline-secondary"
 									style={{width: "20%", minWidth: "60px", maxWidth: "200px", fontSize: "0.8rem"}}
 								>
