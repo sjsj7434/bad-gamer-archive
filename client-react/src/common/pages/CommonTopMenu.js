@@ -67,7 +67,7 @@ const CommonTopMenu = (props) => {
 
 	return(
 		<>
-			<div className="desktopMode" style={{ position: "sticky", top: 0, zIndex: 10, width: "100%" }}>
+			<div className="desktopMode" style={{ position: "sticky", top: 0, zIndex: 10, width: "100%", marginBottom: "50px" }}>
 				<div style={{ display: "flex", alignItems: "center", justifyContent: "center", backgroundColor: "#212529" }}>
 					<div style={{ maxWidth: "1200px", width: "100%" }}>
 						<div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", height: "50px", paddingLeft: "1.5rem", paddingRight: "1.5rem", cursor: "pointer" }}>
@@ -139,6 +139,24 @@ const CommonTopMenu = (props) => {
 								</div>
 								
 								<div
+									onClick={() => { menuClick("/lostark/guild") }}
+									style={{
+										display: "flex"
+										, alignItems: "center"
+										, fontSize: "0.8rem"
+										, fontWeight: props.currentMenu === "/lostark/guild" ? 800 : 400
+										, color: props.currentMenu === "/lostark/guild" ? "white" : "lightgray"
+										, height: "100%"
+										, cursor: "pointer"
+										, paddingLeft: "1rem"
+										, paddingRight: "1rem"
+									}}
+									onMouseOver={ () => {document.querySelector("#subMenuArea").style.display = "none"} }
+								>
+									길드
+								</div>
+								
+								<div
 									onClick={() => { menuClick("/lostark/useful") }}
 									style={{
 										display: "flex"
@@ -153,7 +171,7 @@ const CommonTopMenu = (props) => {
 									}}
 									onMouseOver={ () => {document.querySelector("#subMenuArea").style.display = "none"} }
 								>
-									유용한 사이트
+									도구 모음
 								</div>
 							</div>
 
