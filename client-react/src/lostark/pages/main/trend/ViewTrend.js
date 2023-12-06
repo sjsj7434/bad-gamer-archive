@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import * as contentBoardFetch from '../../../../common/js/contentBoardFetch';
+import * as postFetch from '../../../../common/js/postFetch';
 import { useEffect, useState } from 'react';
 import Table from 'react-bootstrap/Table';
 import Tab from 'react-bootstrap/Tab';
@@ -18,9 +18,9 @@ const ViewTrend = (props) => {
 	
 	useEffect(() => {
 		const readContentList = async () => {
-			const monthlyData = await contentBoardFetch.readContentList("view/trend/monthly", 1);
-			const weeklyData = await contentBoardFetch.readContentList("view/trend/weekly", 1);
-			const dailyData = await contentBoardFetch.readContentList("view/trend/daily", 1);
+			const monthlyData = await postFetch.readContentList("view/trend/monthly", 1);
+			const weeklyData = await postFetch.readContentList("view/trend/weekly", 1);
+			const dailyData = await postFetch.readContentList("view/trend/daily", 1);
 
 			setMonthlyList(monthlyData[0]);
 			setWeeklyList(weeklyData[0]);

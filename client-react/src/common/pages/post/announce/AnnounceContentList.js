@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from "react-router-dom";
 import Container from 'react-bootstrap/Container';
 import CustomPagination from '../CustomPagination';
-import * as contentBoardFetch from '../../../js/contentBoardFetch';
+import * as postFetch from '../../../js/postFetch';
 
 const AnnounceContentList = () => {
 	const [page, setPage] = useState(null);
@@ -27,7 +27,7 @@ const AnnounceContentList = () => {
 
 	useEffect(() => {
 		const readContentList = async () => {
-			const contentListData = await contentBoardFetch.readContentList("announcement", page);
+			const contentListData = await postFetch.readContentList("announcement", page);
 
 			setContentList(contentListData[0]);
 			setContentCount(contentListData[1]);

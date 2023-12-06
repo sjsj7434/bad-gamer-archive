@@ -5,7 +5,7 @@ import Placeholder from 'react-bootstrap/Placeholder';
 import Button from 'react-bootstrap/Button';
 import UserReply from './KnownReply';
 import LoadingModal from '../../common/LoadingModal';
-import * as contentBoardFetch from '../../../js/contentBoardFetch';
+import * as postFetch from '../../../js/postFetch';
 import '../../../css/View.css';
 import MyEditor from '../MyEditor';
 import Modal from 'react-bootstrap/Modal';
@@ -39,7 +39,7 @@ const KnownContentView = (props) => {
 		 * code로 게시글 정보 가져오기
 		 */
 		const getContentData = async () => {
-			const readResult = await contentBoardFetch.readContent("user", contentCode);
+			const readResult = await postFetch.readContent("user", contentCode);
 			const contentData = readResult.contentData;
 
 			if(contentData === null){
@@ -118,7 +118,7 @@ const KnownContentView = (props) => {
 				setLoadingModalShow(true);
 				setLoadingModalMessage("게시글을 삭제 중입니다...");
 
-				const deleteResult = await contentBoardFetch.deleteContent("user", sendData);
+				const deleteResult = await postFetch.deleteContent("user", sendData);
 
 				if(deleteResult === true){
 					navigate(`/lostark/post/known/1`);
@@ -158,7 +158,7 @@ const KnownContentView = (props) => {
 				}
 
 				if(contentCode !== null){
-					const voteResult = await contentBoardFetch.upvoteContent("user", sendData);
+					const voteResult = await postFetch.upvoteContent("user", sendData);
 
 					if(voteResult === null){
 						return;
@@ -195,7 +195,7 @@ const KnownContentView = (props) => {
 				}
 
 				if(contentCode !== null){
-					const voteResult = await contentBoardFetch.downvoteContent("user", sendData);
+					const voteResult = await postFetch.downvoteContent("user", sendData);
 
 					if(voteResult === null){
 						return;
@@ -218,7 +218,7 @@ const KnownContentView = (props) => {
 				showVoteModal();
 				setVoteModalTitle("추천 목록");
 
-				const voteResult = await contentBoardFetch.showUpvoteUserList(contentCode);
+				const voteResult = await postFetch.showUpvoteUserList(contentCode);
 
 				const voteListElement = voteResult.map((element) => {
 					return(
@@ -242,7 +242,7 @@ const KnownContentView = (props) => {
 				showVoteModal();
 				setVoteModalTitle("비추천 목록");
 
-				const voteResult = await contentBoardFetch.showDownvoteUserList(contentCode);
+				const voteResult = await postFetch.showDownvoteUserList(contentCode);
 
 				const voteListElement = voteResult.map((element) => {
 					return(

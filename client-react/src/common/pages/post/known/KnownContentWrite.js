@@ -7,7 +7,7 @@ import Placeholder from 'react-bootstrap/Placeholder';
 import Button from 'react-bootstrap/Button';
 import ProgressBar from 'react-bootstrap/ProgressBar';
 import LoadingModal from '../../common/LoadingModal';
-import * as contentBoardFetch from '../../../js/contentBoardFetch';
+import * as postFetch from '../../../js/postFetch';
 import '../../../css/View.css';
 
 const KnownContentWrite = (props) => {
@@ -59,7 +59,7 @@ const KnownContentWrite = (props) => {
 			writerNickname: props.accountData.nickname,
 		};
 
-		let createResult = await contentBoardFetch.createContentUserBoard(sendData);
+		let createResult = await postFetch.createContentUserBoard(sendData);
 
 		if(createResult === null){
 			setLoadingModalShow(false);
@@ -111,7 +111,7 @@ const KnownContentWrite = (props) => {
 			writerNickname: props.accountData.nickname,
 		};
 
-		let result = await contentBoardFetch.updateContent("user", sendData);
+		let result = await postFetch.updateContent("user", sendData);
 
 		if(result === null){
 			alert("문제가 발생하여 게시글을 수정할 수 없습니다(1)");
@@ -145,7 +145,7 @@ const KnownContentWrite = (props) => {
 		 * 게시글 정보 가져오기
 		 */
 		const readContent = async () => {
-			const readResult = await contentBoardFetch.readContent("user", contentCode, "edit");
+			const readResult = await postFetch.readContent("user", contentCode, "edit");
 			const contentData = readResult.contentData;
 	
 			setContentTitle(contentData.title);
@@ -169,7 +169,7 @@ const KnownContentWrite = (props) => {
 				code: contentCode,
 			};
 			
-			const checkResult = await contentBoardFetch.checkBeforeEdit("user", sendData);
+			const checkResult = await postFetch.checkBeforeEdit("user", sendData);
 
 			if(checkResult === true){
 				setIdentity(true);

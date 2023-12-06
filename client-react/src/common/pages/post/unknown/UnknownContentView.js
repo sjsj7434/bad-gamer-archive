@@ -5,7 +5,7 @@ import Placeholder from 'react-bootstrap/Placeholder';
 import Button from 'react-bootstrap/Button';
 import AnonymousReply from './UnknownReply';
 import LoadingModal from '../../common/LoadingModal';
-import * as contentBoardFetch from '../../../js/contentBoardFetch';
+import * as postFetch from '../../../js/postFetch';
 import MyEditor from '../MyEditor';
 import '../../../css/View.css';
 
@@ -29,7 +29,7 @@ const UnknownContentView = (props) => {
 		 * code로 게시글 정보 가져오기
 		 */
 		const getContentData = async () => {
-			const readResult = await contentBoardFetch.readContent("anonymous", contentCode);
+			const readResult = await postFetch.readContent("anonymous", contentCode);
 			const contentData = readResult.contentData;
 
 			if(contentData === null){
@@ -112,7 +112,7 @@ const UnknownContentView = (props) => {
 				setLoadingModalShow(true);
 				setLoadingModalMessage("게시글을 삭제 중입니다...");
 
-				const deleteResult = await contentBoardFetch.deleteContent("anonymous", sendData);
+				const deleteResult = await postFetch.deleteContent("anonymous", sendData);
 
 				if(deleteResult === true){
 					navigate(`/lostark/post/unknown/1`);
@@ -147,7 +147,7 @@ const UnknownContentView = (props) => {
 				}
 
 				if(contentCode !== null){
-					const voteResult = await contentBoardFetch.upvoteContent("anonymous", sendData);
+					const voteResult = await postFetch.upvoteContent("anonymous", sendData);
 
 					if(voteResult === null){
 						return;
@@ -179,7 +179,7 @@ const UnknownContentView = (props) => {
 				}
 
 				if(contentCode !== null){
-					const voteResult = await contentBoardFetch.downvoteContent("anonymous", sendData);
+					const voteResult = await postFetch.downvoteContent("anonymous", sendData);
 
 					if(voteResult === null){
 						return;

@@ -10,7 +10,7 @@ import InputGroup from 'react-bootstrap/InputGroup';
 import Button from 'react-bootstrap/Button';
 import ProgressBar from 'react-bootstrap/ProgressBar';
 import LoadingModal from '../../common/LoadingModal';
-import * as contentBoardFetch from '../../../js/contentBoardFetch';
+import * as postFetch from '../../../js/postFetch';
 import '../../../css/View.css';
 
 const UnknownContentWrite = (props) => {
@@ -72,7 +72,7 @@ const UnknownContentWrite = (props) => {
 			writerNickname: "",
 		};
 
-		await contentBoardFetch.createContent("anonymous", sendData);
+		await postFetch.createContent("anonymous", sendData);
 
 		navigate(`/lostark/post/unknown/1`);
 	}, [editorObject, editorSizeByte, editorMaxKB, navigate])
@@ -113,7 +113,7 @@ const UnknownContentWrite = (props) => {
 			writerID: "",
 		};
 
-		let result = await contentBoardFetch.updateContent("anonymous", sendData);
+		let result = await postFetch.updateContent("anonymous", sendData);
 
 		if(result === null){
 			alert("문제가 발생하여 게시글을 수정할 수 없습니다(1)");
@@ -147,7 +147,7 @@ const UnknownContentWrite = (props) => {
 		 * 게시글 정보 가져오기
 		 */
 		const getContentData = async () => {
-			const readResult = await contentBoardFetch.getContentData("anonymous", contentCode);
+			const readResult = await postFetch.getContentData("anonymous", contentCode);
 			const contentData = readResult.contentData;
 	
 			setContentTitle(contentData.title);
@@ -181,7 +181,7 @@ const UnknownContentWrite = (props) => {
 				password: contentPasswordElement.value,
 			};
 			
-			const checkResult = await contentBoardFetch.checkBeforeEdit("anonymous", sendData)
+			const checkResult = await postFetch.checkBeforeEdit("anonymous", sendData)
 
 			if(checkResult === true){
 				setIdentity(true);

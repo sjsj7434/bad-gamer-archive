@@ -3,7 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import Container from 'react-bootstrap/Container';
 import Placeholder from 'react-bootstrap/Placeholder';
 import Button from 'react-bootstrap/Button';
-import * as contentBoardFetch from '../../../js/contentBoardFetch';
+import * as postFetch from '../../../js/postFetch';
 import '../../../css/View.css';
 import MyEditor from '../MyEditor';
 
@@ -25,7 +25,7 @@ const AnnounceContentView = (props) => {
 		 * code로 게시글 정보 가져오기
 		 */
 		const getContentData = async () => {
-			const readResult = await contentBoardFetch.readContent("announcement", contentCode);
+			const readResult = await postFetch.readContent("announcement", contentCode);
 			const contentData = readResult.contentData;
 
 			if(contentData === null){
@@ -107,7 +107,7 @@ const AnnounceContentView = (props) => {
 				}
 
 				if(contentCode !== null){
-					const voteResult = await contentBoardFetch.upvoteContent("announcement", sendData);
+					const voteResult = await postFetch.upvoteContent("announcement", sendData);
 
 					if(voteResult === null){
 						return;
@@ -144,7 +144,7 @@ const AnnounceContentView = (props) => {
 				}
 
 				if(contentCode !== null){
-					const voteResult = await contentBoardFetch.downvoteContent("announcement", sendData);
+					const voteResult = await postFetch.downvoteContent("announcement", sendData);
 
 					if(voteResult === null){
 						return;
