@@ -41,11 +41,11 @@ const MyPage = () => {
 		const deleteResult = await accountsFetch.deleteAccount();
 		console.log("deleteResult : ", deleteResult);
 
-		if(deleteResult === true){
+		if(deleteResult === "true"){
 			alert("정상적으로 탈퇴 처리되었습니다");
 		}
 		else{
-			alert("게정을 탈퇴 처리할 수 없습니다");
+			alert("계정을 탈퇴 처리할 수 없습니다");
 		}
 		navigate("/");
 	}, [navigate])
