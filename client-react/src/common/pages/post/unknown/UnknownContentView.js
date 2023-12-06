@@ -210,12 +210,12 @@ const UnknownContentView = (props) => {
 								익명 게시판
 							</span>
 
-							<div style={{fontWeight: "800", fontSize: "1.5rem"}}>
+							<div style={{ fontWeight: "800", fontSize: "1.5rem", wordBreak: "break-all" }}>
 								<span>{contentJson.title}</span>
 							</div>
 							<div style={{fontWeight: "400", fontSize: "0.8rem"}}>
 								<span>
-									{contentJson.writerNickname === "" ? `익명 (${contentJson.ip})` : contentJson.writerNickname}
+									익명 ({contentJson.ip})
 								</span>
 								&nbsp;|&nbsp;
 								<span>
@@ -227,7 +227,7 @@ const UnknownContentView = (props) => {
 									조회 {contentJson.view}
 								</span>
 								&nbsp;|&nbsp;
-								<span style={{color: "green"}}>↑{upvoteCount}</span> | ↓<span style={{color: "red"}}>{downvoteCount}</span>
+								<span style={{color: "green"}}>↑{upvoteCount}</span> | <span style={{color: "red"}}>↓{downvoteCount}</span>
 							</div>
 							<div style={{fontWeight: "400", fontSize: "0.75rem", color: "orange"}}>
 								<span>
@@ -244,14 +244,15 @@ const UnknownContentView = (props) => {
 						{/* <div className="ck ck-editor__main" style={{minHeight: "150px", overflowWrap: "anywhere", overflow: "auto"}}>
 							<div className="ck-blurred ck ck-content ck-editor__editable ck-rounded-corners ck-editor__editable_inline ck-read-only ck-column-resize_disabled" dangerouslySetInnerHTML={{__html: contentJson.content}}></div>
 						</div> */}
-						{/* <br/><br/><br/><br/> */}
-						<MyEditor
-							editorMode={"read"}
-							savedData={contentJson.content}
-							editorMaxKB={100}
-							setEditor={ () => {} }
-							setEditorSizeByte={ () => {} }
-						/>
+						<div style={{ minHeight: "20rem" }}>
+							<MyEditor
+								editorMode={"read"}
+								savedData={contentJson.content}
+								editorMaxKB={100}
+								setEditor={ () => {} }
+								setEditorSizeByte={ () => {} }
+							/>
+						</div>
 
 						<div style={{display: "flex", justifyContent: "center", marginTop: "30px"}}>
 							<Button id={"upvoteButton"} onClick={() => {upvoteContent()}} variant="outline-success" style={{width: "30%", maxWidth: "130px", padding: "2px"}}>

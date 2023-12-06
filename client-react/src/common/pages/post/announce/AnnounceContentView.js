@@ -175,7 +175,7 @@ const AnnounceContentView = (props) => {
 								공지사항
 							</span>
 
-							<div style={{fontWeight: "800", fontSize: "1.5rem"}}>
+							<div style={{ fontWeight: "800", fontSize: "1.5rem", wordBreak: "break-all" }}>
 								<span>{contentJson.title}</span>
 							</div>
 							<div style={{fontWeight: "400", fontSize: "0.8rem"}}>
@@ -192,7 +192,7 @@ const AnnounceContentView = (props) => {
 									조회 {contentJson.view}
 								</span>
 								&nbsp;|&nbsp;
-								<span style={{color: "green"}}>↑{upvoteCount}</span> | ↓<span style={{color: "red"}}>{downvoteCount}</span>
+								<span style={{color: "green"}}>↑{upvoteCount}</span> | <span style={{color: "red"}}>↓{downvoteCount}</span>
 							</div>
 							<div style={{fontWeight: "400", fontSize: "0.75rem", color: "orange"}}>
 								<span>
@@ -207,13 +207,15 @@ const AnnounceContentView = (props) => {
 							sanitizer libraries for HTML XSS Attacks : DOMPurify
 						*/}
 						{/* <div dangerouslySetInnerHTML={{__html: contentJson.content}} style={{minHeight: "150px", overflowWrap: "anywhere", overflow: "auto", fontSize: "0.8rem"}}></div> */}
-						<MyEditor
-							editorMode={"read"}
-							savedData={contentJson.content}
-							editorMaxKB={100}
-							setEditor={ () => {} }
-							setEditorSizeByte={ () => {} }
-						/>
+						<div style={{ minHeight: "20rem" }}>
+							<MyEditor
+								editorMode={"read"}
+								savedData={contentJson.content}
+								editorMaxKB={100}
+								setEditor={ () => {} }
+								setEditorSizeByte={ () => {} }
+							/>
+						</div>
 
 						<div style={{display: "flex", justifyContent: "center", marginTop: "30px"}}>
 							<Button id={"upvoteButton"} onClick={() => {upvoteContent()}} variant="outline-success" style={{width: "30%", maxWidth: "130px", padding: "2px"}}>
