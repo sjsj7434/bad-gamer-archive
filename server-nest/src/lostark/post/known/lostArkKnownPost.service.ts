@@ -271,7 +271,7 @@ export class LostArkKnownPostService {
 			relations: ["reply", "accounts", "accounts.authentication"], //댓글 정보 join
 			select: {
 				reply: { code: true },
-				accounts: { email: true, authentication: { type: true, data: true } },
+				accounts: { nickname: true, authentication: { type: true, data: true } },
 				code: true,
 				writerNickname: true,
 				title: true,
@@ -316,6 +316,7 @@ export class LostArkKnownPostService {
 		await this.lostArkKnownPostRepository.increment({ code: contentCode }, "view", 1);
 
 		const contentData = await this.lostArkKnownPostRepository.findOne({
+			relations: ["accounts", "accounts.authentication"],
 			select: {
 				code: true,
 				category: true,
@@ -324,14 +325,25 @@ export class LostArkKnownPostService {
 				view: true,
 				upvote: true,
 				downvote: true,
-				writerID: true,
 				writerNickname: true,
-				ip: true,
 				createdAt: true,
 				updatedAt: true,
+				accounts: {
+					nickname: true,
+					authentication: {
+						type: true,
+						data: true,
+					},
+				},
 			},
 			where: {
 				code: Equal(contentCode),
+				accounts: {
+					authentication: [
+						{ type: Equal("lostark_item_level") },
+						{ type: IsNull() },
+					]
+				}
 			},
 		});
 
@@ -365,7 +377,6 @@ export class LostArkKnownPostService {
 				downvote: true,
 				writerID: true,
 				writerNickname: true,
-				ip: true,
 				createdAt: true,
 				updatedAt: true,
 			},
@@ -375,7 +386,6 @@ export class LostArkKnownPostService {
 		});
 
 		if (contentData !== null) {
-			// contentData.ip = contentData.ip.split(".")[0] + (contentData.ip.split(".")[1] !== undefined ? "." + contentData.ip.split(".")[1] : "");
 			isAuthor = contentData.writerID === loginCookie.id;
 		}
 
