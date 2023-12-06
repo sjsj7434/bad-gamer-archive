@@ -5,7 +5,7 @@ import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import CustomPagination from '../CustomPagination';
-import * as repliesFetch from '../../../js/repliesFetch';
+import * as replyFetch from '../../../js/replyFetch';
 
 const KnownReply = (props) => {
 	// const [upvoteCount, setUpvoteCount] = useState(0);
@@ -80,7 +80,7 @@ const KnownReply = (props) => {
 						code: replyCode,
 					}
 
-					const deleteResult = await repliesFetch.deleteReply("user", sendData);
+					const deleteResult = await replyFetch.deleteReply("user", sendData);
 
 					if(deleteResult === false){
 						alert("댓글 작성자가 아니면 삭제할 수 없습니다");
@@ -151,7 +151,7 @@ const KnownReply = (props) => {
 				content: formElement.content.value,
 			}
 
-			const createResult = await repliesFetch.createReply("user", sendData);
+			const createResult = await replyFetch.createReply("user", sendData);
 
 			if(createResult === true){
 				formElement.reset();
@@ -165,7 +165,7 @@ const KnownReply = (props) => {
 		}
 
 		if(props.contentCode !== null){
-			const replyArray = await repliesFetch.getReplies("user", props.contentCode, currentPage);
+			const replyArray = await replyFetch.getReplies("user", props.contentCode, currentPage);
 
 			if(replyArray !== null){
 				if(replyArray[1] === 0){
@@ -350,7 +350,7 @@ const KnownReply = (props) => {
 			content: replyDataElement.value,
 		}
 
-		const createResult = await repliesFetch.createReply("user", sendData);
+		const createResult = await replyFetch.createReply("user", sendData);
 
 		if(createResult === true){
 			getReplies(1);
