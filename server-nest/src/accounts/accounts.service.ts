@@ -150,6 +150,11 @@ export class AccountsService {
 
 		if (isMatched) {
 			const characterName = await this.getCharacterName(stoveCode); //web page scrapping
+
+			if (characterName === "") {
+				return { result: "codeError", characterList: null };
+			}
+
 			const characterNameArray = await this.lostarkAPIService.getCharacterList(characterName); //api 호출
 
 			// for (let index = 0; index < characterNameArray.length; index++) {
@@ -217,6 +222,11 @@ export class AccountsService {
 		}
 
 		const characterName = await this.getCharacterName(authenticationData.data); //web page scrapping
+
+		if (characterName === "") {
+			return { result: "codeError", characterList: null };
+		}
+
 		const characterList = await this.lostarkAPIService.getCharacterList(characterName); //api 호출
 
 		await this.setCacheData("LOSTARK_" + request.cookies["sessionCode"], characterList, 5 * 60); //캐릭터 데이터 cache에 저장
@@ -268,31 +278,41 @@ export class AccountsService {
 	 * 유저의 스토브 ID로 로스트아크 대표 캐릭터 이름을 가져온다
 	 */
 	async getCharacterName(stoveCode: string): Promise<string> {
-		const stoveCodeWithOutProtocol: string = stoveCode.replace(/https:\/\/|http:\/\//g, "");
+		try {
+			const stoveCodeWithOutProtocol: string = stoveCode.replace(/https:\/\/|http:\/\//g, "");
 
-		const browser = await puppeteer.launch({
-			headless: true,
-			waitForInitialPage: false,
-		});
-		const page = await browser.newPage();
-		// await page.setViewport({width: 1920, height: 1080}); //화면 크기 설정, headless: false 여야 확인 가능
-		await page.goto(`https://lostark.game.onstove.com/Board/GetExpandInfo?memberNo=${stoveCodeWithOutProtocol}`, {timeout: 10000, waitUntil: "networkidle2"});
+			const browser = await puppeteer.launch({
+				headless: true,
+				waitForInitialPage: false,
+			});
+			const page = await browser.newPage();
+			// await page.setViewport({width: 1920, height: 1080}); //화면 크기 설정, headless: false 여야 확인 가능
+			await page.goto(`https://lostark.game.onstove.com/Board/GetExpandInfo?memberNo=${stoveCodeWithOutProtocol}`, { timeout: 10000, waitUntil: "networkidle2" });
 
-		const pageTarget = page.target(); //save this to know that this was the opener
-		await page.click("body > div.profile-library > div.profile-link > a.button.button--black"); //click on a link
-		const newTarget = await browser.waitForTarget(target => target.opener() === pageTarget); //check that you opened this page, rather than just checking the url
-		const newPage = await newTarget.page(); //get the page object
-		await newPage.waitForSelector("body"); //wait for page to be loaded
-		
-		const targetElement = await newPage.$("#lostark-wrapper > div > main > div > div.profile-character-info > span.profile-character-info__name");
+			const pageTarget = page.target(); //save this to know that this was the opener
+			await page.click("body > div.profile-library > div.profile-link > a.button.button--black"); //click on a link
+			const newTarget = await browser.waitForTarget(target => target.opener() === pageTarget); //check that you opened this page, rather than just checking the url
+			const newPage = await newTarget.page(); //get the page object
+			await newPage.waitForSelector("body"); //wait for page to be loaded
 
-		const characterName = await newPage.evaluate((data) => {
-			return data.getAttribute("title");
-		}, targetElement);
-		
-		browser.close(); //창 종료
+			const targetElement = await newPage.$("#lostark-wrapper > div > main > div > div.profile-character-info > span.profile-character-info__name");
 
-		return characterName;
+			const characterName = await newPage.evaluate((data) => {
+				if (data === null || data === undefined){
+					return "";
+				}
+				else{
+					return data.getAttribute("title");
+				}
+			}, targetElement);
+
+			browser.close(); //창 종료
+
+			return characterName;
+		}
+		catch (error) {
+			console.error(error);
+		}
 	}
 
 	/**
