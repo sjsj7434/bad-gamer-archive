@@ -68,8 +68,8 @@ export class PostController {
 
 	//익명 게시판 글 작성
 	@Post("anonymous/content")
-	async createAnonymousContent(@Ip() ipData: string, @Body() createLostArkUnknownPostDTO: CreateLostArkUnknownPostDTO) {
-		await this.lostArkUnknownPostService.createPost(createLostArkUnknownPostDTO, ipData);
+	async createAnonymousContent(@Ip() ipData: string, @Body() createPostDTO: CreateLostArkUnknownPostDTO) {
+		await this.lostArkUnknownPostService.createPost(createPostDTO, ipData);
 	}
 
 	//익명 게시판 글 수정 진입 시 작성자 확인
