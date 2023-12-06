@@ -89,6 +89,17 @@ export class LostArkKnownPostService {
 	}
 
 	/**
+	 * 에디터 내용 kilobyte(1000) 계산하여 반환, kibibyte(1024)아님
+	 */
+	getKiloByteSize = (stringData): number => {
+		const encoder = new TextEncoder();
+		const encoded = encoder.encode(stringData);
+		const kilobyteStr = (encoded.byteLength / 1000).toFixed(2);
+		const kilobyte = parseFloat(kilobyteStr);
+		return kilobyte;
+	}
+
+	/**
 	 * 추천 트랜드 게시글 목록 가져오기
 	 */
 	async getUpvoteTrend(page: number, type: string): Promise<[LostArkKnownPost[], number]> {
@@ -311,7 +322,7 @@ export class LostArkKnownPostService {
 			return null;
 		}
 
-		let isAuthor: boolean = false;
+		let isWriter: boolean = false;
 
 		await this.lostArkKnownPostRepository.increment({ code: contentCode }, "view", 1);
 
@@ -325,6 +336,7 @@ export class LostArkKnownPostService {
 				view: true,
 				upvote: true,
 				downvote: true,
+				writerID: true,
 				writerNickname: true,
 				createdAt: true,
 				updatedAt: true,
@@ -348,10 +360,11 @@ export class LostArkKnownPostService {
 		});
 
 		if (contentData !== null) {
-			isAuthor = contentData.writerID === loginCookie.id;
+			isWriter = contentData.writerID === loginCookie.id;
+			contentData.writerID = "";
 		}
 
-		return { contentData: contentData, isWriter: isAuthor };
+		return { contentData: contentData, isWriter: isWriter };
 	}
 
 	/**
@@ -364,7 +377,7 @@ export class LostArkKnownPostService {
 			return null;
 		}
 
-		let isAuthor: boolean = false;
+		let isWriter: boolean = false;
 
 		const contentData = await this.lostArkKnownPostRepository.findOne({
 			select: {
@@ -386,10 +399,11 @@ export class LostArkKnownPostService {
 		});
 
 		if (contentData !== null) {
-			isAuthor = contentData.writerID === loginCookie.id;
+			isWriter = contentData.writerID === loginCookie.id;
+			contentData.writerID = "";
 		}
 
-		return { contentData: contentData, isWriter: isAuthor };
+		return { contentData: contentData, isWriter: isWriter };
 	}
 
 	/**
@@ -424,22 +438,29 @@ export class LostArkKnownPostService {
 	/**
 	 * 유저 게시판에 게시글을 생성한다
 	 */
-	async createPost(createPostDTO: CreateLostArkKnownPostDTO, ipData: string, request: Request, response: Response) {
+	async createPost(createPostDTO: CreateLostArkKnownPostDTO, ipData: string, request: Request, response: Response): Promise<{ createdCode: number, status: string }> {
 		const loginCookie = await this.accountsService.checkLoginStatus(request, response);
 
 		if (loginCookie.status === "login") {
-			createPostDTO.category = "normal";
+			if (createPostDTO.title.length > 200) {
+				return { createdCode: 0, status: "long_title" };
+			}
+			else if (this.getKiloByteSize(createPostDTO.content) > 30) {
+				return { createdCode: 0, status: "long_content" };
+			}
+
+			createPostDTO.category = "";
 			createPostDTO.writerID = loginCookie.id;
 			createPostDTO.writerNickname = loginCookie.nickname;
 			createPostDTO.ip = ipData; //개발서버에서는 로컬만 찍혀서 임시로 비활성
 			createPostDTO.ip = Math.random().toString().substring(2, 5) + "." + Math.random().toString().substring(2, 5) + "." + Math.random().toString().substring(2, 5) + "." + Math.random().toString().substring(2, 5);
 
-			await this.lostArkKnownPostRepository.save(createPostDTO);
+			const createdPost = await this.lostArkKnownPostRepository.save(createPostDTO);
 
-			return true;
+			return { createdCode: createdPost.code, status: "" };
 		}
 		else {
-			return false;
+			return { createdCode: 0, status: "need_login" };
 		}
 	}
 
@@ -449,28 +470,31 @@ export class LostArkKnownPostService {
 	async updatePost(request: Request, response: Response, updatePostDTO: UpdateLostArkKnownPostDTO): Promise<boolean> {
 		const loginCookie = await this.accountsService.checkLoginStatus(request, response);
 
+		const updateTargetPost = await this.lostArkKnownPostRepository.findOne({
+			select: {
+				code: true,
+				writerID: true,
+				writerNickname: true,
+			},
+			where: {
+				code: Equal(updatePostDTO.code)
+			}
+		})
+
 		if (loginCookie.status === "login") {
-			if (loginCookie.id !== updatePostDTO.writerID) {
+			console.log(loginCookie.id, updateTargetPost.writerID, updatePostDTO)
+			if (loginCookie.id !== updateTargetPost.writerID) {
 				//위의 값이 아니면 누군가 값을 조작하여 전송했을 가능성이 있으므로 게시글 저장 차단
 				return false;
 			}
 
-			updatePostDTO.writerID = loginCookie.id;
+			// updatePostDTO.writerNickname = loginCookie.nickname;
+			updatePostDTO.updatedAt = new Date(); //update 날짜 수정
 
-			const isExists = await this.lostArkKnownPostRepository.exist({
-				where: {
-					code: Equal(updatePostDTO.code),
-					writerID: Equal(updatePostDTO.writerID),
-				}
-			});
+			// await this.lostArkKnownPostRepository.save(updatePostDTO);
+			await this.lostArkKnownPostRepository.update({ code: updatePostDTO.code }, updatePostDTO)
 
-			if (isExists === true) {
-				// updatePostDTO.updatedAt = new Date(); //update 날짜 수정
-
-				await this.lostArkKnownPostRepository.save(updatePostDTO);
-			}
-
-			return isExists;
+			return true;
 		}
 		else {
 			return false;

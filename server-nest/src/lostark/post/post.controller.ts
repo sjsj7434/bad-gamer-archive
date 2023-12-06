@@ -68,8 +68,8 @@ export class PostController {
 
 	//익명 게시판 글 작성
 	@Post("anonymous/content")
-	async createAnonymousContent(@Ip() ipData: string, @Body() createPostDTO: CreateLostArkUnknownPostDTO) {
-		await this.lostArkUnknownPostService.createPost(createPostDTO, ipData);
+	async createAnonymousContent(@Ip() ipData: string, @Body() createPostDTO: CreateLostArkUnknownPostDTO): Promise<{ createdCode: number, status: string }> {
+		return await this.lostArkUnknownPostService.createPost(createPostDTO, ipData);
 	}
 
 	//익명 게시판 글 수정 진입 시 작성자 확인
@@ -147,7 +147,7 @@ export class PostController {
 
 	//유저 게시판 글 작성
 	@Post("user/content")
-	async createUserContent(@Req() request: Request, @Res({ passthrough: true }) response: Response, @Ip() ipData: string, @Body() createPostDTO: CreateLostArkKnownPostDTO): Promise<boolean> {
+	async createUserContent(@Req() request: Request, @Res({ passthrough: true }) response: Response, @Ip() ipData: string, @Body() createPostDTO: CreateLostArkKnownPostDTO): Promise<{ createdCode: number, status: string }> {
 		return await this.lostArkKnownPostService.createPost(createPostDTO, ipData, request, response);
 	}
 

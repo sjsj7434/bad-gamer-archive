@@ -12,10 +12,6 @@ export class CreateLostArkUnknownPostDTO extends OmitType(LostArkUnknownPost, ["
 	password: string;
 	@IsBoolean()
 	hasImage: boolean;
-	@IsOptional() @IsString()
-	writerID: string;
-	@IsOptional() @IsString()
-	writerNickname: string;
 }
 
 export class UpdateLostArkUnknownPostDTO extends PartialType(LostArkUnknownPost) {
@@ -29,10 +25,6 @@ export class UpdateLostArkUnknownPostDTO extends PartialType(LostArkUnknownPost)
 	content: string;
 	@IsOptional() @IsBoolean()
 	hasImage: boolean;
-	@IsOptional() @IsString()
-	writerID: string;
-	@IsOptional() @IsString()
-	writerNickname: string;
 }
 
 export class DeleteLostArkUnknownPostDTO extends PickType(LostArkUnknownPost, ["code", "password"] as const) {

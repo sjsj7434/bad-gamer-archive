@@ -53,26 +53,30 @@ const KnownContentWrite = (props) => {
 		const sendData = {
 			title: titleElement.value,
 			content: editorContet,
-			password: "",
 			hasImage: editorContet.indexOf("<img") > -1 ? true : false,
-			writerID: props.accountData.id,
-			writerNickname: props.accountData.nickname,
 		};
 
-		let createResult = await postFetch.createContentUserBoard(sendData);
+		const createResult = await postFetch.createContentUserBoard(sendData);
 
-		if(createResult === null){
-			setLoadingModalShow(false);
-			setLoadingModalMessage("");
-		}
-		else if(createResult === false){
-			alert("게시글 저장이 실패하였습니다");
-			navigate(`/lostark/post/known/1`);
+		if(createResult.createdCode === 0){
+			if(createResult.status === "long_title"){
+				alert("제목이 너무 길어 저장할 수 없습니다(최대 100자)");
+				setLoadingModalShow(false);
+			}
+			else if(createResult.status === "long_content"){
+				alert(`작성된 글의 용량이 너무 커 저장할 수 없습니다(최대 ${editorMaxKB}KB)`);
+				setLoadingModalShow(false);
+			}
+			else if(createResult.status === "need_login"){
+				alert("로그인이 필요합니다");
+				setLoadingModalShow(false);
+				navigate("/accounts/login");
+			}
 		}
 		else{
-			navigate(`/lostark/post/known/1`);
+			navigate(`/lostark/post/known/view/${createResult.createdCode}`);
 		}
-	}, [editorObject, editorSizeByte, editorMaxKB, navigate, props.accountData])
+	}, [editorObject, editorSizeByte, editorMaxKB, navigate])
 
 	/**
 	 * 게시글 수정
@@ -105,10 +109,7 @@ const KnownContentWrite = (props) => {
 			code: contentCode,
 			title: titleElement.value,
 			content: editorContet,
-			password: "",
 			hasImage: editorContet.indexOf("<img") > -1 ? true : false,
-			writerID: props.accountData.id,
-			writerNickname: props.accountData.nickname,
 		};
 
 		let result = await postFetch.updateContent("user", sendData);
@@ -127,7 +128,7 @@ const KnownContentWrite = (props) => {
 			//정상적으로 처리 성공
 			navigate(`/lostark/post/known/view/${contentCode}`);
 		}
-	}, [contentCode, editorObject, editorSizeByte, editorMaxKB, navigate, props.accountData.id, props.accountData.nickname])
+	}, [contentCode, editorObject, editorSizeByte, editorMaxKB, navigate])
 
 	useEffect(() => {
 		if(params.contentCode !== undefined){

@@ -166,8 +166,16 @@ export const createContent = async (boardType, sendData) => {
 	const fetchResponse = await fetch(`/boards/${boardType}/content`, fecthOption);
 	const [isStatusGood, checkMessage] = isFetchStatusGood(fetchResponse);
 
-	if(isStatusGood !== true){
+	if(isStatusGood === true){
+		const fetchData = await getFetchJson(fetchResponse);
+		console.log('createContent =>', fetchData)
+
+		return fetchData;
+	}
+	else{
 		alert(checkMessage);
+
+		return null;
 	}
 }
 

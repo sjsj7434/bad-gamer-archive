@@ -68,13 +68,24 @@ const UnknownContentWrite = (props) => {
 			content: editorContet,
 			hasImage: editorContet.indexOf("<img") > -1 ? true : false,
 			password: passwordElement.value,
-			writerID: "",
-			writerNickname: "",
 		};
 
-		await postFetch.createContent("anonymous", sendData);
+		const createResult = await postFetch.createContent("anonymous", sendData);
 
-		navigate(`/lostark/post/unknown/1`);
+		if(createResult.createdCode === 0){
+			if(createResult.status === "long_title"){
+				alert("제목이 너무 길어 저장할 수 없습니다(최대 100자)");
+				setLoadingModalShow(false);
+			}
+			else if(createResult.status === "long_content"){
+				alert(`작성된 글의 용량이 너무 커 저장할 수 없습니다(최대 ${editorMaxKB}KB)`);
+				setLoadingModalShow(false);
+			}
+		}
+		else{
+			navigate(`/lostark/post/unknown/view/${createResult.createdCode}`);
+		}
+
 	}, [editorObject, editorSizeByte, editorMaxKB, navigate])
 
 	/**
@@ -110,7 +121,6 @@ const UnknownContentWrite = (props) => {
 			title: titleElement.value,
 			content: editorContet,
 			hasImage: editorContet.indexOf("<img") > -1 ? true : false,
-			writerID: "",
 		};
 
 		let result = await postFetch.updateContent("anonymous", sendData);

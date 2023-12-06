@@ -8,8 +8,6 @@ export class CreateLostArkKnownPostDTO extends OmitType(LostArkKnownPost, ["code
 	title: string;
 	@IsString()
 	content: string;
-	@IsString()
-	password: string;
 	@IsBoolean()
 	hasImage: boolean;
 	@IsOptional() @IsString()
@@ -21,8 +19,6 @@ export class CreateLostArkKnownPostDTO extends OmitType(LostArkKnownPost, ["code
 export class UpdateLostArkKnownPostDTO extends PartialType(LostArkKnownPost) {
 	@IsNumber()
 	code: number;
-	@IsOptional() @IsString()
-	password: string;
 	@IsOptional() @IsString()
 	title: string;
 	@IsOptional() @IsString()

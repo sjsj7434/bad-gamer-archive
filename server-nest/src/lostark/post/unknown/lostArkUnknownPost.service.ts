@@ -96,6 +96,17 @@ export class LostArkUnknownPostService {
 	}
 
 	/**
+	 * 에디터 내용 kilobyte(1000) 계산하여 반환, kibibyte(1024)아님
+	 */
+	getKiloByteSize = (stringData): number => {
+		const encoder = new TextEncoder();
+		const encoded = encoder.encode(stringData);
+		const kilobyteStr = (encoded.byteLength / 1000).toFixed(2);
+		const kilobyte = parseFloat(kilobyteStr);
+		return kilobyte;
+	}
+
+	/**
 	 * 추천 트랜드 게시글 목록 가져오기
 	 */
 	async getUpvoteTrend(page: number, type: string): Promise<[LostArkUnknownPost[], number]> {
@@ -367,14 +378,20 @@ export class LostArkUnknownPostService {
 	/**
 	 * 익명 게시판에 게시글을 생성한다
 	 */
-	async createPost(createLostArkUnknownPostDTO: CreateLostArkUnknownPostDTO, ipData: string) {
-		createLostArkUnknownPostDTO.category = "anonymous";
-		createLostArkUnknownPostDTO.writerID = "";
-		createLostArkUnknownPostDTO.writerNickname = "";
-		createLostArkUnknownPostDTO.ip = ipData; //개발서버에서는 로컬만 찍혀서 임시로 비활성
-		createLostArkUnknownPostDTO.ip = Math.random().toString().substring(2, 5) + "." + Math.random().toString().substring(2, 5) + "." + Math.random().toString().substring(2, 5) + "." + Math.random().toString().substring(2, 5);
+	async createPost(createPostDTO: CreateLostArkUnknownPostDTO, ipData: string): Promise<{ createdCode: number, status: string }> {
+		if (createPostDTO.title.length > 200) {
+			return { createdCode: 0, status: "long_title" };
+		}
+		else if (this.getKiloByteSize(createPostDTO.content) > 30) {
+			return { createdCode: 0, status: "long_content" };
+		}
 
-		await this.lostArkUnknownPostRepository.save(createLostArkUnknownPostDTO);
+		createPostDTO.category = "";
+		createPostDTO.ip = ipData; //개발서버에서는 로컬만 찍혀서 임시로 비활성
+		createPostDTO.ip = Math.random().toString().substring(2, 5) + "." + Math.random().toString().substring(2, 5) + "." + Math.random().toString().substring(2, 5) + "." + Math.random().toString().substring(2, 5);
+
+		const createdPost = await this.lostArkUnknownPostRepository.save(createPostDTO);
+		return { createdCode: createdPost.code, status: "" };
 	}
 
 	/**
@@ -389,9 +406,10 @@ export class LostArkUnknownPostService {
 		});
 
 		if (isExists === true) {
-			// updatePostDTO.updatedAt = new Date(); //update 날짜 수정
+			updatePostDTO.updatedAt = new Date(); //update 날짜 수정
 
-			await this.lostArkUnknownPostRepository.save(updatePostDTO);
+			// await this.lostArkUnknownPostRepository.save(updatePostDTO);
+			await this.lostArkUnknownPostRepository.update({ code: updatePostDTO.code }, updatePostDTO)
 		}
 
 		return isExists;
