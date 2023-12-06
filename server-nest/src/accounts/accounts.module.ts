@@ -5,6 +5,7 @@ import { AccountsService } from './accounts.service';
 import { Accounts } from './accounts.entity';
 import { Level } from './level.entity';
 import { Authentication } from './authentication.entity';
+import { LostarkCharacter } from './lostarkCharacter';
 
 /**
  * 사용자 계정 관련 기능 모듈
@@ -13,6 +14,7 @@ import { Authentication } from './authentication.entity';
 	imports: [
 		TypeOrmModule.forFeature([
 			Accounts, Level, Authentication
+			, LostarkCharacter
 		]),
 	],
 	controllers: [ AccountsController ],

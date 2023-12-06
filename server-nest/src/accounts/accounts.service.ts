@@ -13,12 +13,14 @@ import { Authentication } from './authentication.entity';
 import { LostarkAPIService } from 'src/lostark/api/lostark.api.service';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { ErrorLogService } from 'src/log/error.log.service';
+import { LostarkCharacter } from './lostarkCharacter';
 
 @Injectable()
 export class AccountsService {
 	constructor(
 		@InjectRepository(Accounts) private accountsRepository: Repository<Accounts>,
 		@InjectRepository(Authentication) private authenticationRepository: Repository<Authentication>,
+		@InjectRepository(LostarkCharacter) private lostarkCharacterRepository: Repository<LostarkCharacter>,
 		@Inject(CACHE_MANAGER) private cacheManager: Cache,
 		private lostarkAPIService: LostarkAPIService,
 		private errorLogService: ErrorLogService,
@@ -120,7 +122,13 @@ export class AccountsService {
 	 * 스토브 로아 캐릭터 인증
 	 */
 	async authenticateStove(request: Request, stoveCode: string): Promise<{ result: string, characterList: object }> {
+		const sessionCode: string = request.cookies["sessionCode"]; //로그인한 세션의 코드 값
+		const loginUUID = this.LOGIN_SESSION.get(sessionCode); //로그인한 정보
 		const stoveCodeWithOutProtocol: string = stoveCode.replace(/https:\/\/|http:\/\//g, "");
+
+		if (sessionCode === null || sessionCode === ""){
+			return { result: "codeError", characterList: null };
+		}
 
 		if (isNaN(Number(stoveCodeWithOutProtocol)) === true) {
 			return { result: "codeError", characterList: null };
@@ -143,6 +151,24 @@ export class AccountsService {
 		if (isMatched) {
 			const characterName = await this.getCharacterName(stoveCode); //web page scrapping
 			const characterNameArray = await this.lostarkAPIService.getCharacterList(characterName); //api 호출
+
+			// for (let index = 0; index < characterNameArray.length; index++) {
+			// 	const element = characterNameArray[index];
+
+			// 	await this.lostarkCharacterRepository.upsert(
+			// 		[{
+			// 			uuid: loginUUID,
+			// 			stoveCode: stoveCode,
+			// 			serverName: element.ServerName,
+			// 			characterName: element.CharacterName,
+			// 			characterClass: element.CharacterClassName,
+			// 			characterLevel: element.CharacterLevel,
+			// 			maxItemLevel: element.ItemMaxLevel,
+			// 			avgItemLevel: element.ItemAvgLevel,
+			// 		}],
+			// 		["uuid", "stoveCode"]
+			// 	);
+			// }
 
 			await this.setCacheData("LOSTARK_" + request.cookies["sessionCode"], characterNameArray, 5 * 60); //캐릭터 데이터 cache에 저장
 			await this.setCacheData("STOVE_CODE_" + request.cookies["sessionCode"], stoveCode, 5 * 60); //스토브 코드 cache에 저장
@@ -875,6 +901,7 @@ export class AccountsService {
 		const sessionCode: string = request.cookies["sessionCode"]; //로그인한 세션의 코드 값
 		const loginUUID = this.LOGIN_SESSION.get(sessionCode); //로그인한 정보
 		const characterList: [any] = await this.cacheManager.get("LOSTARK_" + sessionCode);
+		const stoveCode: string = await this.cacheManager.get("STOVE_CODE_" + sessionCode);
 
 		if (typeof characterList !== "object") {
 			return "0002";
@@ -885,6 +912,21 @@ export class AccountsService {
 
 		for (let index = 0; index < characterList.length; index++) {
 			const element = characterList[index];
+
+			// await this.lostarkCharacterRepository.upsert(
+			// 	[{
+			// 		uuid: loginUUID,
+			// 		stoveCode: stoveCode,
+			// 		serverName: element.ServerName,
+			// 		characterName: element.CharacterName,
+			// 		characterClass: element.CharacterClassName,
+			// 		characterLevel: element.CharacterLevel,
+			// 		maxItemLevel: element.ItemMaxLevel,
+			// 		avgItemLevel: element.ItemAvgLevel,
+			// 	}],
+			// 	["uuid", "stoveCode"]
+			// );
+
 			if (element.CharacterName === lostarkName){
 				isContain = true;
 				infoIndex = index;
@@ -900,8 +942,6 @@ export class AccountsService {
 				deletedAt: Not(IsNull()),
 			});
 
-			const stoveCode: string = await this.cacheManager.get("STOVE_CODE_" + sessionCode);
-			
 			let simpleItemLevel = characterList[infoIndex].ItemMaxLevel.replace(",", "").split(".")[0];
 			simpleItemLevel = simpleItemLevel.slice(0, simpleItemLevel.length -1) + "0+"; //끝자리 0으로 변경
 
