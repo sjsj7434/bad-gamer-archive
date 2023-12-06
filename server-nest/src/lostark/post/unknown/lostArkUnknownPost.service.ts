@@ -296,7 +296,6 @@ export class LostArkUnknownPostService {
 			},
 			where: {
 				code: Equal(contentCode),
-				category: Equal("anonymous"),
 			},
 		});
 
@@ -333,7 +332,6 @@ export class LostArkUnknownPostService {
 			},
 			where: {
 				code: Equal(contentCode),
-				category: Equal("anonymous"),
 			},
 		});
 
@@ -359,7 +357,6 @@ export class LostArkUnknownPostService {
 			},
 			where: {
 				code: Equal(inputCode),
-				category: Equal("anonymous"),
 				password: Equal(inputPassword),
 			},
 		});
@@ -387,7 +384,6 @@ export class LostArkUnknownPostService {
 		const isExists = await this.lostArkUnknownPostRepository.exist({
 			where: {
 				code: Equal(updatePostDTO.code),
-				category: Equal("anonymous"),
 				password: Equal(updatePostDTO.password),
 			}
 		});
@@ -408,7 +404,6 @@ export class LostArkUnknownPostService {
 		const isExists = await this.lostArkUnknownPostRepository.exist({
 			where: {
 				code: Equal(deletePostDTO.code),
-				category: Equal("anonymous"),
 				password: Equal(deletePostDTO.password),
 			}
 		});
@@ -429,7 +424,7 @@ export class LostArkUnknownPostService {
 		const isVotable: boolean = this.isVotableContent(contentCode, ipData);
 
 		if (isVotable === true) {
-			await this.lostArkUnknownPostRepository.increment({ code: Equal(contentCode), category: Equal("anonymous") }, "upvote", 1);
+			await this.lostArkUnknownPostRepository.increment({ code: Equal(contentCode) }, "upvote", 1);
 		}
 
 		const contentData = await this.lostArkUnknownPostRepository.findOne({
@@ -439,7 +434,6 @@ export class LostArkUnknownPostService {
 			},
 			where: {
 				code: Equal(contentCode),
-				category: Equal("anonymous"),
 			},
 		});
 
@@ -453,7 +447,7 @@ export class LostArkUnknownPostService {
 		const isVotable: boolean = this.isVotableContent(contentCode, ipData);
 
 		if (isVotable === true) {
-			await this.lostArkUnknownPostRepository.increment({ code: Equal(contentCode), category: Equal("anonymous") }, "downvote", 1);
+			await this.lostArkUnknownPostRepository.increment({ code: Equal(contentCode) }, "downvote", 1);
 		}
 
 		const contentData = await this.lostArkUnknownPostRepository.findOne({
@@ -463,7 +457,6 @@ export class LostArkUnknownPostService {
 			},
 			where: {
 				code: Equal(contentCode),
-				category: Equal("anonymous"),
 			},
 		});
 
@@ -541,7 +534,6 @@ export class LostArkUnknownPostService {
 		const contentData = await this.lostArkUnknownPostRepository.exist({
 			where: {
 				code: Equal(createReplyDTO.parentContentCode),
-				category: Equal("anonymous"),
 			},
 		});
 
