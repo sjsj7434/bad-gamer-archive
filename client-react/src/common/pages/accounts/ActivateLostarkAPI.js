@@ -237,6 +237,11 @@ const ActivateLostarkAPI = () => {
 			alert("인증을 진행할 수 없습니다");
 			setCharacterModalShow(false);
 		}
+		else if(resultData.result === "already"){
+			alert("이미 인증이 진행된 계정입니다\n한 계정으로 여러번 인증은 불가능합니다");
+			navigate("/accounts/mypage");
+			setCharacterModalShow(false);
+		}
 		else if(resultData.result === "codeError"){
 			alert("스토브 코드를 다시 확인해주세요");
 			setCharacterModalShow(false);

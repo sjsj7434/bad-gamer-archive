@@ -126,7 +126,18 @@ export class AccountsService {
 			return { result: "codeError", characterList: null };
 		}
 
-		// const isMatched: boolean = await this.compareStoveVerificationCode(request, stoveCodeWithOutProtocol);
+		const isExist = await this.authenticationRepository.exist({ //이미 인증된 계정으로는 다시 인증 불가능
+			where: {
+				type: Equal("stove_code"),
+				data: Equal(stoveCodeWithOutProtocol),
+			}
+		});
+
+		if (isExist === true){
+			return { result: "already", characterList: null };
+		}
+
+		// const isMatched: boolean = await this.compareStoveVerificationCode(request, stoveCodeWithOutProtocol); //테스트 용으로 임시 비활성화
 		const isMatched = true;
 
 		if (isMatched) {
@@ -510,7 +521,11 @@ export class AccountsService {
 		});
 
 		if (isExists === true){
-			await this.accountsRepository.softDelete({
+			await this.accountsRepository.softDelete({ //계정 정보는 soft delete
+				uuid: loginUUID,
+			});
+
+			await this.authenticationRepository.softDelete({ //인증 정보는 soft delete
 				uuid: loginUUID,
 			});
 		}
