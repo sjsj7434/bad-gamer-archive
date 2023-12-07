@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, IsNull, MoreThanOrEqual, Between, Equal, In } from 'typeorm';
+import { Repository, IsNull, MoreThanOrEqual, Between, Equal, In, Like } from 'typeorm';
 import { AccountsService } from 'src/accounts/accounts.service';
 import { Request, Response } from 'express';
 import { ErrorLogService } from 'src/log/error.log.service';
@@ -233,7 +233,7 @@ export class LostArkKnownPostService {
 	/**
 	 * 유저 게시판 목록 가져오기
 	 */
-	async getPostList(page: number): Promise<[LostArkKnownPost[], number]> {
+	async getPostList(page: number, searchType: string, searchText: string): Promise<[LostArkKnownPost[], number]> {
 		/*
 		const queryOBJ = this.lostArkKnownPostRepository
 		.createQueryBuilder("boards")
@@ -278,6 +278,71 @@ export class LostArkKnownPostService {
 		return [result3, result3.length];
 		*/
 
+		let whereClause = {};
+
+		if (searchText !== "") {
+			if (searchType === "title") {
+				whereClause = {
+					deletedAt: IsNull(),
+					accounts: {
+						authentication: [
+							{ type: Equal("lostark_item_level") },
+							{ type: IsNull() },
+						]
+					},
+					title: Like(`%${searchText}%`),
+				}
+			}
+			else if (searchType === "content") {
+				whereClause = {
+					deletedAt: IsNull(),
+					accounts: {
+						authentication: [
+							{ type: Equal("lostark_item_level") },
+							{ type: IsNull() },
+						]
+					},
+					content: Like(`%${searchText}%`),
+				}
+			}
+			else if (searchType === "nickname") {
+				whereClause = {
+					deletedAt: IsNull(),
+					accounts: {
+						authentication: [
+							{ type: Equal("lostark_item_level") },
+							{ type: IsNull() },
+						]
+					},
+					writerNickname: Like(`%${searchText}%`),
+				}
+			}
+			else if (searchType === "titleAndContent") {
+				whereClause = [
+					{
+						deletedAt: IsNull(),
+					accounts: {
+						authentication: [
+							{ type: Equal("lostark_item_level") },
+							{ type: IsNull() },
+						]
+					},
+						title: Like(`%${searchText}%`),
+					},
+					{
+						deletedAt: IsNull(),
+					accounts: {
+						authentication: [
+							{ type: Equal("lostark_item_level") },
+							{ type: IsNull() },
+						]
+					},
+						content: Like(`%${searchText}%`),
+					},
+				]
+			}
+		}
+
 		const result = await this.lostArkKnownPostRepository.findAndCount({
 			relations: ["reply", "accounts", "accounts.authentication"], //댓글 정보 join
 			select: {
@@ -292,15 +357,7 @@ export class LostArkKnownPostService {
 				hasImage: true,
 				createdAt: true,
 			},
-			where: {
-				deletedAt: IsNull(),
-				accounts: {
-					authentication: [
-						{ type: Equal("lostark_item_level") },
-						{ type: IsNull() },
-					]
-				}
-			},
+			where: whereClause,
 			order: {
 				code: "DESC",
 			},

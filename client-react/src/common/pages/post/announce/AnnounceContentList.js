@@ -27,7 +27,7 @@ const AnnounceContentList = () => {
 
 	useEffect(() => {
 		const readContentList = async () => {
-			const contentListData = await postFetch.readContentList("announcement", page);
+			const contentListData = await postFetch.getKnownPostList("announcement", page);
 
 			setContentList(contentListData[0]);
 			setContentCount(contentListData[1]);

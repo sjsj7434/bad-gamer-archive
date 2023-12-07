@@ -1,4 +1,4 @@
-import { Param, Controller, Get, Post, Body, Ip, Req, Res, Delete, Patch, UseInterceptors, UploadedFile } from '@nestjs/common';
+import { Param, Controller, Get, Post, Body, Ip, Req, Res, Delete, Patch, UseInterceptors, UploadedFile, Query } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { Request, Response } from 'express';
 import { SkipThrottle, Throttle } from '@nestjs/throttler';
@@ -50,8 +50,8 @@ export class PostController {
 
 	//익명 게시판 목록, page 값이 number가 아니면 호출되지 않음
 	@Get("anonymous/list/:page")
-	async getAnonymousContentList(@Param("page") page: number): Promise<[LostArkUnknownPost[], number]> {
-		return await this.lostArkUnknownPostService.getPostList(page);
+	async getAnonymousContentList(@Param("page") page: number, @Query("searchType") searchType: string, @Query("searchText") searchText: string): Promise<[LostArkUnknownPost[], number]> {
+		return await this.lostArkUnknownPostService.getPostList(page, searchType, searchText);
 	}
 
 	//익명 게시판 글 조회, contentCode 값이 number가 아니면 호출되지 않음
@@ -128,8 +128,8 @@ export class PostController {
 
 	//유저 게시판 목록, page 값이 number가 아니면 호출되지 않음
 	@Get("user/list/:page")
-	async getUserContentList(@Param("page") page: number): Promise<[LostArkKnownPost[], number]> {
-		return await this.lostArkKnownPostService.getPostList(page);
+	async getUserContentList(@Param("page") page: number, @Query("searchType") searchType: string, @Query("searchText") searchText: string): Promise<[LostArkKnownPost[], number]> {
+		return await this.lostArkKnownPostService.getPostList(page, searchType, searchText);
 	}
 
 	//유저 게시판 글 조회, contentCode 값이 number가 아니면 호출되지 않음

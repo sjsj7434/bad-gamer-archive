@@ -1,20 +1,45 @@
 import { isFetchStatusGood, getFetchJson } from './fetchCommonImport';
 
 /**
- * 게시판의 게시글 목록을 가져온다
+ * 익명 게시판의 게시글 목록을 가져온다
  */
-export const readContentList = async (boardType, page) => {
+export const getUnknownPostList = async (searchType, searchText, page) => {
 	const fecthOption = {
 		method: "GET"
 		, headers: {"Content-Type": "application/json",}
 		, credentials: "include", // Don't forget to specify this if you need cookies
 	};
-	const fetchResponse = await fetch(`/boards/${boardType}/list/${page}`, fecthOption);
+	const fetchResponse = await fetch(`/boards/anonymous/list/${page}?searchType=${searchType}&searchText=${searchText}`, fecthOption);
 	const [isStatusGood, checkMessage] = isFetchStatusGood(fetchResponse);
 
 	if(isStatusGood === true){
 		const fetchData = await getFetchJson(fetchResponse);
-		console.log('readContentList =>', fetchData)
+		console.log('getUnknownPostList =>', fetchData)
+
+		return fetchData;
+	}
+	else{
+		alert(checkMessage);
+
+		return null;
+	}
+}
+
+/**
+ * 자유 게시판의 게시글 목록을 가져온다
+ */
+export const getKnownPostList = async (searchType, searchText, page) => {
+	const fecthOption = {
+		method: "GET"
+		, headers: {"Content-Type": "application/json",}
+		, credentials: "include", // Don't forget to specify this if you need cookies
+	};
+	const fetchResponse = await fetch(`/boards/user/list/${page}?searchType=${searchType}&searchText=${searchText}`, fecthOption);
+	const [isStatusGood, checkMessage] = isFetchStatusGood(fetchResponse);
+
+	if(isStatusGood === true){
+		const fetchData = await getFetchJson(fetchResponse);
+		console.log('getKnownPostList =>', fetchData)
 
 		return fetchData;
 	}

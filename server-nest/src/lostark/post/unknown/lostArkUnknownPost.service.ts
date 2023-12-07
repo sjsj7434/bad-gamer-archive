@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, IsNull, MoreThanOrEqual, Between, Equal, In } from 'typeorm';
+import { Repository, IsNull, MoreThanOrEqual, Between, Equal, In, Like } from 'typeorm';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { ErrorLogService } from 'src/log/error.log.service';
 import { LostArkUnknownPost } from './lostArkUnknownPost.entity';
@@ -240,8 +240,37 @@ export class LostArkUnknownPostService {
 	/**
 	 * 익명 게시판 목록 가져오기
 	 */
-	async getPostList(page: number): Promise<[LostArkUnknownPost[], number]> {
+	async getPostList(page: number, searchType: string, searchText: string): Promise<[LostArkUnknownPost[], number]> {
 		try {
+			let whereClause = {};
+
+			if (searchText !== ""){
+				if (searchType === "title") {
+					whereClause = {
+						deletedAt: IsNull(),
+						title: Like(`%${searchText}%`),
+					}
+				}
+				else if (searchType === "content") {
+					whereClause = {
+						deletedAt: IsNull(),
+						content: Like(`%${searchText}%`),
+					}
+				}
+				else if (searchType === "titleAndContent") {
+					whereClause = [
+						{
+							deletedAt: IsNull(),
+							title: Like(`%${searchText}%`),
+						},
+						{
+							deletedAt: IsNull(),
+							content: Like(`%${searchText}%`),
+						},
+					]
+				}
+			}
+
 			const result = await this.lostArkUnknownPostRepository.findAndCount({
 				relations: ["reply"], //댓글 정보 join
 				select: {
@@ -255,9 +284,7 @@ export class LostArkUnknownPostService {
 					hasImage: true,
 					createdAt: true,
 				},
-				where: {
-					deletedAt: IsNull(),
-				},
+				where: whereClause,
 				order: {
 					code: "DESC",
 				},

@@ -1,13 +1,17 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useParams, Link, useNavigate } from "react-router-dom";
 import Container from 'react-bootstrap/Container';
 import Button from 'react-bootstrap/Button';
 import CustomPagination from '../CustomPagination';
+import Form from 'react-bootstrap/Form';
+import InputGroup from 'react-bootstrap/InputGroup';
 import * as postFetch from '../../../js/postFetch';
 
 const KnownContentList = () => {
 	const [page, setPage] = useState(null);
 	const [renderData, setRenderData] = useState(<></>);
+	const [searchType, setSearchType] = useState("");
+	const [searchText, setSearchText] = useState("");
 	
 	const [contentList, setContentList] = useState(null);
 	const [contentCount, setContentCount] = useState(null);
@@ -16,6 +20,23 @@ const KnownContentList = () => {
 	const params = useParams();
 	const contentPerPage = 20;
 	const howManyPages = 5;
+
+	const readContentList = useCallback(async () => {
+		const contentListData = await postFetch.getKnownPostList(searchType, searchText, page);
+
+		setContentList(contentListData[0]);
+		setContentCount(contentListData[1]);
+	}, [searchType, searchText, page])
+	
+	const search = () => {
+		const searchTypeElement = document.querySelector("#searchType");
+		const searchTextElement = document.querySelector("#searchText");
+
+		setSearchType(searchTypeElement.value);
+		setSearchText(searchTextElement.value);
+		setPage(1);
+		readContentList();
+	}
 
 	useEffect(() => {
 		if(isNaN(params.page) === false){
@@ -27,13 +48,6 @@ const KnownContentList = () => {
 	}, [params.page])
 
 	useEffect(() => {
-		const readContentList = async () => {
-			const contentListData = await postFetch.readContentList("user", page);
-
-			setContentList(contentListData[0]);
-			setContentCount(contentListData[1]);
-		}
-
 		if(page !== null){
 			readContentList();
 		}
@@ -179,6 +193,22 @@ const KnownContentList = () => {
 			</div>
 
 			{paginationData}
+
+			<div style={{ display: "flex", justifyContent: "center", marginTop: "2rem", marginBottom: "2rem" }}>
+				<div style={{ width: "50%" }}>
+					<InputGroup className="mb-3">
+						<Form.Select id="searchType" size="sm" style={{ maxWidth: "140px"}}>
+							<option value="titleAndContent">제목+내용</option>
+							<option value="title">제목</option>
+							<option value="content">내용</option>
+						</Form.Select>
+
+						<Form.Control id="searchText" style={{ fontSize: "0.8rem" }} />
+
+						<Button id="searchButton" onClick={ () => { search() } } variant="outline-secondary" style={{ fontSize: "0.8rem" }}>검색</Button>
+					</InputGroup>
+				</div>
+			</div>
 		</Container>
 	);
 }
