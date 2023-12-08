@@ -9,7 +9,7 @@ export const getPostList = async (postType, searchType, searchText, page) => {
 		, headers: {"Content-Type": "application/json",}
 		, credentials: "include", // Don't forget to specify this if you need cookies
 	};
-	const fetchResponse = await fetch(`/boards/${postType}/list/${page}?searchType=${searchType}&searchText=${searchText}`, fecthOption);
+	const fetchResponse = await fetch(`/post/${postType}/list/${page}?searchType=${searchType}&searchText=${searchText}`, fecthOption);
 	const [isStatusGood, checkMessage] = isFetchStatusGood(fetchResponse);
 
 	if(isStatusGood === true){
@@ -33,7 +33,7 @@ export const getTrendPostList = async (postType, trendType, searchType, searchTe
 		, headers: {"Content-Type": "application/json",}
 		, credentials: "include", // Don't forget to specify this if you need cookies
 	};
-	const fetchResponse = await fetch(`/boards/${postType}/trend/${trendType}/list/${page}?searchType=${searchType}&searchText=${searchText}`, fecthOption);
+	const fetchResponse = await fetch(`/post/${postType}/trend/${trendType}/list/${page}?searchType=${searchType}&searchText=${searchText}`, fecthOption);
 	const [isStatusGood, checkMessage] = isFetchStatusGood(fetchResponse);
 
 	if(isStatusGood === true){
@@ -57,7 +57,7 @@ export const readContent = async (postType, contentCode) => {
 		, headers: {"Content-Type": "application/json",}
 		, credentials: "include", // Don't forget to specify this if you need cookies
 	};
-	const fetchResponse = await fetch(`/boards/${postType}/content/read/${contentCode}`, fecthOption);
+	const fetchResponse = await fetch(`/post/${postType}/view/${contentCode}`, fecthOption);
 	const [isStatusGood, checkMessage] = isFetchStatusGood(fetchResponse);
 
 	if(isStatusGood === true){
@@ -82,38 +82,12 @@ export const getContentData = async (postType, contentCode) => {
 		, headers: {"Content-Type": "application/json",}
 		, credentials: "include", // Don't forget to specify this if you need cookies
 	};
-	const fetchResponse = await fetch(`/boards/${postType}/content/data/${contentCode}`, fecthOption);
+	const fetchResponse = await fetch(`/post/${postType}/data/${contentCode}`, fecthOption);
 	const [isStatusGood, checkMessage] = isFetchStatusGood(fetchResponse);
 
 	if(isStatusGood === true){
 		const fetchData = await getFetchJson(fetchResponse);
 		console.log('getContentData =>', fetchData)
-
-		return fetchData;
-	}
-	else{
-		alert(checkMessage);
-
-		return null;
-	}
-}
-
-/**
- * 특정 게시글을 삭제한다
- */
-export const deleteContent = async (postType, sendData) => {
-	const fecthOption = {
-		method: "DELETE"
-		, body: JSON.stringify(sendData)
-		, headers: {"Content-Type": "application/json",}
-		, credentials: "include", // Don't forget to specify this if you need cookies
-	};
-	const fetchResponse = await fetch(`/boards/${postType}/content`, fecthOption);
-	const [isStatusGood, checkMessage] = isFetchStatusGood(fetchResponse);
-
-	if(isStatusGood === true){
-		const fetchData = await getFetchJson(fetchResponse);
-		console.log('deleteContent =>', fetchData)
 
 		return fetchData;
 	}
@@ -134,7 +108,7 @@ export const upvoteContent = async (postType, sendData) => {
 		, headers: {"Content-Type": "application/json",}
 		, credentials: "include", // Don't forget to specify this if you need cookies
 	};
-	const fetchResponse = await fetch(`/boards/${postType}/content/upvote`, fecthOption);
+	const fetchResponse = await fetch(`/post/${postType}/upvote`, fecthOption);
 	const [isStatusGood, checkMessage] = isFetchStatusGood(fetchResponse);
 
 	if(isStatusGood === true){
@@ -160,7 +134,7 @@ export const downvoteContent = async (postType, sendData) => {
 		, headers: {"Content-Type": "application/json",}
 		, credentials: "include", // Don't forget to specify this if you need cookies
 	};
-	const fetchResponse = await fetch(`/boards/${postType}/content/downvote`, fecthOption);
+	const fetchResponse = await fetch(`/post/${postType}/downvote`, fecthOption);
 	const [isStatusGood, checkMessage] = isFetchStatusGood(fetchResponse);
 
 	if(isStatusGood === true){
@@ -186,7 +160,7 @@ export const createContent = async (postType, sendData) => {
 		, headers: {"Content-Type": "application/json",}
 		, credentials: "include", // Don't forget to specify this if you need cookies
 	};
-	const fetchResponse = await fetch(`/boards/${postType}/content`, fecthOption);
+	const fetchResponse = await fetch(`/post/${postType}`, fecthOption);
 	const [isStatusGood, checkMessage] = isFetchStatusGood(fetchResponse);
 
 	if(isStatusGood === true){
@@ -212,12 +186,38 @@ export const updateContent = async (postType, sendData) => {
 		, headers: {"Content-Type": "application/json",}
 		, credentials: "include", // Don't forget to specify this if you need cookies
 	};
-	const fetchResponse = await fetch(`/boards/${postType}/content`, fecthOption);
+	const fetchResponse = await fetch(`/post/${postType}`, fecthOption);
 	const [isStatusGood, checkMessage] = isFetchStatusGood(fetchResponse);
 
 	if(isStatusGood === true){
 		const fetchData = await getFetchJson(fetchResponse);
 		console.log('updateContent =>', fetchData)
+
+		return fetchData;
+	}
+	else{
+		alert(checkMessage);
+
+		return null;
+	}
+}
+
+/**
+ * 특정 게시글을 삭제한다
+ */
+export const deleteContent = async (postType, sendData) => {
+	const fecthOption = {
+		method: "DELETE"
+		, body: JSON.stringify(sendData)
+		, headers: {"Content-Type": "application/json",}
+		, credentials: "include", // Don't forget to specify this if you need cookies
+	};
+	const fetchResponse = await fetch(`/post/${postType}`, fecthOption);
+	const [isStatusGood, checkMessage] = isFetchStatusGood(fetchResponse);
+
+	if(isStatusGood === true){
+		const fetchData = await getFetchJson(fetchResponse);
+		console.log('deleteContent =>', fetchData)
 
 		return fetchData;
 	}
@@ -238,7 +238,7 @@ export const checkBeforeEdit = async (postType, sendData) => {
 		, headers: {"Content-Type": "application/json",}
 		, credentials: "include", // Don't forget to specify this if you need cookies
 	};
-	const fetchResponse = await fetch(`/boards/${postType}/content/check/author`, fecthOption);
+	const fetchResponse = await fetch(`/post/${postType}/check/author`, fecthOption);
 	const [isStatusGood, checkMessage] = isFetchStatusGood(fetchResponse);
 
 	if(isStatusGood === true){
@@ -267,7 +267,7 @@ export const showUpvoteUserList = async (contentCode) => {
 		, headers: {"Content-Type": "application/json",}
 		, credentials: "include", // Don't forget to specify this if you need cookies
 	};
-	const fetchResponse = await fetch(`/boards/known/content/upvote/list/${contentCode}`, fecthOption);
+	const fetchResponse = await fetch(`/post/known/upvote/list/${contentCode}`, fecthOption);
 	const [isStatusGood, checkMessage] = isFetchStatusGood(fetchResponse);
 
 	if(isStatusGood === true){
@@ -292,7 +292,7 @@ export const showDownvoteUserList = async (contentCode) => {
 		, headers: {"Content-Type": "application/json",}
 		, credentials: "include", // Don't forget to specify this if you need cookies
 	};
-	const fetchResponse = await fetch(`/boards/known/content/downvote/list/${contentCode}`, fecthOption);
+	const fetchResponse = await fetch(`/post/known/downvote/list/${contentCode}`, fecthOption);
 	const [isStatusGood, checkMessage] = isFetchStatusGood(fetchResponse);
 
 	if(isStatusGood === true){

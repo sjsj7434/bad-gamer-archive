@@ -10,7 +10,7 @@ export const deleteReply = async (boardType, sendData) => {
 		, headers: {"Content-Type": "application/json",}
 		, credentials: "include", // Don't forget to specify this if you need cookies
 	};
-	const fetchResponse = await fetch(`/boards/${boardType}/reply`, fecthOption);
+	const fetchResponse = await fetch(`/post/${boardType}/reply`, fecthOption);
 	const [isStatusGood, checkMessage] = isFetchStatusGood(fetchResponse);
 
 	if(isStatusGood === true){
@@ -35,7 +35,7 @@ export const getReplies = async (boardType, contentCode, currentPage) => {
 		, headers: {"Content-Type": "application/json",}
 		, credentials: "include", // Don't forget to specify this if you need cookies
 	};
-	const fetchResponse = await fetch(`/boards/${boardType}/reply/${contentCode}/${currentPage}`, fecthOption);
+	const fetchResponse = await fetch(`/post/${boardType}/reply/${contentCode}/${currentPage}`, fecthOption);
 	const [isStatusGood, checkMessage] = isFetchStatusGood(fetchResponse);
 
 	if(isStatusGood === true){
@@ -61,7 +61,7 @@ export const createReply = async (boardType, sendData) => {
 		, headers: {"Content-Type": "application/json",}
 		, credentials: "include", // Don't forget to specify this if you need cookies
 	};
-	const fetchResponse = await fetch(`/boards/${boardType}/reply`, fecthOption);
+	const fetchResponse = await fetch(`/post/${boardType}/reply`, fecthOption);
 	const [isStatusGood, checkMessage] = isFetchStatusGood(fetchResponse);
 
 	if(isStatusGood === true){
