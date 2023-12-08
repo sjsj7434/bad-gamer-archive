@@ -1,20 +1,12 @@
 import Container from 'react-bootstrap/Container';
-import Tab from 'react-bootstrap/Tab';
-import Tabs from 'react-bootstrap/Tabs';
 import { Routes, Route } from "react-router-dom";
-import UpvoteTrend from './trend/UpvoteTrend';
-import DownvoteTrend from './trend/DownvoteTrend';
-import ViewTrend from './trend/ViewTrend';
+import TrendPost from './trend/TrendPost';
 import Carousel from 'react-bootstrap/Carousel';
 import Image from 'react-bootstrap/Image';
 import Row from 'react-bootstrap/esm/Row';
 import Col from 'react-bootstrap/esm/Col';
 
 const LostarkMain = () => {
-	const tabOnSelect = (tabKey) => {
-		console.log("tabOnSelect", tabKey);
-	}
-
 	return(
 		<Container style={{maxWidth: "1200px"}}>
 			<Routes>
@@ -45,22 +37,7 @@ const LostarkMain = () => {
 						<hr/>
 						
 						<div style={{ backgroundColor: "", padding: "0.5rem" }}>
-							<Tabs
-								onSelect={(key) => {tabOnSelect(key)}}
-								defaultActiveKey="hot"
-								className="mb-2"
-								justify
-							>
-								<Tab eventKey="hot" title="뜨는 It" mountOnEnter={true} unmountOnExit={false}>
-									<UpvoteTrend category={"over 10 upvote"}></UpvoteTrend>
-								</Tab>
-								<Tab eventKey="none" title="지는 It" mountOnEnter={true} unmountOnExit={false}>
-									<DownvoteTrend category={"over 10 downvote"}></DownvoteTrend>
-								</Tab>
-								<Tab eventKey="class" title="시선집중" mountOnEnter={true} unmountOnExit={false}>
-									<ViewTrend category={"over 100 views"}></ViewTrend>
-								</Tab>
-							</Tabs>
+							<TrendPost category={"over 10 upvote"}></TrendPost>
 						</div>
 					</>
 				}></Route>

@@ -54,7 +54,7 @@ export class LostArkUnknownPostService {
 	}
 
 	/**
-	 * 검색 날짜 범위 설정
+	 * 검색 날짜 범위 설정 / 이제 사용하지 않음
 	 * @param type 검색 타입
 	 * @returns Date
 	 */
@@ -109,9 +109,8 @@ export class LostArkUnknownPostService {
 	/**
 	 * 추천 트랜드 게시글 목록 가져오기
 	 */
-	async getUpvoteTrend(page: number, type: string): Promise<[LostArkUnknownPost[], number]> {
+	async getUpvoteTrend(page: number, searchType: string, searchText: string): Promise<[LostArkUnknownPost[], number]> {
 		try {
-			const searchDate: Date = this.setSearchDate(type);
 			const perPage: number = 10;
 			const upvoteCutline: number = 1;
 
@@ -132,8 +131,6 @@ export class LostArkUnknownPostService {
 				where: {
 					deletedAt: IsNull(),
 					upvote: MoreThanOrEqual(upvoteCutline),
-					createdAt: Between(searchDate, new Date()),
-					category: In(["anonymous", "user"]),
 				},
 				order: {
 					upvote: "DESC",
@@ -155,8 +152,7 @@ export class LostArkUnknownPostService {
 	/**
 	 * 비추천 트랜드 게시글 목록 가져오기
 	 */
-	async getDownvoteTrend(page: number, type: string): Promise<[LostArkUnknownPost[], number]> {
-		const searchDate: Date = this.setSearchDate(type);
+	async getDownvoteTrend(page: number, searchType: string, searchText: string): Promise<[LostArkUnknownPost[], number]> {
 		const perPage: number = 10;
 		const downvoteCutline: number = 1;
 
@@ -177,8 +173,6 @@ export class LostArkUnknownPostService {
 			where: {
 				deletedAt: IsNull(),
 				downvote: MoreThanOrEqual(downvoteCutline),
-				createdAt: Between(searchDate, new Date()),
-				category: In(["anonymous", "user"]),
 			},
 			order: {
 				downvote: "DESC",
@@ -196,8 +190,7 @@ export class LostArkUnknownPostService {
 	/**
 	 * 조회 트랜드 게시글 목록 가져오기
 	 */
-	async getViewTrend(page: number, type: string): Promise<[LostArkUnknownPost[], number]> {
-		const searchDate: Date = this.setSearchDate(type);
+	async getViewTrend(page: number, searchType: string, searchText: string): Promise<[LostArkUnknownPost[], number]> {
 		const perPage: number = 10;
 		const viewCutline: number = 1;
 
@@ -218,8 +211,6 @@ export class LostArkUnknownPostService {
 			where: {
 				deletedAt: IsNull(),
 				view: MoreThanOrEqual(viewCutline),
-				createdAt: Between(searchDate, new Date()),
-				category: In(["anonymous", "user"]),
 			},
 			order: {
 				view: "DESC",

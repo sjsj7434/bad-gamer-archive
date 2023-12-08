@@ -22,7 +22,7 @@ const KnownContentList = () => {
 	const howManyPages = 5;
 
 	const readContentList = useCallback(async () => {
-		const contentListData = await postFetch.getKnownPostList(searchType, searchText, page);
+		const contentListData = await postFetch.getPostList("user", searchType, searchText, page);
 
 		setContentList(contentListData[0]);
 		setContentCount(contentListData[1]);
@@ -51,7 +51,7 @@ const KnownContentList = () => {
 		if(page !== null){
 			readContentList();
 		}
-	}, [page])
+	}, [page, readContentList])
 
 	useEffect(() => {
 		if(contentList !== null && contentCount !== null){

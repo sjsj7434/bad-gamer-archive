@@ -29,21 +29,21 @@ export class PostController {
 	) { }
 
 	//추천 트랜드 게시글 목록, page 값이 number가 아니면 호출되지 않음
-	@Get("upvote/trend/:type/list/:page")
-	async getUpvoteTrend(@Param("type") type: string, @Param("page") page: number): Promise<[LostArkUnknownPost[], number]> {
-		return await this.lostArkUnknownPostService.getUpvoteTrend(page, type);
+	@Get("trend/upvote/list/:page")
+	async getUpvoteTrend(@Param("page") page: number, @Query("searchType") searchType: string, @Query("searchText") searchText: string): Promise<[LostArkUnknownPost[], number]> {
+		return await this.lostArkUnknownPostService.getUpvoteTrend(page, searchType, searchText);
 	}
 
 	//비추천 트랜드 게시글 목록, page 값이 number가 아니면 호출되지 않음
-	@Get("downvote/trend/:type/list/:page")
-	async getDownvoteTrend(@Param("type") type: string, @Param("page") page: number): Promise<[LostArkUnknownPost[], number]> {
-		return await this.lostArkUnknownPostService.getDownvoteTrend(page, type);
+	@Get("trend/downvote/list/:page")
+	async getDownvoteTrend(@Param("page") page: number, @Query("searchType") searchType: string, @Query("searchText") searchText: string): Promise<[LostArkUnknownPost[], number]> {
+		return await this.lostArkUnknownPostService.getDownvoteTrend(page, searchType, searchText);
 	}
 
 	//조회수 트랜드 게시글 목록, page 값이 number가 아니면 호출되지 않음
-	@Get("view/trend/:type/list/:page")
-	async getViewTrend(@Param("type") type: string, @Param("page") page: number): Promise<[LostArkUnknownPost[], number]> {
-		return await this.lostArkUnknownPostService.getViewTrend(page, type);
+	@Get("trend/view/list/:page")
+	async getViewTrend(@Param("page") page: number, @Query("searchType") searchType: string, @Query("searchText") searchText: string): Promise<[LostArkUnknownPost[], number]> {
+		return await this.lostArkUnknownPostService.getViewTrend(page, searchType, searchText);
 	}
 
 	//================================================================================================================================================= anonymous

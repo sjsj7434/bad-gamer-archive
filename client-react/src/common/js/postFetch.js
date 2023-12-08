@@ -1,20 +1,19 @@
 import { isFetchStatusGood, getFetchJson } from './fetchCommonImport';
 
 /**
- * 익명 게시판의 게시글 목록을 가져온다
+ * postType의 게시글 목록을 가져온다
  */
-export const getUnknownPostList = async (searchType, searchText, page) => {
+export const getPostList = async (postType, searchType, searchText, page) => {
 	const fecthOption = {
 		method: "GET"
 		, headers: {"Content-Type": "application/json",}
 		, credentials: "include", // Don't forget to specify this if you need cookies
 	};
-	const fetchResponse = await fetch(`/boards/anonymous/list/${page}?searchType=${searchType}&searchText=${searchText}`, fecthOption);
+	const fetchResponse = await fetch(`/boards/${postType}/list/${page}?searchType=${searchType}&searchText=${searchText}`, fecthOption);
 	const [isStatusGood, checkMessage] = isFetchStatusGood(fetchResponse);
 
 	if(isStatusGood === true){
 		const fetchData = await getFetchJson(fetchResponse);
-		console.log('getUnknownPostList =>', fetchData)
 
 		return fetchData;
 	}
@@ -26,20 +25,19 @@ export const getUnknownPostList = async (searchType, searchText, page) => {
 }
 
 /**
- * 자유 게시판의 게시글 목록을 가져온다
+ * postType의 Trend 게시글 목록을 가져온다
  */
-export const getKnownPostList = async (searchType, searchText, page) => {
+export const getTrendPostList = async (postType, searchType, searchText, page) => {
 	const fecthOption = {
 		method: "GET"
 		, headers: {"Content-Type": "application/json",}
 		, credentials: "include", // Don't forget to specify this if you need cookies
 	};
-	const fetchResponse = await fetch(`/boards/user/list/${page}?searchType=${searchType}&searchText=${searchText}`, fecthOption);
+	const fetchResponse = await fetch(`/boards/trend/${postType}/list/${page}?searchType=${searchType}&searchText=${searchText}`, fecthOption);
 	const [isStatusGood, checkMessage] = isFetchStatusGood(fetchResponse);
 
 	if(isStatusGood === true){
 		const fetchData = await getFetchJson(fetchResponse);
-		console.log('getKnownPostList =>', fetchData)
 
 		return fetchData;
 	}
