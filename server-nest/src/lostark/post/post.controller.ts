@@ -27,25 +27,6 @@ export class PostController {
 		private lostArkUnknownPostService: LostArkUnknownPostService,
 		private lostArkKnownPostService: LostArkKnownPostService,
 	) { }
-
-	//추천 트랜드 게시글 목록, page 값이 number가 아니면 호출되지 않음
-	@Get("unknown/trend/upvote/list/:page")
-	async getUnknownUpvoteTrend(@Param("page") page: number, @Query("searchType") searchType: string, @Query("searchText") searchText: string): Promise<[LostArkUnknownPost[], number]> {
-		return await this.lostArkUnknownPostService.getUpvoteTrend(page, searchType, searchText);
-	}
-
-	//비추천 트랜드 게시글 목록, page 값이 number가 아니면 호출되지 않음
-	@Get("unknown/trend/downvote/list/:page")
-	async getUnknownDownvoteTrend(@Param("page") page: number, @Query("searchType") searchType: string, @Query("searchText") searchText: string): Promise<[LostArkUnknownPost[], number]> {
-		return await this.lostArkUnknownPostService.getDownvoteTrend(page, searchType, searchText);
-	}
-
-	//조회수 트랜드 게시글 목록, page 값이 number가 아니면 호출되지 않음
-	@Get("unknown/trend/view/list/:page")
-	async getUnknownViewTrend(@Param("page") page: number, @Query("searchType") searchType: string, @Query("searchText") searchText: string): Promise<[LostArkUnknownPost[], number]> {
-		return await this.lostArkUnknownPostService.getViewTrend(page, searchType, searchText);
-	}
-
 	//================================================================================================================================================= unknown
 
 	//익명 게시판 목록, page 값이 number가 아니면 호출되지 않음
@@ -122,6 +103,24 @@ export class PostController {
 	@Delete("unknown/reply")
 	async deleteAnonymousReply(@Body() deleteReplyDTO: DeleteLostArkUnknownReplyDTO): Promise<boolean> {
 		return await this.lostArkUnknownPostService.deleteReply(deleteReplyDTO);
+	}
+
+	//익명 게시글 추천 트랜드 게시글 목록, page 값이 number가 아니면 호출되지 않음
+	@Get("unknown/trend/upvote/list/:page")
+	async getUnknownUpvoteTrend(@Param("page") page: number, @Query("searchType") searchType: string, @Query("searchText") searchText: string): Promise<[LostArkUnknownPost[], number]> {
+		return await this.lostArkUnknownPostService.getUpvoteTrend(page, searchType, searchText);
+	}
+
+	//익명 게시글 비추천 트랜드 게시글 목록, page 값이 number가 아니면 호출되지 않음
+	@Get("unknown/trend/downvote/list/:page")
+	async getUnknownDownvoteTrend(@Param("page") page: number, @Query("searchType") searchType: string, @Query("searchText") searchText: string): Promise<[LostArkUnknownPost[], number]> {
+		return await this.lostArkUnknownPostService.getDownvoteTrend(page, searchType, searchText);
+	}
+
+	//익명 게시글 조회수 트랜드 게시글 목록, page 값이 number가 아니면 호출되지 않음
+	@Get("unknown/trend/view/list/:page")
+	async getUnknownViewTrend(@Param("page") page: number, @Query("searchType") searchType: string, @Query("searchText") searchText: string): Promise<[LostArkUnknownPost[], number]> {
+		return await this.lostArkUnknownPostService.getViewTrend(page, searchType, searchText);
 	}
 
 	//================================================================================================================================================= known
@@ -217,6 +216,24 @@ export class PostController {
 	@Delete("known/reply")
 	async deleteUserReply(@Req() request: Request, @Res({ passthrough: true }) response: Response, @Body() deleteReplyDTO: DeleteLostArkKnownReplyDTO): Promise<boolean> {
 		return await this.lostArkKnownPostService.deleteReply(request, response, deleteReplyDTO);
+	}
+
+	//유저 게시글 추천 트랜드 게시글 목록, page 값이 number가 아니면 호출되지 않음
+	@Get("known/trend/upvote/list/:page")
+	async getKnownUpvoteTrend(@Param("page") page: number, @Query("searchType") searchType: string, @Query("searchText") searchText: string): Promise<[LostArkKnownPost[], number]> {
+		return await this.lostArkKnownPostService.getUpvoteTrend(page, searchType, searchText);
+	}
+
+	//유저 게시글 비추천 트랜드 게시글 목록, page 값이 number가 아니면 호출되지 않음
+	@Get("known/trend/downvote/list/:page")
+	async getKnownDownvoteTrend(@Param("page") page: number, @Query("searchType") searchType: string, @Query("searchText") searchText: string): Promise<[LostArkKnownPost[], number]> {
+		return await this.lostArkKnownPostService.getDownvoteTrend(page, searchType, searchText);
+	}
+
+	//유저 게시글 조회수 트랜드 게시글 목록, page 값이 number가 아니면 호출되지 않음
+	@Get("known/trend/view/list/:page")
+	async getKnownViewTrend(@Param("page") page: number, @Query("searchType") searchType: string, @Query("searchText") searchText: string): Promise<[LostArkKnownPost[], number]> {
+		return await this.lostArkKnownPostService.getViewTrend(page, searchType, searchText);
 	}
 
 	//================================================================================================================================================= common

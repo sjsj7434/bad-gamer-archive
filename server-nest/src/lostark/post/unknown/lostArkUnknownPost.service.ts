@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, IsNull, MoreThanOrEqual, Between, Equal, In, Like } from 'typeorm';
+import { Repository, IsNull, MoreThanOrEqual, Equal, Like } from 'typeorm';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { ErrorLogService } from 'src/log/error.log.service';
 import { LostArkUnknownPost } from './lostArkUnknownPost.entity';

@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, IsNull, MoreThanOrEqual, Between, Equal, In, Like } from 'typeorm';
+import { Repository, IsNull, MoreThanOrEqual, Between, Equal, Like } from 'typeorm';
 import { AccountsService } from 'src/accounts/accounts.service';
 import { Request, Response } from 'express';
 import { ErrorLogService } from 'src/log/error.log.service';
@@ -47,7 +47,7 @@ export class LostArkKnownPostService {
 	}
 
 	/**
-	 * 검색 날짜 범위 설정
+	 * 검색 날짜 범위 설정 / 이제 사용하지 않음
 	 * @param type 검색 타입
 	 * @returns Date
 	 */
@@ -102,9 +102,8 @@ export class LostArkKnownPostService {
 	/**
 	 * 추천 트랜드 게시글 목록 가져오기
 	 */
-	async getUpvoteTrend(page: number, type: string): Promise<[LostArkKnownPost[], number]> {
+	async getUpvoteTrend(page: number, searchType: string, searchText: string): Promise<[LostArkKnownPost[], number]> {
 		try {
-			const searchDate: Date = this.setSearchDate(type);
 			const perPage: number = 10;
 			const upvoteCutline: number = 1;
 
@@ -119,14 +118,12 @@ export class LostArkKnownPostService {
 					view: true,
 					upvote: true,
 					downvote: true,
-					ip: true,
 					hasImage: true,
 					createdAt: true,
 				},
 				where: {
 					deletedAt: IsNull(),
 					upvote: MoreThanOrEqual(upvoteCutline),
-					createdAt: Between(searchDate, new Date()),
 				},
 				order: {
 					upvote: "DESC",
@@ -148,8 +145,7 @@ export class LostArkKnownPostService {
 	/**
 	 * 비추천 트랜드 게시글 목록 가져오기
 	 */
-	async getDownvoteTrend(page: number, type: string): Promise<[LostArkKnownPost[], number]> {
-		const searchDate: Date = this.setSearchDate(type);
+	async getDownvoteTrend(page: number, searchType: string, searchText: string): Promise<[LostArkKnownPost[], number]> {
 		const perPage: number = 10;
 		const downvoteCutline: number = 1;
 
@@ -164,14 +160,12 @@ export class LostArkKnownPostService {
 				view: true,
 				upvote: true,
 				downvote: true,
-				ip: true,
 				hasImage: true,
 				createdAt: true,
 			},
 			where: {
 				deletedAt: IsNull(),
 				downvote: MoreThanOrEqual(downvoteCutline),
-				createdAt: Between(searchDate, new Date()),
 			},
 			order: {
 				downvote: "DESC",
@@ -189,8 +183,7 @@ export class LostArkKnownPostService {
 	/**
 	 * 조회 트랜드 게시글 목록 가져오기
 	 */
-	async getViewTrend(page: number, type: string): Promise<[LostArkKnownPost[], number]> {
-		const searchDate: Date = this.setSearchDate(type);
+	async getViewTrend(page: number, searchType: string, searchText: string): Promise<[LostArkKnownPost[], number]> {
 		const perPage: number = 10;
 		const viewCutline: number = 1;
 
@@ -205,14 +198,12 @@ export class LostArkKnownPostService {
 				view: true,
 				upvote: true,
 				downvote: true,
-				ip: true,
 				hasImage: true,
 				createdAt: true,
 			},
 			where: {
 				deletedAt: IsNull(),
 				view: MoreThanOrEqual(viewCutline),
-				createdAt: Between(searchDate, new Date()),
 			},
 			order: {
 				view: "DESC",
@@ -719,7 +710,6 @@ export class LostArkKnownPostService {
 				upvote: true,
 				downvote: true,
 				writerNickname: true,
-				ip: true,
 				createdAt: true,
 				deletedAt: true
 			},
