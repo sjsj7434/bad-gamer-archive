@@ -142,6 +142,13 @@ export class LostArkUnknownPostService {
 				take: perPage,
 			});
 
+			if (result !== null) {
+				//ip 전체 노출하지 않고 앞부분만 노출
+				for (let index: number = 0; index < result[0].length; index++) {
+					result[0][index]["ip"] = result[0][index]["ip"].split(".")[0] + (result[0][index]["ip"].split(".")[1] !== undefined ? "." + result[0][index]["ip"].split(".")[1] : "");
+				}
+			}
+
 			return result;
 		}
 		catch (error) {
@@ -153,77 +160,101 @@ export class LostArkUnknownPostService {
 	 * 비추천 트랜드 게시글 목록 가져오기
 	 */
 	async getDownvoteTrend(page: number, searchType: string, searchText: string): Promise<[LostArkUnknownPost[], number]> {
-		const perPage: number = 10;
-		const downvoteCutline: number = 1;
+		try {
+			const perPage: number = 10;
+			const downvoteCutline: number = 1;
 
-		const result = await this.lostArkUnknownPostRepository.findAndCount({
-			relations: ["reply"], //댓글 정보 join
-			select: {
-				reply: { code: true },
-				code: true,
-				category: true,
-				title: true,
-				view: true,
-				upvote: true,
-				downvote: true,
-				ip: true,
-				hasImage: true,
-				createdAt: true,
-			},
-			where: {
-				deletedAt: IsNull(),
-				downvote: MoreThanOrEqual(downvoteCutline),
-			},
-			order: {
-				downvote: "DESC",
-				view: "DESC",
-				createdAt: "DESC",
-			},
-			withDeleted: true,
-			skip: (page - 1) * perPage,
-			take: perPage,
-		});
+			const result = await this.lostArkUnknownPostRepository.findAndCount({
+				relations: ["reply"], //댓글 정보 join
+				select: {
+					reply: { code: true },
+					code: true,
+					category: true,
+					title: true,
+					view: true,
+					upvote: true,
+					downvote: true,
+					ip: true,
+					hasImage: true,
+					createdAt: true,
+				},
+				where: {
+					deletedAt: IsNull(),
+					downvote: MoreThanOrEqual(downvoteCutline),
+				},
+				order: {
+					downvote: "DESC",
+					view: "DESC",
+					createdAt: "DESC",
+				},
+				withDeleted: true,
+				skip: (page - 1) * perPage,
+				take: perPage,
+			});
 
-		return result;
+			if (result !== null) {
+				//ip 전체 노출하지 않고 앞부분만 노출
+				for (let index: number = 0; index < result[0].length; index++) {
+					result[0][index]["ip"] = result[0][index]["ip"].split(".")[0] + (result[0][index]["ip"].split(".")[1] !== undefined ? "." + result[0][index]["ip"].split(".")[1] : "");
+				}
+			}
+
+			return result;
+		}
+		catch (error) {
+			this.errorLogService.createErrorLog(error);
+		}
 	}
 
 	/**
 	 * 조회 트랜드 게시글 목록 가져오기
 	 */
 	async getViewTrend(page: number, searchType: string, searchText: string): Promise<[LostArkUnknownPost[], number]> {
-		const perPage: number = 10;
-		const viewCutline: number = 1;
+		try {
+			const perPage: number = 10;
+			const viewCutline: number = 1;
 
-		const result = await this.lostArkUnknownPostRepository.findAndCount({
-			relations: ["reply"], //댓글 정보 join
-			select: {
-				reply: { code: true },
-				code: true,
-				category: true,
-				title: true,
-				view: true,
-				upvote: true,
-				downvote: true,
-				ip: true,
-				hasImage: true,
-				createdAt: true,
-			},
-			where: {
-				deletedAt: IsNull(),
-				view: MoreThanOrEqual(viewCutline),
-			},
-			order: {
-				view: "DESC",
-				upvote: "DESC",
-				downvote: "ASC",
-				createdAt: "DESC",
-			},
-			withDeleted: true,
-			skip: (page - 1) * perPage,
-			take: perPage,
-		});
+			const result = await this.lostArkUnknownPostRepository.findAndCount({
+				relations: ["reply"], //댓글 정보 join
+				select: {
+					reply: { code: true },
+					code: true,
+					category: true,
+					title: true,
+					view: true,
+					upvote: true,
+					downvote: true,
+					ip: true,
+					hasImage: true,
+					createdAt: true,
+				},
+				where: {
+					deletedAt: IsNull(),
+					view: MoreThanOrEqual(viewCutline),
+				},
+				order: {
+					view: "DESC",
+					upvote: "DESC",
+					downvote: "ASC",
+					createdAt: "DESC",
+				},
+				withDeleted: true,
+				skip: (page - 1) * perPage,
+				take: perPage,
+			});
 
-		return result;
+			if (result !== null) {
+				//ip 전체 노출하지 않고 앞부분만 노출
+				for (let index: number = 0; index < result[0].length; index++) {
+					result[0][index]["ip"] = result[0][index]["ip"].split(".")[0] + (result[0][index]["ip"].split(".")[1] !== undefined ? "." + result[0][index]["ip"].split(".")[1] : "");
+				}
+			}
+
+			return result;	
+		}
+		catch (error) {
+			this.errorLogService.createErrorLog(error);
+		}
 	}
 
 	//=================================================================================================================================================================================

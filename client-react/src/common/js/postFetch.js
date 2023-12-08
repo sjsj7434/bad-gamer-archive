@@ -27,13 +27,13 @@ export const getPostList = async (postType, searchType, searchText, page) => {
 /**
  * postType의 Trend 게시글 목록을 가져온다
  */
-export const getTrendPostList = async (postType, searchType, searchText, page) => {
+export const getTrendPostList = async (postType, trendType, searchType, searchText, page) => {
 	const fecthOption = {
 		method: "GET"
 		, headers: {"Content-Type": "application/json",}
 		, credentials: "include", // Don't forget to specify this if you need cookies
 	};
-	const fetchResponse = await fetch(`/boards/trend/${postType}/list/${page}?searchType=${searchType}&searchText=${searchText}`, fecthOption);
+	const fetchResponse = await fetch(`/boards/${postType}/trend/${trendType}/list/${page}?searchType=${searchType}&searchText=${searchText}`, fecthOption);
 	const [isStatusGood, checkMessage] = isFetchStatusGood(fetchResponse);
 
 	if(isStatusGood === true){

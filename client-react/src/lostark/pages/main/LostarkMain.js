@@ -1,6 +1,6 @@
 import Container from 'react-bootstrap/Container';
 import { Routes, Route } from "react-router-dom";
-import TrendPost from './trend/TrendPost';
+import TrendUnknownPost from './trend/TrendUnknownPost';
 import Carousel from 'react-bootstrap/Carousel';
 import Image from 'react-bootstrap/Image';
 import Row from 'react-bootstrap/esm/Row';
@@ -37,7 +37,7 @@ const LostarkMain = () => {
 						<hr/>
 						
 						<div style={{ backgroundColor: "", padding: "0.5rem" }}>
-							<TrendPost category={"over 10 upvote"}></TrendPost>
+							<TrendUnknownPost />
 						</div>
 					</>
 				}></Route>
