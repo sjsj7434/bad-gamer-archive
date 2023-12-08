@@ -14,7 +14,6 @@ export const getVerificationCode = async () => {
 
 	if(isStatusGood === true){
 		const fetchData = await getFetchText(fetchResponse);
-		console.log('getVerificationCode =>', fetchData)
 
 		return fetchData;
 	}
@@ -39,7 +38,6 @@ export const checkProfileTokenMatchAPI = async (stoveCode) => {
 
 	if(isStatusGood === true){
 		const fetchData = await getFetchJson(fetchResponse);
-		console.log('checkProfileTokenMatchAPI =>', fetchData)
 
 		return fetchData;
 	}
@@ -64,7 +62,6 @@ export const checkProfileTokenMatchScrap = async (stoveCode) => {
 
 	if(isStatusGood === true){
 		const fetchData = await getFetchJson(fetchResponse);
-		console.log('checkProfileTokenMatchScrap =>', fetchData)
 
 		return fetchData;
 	}
@@ -89,7 +86,6 @@ export const isDuplicatedID = async (id) => {
 
 	if(isStatusGood === true){
 		const fetchData = await getFetchText(fetchResponse);
-		console.log('isDuplicatedID =>', fetchData)
 
 		return fetchData;
 	}
@@ -114,7 +110,6 @@ export const isDuplicatedNickname = async (nickname) => {
 
 	if(isStatusGood === true){
 		const fetchData = await getFetchText(fetchResponse);
-		console.log('isDuplicatedNickname =>', fetchData)
 
 		return fetchData;
 	}
@@ -141,7 +136,6 @@ export const createAccount = async (accountInfo) => {
 
 	if(isStatusGood === true){
 		const fetchData = await getFetchText(fetchResponse);
-		console.log('createAccount =>', fetchData)
 
 		if(isNaN(fetchData) === true){
 			return null;
@@ -172,7 +166,6 @@ export const loginAccount = async (accountInfo) => {
 
 	if(isStatusGood === true){
 		const fetchData = await getFetchText(fetchResponse);
-		console.log('loginAccount =>', fetchData)
 
 		return fetchData;
 	}
@@ -196,7 +189,6 @@ export const checkLoginStatus = async () => {
 
 	if(isStatusGood === true){
 		const fetchData = await getFetchJson(fetchResponse);
-		console.log('checkLoginStatus =>', fetchData)
 
 		return fetchData;
 	}
@@ -232,7 +224,6 @@ export const getCharacterInfoScrap = async (characterName) => {
 
 	if(isStatusGood === true){
 		const fetchData = await getFetchJson(fetchResponse);
-		console.log('getCharacterInfoScrap =>', fetchData)
 
 		return fetchData;
 	}
@@ -247,7 +238,6 @@ export const getCharacterInfoScrap = async (characterName) => {
  * lostark 캐릭터 설정
  */
 export const setLostarkCharacter = async (accountInfo) => {
-	console.log(accountInfo)
 	const fecthOption = {
 		method: "PUT"
 		, body: JSON.stringify(accountInfo)
@@ -259,7 +249,6 @@ export const setLostarkCharacter = async (accountInfo) => {
 
 	if(isStatusGood === true){
 		const fetchData = await getFetchText(fetchResponse);
-		console.log('setLostarkCharacter =>', fetchData)
 
 		return fetchData;
 	}
@@ -284,7 +273,6 @@ export const changeLostarkCharacter = async () => {
 
 	if(isStatusGood === true){
 		const fetchData = await getFetchJson(fetchResponse);
-		console.log('changeLostarkCharacter =>', fetchData)
 
 		return fetchData;
 	}
@@ -309,7 +297,6 @@ export const renewLostarkCharacter = async () => {
 
 	if(isStatusGood === true){
 		const fetchData = await getFetchText(fetchResponse);
-		console.log('renewLostarkCharacter =>', fetchData)
 
 		return fetchData;
 	}
@@ -324,7 +311,6 @@ export const renewLostarkCharacter = async () => {
  * lostark 캐릭터 설정하지 않고 종료
  */
 export const exitLostarkAuthentication = async (accountInfo) => {
-	console.log(accountInfo)
 	const fecthOption = {
 		method: "POST"
 		, body: JSON.stringify(accountInfo)
@@ -336,7 +322,6 @@ export const exitLostarkAuthentication = async (accountInfo) => {
 
 	if(isStatusGood === true){
 		const fetchData = await getFetchText(fetchResponse);
-		console.log('exitLostarkAuthentication =>', fetchData)
 
 		return fetchData;
 	}
@@ -362,7 +347,6 @@ export const deactivateLostarkCharacter = async (sendData) => {
 
 	if(isStatusGood === true){
 		const fetchData = await getFetchText(fetchResponse);
-		console.log('deactivateLostarkCharacter =>', fetchData)
 
 		return fetchData;
 	}
@@ -387,7 +371,6 @@ export const getMyInfo = async () => {
 
 	if(isStatusGood === true){
 		const fetchData = await getFetchJson(fetchResponse);
-		console.log('getMyInfo =>', fetchData)
 
 		return fetchData;
 	}
@@ -413,7 +396,6 @@ export const renewPassword = async (sendData) => {
 
 	if(isStatusGood === true){
 		const fetchData = await getFetchJson(fetchResponse);
-		console.log('renewPassword =>', fetchData)
 
 		return fetchData;
 	}
@@ -439,7 +421,6 @@ export const renewNickname = async (sendData) => {
 
 	if(isStatusGood === true){
 		const fetchData = await getFetchJson(fetchResponse);
-		console.log('renewNickname =>', fetchData)
 
 		return fetchData;
 	}
@@ -464,7 +445,6 @@ export const requestVerifyEmail = async () => {
 
 	if(isStatusGood === true){
 		const fetchData = await getFetchText(fetchResponse);
-		console.log('requestVerifyEmail =>', fetchData)
 
 		return fetchData;
 	}
@@ -490,7 +470,6 @@ export const requestPasswordReset = async (sendData) => {
 
 	if(isStatusGood === true){
 		const fetchData = await getFetchText(fetchResponse);
-		console.log('requestPasswordReset =>', fetchData)
 
 		return fetchData;
 	}
@@ -516,7 +495,6 @@ export const resetPassword = async (sendData) => {
 
 	if(isStatusGood === true){
 		const fetchData = await getFetchText(fetchResponse);
-		console.log('resetPassword =>', fetchData)
 
 		return fetchData;
 	}
@@ -541,7 +519,6 @@ export const checkPasswordForgotCode = async (verificationCode) => {
 
 	if(isStatusGood === true){
 		const fetchData = await getFetchText(fetchResponse);
-		console.log('checkPasswordForgotCode =>', fetchData)
 
 		return fetchData;
 	}
@@ -566,7 +543,6 @@ export const deleteAccount = async () => {
 
 	if(isStatusGood === true){
 		const fetchData = await getFetchText(fetchResponse);
-		console.log('deleteAccount =>', fetchData)
 
 		return fetchData;
 	}
