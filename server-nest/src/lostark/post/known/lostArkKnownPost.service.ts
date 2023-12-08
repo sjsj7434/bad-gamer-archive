@@ -321,25 +321,36 @@ export class LostArkKnownPostService {
 				whereClause = [
 					{
 						deletedAt: IsNull(),
-					accounts: {
-						authentication: [
-							{ type: Equal("lostark_item_level") },
-							{ type: IsNull() },
-						]
-					},
+						accounts: {
+							authentication: [
+								{ type: Equal("lostark_item_level") },
+								{ type: IsNull() },
+							]
+						},
 						title: Like(`%${searchText}%`),
 					},
 					{
 						deletedAt: IsNull(),
-					accounts: {
-						authentication: [
-							{ type: Equal("lostark_item_level") },
-							{ type: IsNull() },
-						]
-					},
+						accounts: {
+							authentication: [
+								{ type: Equal("lostark_item_level") },
+								{ type: IsNull() },
+							]
+						},
 						content: Like(`%${searchText}%`),
 					},
 				]
+			}
+		}
+		else {
+			whereClause = {
+				deletedAt: IsNull(),
+				accounts: {
+					authentication: [
+						{ type: Equal("lostark_item_level") },
+						{ type: IsNull() },
+					]
+				},
 			}
 		}
 

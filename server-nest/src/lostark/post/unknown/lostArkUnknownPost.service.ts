@@ -292,6 +292,11 @@ export class LostArkUnknownPostService {
 					]
 				}
 			}
+			else {
+				whereClause = {
+					deletedAt: IsNull(),
+				}
+			}
 
 			const result = await this.lostArkUnknownPostRepository.findAndCount({
 				relations: ["reply"], //댓글 정보 join
