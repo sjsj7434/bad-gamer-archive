@@ -25,16 +25,16 @@ import ActivateLostarkAPI from './accounts/ActivateLostarkAPI';
 import ResetPasswordForm from './accounts/ResetPasswordForm';
 import RenewPasswordForm from './accounts/RenewPasswordForm';
 
-import AnnounceContentList from './post/announce/AnnounceContentList.js';
-import AnnounceContentView from './post/announce/AnnounceContentView.js';
+import AnnouncePostList from './post/announce/AnnouncePostList.js';
+import AnnouncePostView from './post/announce/AnnouncePostView.js';
 
-import UnknownContentList from './post/unknown/UnknownContentList.js';
-import UnknownContentView from './post/unknown/UnknownContentView.js';
-import UnknownContentWrite from './post/unknown/UnknownContentWrite.js';
+import UnknownPostList from './post/unknown/UnknownPostList.js';
+import UnknownPostView from './post/unknown/UnknownPostView.js';
+import UnknownPostWrite from './post/unknown/UnknownPostWrite.js';
 
-import KnownContentList from './post/known/KnownContentList.js';
-import KnownContentView from './post/known/KnownContentView.js';
-import KnownContentWrite from './post/known/KnownContentWrite.js';
+import KnownPostList from './post/known/KnownPostList.js';
+import KnownPostView from './post/known/KnownPostView.js';
+import KnownPostWrite from './post/known/KnownPostWrite.js';
 
 // import CharacterInfo from '../../lostark/pages/character/CharacterInfo';
 
@@ -89,28 +89,28 @@ const RoutesWrapper = () => {
 								<Route path=":page" element={
 									<>
 										<SetActiveMenu pageTitle="Agora(LA)" setCurrentMenu={setCurrentMenu} menuCode={"/lostark/post/unknown"} />
-										<UnknownContentList />
+										<UnknownPostList />
 									</>
 								} />
 
 								<Route path="view/:contentCode" element={
 									<>
 										<SetActiveMenu pageTitle="Agora(LA)" setCurrentMenu={setCurrentMenu} menuCode={"/lostark/post/unknown"} />
-										<UnknownContentView />
+										<UnknownPostView />
 									</>
 								} />
 
 								<Route path="write" element={
 									<>
 										<SetActiveMenu pageTitle="Agora(LA)" setCurrentMenu={setCurrentMenu} menuCode={"/lostark/post/unknown"} />
-										<UnknownContentWrite />
+										<UnknownPostWrite />
 									</>
 								} />
 
 								<Route path="edit/:contentCode" element={
 									<>
 										<SetActiveMenu pageTitle="Agora(LA)" setCurrentMenu={setCurrentMenu} menuCode={"/lostark/post/unknown"} />
-										<UnknownContentWrite />
+										<UnknownPostWrite />
 									</>
 								} />
 							</Route>
@@ -123,14 +123,14 @@ const RoutesWrapper = () => {
 								<Route path=":page" element={
 									<>
 										<SetActiveMenu pageTitle="Agora(LA)" setCurrentMenu={setCurrentMenu} menuCode={"/lostark/post/known"} />
-										<KnownContentList />
+										<KnownPostList />
 									</>
 								} />
 
 								<Route path="view/:contentCode" element={
 									<>
 										<SetActiveMenu pageTitle="Agora(LA)" setCurrentMenu={setCurrentMenu} menuCode={"/lostark/post/known"} />
-										<KnownContentView accountData={accountData} />
+										<KnownPostView accountData={accountData} />
 									</>
 								} />
 
@@ -140,7 +140,7 @@ const RoutesWrapper = () => {
 										ifAllow={
 											<>
 												<SetActiveMenu pageTitle="Agora(LA)" setCurrentMenu={setCurrentMenu} menuCode={"/lostark/post/known"} />
-												<KnownContentWrite accountData={accountData} />
+												<KnownPostWrite accountData={accountData} />
 											</>
 										}
 									/>
@@ -152,7 +152,7 @@ const RoutesWrapper = () => {
 										ifAllow={
 											<>
 												<SetActiveMenu pageTitle="Agora(LA)" setCurrentMenu={setCurrentMenu} menuCode={"/lostark/post/known"} />
-												<KnownContentWrite accountData={accountData} />
+												<KnownPostWrite accountData={accountData} />
 											</>
 										}
 									/>
@@ -270,14 +270,14 @@ const RoutesWrapper = () => {
 						<Route path=":page" element={
 							<>
 								<SetActiveMenu pageTitle="Agora(LA)" setCurrentMenu={setCurrentMenu} menuCode={"/post/announce"} />
-								<AnnounceContentList />
+								<AnnouncePostList />
 							</>
 						} />
 
 						<Route path="view/:contentCode" element={
 							<>
 								<SetActiveMenu pageTitle="Agora(LA)" setCurrentMenu={setCurrentMenu} menuCode={"/post/announce"} />
-								<AnnounceContentView accountData={accountData} />
+								<AnnouncePostView accountData={accountData} />
 							</>
 						} />
 					</Route>

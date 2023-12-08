@@ -3,20 +3,25 @@ import { useState, useEffect, useCallback } from 'react';
 import MyEditor from '../MyEditor'
 import Form from 'react-bootstrap/Form';
 import Container from 'react-bootstrap/Container';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
 import Placeholder from 'react-bootstrap/Placeholder';
+import InputGroup from 'react-bootstrap/InputGroup';
 import Button from 'react-bootstrap/Button';
 import ProgressBar from 'react-bootstrap/ProgressBar';
 import LoadingModal from '../../common/LoadingModal';
 import * as postFetch from '../../../js/postFetch';
 import '../../../css/View.css';
 
-const KnownContentWrite = (props) => {
+const UnknownPostWrite = (props) => {
 	const [writeMode, setWriteMode] = useState("");
 	const [contentCode, setContentCode] = useState(null);
 	const [renderData, setRenderData] = useState(<></>);
 	const [contentTitle, setContentTitle] = useState("");
 	const [contentData, setContentData] = useState("");
+	const [contentPassword, setContentPassword] = useState("");
 	const [identity, setIdentity] = useState(false);
+	const [failMessage, setFailMessage] = useState(<>&nbsp;</>);
 	const [editorSizeByte, setEditorSizeByte] = useState(0);
 	const [loadingModalShow, setLoadingModalShow] = useState(false);
 	const [loadingModalMessage, setLoadingModalMessage] = useState("");
@@ -30,18 +35,26 @@ const KnownContentWrite = (props) => {
 	 * 신규 게시글 작성
 	 */
 	const saveEditorData = useCallback(async () => {
+		const passwordElement = document.querySelector("#contentPassword");
 		const titleElement = document.querySelector("#title");
 
-		if(titleElement.value === ""){
+		if(passwordElement.value === ""){
+			alert("게시글의 수정&삭제를 위해 비밀번호를 입력해주세요");
+			passwordElement.focus();
+			return;
+		}
+		else if(titleElement.value === ""){
 			alert("제목을 입력해주세요");
 			titleElement.focus();
 			return;
 		}
-		else if(editorSizeByte >= editorMaxKB){
+
+		if(editorSizeByte >= editorMaxKB){
 			alert("작성된 글의 용량이 너무 큽니다");
 			return;
 		}
-		else if(window.confirm("게시글을 저장하시겠습니까?") === false){
+
+		if(window.confirm("게시글을 저장하시겠습니까?") === false){
 			return;
 		}
 
@@ -54,9 +67,10 @@ const KnownContentWrite = (props) => {
 			title: titleElement.value,
 			content: editorContet,
 			hasImage: editorContet.indexOf("<img") > -1 ? true : false,
+			password: passwordElement.value,
 		};
 
-		const createResult = await postFetch.createContentUserBoard(sendData);
+		const createResult = await postFetch.createContent("anonymous", sendData);
 
 		if(createResult.createdCode === 0){
 			if(createResult.status === "long_title"){
@@ -67,15 +81,11 @@ const KnownContentWrite = (props) => {
 				alert(`작성된 글의 용량이 너무 커 저장할 수 없습니다(최대 ${editorMaxKB}KB)`);
 				setLoadingModalShow(false);
 			}
-			else if(createResult.status === "need_login"){
-				alert("로그인이 필요합니다");
-				setLoadingModalShow(false);
-				navigate("/accounts/login");
-			}
 		}
 		else{
-			navigate(`/lostark/post/known/view/${createResult.createdCode}`);
+			navigate(`/lostark/post/unknown/view/${createResult.createdCode}`);
 		}
+
 	}, [editorObject, editorSizeByte, editorMaxKB, navigate])
 
 	/**
@@ -107,12 +117,13 @@ const KnownContentWrite = (props) => {
 
 		const sendData = {
 			code: contentCode,
+			password: contentPassword,
 			title: titleElement.value,
 			content: editorContet,
 			hasImage: editorContet.indexOf("<img") > -1 ? true : false,
 		};
 
-		let result = await postFetch.updateContent("user", sendData);
+		let result = await postFetch.updateContent("anonymous", sendData);
 
 		if(result === null){
 			alert("문제가 발생하여 게시글을 수정할 수 없습니다(1)");
@@ -126,9 +137,9 @@ const KnownContentWrite = (props) => {
 		}
 		else{
 			//정상적으로 처리 성공
-			navigate(`/lostark/post/known/view/${contentCode}`);
+			navigate(`/lostark/post/unknown/view/${contentCode}`);
 		}
-	}, [contentCode, editorObject, editorSizeByte, editorMaxKB, navigate])
+	}, [contentCode, contentPassword, editorObject, editorSizeByte, editorMaxKB, navigate])
 
 	useEffect(() => {
 		if(params.contentCode !== undefined){
@@ -145,8 +156,8 @@ const KnownContentWrite = (props) => {
 		/**
 		 * 게시글 정보 가져오기
 		 */
-		const readContent = async () => {
-			const readResult = await postFetch.readContent("user", contentCode, "edit");
+		const getContentData = async () => {
+			const readResult = await postFetch.getContentData("anonymous", contentCode);
 			const contentData = readResult.contentData;
 	
 			setContentTitle(contentData.title);
@@ -154,30 +165,40 @@ const KnownContentWrite = (props) => {
 		}
 
 		if(contentCode !== null && identity === true){
-			readContent();
+			getContentData();
 		}
 	}, [contentCode, identity])
 
 	useEffect(() => {
 		/**
-		 * 수정 진입 전에 게시글 작성자 정보 확인
+		 * 수정 진입 전에 게시글 비밀번호 확인
 		 */
 		const checkBeforeEdit = async () => {
+			const contentPasswordElement = document.querySelector("#contentPassword");
+
+			if(contentPasswordElement.value === ""){
+				alert("비밀번호를 입력해주세요");
+				contentPasswordElement.focus();
+				return;
+			}
+
 			setLoadingModalShow(true);
-			setLoadingModalMessage("작성자 정보 확인 중...");
+			setLoadingModalMessage("비밀번호 확인 중...");
+			setFailMessage(<>&nbsp;</>);
 
 			const sendData = {
 				code: contentCode,
+				password: contentPasswordElement.value,
 			};
 			
-			const checkResult = await postFetch.checkBeforeEdit("user", sendData);
+			const checkResult = await postFetch.checkBeforeEdit("anonymous", sendData)
 
 			if(checkResult === true){
 				setIdentity(true);
+				setContentPassword(contentPasswordElement.value);
 			}
 			else{
-				alert("작성자가 아닙니다");
-				window.history.back();
+				setFailMessage(<><b>[ ! ]</b> 올바른 비밀번호가 아닙니다</>);
 			}
 
 			setLoadingModalShow(false);
@@ -187,7 +208,15 @@ const KnownContentWrite = (props) => {
 		if(writeMode === "new"){
 			setRenderData(
 				<>
-					자유 게시판
+					익명 게시판
+					<Row className="g-2">
+						<Col>
+							<Form.Control id="writer" type="text" placeholder="작성자" defaultValue={"익명"} style={{marginBottom: "10px", fontSize: "0.8rem"}} readOnly />
+						</Col>
+						<Col>
+							<Form.Control id="contentPassword" type="password" placeholder="비밀번호" maxLength={20} style={{marginBottom: "10px", fontSize: "0.8rem"}} />
+						</Col>
+					</Row>
 					<Form.Control id="title" type="text" placeholder="제목" style={{marginBottom: "10px", fontSize: "0.8rem"}} defaultValue={""} />
 					
 					<MyEditor
@@ -209,14 +238,50 @@ const KnownContentWrite = (props) => {
 						&nbsp;
 						<Button onClick={() => {if(window.confirm("작성한 내용을 전부 비우시겠습니까?") === true){editorObject.setData("")}}} variant="outline-danger" style={{width: "20%", minWidth: "60px", maxWidth: "200px", fontSize: "0.8rem"}}>비우기</Button>
 						&nbsp;
-						<Button onClick={() => {if(window.confirm("작성한 내용을 저장하지않고 나가시겠습니까?") === true){navigate("/lostark/post/known/1")}}} variant="outline-secondary" style={{width: "20%", minWidth: "60px", maxWidth: "200px", fontSize: "0.8rem"}}>취소</Button>
+						<Button onClick={() => {if(window.confirm("작성한 내용을 저장하지않고 나가시겠습니까?") === true){navigate("/lostark/post/unknown/1")}}} variant="outline-secondary" style={{width: "20%", minWidth: "60px", maxWidth: "200px", fontSize: "0.8rem"}}>취소</Button>
 					</div>
 				</>
 			)
 		}
 		else if(writeMode === "edit"){
 			if(identity !== true){
-				checkBeforeEdit()
+				setRenderData(
+					<Container style={{maxWidth: "600px"}}>
+						<Form>
+							<Form.Group as={Row} className="mb-3">
+								<Form.Label style={{fontWeight: "800", fontSize: "0.8rem"}}>
+									게시글 비밀번호를 입력해주세요
+								</Form.Label>
+								<Col>
+									<InputGroup>
+										<Form.Control id="contentPassword" maxLength={20} type="password" autoComplete="off" placeholder="게시글 비밀번호를 입력해주세요" onKeyDown={(event) => {if(event.key === "Enter"){checkBeforeEdit()}}} style={{fontSize: "0.8rem"}} />
+									</InputGroup>
+									<Form.Text style={{color: "red", fontSize: "0.8rem"}}>
+										{failMessage}
+									</Form.Text>
+								</Col>
+							</Form.Group>
+						</Form>
+
+						<div style={{display: "flex", justifyContent: "flex-end", marginBottom: "15px", marginTop: "30px"}}>
+							<Button
+								onClick={() => {checkBeforeEdit()}}
+								variant="outline-primary"
+								style={{width: "20%", minWidth: "60px", maxWidth: "200px", fontSize: "0.8rem"}}
+							>
+								확인
+							</Button>
+							&nbsp;
+							<Button
+								onClick={() => {if(window.confirm("내용을 수정하지않고 나가시겠습니까?") === true){navigate(`/lostark/post/unknown/view/${contentCode}`)}}}
+								variant="outline-secondary"
+								style={{width: "20%", minWidth: "60px", maxWidth: "200px", fontSize: "0.8rem"}}
+							>
+								취소
+							</Button>
+						</div>
+					</Container>
+				);
 			}
 			else{
 				if(contentData === "" && contentTitle === ""){
@@ -241,7 +306,7 @@ const KnownContentWrite = (props) => {
 				else{
 					setRenderData(
 						<>
-							유저 게시판
+							익명 게시판
 							<br />
 							<Form.Control id="title" type="text" placeholder="제목" style={{marginBottom: "10px", fontSize: "0.8rem"}} defaultValue={contentTitle} />
 
@@ -269,7 +334,7 @@ const KnownContentWrite = (props) => {
 								</Button>
 								&nbsp;
 								<Button
-									onClick={() => {if(window.confirm("내용을 수정하지않고 나가시겠습니까?") === true){navigate(`/lostark/post/known/view/${contentCode}`)}}}
+									onClick={() => {if(window.confirm("내용을 수정하지않고 나가시겠습니까?") === true){navigate(`/lostark/post/unknown/view/${contentCode}`)}}}
 									variant="outline-secondary"
 									style={{width: "20%", minWidth: "60px", maxWidth: "200px", fontSize: "0.8rem"}}
 								>
@@ -281,14 +346,14 @@ const KnownContentWrite = (props) => {
 				}
 			}
 		}
-	}, [writeMode, contentCode, contentTitle, contentData, identity, editorObject, editorSizeByte, saveEditorData, editEditorData, navigate, props.accountData.id])
+	}, [writeMode, contentCode, contentTitle, contentData, identity, failMessage, editorObject, editorSizeByte, saveEditorData, editEditorData, navigate])
 	
 	return(
-		<Container style={{maxWidth: "1000px"}}>
+		<Container style={{maxWidth: "1200px"}}>
 			{renderData}
 			<LoadingModal showModal={loadingModalShow} message={loadingModalMessage}/>
 		</Container>
 	);
 }
 
-export default KnownContentWrite;
+export default UnknownPostWrite;

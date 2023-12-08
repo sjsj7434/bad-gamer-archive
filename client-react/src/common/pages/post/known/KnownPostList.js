@@ -6,9 +6,9 @@ import CustomPagination from '../CustomPagination';
 import Form from 'react-bootstrap/Form';
 import InputGroup from 'react-bootstrap/InputGroup';
 import * as postFetch from '../../../js/postFetch';
-import UnknownPostRow from './UnknownPostRow';
+import KnownPostRow from './KnownPostRow';
 
-const UnknownContentList = () => {
+const KnownPostList = () => {
 	const [page, setPage] = useState(null);
 	const [renderData, setRenderData] = useState(<></>);
 	const [searchType, setSearchType] = useState("");
@@ -23,7 +23,7 @@ const UnknownContentList = () => {
 	const howManyPages = 5;
 
 	const readContentList = useCallback(async () => {
-		const contentListData = await postFetch.getPostList("anonymous", searchType, searchText, page);
+		const contentListData = await postFetch.getPostList("user", searchType, searchText, page);
 
 		setContentList(contentListData[0]);
 		setContentCount(contentListData[1]);
@@ -67,9 +67,9 @@ const UnknownContentList = () => {
 					);
 				}
 				else{
-					renderList.push(contentList.map((postData) => {
+					renderList.push(contentList.map((data) => {
 						return(
-							<UnknownPostRow key={"post" + postData.code} postData={postData} />
+							<KnownPostRow key={"post" + data.code} postData={data} />
 						);
 					}));
 				}
@@ -82,7 +82,7 @@ const UnknownContentList = () => {
 	useEffect(() => {
 		const pageMoveFunc = (pageIndex) => {
 			document.querySelector("h5").scrollIntoView({ behavior: "smooth", block: "center" });
-			navigate(`/lostark/post/unknown/${pageIndex}`);
+			navigate(`/lostark/post/known/${pageIndex}`);
 		}
 
 		setPaginationData(
@@ -100,7 +100,7 @@ const UnknownContentList = () => {
 						<path d="M.5 0a.5.5 0 0 1 .5.5v15a.5.5 0 0 1-1 0V.5A.5.5 0 0 1 .5 0zM2 1.5a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-4a.5.5 0 0 1-.5-.5v-1zm2 4a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-7a.5.5 0 0 1-.5-.5v-1zm2 4a.5.5 0 0 1 .5-.5h6a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-6a.5.5 0 0 1-.5-.5v-1zm2 4a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-7a.5.5 0 0 1-.5-.5v-1z"/>
 					</svg>
 					&nbsp;
-					익명 게시판
+					자유 게시판
 				</h5>
 				<hr/>
 			</div>
@@ -111,7 +111,7 @@ const UnknownContentList = () => {
 				</div>
 
 				<div style={{display: "flex", justifyContent: "flex-end"}}>
-					<Link to={`/lostark/post/unknown/write`} style={{width: "30%", maxWidth: "200px"}}>
+					<Link to={`/lostark/post/known/write`} style={{width: "30%", maxWidth: "200px"}}>
 						<Button id={"createReply"} variant="outline-primary" style={{width: "100%", padding: "1px"}}>
 							<span style={{fontSize: "0.8rem"}}>글쓰기</span>
 						</Button>
@@ -140,4 +140,4 @@ const UnknownContentList = () => {
 	);
 }
 
-export default UnknownContentList;
+export default KnownPostList;

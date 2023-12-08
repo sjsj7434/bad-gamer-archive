@@ -3,33 +3,23 @@ import { useNavigate, useParams } from "react-router-dom";
 import Container from 'react-bootstrap/Container';
 import Placeholder from 'react-bootstrap/Placeholder';
 import Button from 'react-bootstrap/Button';
-import UserReply from './KnownReply';
+import AnonymousReply from './UnknownReply';
 import LoadingModal from '../../common/LoadingModal';
 import * as postFetch from '../../../js/postFetch';
-import '../../../css/View.css';
 import MyEditor from '../MyEditor';
-import Modal from 'react-bootstrap/Modal';
-import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
+import '../../../css/View.css';
 
-const KnownContentView = (props) => {
+const UnknownPostView = (props) => {
 	const [contentCode, setContentCode] = useState(null);
 	const [upvoteCount, setUpvoteCount] = useState(0);
 	const [downvoteCount, setDownvoteCount] = useState(0);
 	const [contentJson, setContentJson] = useState(null);
-	const [isContentWriter, setIsContentWriter] = useState(false);
 	const [renderData, setRenderData] = useState(<></>);
 	const [loadingModalShow, setLoadingModalShow] = useState(false);
 	const [loadingModalMessage, setLoadingModalMessage] = useState("");
-	const [voteHistory, setVoteHistory] = useState(<></>);
-	const [showVote, setShowVote] = useState(false);
-	const [voteModalTitle, setVoteModalTitle] = useState("");
 	const navigate = useNavigate();
 	const params = useParams();
 
-	const closeVoteModal = () => setShowVote(false);
-	const showVoteModal = () => setShowVote(true);
-	
 	useEffect(() => {
 		setContentCode(params.contentCode);
 	}, [params.contentCode]);
@@ -39,17 +29,16 @@ const KnownContentView = (props) => {
 		 * code로 게시글 정보 가져오기
 		 */
 		const getContentData = async () => {
-			const readResult = await postFetch.readContent("user", contentCode);
+			const readResult = await postFetch.readContent("anonymous", contentCode);
 			const contentData = readResult.contentData;
 
 			if(contentData === null){
 				alert("존재하지 않는 게시물입니다");
-				navigate(`/lostark/post/known/1`);
+				navigate(`/lostark/post/unknown/1`);
 			}
 			else{
 				setUpvoteCount(contentData.upvote);
 				setDownvoteCount(contentData.downvote);
-				setIsContentWriter(readResult.isWriter);
 				setContentJson(contentData);
 			}
 		}
@@ -71,7 +60,7 @@ const KnownContentView = (props) => {
 									<path d="M4.085 1H3.5A1.5 1.5 0 0 0 2 2.5v12A1.5 1.5 0 0 0 3.5 16h9a1.5 1.5 0 0 0 1.5-1.5v-12A1.5 1.5 0 0 0 12.5 1h-.585c.055.156.085.325.085.5V2a1.5 1.5 0 0 1-1.5 1.5h-5A1.5 1.5 0 0 1 4 2v-.5c0-.175.03-.344.085-.5ZM10 7a1 1 0 1 1 2 0v5a1 1 0 1 1-2 0V7Zm-6 4a1 1 0 1 1 2 0v1a1 1 0 1 1-2 0v-1Zm4-3a1 1 0 0 1 1 1v3a1 1 0 1 1-2 0V9a1 1 0 0 1 1-1Z"/>
 								</svg>
 								&nbsp;
-								유저 게시판
+								{props.boardTitle}
 							</span>
 
 							<Placeholder as={"p"} animation="glow">
@@ -109,19 +98,24 @@ const KnownContentView = (props) => {
 			const deleteContent = async () => {
 				const sendData = {
 					code: contentCode,
+					password: "",
 				};
 
-				if(window.confirm("게시글을 삭제하시겠습니까?") === false){
+				const password = prompt("삭제하시려면 게시글의 비밀번호를 입력해주세요");
+				
+				if(password === null || password === ""){
 					return;
 				}
+
+				sendData.password = password;
 
 				setLoadingModalShow(true);
 				setLoadingModalMessage("게시글을 삭제 중입니다...");
 
-				const deleteResult = await postFetch.deleteContent("user", sendData);
+				const deleteResult = await postFetch.deleteContent("anonymous", sendData);
 
 				if(deleteResult === true){
-					navigate(`/lostark/post/known/1`);
+					navigate(`/lostark/post/unknown/1`);
 				}
 				else{
 					alert("정보가 올바르지않아 게시글을 삭제할 수 없습니다");
@@ -136,18 +130,13 @@ const KnownContentView = (props) => {
 			 * 수정은 비밀번호 입력한 사람만 가능한데, 굳이 DB에서 다시 읽어와야하나?
 			 */
 			const editContent = async () => {
-				navigate(`/lostark/post/known/edit/${contentCode}`);
+				navigate(`/lostark/post/unknown/edit/${contentCode}`);
 			}
 
 			/**
 			 * 게시글 추천
 			 */
 			const upvoteContent = async () => {
-				if(props.accountData.status !== "login"){
-					alert("로그인이 필요합니다");
-					return;
-				}
-
 				const downvoteButton = document.querySelector("#downvoteButton");
 				const upvoteButton = document.querySelector("#upvoteButton");
 				upvoteButton.disabled = true;
@@ -158,13 +147,13 @@ const KnownContentView = (props) => {
 				}
 
 				if(contentCode !== null){
-					const voteResult = await postFetch.upvoteContent("user", sendData);
+					const voteResult = await postFetch.upvoteContent("anonymous", sendData);
 
 					if(voteResult === null){
 						return;
 					}
 					else if(voteResult.isVotable === false){
-						alert("이미 게시물에 추천 또는 비추천을 하였습니다");
+						alert("오늘은 이미 해당 게시물에 추천, 비추천을 하였습니다");
 					}
 					else{
 						setUpvoteCount(voteResult.upvote);
@@ -180,11 +169,6 @@ const KnownContentView = (props) => {
 			 * 게시글 비추천
 			 */
 			const downvoteContent = async () => {
-				if(props.accountData.status !== "login"){
-					alert("로그인이 필요합니다");
-					return;
-				}
-
 				const downvoteButton = document.querySelector("#downvoteButton");
 				const upvoteButton = document.querySelector("#upvoteButton");
 				upvoteButton.disabled = true;
@@ -195,13 +179,13 @@ const KnownContentView = (props) => {
 				}
 
 				if(contentCode !== null){
-					const voteResult = await postFetch.downvoteContent("user", sendData);
+					const voteResult = await postFetch.downvoteContent("anonymous", sendData);
 
 					if(voteResult === null){
 						return;
 					}
 					else if(voteResult.isVotable === false){
-						alert("이미 게시물에 추천 또는 비추천을 하였습니다");
+						alert("오늘은 이미 해당 게시물에 추천, 비추천을 하였습니다");
 					}
 					else{
 						setUpvoteCount(voteResult.upvote);
@@ -210,54 +194,6 @@ const KnownContentView = (props) => {
 					
 					upvoteButton.disabled = false;
 					downvoteButton.disabled = false;
-				}
-			}
-
-			const showUpvoteUserList = async () => {
-				setVoteHistory(<><Placeholder xs={3} /> <Placeholder xs={1} /> <Placeholder xs={4} /></>);
-				showVoteModal();
-				setVoteModalTitle("추천 목록");
-
-				const voteResult = await postFetch.showUpvoteUserList(contentCode);
-
-				const voteListElement = voteResult.map((element) => {
-					return(
-						<Row key={element.voterNickname}>
-							<Col>{element.voterNickname}</Col>
-							<Col>{element.createdAt.substring(0, 10)}</Col>
-						</Row>
-					);
-				});
-
-				if(voteListElement.length > 0){
-					setVoteHistory(voteListElement);
-				}
-				else{
-					setVoteHistory(<>추천자가 존재하지 않습니다</>);
-				}
-			}
-
-			const showDownvoteUserList = async () => {
-				setVoteHistory(<><Placeholder xs={3} /> <Placeholder xs={1} /> <Placeholder xs={4} /></>);
-				showVoteModal();
-				setVoteModalTitle("비추천 목록");
-
-				const voteResult = await postFetch.showDownvoteUserList(contentCode);
-
-				const voteListElement = voteResult.map((element) => {
-					return(
-						<Row key={element.voterNickname}>
-							<Col>{element.voterNickname}</Col>
-							<Col>{element.createdAt.substring(0, 10)}</Col>
-						</Row>
-					);
-				});
-
-				if(voteListElement.length > 0){
-					setVoteHistory(voteListElement);
-				}
-				else{
-					setVoteHistory(<>비추천자가 존재하지 않습니다</>);
 				}
 			}
 
@@ -271,7 +207,7 @@ const KnownContentView = (props) => {
 									<path d="M4.085 1H3.5A1.5 1.5 0 0 0 2 2.5v12A1.5 1.5 0 0 0 3.5 16h9a1.5 1.5 0 0 0 1.5-1.5v-12A1.5 1.5 0 0 0 12.5 1h-.585c.055.156.085.325.085.5V2a1.5 1.5 0 0 1-1.5 1.5h-5A1.5 1.5 0 0 1 4 2v-.5c0-.175.03-.344.085-.5ZM10 7a1 1 0 1 1 2 0v5a1 1 0 1 1-2 0V7Zm-6 4a1 1 0 1 1 2 0v1a1 1 0 1 1-2 0v-1Zm4-3a1 1 0 0 1 1 1v3a1 1 0 1 1-2 0V9a1 1 0 0 1 1-1Z"/>
 								</svg>
 								&nbsp;
-								자유 게시판
+								익명 게시판
 							</span>
 
 							<div style={{ fontWeight: "800", fontSize: "1.5rem", wordBreak: "break-all" }}>
@@ -279,8 +215,7 @@ const KnownContentView = (props) => {
 							</div>
 							<div style={{fontWeight: "400", fontSize: "0.8rem"}}>
 								<span>
-									{contentJson.writerNickname}
-									{ contentJson.accounts.authentication[0] !== undefined ? `(${contentJson.accounts.authentication[0].data.replace(",", "")})` : "" }
+									익명 ({contentJson.ip})
 								</span>
 								&nbsp;|&nbsp;
 								<span>
@@ -306,7 +241,9 @@ const KnownContentView = (props) => {
 						{/*
 							sanitizer libraries for HTML XSS Attacks : DOMPurify
 						*/}
-						{/* <div dangerouslySetInnerHTML={{__html: contentJson.content}} style={{minHeight: "150px", overflowWrap: "anywhere", overflow: "auto", fontSize: "0.8rem"}}></div> */}
+						{/* <div className="ck ck-editor__main" style={{minHeight: "150px", overflowWrap: "anywhere", overflow: "auto"}}>
+							<div className="ck-blurred ck ck-content ck-editor__editable ck-rounded-corners ck-editor__editable_inline ck-read-only ck-column-resize_disabled" dangerouslySetInnerHTML={{__html: contentJson.content}}></div>
+						</div> */}
 						<div style={{ minHeight: "20rem" }}>
 							<MyEditor
 								editorMode={"read"}
@@ -338,61 +275,30 @@ const KnownContentView = (props) => {
 								<span style={{fontSize: "0.85rem"}}>비추천</span>
 							</Button>
 						</div>
-						<div style={{display: "flex", justifyContent: "center", marginTop: "10px"}}>
-							<Button variant="success" onClick={() => { showUpvoteUserList() }} style={{ width: "30%", maxWidth: "130px", padding: "2px", fontSize: "0.85rem" }}>목록 확인</Button>
-							&nbsp;&nbsp;
-							<Button variant="danger" onClick={() => { showDownvoteUserList() }} style={{ width: "30%", maxWidth: "130px", padding: "2px", fontSize: "0.85rem" }}>목록 확인</Button>
-						</div>
 						
-						{
-							isContentWriter === true ?
-							<>
-								<div style={{display: "flex", justifyContent: "flex-end", marginBottom: "15px", marginTop: "30px"}}>
-									<Button onClick={() => {editContent()}} variant="outline-primary" style={{padding: "2px", width: "8%", minWidth: "60px", maxWidth: "100px", fontSize: "0.8rem"}}>수정</Button>
-									&nbsp;
-									<Button onClick={() => {deleteContent()}} variant="outline-danger" style={{padding: "2px", width: "8%", minWidth: "60px", maxWidth: "100px", fontSize: "0.8rem"}}>삭제</Button>
-									&nbsp;
-									<Button onClick={() => {navigate(`/lostark/post/known/1`)}} variant="outline-secondary" style={{padding: "2px", width: "8%", minWidth: "70px", maxWidth: "100px", fontSize: "0.8rem"}}>목록으로</Button>
-								</div>
-							</>
-							:
-							<>
-								<div style={{display: "flex", justifyContent: "flex-end", marginBottom: "15px", marginTop: "30px"}}>
-									<Button onClick={() => {navigate(`/lostark/post/known/1`)}} variant="outline-secondary" style={{padding: "2px", width: "8%", minWidth: "70px", maxWidth: "100px", fontSize: "0.8rem"}}>목록으로</Button>
-								</div>
-							</>
-						}
+						<div style={{display: "flex", justifyContent: "flex-end", marginBottom: "15px", marginTop: "30px"}}>
+							<Button onClick={() => {editContent()}} variant="outline-primary" style={{padding: "2px", width: "8%", minWidth: "60px", maxWidth: "100px", fontSize: "0.8rem"}}>수정</Button>
+							&nbsp;
+							<Button onClick={() => {deleteContent()}} variant="outline-danger" style={{padding: "2px", width: "8%", minWidth: "60px", maxWidth: "100px", fontSize: "0.8rem"}}>삭제</Button>
+							&nbsp;
+							<Button onClick={() => {navigate(`/lostark/post/unknown/1`)}} variant="outline-secondary" style={{padding: "2px", width: "8%", minWidth: "70px", maxWidth: "100px", fontSize: "0.8rem"}}>목록으로</Button>
+						</div>
 
 						<hr style={{border: "1px solid #5893ff"}} />
 						
-						<UserReply accountData={props.accountData} contentCode={contentCode} />
+						<AnonymousReply contentCode={contentCode} />
 					</div>
 				</>
 			);
 		}
-	}, [contentCode, contentJson, upvoteCount, downvoteCount, isContentWriter, voteHistory, navigate, props.accountData]);
+	}, [contentCode, contentJson, upvoteCount, downvoteCount, navigate, props.boardTitle]);
 	
 	return(
 		<Container style={{maxWidth: "1200px"}}>
 			{renderData}
-
 			<LoadingModal showModal={loadingModalShow} message={loadingModalMessage}/>
-			
-			<Modal show={showVote} onHide={closeVoteModal} backdrop="static" keyboard={false} centered>
-				<Modal.Header closeButton>
-					<Modal.Title>{voteModalTitle}</Modal.Title>
-				</Modal.Header>
-
-				<Modal.Body style={{ maxHeight: "20rem", overflow: "auto" }}>{voteHistory}</Modal.Body>
-
-				<Modal.Footer>
-					<Button variant="secondary" onClick={closeVoteModal}>
-						닫기
-					</Button>
-				</Modal.Footer>
-			</Modal>
 		</Container>
 	);
 }
 
-export default KnownContentView;
+export default UnknownPostView;

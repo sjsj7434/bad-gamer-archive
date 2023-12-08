@@ -7,7 +7,7 @@ import * as postFetch from '../../../js/postFetch';
 import '../../../css/View.css';
 import MyEditor from '../MyEditor';
 
-const AnnounceContentView = (props) => {
+const AnnouncePostView = (props) => {
 	const [contentCode, setContentCode] = useState(null);
 	const [upvoteCount, setUpvoteCount] = useState(0);
 	const [downvoteCount, setDownvoteCount] = useState(0);
@@ -255,4 +255,4 @@ const AnnounceContentView = (props) => {
 	);
 }
 
-export default AnnounceContentView;
+export default AnnouncePostView;
