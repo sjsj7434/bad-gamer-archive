@@ -111,7 +111,7 @@ export class LostArkUnknownPostService {
 	 */
 	async getUpvoteTrend(page: number, searchType: string, searchText: string): Promise<[LostArkUnknownPost[], number]> {
 		try {
-			const perPage: number = 10;
+			const perPage: number = 5;
 			const upvoteCutline: number = 1;
 
 			const result = await this.lostArkUnknownPostRepository.findAndCount({
@@ -161,7 +161,7 @@ export class LostArkUnknownPostService {
 	 */
 	async getDownvoteTrend(page: number, searchType: string, searchText: string): Promise<[LostArkUnknownPost[], number]> {
 		try {
-			const perPage: number = 10;
+			const perPage: number = 5;
 			const downvoteCutline: number = 1;
 
 			const result = await this.lostArkUnknownPostRepository.findAndCount({
@@ -211,7 +211,7 @@ export class LostArkUnknownPostService {
 	 */
 	async getViewTrend(page: number, searchType: string, searchText: string): Promise<[LostArkUnknownPost[], number]> {
 		try {
-			const perPage: number = 10;
+			const perPage: number = 5;
 			const viewCutline: number = 1;
 
 			const result = await this.lostArkUnknownPostRepository.findAndCount({

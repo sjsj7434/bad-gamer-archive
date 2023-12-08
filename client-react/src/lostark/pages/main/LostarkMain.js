@@ -1,10 +1,11 @@
 import Container from 'react-bootstrap/Container';
 import { Routes, Route } from "react-router-dom";
-import TrendUnknownPost from './trend/TrendUnknownPost';
 import Carousel from 'react-bootstrap/Carousel';
 import Image from 'react-bootstrap/Image';
 import Row from 'react-bootstrap/esm/Row';
 import Col from 'react-bootstrap/esm/Col';
+import TrendUnknownPost from './trend/TrendUnknownPost';
+import TrendKnownPost from './trend/TrendKnownPost';
 
 const LostarkMain = () => {
 	return(
@@ -34,11 +35,15 @@ const LostarkMain = () => {
 							</Col>
 						</Row>
 
-						<hr/>
-						
-						<div style={{ backgroundColor: "", padding: "0.5rem" }}>
+						<div style={{ backgroundColor: "", padding: "0.5rem", marginTop: "3rem", overflow: "hidden", minHeight: "360px" }}>
 							<TrendUnknownPost />
 						</div>
+
+						<div style={{ backgroundColor: "", padding: "0.5rem", marginTop: "3rem", overflow: "hidden", minHeight: "360px" }}>
+							<TrendKnownPost />
+						</div>
+
+						<div style={{ marginBottom: "10rem" }}></div>
 					</>
 				}></Route>
 

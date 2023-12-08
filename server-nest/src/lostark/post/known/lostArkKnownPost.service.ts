@@ -104,13 +104,96 @@ export class LostArkKnownPostService {
 	 */
 	async getUpvoteTrend(page: number, searchType: string, searchText: string): Promise<[LostArkKnownPost[], number]> {
 		try {
-			const perPage: number = 10;
+			const perPage: number = 5;
 			const upvoteCutline: number = 1;
 
+			let whereClause = {};
+
+			if (searchText !== "") {
+				if (searchType === "title") {
+					whereClause = {
+						deletedAt: IsNull(),
+						upvote: MoreThanOrEqual(upvoteCutline),
+						accounts: {
+							authentication: [
+								{ type: Equal("lostark_item_level") },
+								{ type: IsNull() },
+							]
+						},
+						title: Like(`%${searchText}%`),
+					}
+				}
+				else if (searchType === "content") {
+					whereClause = {
+						deletedAt: IsNull(),
+						upvote: MoreThanOrEqual(upvoteCutline),
+						accounts: {
+							authentication: [
+								{ type: Equal("lostark_item_level") },
+								{ type: IsNull() },
+							]
+						},
+						content: Like(`%${searchText}%`),
+					}
+				}
+				else if (searchType === "nickname") {
+					whereClause = {
+						deletedAt: IsNull(),
+						upvote: MoreThanOrEqual(upvoteCutline),
+						accounts: {
+							authentication: [
+								{ type: Equal("lostark_item_level") },
+								{ type: IsNull() },
+							]
+						},
+						writerNickname: Like(`%${searchText}%`),
+					}
+				}
+				else if (searchType === "titleAndContent") {
+					whereClause = [
+						{
+							deletedAt: IsNull(),
+							upvote: MoreThanOrEqual(upvoteCutline),
+							accounts: {
+								authentication: [
+									{ type: Equal("lostark_item_level") },
+									{ type: IsNull() },
+								]
+							},
+							title: Like(`%${searchText}%`),
+						},
+						{
+							deletedAt: IsNull(),
+							upvote: MoreThanOrEqual(upvoteCutline),
+							accounts: {
+								authentication: [
+									{ type: Equal("lostark_item_level") },
+									{ type: IsNull() },
+								]
+							},
+							content: Like(`%${searchText}%`),
+						},
+					]
+				}
+			}
+			else {
+				whereClause = {
+					deletedAt: IsNull(),
+					upvote: MoreThanOrEqual(upvoteCutline),
+					accounts: {
+						authentication: [
+							{ type: Equal("lostark_item_level") },
+							{ type: IsNull() },
+						]
+					},
+				}
+			}
+
 			const result = await this.lostArkKnownPostRepository.findAndCount({
-				relations: ["reply"], //댓글 정보 join
+				relations: ["reply", "accounts", "accounts.authentication"], //정보 join
 				select: {
 					reply: { code: true },
+					accounts: { nickname: true, authentication: { type: true, data: true } },
 					code: true,
 					category: true,
 					writerNickname: true,
@@ -121,10 +204,7 @@ export class LostArkKnownPostService {
 					hasImage: true,
 					createdAt: true,
 				},
-				where: {
-					deletedAt: IsNull(),
-					upvote: MoreThanOrEqual(upvoteCutline),
-				},
+				where: whereClause,
 				order: {
 					upvote: "DESC",
 					view: "DESC",
@@ -146,77 +226,247 @@ export class LostArkKnownPostService {
 	 * 비추천 트랜드 게시글 목록 가져오기
 	 */
 	async getDownvoteTrend(page: number, searchType: string, searchText: string): Promise<[LostArkKnownPost[], number]> {
-		const perPage: number = 10;
-		const downvoteCutline: number = 1;
+		try {
+			const perPage: number = 5;
+			const downvoteCutline: number = 1;
 
-		const result = await this.lostArkKnownPostRepository.findAndCount({
-			relations: ["reply"], //댓글 정보 join
-			select: {
-				reply: { code: true },
-				code: true,
-				category: true,
-				writerNickname: true,
-				title: true,
-				view: true,
-				upvote: true,
-				downvote: true,
-				hasImage: true,
-				createdAt: true,
-			},
-			where: {
-				deletedAt: IsNull(),
-				downvote: MoreThanOrEqual(downvoteCutline),
-			},
-			order: {
-				downvote: "DESC",
-				view: "DESC",
-				createdAt: "DESC",
-			},
-			withDeleted: true,
-			skip: (page - 1) * perPage,
-			take: perPage,
-		});
+			let whereClause = {};
 
-		return result;
+			if (searchText !== "") {
+				if (searchType === "title") {
+					whereClause = {
+						deletedAt: IsNull(),
+						downvote: MoreThanOrEqual(downvoteCutline),
+						accounts: {
+							authentication: [
+								{ type: Equal("lostark_item_level") },
+								{ type: IsNull() },
+							]
+						},
+						title: Like(`%${searchText}%`),
+					}
+				}
+				else if (searchType === "content") {
+					whereClause = {
+						deletedAt: IsNull(),
+						downvote: MoreThanOrEqual(downvoteCutline),
+						accounts: {
+							authentication: [
+								{ type: Equal("lostark_item_level") },
+								{ type: IsNull() },
+							]
+						},
+						content: Like(`%${searchText}%`),
+					}
+				}
+				else if (searchType === "nickname") {
+					whereClause = {
+						deletedAt: IsNull(),
+						downvote: MoreThanOrEqual(downvoteCutline),
+						accounts: {
+							authentication: [
+								{ type: Equal("lostark_item_level") },
+								{ type: IsNull() },
+							]
+						},
+						writerNickname: Like(`%${searchText}%`),
+					}
+				}
+				else if (searchType === "titleAndContent") {
+					whereClause = [
+						{
+							deletedAt: IsNull(),
+							downvote: MoreThanOrEqual(downvoteCutline),
+							accounts: {
+								authentication: [
+									{ type: Equal("lostark_item_level") },
+									{ type: IsNull() },
+								]
+							},
+							title: Like(`%${searchText}%`),
+						},
+						{
+							deletedAt: IsNull(),
+							downvote: MoreThanOrEqual(downvoteCutline),
+							accounts: {
+								authentication: [
+									{ type: Equal("lostark_item_level") },
+									{ type: IsNull() },
+								]
+							},
+							content: Like(`%${searchText}%`),
+						},
+					]
+				}
+			}
+			else {
+				whereClause = {
+					deletedAt: IsNull(),
+					downvote: MoreThanOrEqual(downvoteCutline),
+					accounts: {
+						authentication: [
+							{ type: Equal("lostark_item_level") },
+							{ type: IsNull() },
+						]
+					},
+				}
+			}
+
+			const result = await this.lostArkKnownPostRepository.findAndCount({
+				relations: ["reply", "accounts", "accounts.authentication"], //정보 join
+				select: {
+					reply: { code: true },
+					accounts: { nickname: true, authentication: { type: true, data: true } },
+					code: true,
+					category: true,
+					writerNickname: true,
+					title: true,
+					view: true,
+					upvote: true,
+					downvote: true,
+					hasImage: true,
+					createdAt: true,
+				},
+				where: whereClause,
+				order: {
+					downvote: "DESC",
+					view: "DESC",
+					createdAt: "DESC",
+				},
+				withDeleted: true,
+				skip: (page - 1) * perPage,
+				take: perPage,
+			});
+
+			return result;
+		}
+		catch (error) {
+			this.errorLogService.createErrorLog(error);
+		}
 	}
 
 	/**
 	 * 조회 트랜드 게시글 목록 가져오기
 	 */
 	async getViewTrend(page: number, searchType: string, searchText: string): Promise<[LostArkKnownPost[], number]> {
-		const perPage: number = 10;
-		const viewCutline: number = 1;
+		try {
+			const perPage: number = 5;
+			const viewCutline: number = 1;
 
-		const result = await this.lostArkKnownPostRepository.findAndCount({
-			relations: ["reply"], //댓글 정보 join
-			select: {
-				reply: { code: true },
-				code: true,
-				category: true,
-				writerNickname: true,
-				title: true,
-				view: true,
-				upvote: true,
-				downvote: true,
-				hasImage: true,
-				createdAt: true,
-			},
-			where: {
-				deletedAt: IsNull(),
-				view: MoreThanOrEqual(viewCutline),
-			},
-			order: {
-				view: "DESC",
-				upvote: "DESC",
-				downvote: "ASC",
-				createdAt: "DESC",
-			},
-			withDeleted: true,
-			skip: (page - 1) * perPage,
-			take: perPage,
-		});
+			let whereClause = {};
 
-		return result;
+			if (searchText !== "") {
+				if (searchType === "title") {
+					whereClause = {
+						deletedAt: IsNull(),
+						view: MoreThanOrEqual(viewCutline),
+						accounts: {
+							authentication: [
+								{ type: Equal("lostark_item_level") },
+								{ type: IsNull() },
+							]
+						},
+						title: Like(`%${searchText}%`),
+					}
+				}
+				else if (searchType === "content") {
+					whereClause = {
+						deletedAt: IsNull(),
+						view: MoreThanOrEqual(viewCutline),
+						accounts: {
+							authentication: [
+								{ type: Equal("lostark_item_level") },
+								{ type: IsNull() },
+							]
+						},
+						content: Like(`%${searchText}%`),
+					}
+				}
+				else if (searchType === "nickname") {
+					whereClause = {
+						deletedAt: IsNull(),
+						view: MoreThanOrEqual(viewCutline),
+						accounts: {
+							authentication: [
+								{ type: Equal("lostark_item_level") },
+								{ type: IsNull() },
+							]
+						},
+						writerNickname: Like(`%${searchText}%`),
+					}
+				}
+				else if (searchType === "titleAndContent") {
+					whereClause = [
+						{
+							deletedAt: IsNull(),
+							view: MoreThanOrEqual(viewCutline),
+							accounts: {
+								authentication: [
+									{ type: Equal("lostark_item_level") },
+									{ type: IsNull() },
+								]
+							},
+							title: Like(`%${searchText}%`),
+						},
+						{
+							deletedAt: IsNull(),
+							view: MoreThanOrEqual(viewCutline),
+							accounts: {
+								authentication: [
+									{ type: Equal("lostark_item_level") },
+									{ type: IsNull() },
+								]
+							},
+							content: Like(`%${searchText}%`),
+						},
+					]
+				}
+			}
+			else {
+				whereClause = {
+					deletedAt: IsNull(),
+					view: MoreThanOrEqual(viewCutline),
+					accounts: {
+						authentication: [
+							{ type: Equal("lostark_item_level") },
+							{ type: IsNull() },
+						]
+					},
+				}
+			}
+
+			const result = await this.lostArkKnownPostRepository.findAndCount({
+				relations: ["reply", "accounts", "accounts.authentication"], //정보 join
+				select: {
+					reply: { code: true },
+					accounts: { nickname: true, authentication: { type: true, data: true } },
+					code: true,
+					category: true,
+					writerNickname: true,
+					title: true,
+					view: true,
+					upvote: true,
+					downvote: true,
+					hasImage: true,
+					createdAt: true,
+				},
+				where: whereClause,
+				order: {
+					view: "DESC",
+					upvote: "DESC",
+					downvote: "ASC",
+					createdAt: "DESC",
+				},
+				withDeleted: true,
+				skip: (page - 1) * perPage,
+				take: perPage,
+			});
+
+			return result;
+		}
+		catch (error) {
+			this.errorLogService.createErrorLog(error);
+		}
 	}
 
 	//=================================================================================================================================================================================
