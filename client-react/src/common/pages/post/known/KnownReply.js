@@ -80,7 +80,7 @@ const KnownReply = (props) => {
 						code: replyCode,
 					}
 
-					const deleteResult = await replyFetch.deleteReply("user", sendData);
+					const deleteResult = await replyFetch.deleteReply("known", sendData);
 
 					if(deleteResult === false){
 						alert("댓글 작성자가 아니면 삭제할 수 없습니다");
@@ -151,7 +151,7 @@ const KnownReply = (props) => {
 				content: formElement.content.value,
 			}
 
-			const createResult = await replyFetch.createReply("user", sendData);
+			const createResult = await replyFetch.createReply("known", sendData);
 
 			if(createResult === true){
 				formElement.reset();
@@ -165,7 +165,7 @@ const KnownReply = (props) => {
 		}
 
 		if(props.contentCode !== null){
-			const replyArray = await replyFetch.getReplies("user", props.contentCode, currentPage);
+			const replyArray = await replyFetch.getReplies("known", props.contentCode, currentPage);
 
 			if(replyArray !== null){
 				if(replyArray[1] === 0){
@@ -350,7 +350,7 @@ const KnownReply = (props) => {
 			content: replyDataElement.value,
 		}
 
-		const createResult = await replyFetch.createReply("user", sendData);
+		const createResult = await replyFetch.createReply("known", sendData);
 
 		if(createResult === true){
 			getReplies(1);

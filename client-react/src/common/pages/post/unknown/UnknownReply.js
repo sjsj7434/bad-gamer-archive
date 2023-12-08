@@ -86,7 +86,7 @@ const UnknownReply = (props) => {
 						password: deletePassword,
 					}
 
-					const deleteResult = await replyFetch.deleteReply("anonymous", sendData);
+					const deleteResult = await replyFetch.deleteReply("unknown", sendData);
 
 					if(deleteResult === null){
 						alert("댓글 삭제 중 오류가 발생하였습니다(1)");
@@ -158,7 +158,7 @@ const UnknownReply = (props) => {
 				content: formElement.content.value,
 			}
 
-			const createResult = await replyFetch.createReply("anonymous", sendData);
+			const createResult = await replyFetch.createReply("unknown", sendData);
 
 			if(createResult === null){
 				alert("답글 작성 중 오류가 발생하였습니다(1)");
@@ -174,7 +174,7 @@ const UnknownReply = (props) => {
 		}
 
 		if(props.contentCode !== null){
-			const replyArray = await replyFetch.getReplies("anonymous", props.contentCode, currentPage);
+			const replyArray = await replyFetch.getReplies("unknown", props.contentCode, currentPage);
 
 			if(replyArray !== null){
 				if(replyArray[1] === 0){
@@ -355,7 +355,7 @@ const UnknownReply = (props) => {
 				content: replyDataElement.value,
 			}
 
-			const createResult = await replyFetch.createReply("anonymous", sendData);
+			const createResult = await replyFetch.createReply("unknown", sendData);
 
 			if(createResult === null){
 				alert("댓글 작성 중 오류가 발생하였습니다(1)");

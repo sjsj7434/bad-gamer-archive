@@ -56,7 +56,7 @@ const KnownPostWrite = (props) => {
 			hasImage: editorContet.indexOf("<img") > -1 ? true : false,
 		};
 
-		const createResult = await postFetch.createContentUserBoard(sendData);
+		const createResult = await postFetch.createContent("known", sendData);
 
 		if(createResult.createdCode === 0){
 			if(createResult.status === "long_title"){
@@ -112,7 +112,7 @@ const KnownPostWrite = (props) => {
 			hasImage: editorContet.indexOf("<img") > -1 ? true : false,
 		};
 
-		let result = await postFetch.updateContent("user", sendData);
+		let result = await postFetch.updateContent("known", sendData);
 
 		if(result === null){
 			alert("문제가 발생하여 게시글을 수정할 수 없습니다(1)");
@@ -146,7 +146,7 @@ const KnownPostWrite = (props) => {
 		 * 게시글 정보 가져오기
 		 */
 		const readContent = async () => {
-			const readResult = await postFetch.readContent("user", contentCode, "edit");
+			const readResult = await postFetch.readContent("known", contentCode, "edit");
 			const contentData = readResult.contentData;
 	
 			setContentTitle(contentData.title);
@@ -170,7 +170,7 @@ const KnownPostWrite = (props) => {
 				code: contentCode,
 			};
 			
-			const checkResult = await postFetch.checkBeforeEdit("user", sendData);
+			const checkResult = await postFetch.checkBeforeEdit("known", sendData);
 
 			if(checkResult === true){
 				setIdentity(true);

@@ -39,7 +39,7 @@ const KnownPostView = (props) => {
 		 * code로 게시글 정보 가져오기
 		 */
 		const getContentData = async () => {
-			const readResult = await postFetch.readContent("user", contentCode);
+			const readResult = await postFetch.readContent("known", contentCode);
 			const contentData = readResult.contentData;
 
 			if(contentData === null){
@@ -118,7 +118,7 @@ const KnownPostView = (props) => {
 				setLoadingModalShow(true);
 				setLoadingModalMessage("게시글을 삭제 중입니다...");
 
-				const deleteResult = await postFetch.deleteContent("user", sendData);
+				const deleteResult = await postFetch.deleteContent("known", sendData);
 
 				if(deleteResult === true){
 					navigate(`/lostark/post/known/1`);
@@ -158,7 +158,7 @@ const KnownPostView = (props) => {
 				}
 
 				if(contentCode !== null){
-					const voteResult = await postFetch.upvoteContent("user", sendData);
+					const voteResult = await postFetch.upvoteContent("known", sendData);
 
 					if(voteResult === null){
 						return;
@@ -195,7 +195,7 @@ const KnownPostView = (props) => {
 				}
 
 				if(contentCode !== null){
-					const voteResult = await postFetch.downvoteContent("user", sendData);
+					const voteResult = await postFetch.downvoteContent("known", sendData);
 
 					if(voteResult === null){
 						return;

@@ -23,7 +23,7 @@ const KnownPostList = () => {
 	const howManyPages = 5;
 
 	const readContentList = useCallback(async () => {
-		const contentListData = await postFetch.getPostList("user", searchType, searchText, page);
+		const contentListData = await postFetch.getPostList("known", searchType, searchText, page);
 
 		setContentList(contentListData[0]);
 		setContentCount(contentListData[1]);

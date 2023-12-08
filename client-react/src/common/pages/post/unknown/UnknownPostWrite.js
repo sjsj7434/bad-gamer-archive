@@ -70,7 +70,7 @@ const UnknownPostWrite = (props) => {
 			password: passwordElement.value,
 		};
 
-		const createResult = await postFetch.createContent("anonymous", sendData);
+		const createResult = await postFetch.createContent("unknown", sendData);
 
 		if(createResult.createdCode === 0){
 			if(createResult.status === "long_title"){
@@ -123,7 +123,7 @@ const UnknownPostWrite = (props) => {
 			hasImage: editorContet.indexOf("<img") > -1 ? true : false,
 		};
 
-		let result = await postFetch.updateContent("anonymous", sendData);
+		let result = await postFetch.updateContent("unknown", sendData);
 
 		if(result === null){
 			alert("문제가 발생하여 게시글을 수정할 수 없습니다(1)");
@@ -157,7 +157,7 @@ const UnknownPostWrite = (props) => {
 		 * 게시글 정보 가져오기
 		 */
 		const getContentData = async () => {
-			const readResult = await postFetch.getContentData("anonymous", contentCode);
+			const readResult = await postFetch.getContentData("unknown", contentCode);
 			const contentData = readResult.contentData;
 	
 			setContentTitle(contentData.title);
@@ -191,7 +191,7 @@ const UnknownPostWrite = (props) => {
 				password: contentPasswordElement.value,
 			};
 			
-			const checkResult = await postFetch.checkBeforeEdit("anonymous", sendData)
+			const checkResult = await postFetch.checkBeforeEdit("unknown", sendData)
 
 			if(checkResult === true){
 				setIdentity(true);

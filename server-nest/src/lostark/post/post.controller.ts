@@ -46,46 +46,46 @@ export class PostController {
 		return await this.lostArkUnknownPostService.getViewTrend(page, searchType, searchText);
 	}
 
-	//================================================================================================================================================= anonymous
+	//================================================================================================================================================= unknown
 
 	//익명 게시판 목록, page 값이 number가 아니면 호출되지 않음
-	@Get("anonymous/list/:page")
+	@Get("unknown/list/:page")
 	async getAnonymousContentList(@Param("page") page: number, @Query("searchType") searchType: string, @Query("searchText") searchText: string): Promise<[LostArkUnknownPost[], number]> {
 		return await this.lostArkUnknownPostService.getPostList(page, searchType, searchText);
 	}
 
 	//익명 게시판 글 조회, contentCode 값이 number가 아니면 호출되지 않음
-	@Get("anonymous/content/read/:contentCode")
+	@Get("unknown/content/read/:contentCode")
 	async readAnonymousContent(@Param("contentCode") contentCode: number): Promise<{ contentData: LostArkUnknownPost, isWriter: boolean }> {
 		return await this.lostArkUnknownPostService.readPost(contentCode);
 	}
 
 	//익명 게시판 글 데이터 가져오기, contentCode 값이 number가 아니면 호출되지 않음
-	@Get("anonymous/content/data/:contentCode")
+	@Get("unknown/content/data/:contentCode")
 	async getAnonymousContentData(@Param("contentCode") contentCode: number): Promise<{ contentData: LostArkUnknownPost, isWriter: boolean }> {
 		return await this.lostArkUnknownPostService.getPost(contentCode);
 	}
 
 	//익명 게시판 글 작성
-	@Post("anonymous/content")
+	@Post("unknown/content")
 	async createAnonymousContent(@Ip() ipData: string, @Body() createPostDTO: CreateLostArkUnknownPostDTO): Promise<{ createdCode: number, status: string }> {
 		return await this.lostArkUnknownPostService.createPost(createPostDTO, ipData);
 	}
 
 	//익명 게시판 글 수정 진입 시 작성자 확인
-	@Post("anonymous/content/check/author")
+	@Post("unknown/content/check/author")
 	async getAnonymousAuthor(@Body() sendData: { code: number, password: string }): Promise<boolean> {
 		return await this.lostArkUnknownPostService.isAuthor(sendData.code, sendData.password);
 	}
 
 	//익명 게시판 글 수정
-	@Patch("anonymous/content")
+	@Patch("unknown/content")
 	async updateAnonymousContent(@Body() updatePostDTO: UpdateLostArkUnknownPostDTO): Promise<boolean> {
 		return await this.lostArkUnknownPostService.updatePost(updatePostDTO);
 	}
 
 	//익명 게시판 글 삭제
-	@Delete("anonymous/content")
+	@Delete("unknown/content")
 	async deleteAnonymousContent(@Body() deletePostDTO: DeleteLostArkUnknownPostDTO): Promise<boolean> {
 		return await this.lostArkUnknownPostService.softDeletePost(deletePostDTO);
 	}
@@ -93,7 +93,7 @@ export class PostController {
 	//익명 게시판 글 추천
 	@SkipThrottle({ default: false })
 	@Throttle({ default: { limit: 20, ttl: 60000 } }) //1분에 20개 이상 금지
-	@Post("anonymous/content/upvote")
+	@Post("unknown/content/upvote")
 	async upvoteAnonymousContent(@Ip() ipData: string, @Body() sendData: { code: number }): Promise<{ upvote: number, downvote: number, isVotable: boolean }> {
 		return await this.lostArkUnknownPostService.upvotePost(sendData.code, ipData);
 	}
@@ -101,70 +101,70 @@ export class PostController {
 	//익명 게시판 글 비추천
 	@SkipThrottle({ default: false })
 	@Throttle({ default: { limit: 20, ttl: 60000 } }) //1분에 20개 이상 금지
-	@Post("anonymous/content/downvote")
+	@Post("unknown/content/downvote")
 	async downvoteAnonymousContent(@Ip() ipData: string, @Body() sendData: { code: number }): Promise<{ upvote: number, downvote: number, isVotable: boolean }> {
 		return await this.lostArkUnknownPostService.downvotePost(sendData.code, ipData);
 	}
 
 	//익명 게시판 댓글 조회
-	@Get("anonymous/reply/:contentCode/:page")
+	@Get("unknown/reply/:contentCode/:page")
 	async getAnonymousReplies(@Param("contentCode") contentCode: number, @Param("page") page: number): Promise<[LostArkUnknownReply[], number]> {
 		return await this.lostArkUnknownPostService.getReply(contentCode, page);
 	}
 
 	//익명 게시판 댓글 작성
-	@Post("anonymous/reply")
+	@Post("unknown/reply")
 	async createAnonymousReply(@Ip() ipData: string, @Body() createReplyDTO: CreateLostArkUnknownReplyDTO): Promise<boolean> {
 		return await this.lostArkUnknownPostService.createReply(createReplyDTO, ipData);
 	}
 
 	//익명 게시판 댓글 삭제
-	@Delete("anonymous/reply")
+	@Delete("unknown/reply")
 	async deleteAnonymousReply(@Body() deleteReplyDTO: DeleteLostArkUnknownReplyDTO): Promise<boolean> {
 		return await this.lostArkUnknownPostService.deleteReply(deleteReplyDTO);
 	}
 
-	//================================================================================================================================================= user
+	//================================================================================================================================================= known
 
 	//유저 게시판 목록, page 값이 number가 아니면 호출되지 않음
-	@Get("user/list/:page")
+	@Get("known/list/:page")
 	async getUserContentList(@Param("page") page: number, @Query("searchType") searchType: string, @Query("searchText") searchText: string): Promise<[LostArkKnownPost[], number]> {
 		return await this.lostArkKnownPostService.getPostList(page, searchType, searchText);
 	}
 
 	//유저 게시판 글 조회, contentCode 값이 number가 아니면 호출되지 않음
-	@Get("user/content/read/:contentCode")
+	@Get("known/content/read/:contentCode")
 	async readUserContent(@Req() request: Request, @Res({ passthrough: true }) response: Response, @Param("contentCode") contentCode: number): Promise<{ contentData: LostArkKnownPost, isWriter: boolean }> {
 		//set cookies/headers 정도만 사용하고, 나머지는 프레임워크에 떠넘기는 식으로 @Res()를 사용하는 거라면 passthrough: true 옵션은 필수! 그렇지 않으면 fetch 요청이 마무리가 안됨
 		return await this.lostArkKnownPostService.readPost(request, response, contentCode);
 	}
 
 	//유저 게시판 글 데이터 가져오기, contentCode 값이 number가 아니면 호출되지 않음
-	@Get("user/content/data/:contentCode")
+	@Get("known/content/data/:contentCode")
 	async getUserContentData(@Req() request: Request, @Res({ passthrough: true }) response: Response, @Param("contentCode") contentCode: number): Promise<{ contentData: LostArkKnownPost, isWriter: boolean }> {
 		return await this.lostArkKnownPostService.getPost(request, response, contentCode);
 	}
 
 	//유저 게시판 글 작성
-	@Post("user/content")
+	@Post("known/content")
 	async createUserContent(@Req() request: Request, @Res({ passthrough: true }) response: Response, @Ip() ipData: string, @Body() createPostDTO: CreateLostArkKnownPostDTO): Promise<{ createdCode: number, status: string }> {
 		return await this.lostArkKnownPostService.createPost(createPostDTO, ipData, request, response);
 	}
 
 	//유저 게시글 수정
-	@Patch("user/content")
+	@Patch("known/content")
 	async updateUserContent(@Req() request: Request, @Res({ passthrough: true }) response: Response, @Body() updatePostDTO: UpdateLostArkKnownPostDTO): Promise<boolean> {
 		return await this.lostArkKnownPostService.updatePost(request, response, updatePostDTO);
 	}
 
 	//유저 게시글 삭제
-	@Delete("user/content")
+	@Delete("known/content")
 	async deleteUserContent(@Req() request: Request, @Res({ passthrough: true }) response: Response, @Body() deletePostDTO: DeleteLostArkKnownPostDTO): Promise<boolean> {
 		return await this.lostArkKnownPostService.softDeletePost(request, response, deletePostDTO);
 	}
 
 	//유저 게시글 수정 진입 시 작성자 확인
-	@Post("user/content/check/author")
+	@Post("known/content/check/author")
 	async getuserAuthor(@Req() request: Request, @Res({ passthrough: true }) response: Response, @Body() sendData: { code: number }): Promise<boolean> {
 		return await this.lostArkKnownPostService.isAuthor(request, response, sendData.code);
 	}
@@ -172,7 +172,7 @@ export class PostController {
 	//유저 게시글 추천
 	@SkipThrottle({ default: false })
 	@Throttle({ default: { limit: 20, ttl: 60000 } }) //1분에 20개 이상 금지
-	@Post("user/content/upvote")
+	@Post("known/content/upvote")
 	async upvoteUserContent(@Req() request: Request, @Res({ passthrough: true }) response: Response, @Ip() ipData: string, @Body() sendData: { code: number }): Promise<{ upvote: number, downvote: number, isVotable: boolean }> {
 		return await this.lostArkKnownPostService.upvotePost(request, response, sendData.code, ipData);
 	}
@@ -180,7 +180,7 @@ export class PostController {
 	//유저 게시글 비추천
 	@SkipThrottle({ default: false })
 	@Throttle({ default: { limit: 20, ttl: 60000 } }) //1분에 20개 이상 금지
-	@Post("user/content/downvote")
+	@Post("known/content/downvote")
 	async downvoteUserContent(@Req() request: Request, @Res({ passthrough: true }) response: Response, @Ip() ipData: string, @Body() sendData: { code: number }): Promise<{ upvote: number, downvote: number, isVotable: boolean }> {
 		return await this.lostArkKnownPostService.downvotePost(request, response, sendData.code, ipData);
 	}
@@ -188,7 +188,7 @@ export class PostController {
 	//유저 게시글 추천자 목록
 	@SkipThrottle({ default: false })
 	@Throttle({ default: { limit: 20, ttl: 60000 } }) //1분에 20개 이상 금지
-	@Get("user/content/upvote/list/:contentCode")
+	@Get("known/content/upvote/list/:contentCode")
 	async getUserPostUpvoteList(@Req() request: Request, @Res({ passthrough: true }) response: Response, @Param("contentCode") contentCode: number): Promise<LostArkKnownVoteHistory[]> {
 		return await this.lostArkKnownPostService.getPostUpvoteList(request, response, contentCode);
 	}
@@ -196,25 +196,25 @@ export class PostController {
 	//유저 게시글 비추천자 목록
 	@SkipThrottle({ default: false })
 	@Throttle({ default: { limit: 20, ttl: 60000 } }) //1분에 20개 이상 금지
-	@Get("user/content/downvote/list/:contentCode")
+	@Get("known/content/downvote/list/:contentCode")
 	async getUserPostDownvoteList(@Req() request: Request, @Res({ passthrough: true }) response: Response, @Param("contentCode") contentCode: number): Promise<LostArkKnownVoteHistory[]> {
 		return await this.lostArkKnownPostService.getPostDownvoteList(request, response, contentCode);
 	}
 
 	//유저 게시글 댓글 조회
-	@Get("user/reply/:contentCode/:page")
+	@Get("known/reply/:contentCode/:page")
 	async getUserReplies(@Param("contentCode") contentCode: number, @Param("page") page: number): Promise<[LostArkKnownReply[], number]> {
 		return await this.lostArkKnownPostService.getReply(contentCode, page);
 	}
 
 	//유저 게시글 댓글 작성
-	@Post("user/reply")
+	@Post("known/reply")
 	async createUserReply(@Req() request: Request, @Res({ passthrough: true }) response: Response, @Ip() ipData: string, @Body() createReplyDTO: CreateLostArkKnownReplyDTO): Promise<boolean> {
 		return await this.lostArkKnownPostService.createReply(request, response, createReplyDTO, ipData);
 	}
 
 	//유저 게시글 댓글 삭제
-	@Delete("user/reply")
+	@Delete("known/reply")
 	async deleteUserReply(@Req() request: Request, @Res({ passthrough: true }) response: Response, @Body() deleteReplyDTO: DeleteLostArkKnownReplyDTO): Promise<boolean> {
 		return await this.lostArkKnownPostService.deleteReply(request, response, deleteReplyDTO);
 	}
