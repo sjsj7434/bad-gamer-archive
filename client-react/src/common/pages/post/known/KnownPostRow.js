@@ -1,10 +1,6 @@
 import { Link } from "react-router-dom";
 
 const KnownPostRow = (props) => {
-	console.log("=======================================================")
-	console.log(props.postData.accounts)
-	console.log("=======================================================")
-	console.log("")
 	return(
 		<Link
 			key={"post" + props.postData.code}
