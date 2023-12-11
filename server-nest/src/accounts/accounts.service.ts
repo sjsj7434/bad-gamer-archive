@@ -1244,6 +1244,7 @@ export class AccountsService {
 		const UNSIGNED_INT_MAX: number = 4294967295;
 		const accountData = await this.getMyInfo(request, response);
 		let accountEXP: number = accountData.exp;
+		let isUpdate: boolean = false;
 
 		if (direction === "down"){
 			expPoint = expPoint * (-1);
@@ -1256,16 +1257,24 @@ export class AccountsService {
 				if (accountData.evolution < 32767){ //smallint 최대 값
 					accountData.evolution += 1; //진화
 					accountData.exp = (accountEXP - UNSIGNED_INT_MAX); //경험치 0으로 초기화
+
+					isUpdate = true;
 				}
 			}
 			else{
 				accountData.exp = accountEXP;
+
+				isUpdate = true;
 			}
 		}
 		else{
 			accountData.exp = 0; //0보다 낮아지면 경험치 0으로 초기화
+
+			isUpdate = true;
 		}
 
-		this.accountsRepository.save(accountData);
+		if (isUpdate === true){ //update가 필요한 경우만 코드 실행
+			this.accountsRepository.save(accountData);
+		}
 	}
 }
