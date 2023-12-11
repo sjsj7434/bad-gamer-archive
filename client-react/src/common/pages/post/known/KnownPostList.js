@@ -111,26 +111,28 @@ const KnownPostList = () => {
 				</div>
 
 				<div style={{display: "flex", justifyContent: "flex-end"}}>
-					<Link to={`/lostark/post/known/write`} style={{width: "30%", maxWidth: "200px"}}>
-						<Button id={"createReply"} variant="outline-primary" style={{width: "100%", padding: "1px"}}>
+					<Link to={`/lostark/post/known/write`} style={{width: "30%", maxWidth: "100px"}}>
+						<Button id={"createReply"} variant="primary" style={{width: "100%", padding: "1px"}}>
 							<span style={{fontSize: "0.8rem"}}>글쓰기</span>
 						</Button>
 					</Link>
 				</div>
 			</div>
 
-			{paginationData}
+			<div style={{ marginTop: "2rem" }}>
+				{paginationData}
+			</div>
 
 			<div style={{ display: "flex", justifyContent: "center", marginTop: "2rem", marginBottom: "2rem" }}>
-				<div style={{ width: "50%" }}>
+				<div>
 					<InputGroup className="mb-3">
-						<Form.Select id="searchType" size="sm" style={{ maxWidth: "140px"}}>
+						<Form.Select id="searchType" size="sm" style={{ maxWidth: "120px"}}>
 							<option value="titleAndContent">제목+내용</option>
 							<option value="title">제목</option>
 							<option value="content">내용</option>
 						</Form.Select>
 
-						<Form.Control id="searchText" style={{ fontSize: "0.8rem" }} />
+						<Form.Control id="searchText" style={{ fontSize: "0.8rem" }} type="search" />
 
 						<Button id="searchButton" onClick={ () => { search() } } variant="outline-secondary" style={{ fontSize: "0.8rem" }}>검색</Button>
 					</InputGroup>
