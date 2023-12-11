@@ -170,10 +170,10 @@ const MyPage = () => {
 									</td>
 								</tr>
 								<tr>
-									<th>레벨</th>
+									<th>커뮤력</th>
 									<td><div className="vr"></div></td>
 									<td>
-										{accountData.exp}
+										{new Intl.NumberFormat().format(accountData.exp)}
 									</td>
 								</tr>
 								<tr>
