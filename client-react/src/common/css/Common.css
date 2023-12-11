@@ -60,3 +60,13 @@
 p {
 	margin: 0px;
 }
+
+#subMenuArea{
+	/* display: none; */
+	visibility: hidden;
+}
+
+#subMenuArea.show{
+	/* display: block; */
+	visibility: visible;
+}

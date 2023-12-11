@@ -24,7 +24,7 @@ const CommonTopMenu = (props) => {
 			return(
 				<div
 					key={element.name}
-					onClick={() => { menuClick(element.url); document.querySelector("#subMenuArea").style.display = "none" }}
+					onClick={() => { menuClick(element.url); controlSubmenu("hide"); }}
 					style={{
 						display: "flex"
 						, alignItems: "center"
@@ -36,13 +36,25 @@ const CommonTopMenu = (props) => {
 						, paddingLeft: "1rem"
 						, paddingRight: "1rem"
 					}}
-					onMouseOver={ () => {document.querySelector("#subMenuArea").style.display = "block"} }
+					onMouseOver={ () => { controlSubmenu("show"); } }
 				>
 					{element.name}
 				</div>
 			);
 		})
 		setSubMenuRender(renderData);
+	}
+
+	const controlSubmenu = (control) => {
+		if(control === "toggle"){
+			document.querySelector("#subMenuArea").classList.toggle("show");
+		}
+		else if(control === "show"){
+			document.querySelector("#subMenuArea").classList.add("show");
+		}
+		else if(control === "hide"){
+			document.querySelector("#subMenuArea").classList.remove("show");
+		}
 	}
 	
 	const menuClick = useCallback((url) => {
@@ -72,7 +84,7 @@ const CommonTopMenu = (props) => {
 					<div style={{ maxWidth: "1200px", width: "100%" }}>
 						<div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", height: "50px", paddingLeft: "1.5rem", paddingRight: "1.5rem" }}>
 							<div style={{ maxWidth: "200px", minWidth: "150px", color: "white", fontWeight: 400, fontSize: "1.1rem" }}
-								onMouseOver={ () => { document.querySelector("#subMenuArea").style.display = "none" } }
+								onMouseOver={ () => { controlSubmenu("hide"); } }
 							>
 								<div style={{ width: "fit-content", cursor: "pointer" }} onClick={ () => { menuClick("/lostark/main") } }>
 									<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="orange" className="bi bi-fan" viewBox="0 0 16 16">
@@ -87,6 +99,7 @@ const CommonTopMenu = (props) => {
 							<div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100%", color: "lightgray" }}>
 								<div
 									onClick={() => { menuClick("/lostark/main") }}
+									onMouseOver={ () => { controlSubmenu("hide"); } }
 									style={{
 										display: "flex"
 										, alignItems: "center"
@@ -98,13 +111,13 @@ const CommonTopMenu = (props) => {
 										, paddingLeft: "1rem"
 										, paddingRight: "1rem"
 									}}
-									onMouseOver={ () => {document.querySelector("#subMenuArea").style.display = "none"} }
 								>
 									메인
 								</div>
 								
 								<div
 									onClick={() => { menuClick("/post/announce/1") }}
+									onMouseOver={ () => { controlSubmenu("hide"); } }
 									style={{
 										display: "flex"
 										, alignItems: "center"
@@ -116,13 +129,13 @@ const CommonTopMenu = (props) => {
 										, paddingLeft: "1rem"
 										, paddingRight: "1rem"
 									}}
-									onMouseOver={ () => {document.querySelector("#subMenuArea").style.display = "none"} }
 								>
 									공지사항
 								</div>
 								
 								<div
-									onClick={() => { document.querySelector("#subMenuArea").style.display = "block"; setSubMenu("post"); } }
+									onClick={() => { controlSubmenu("toggle"); setSubMenu("post"); } }
+									onMouseOver={ () => { controlSubmenu("show"); setSubMenu("post"); } }
 									style={{
 										display: "flex"
 										, alignItems: "center"
@@ -134,13 +147,13 @@ const CommonTopMenu = (props) => {
 										, paddingLeft: "1rem"
 										, paddingRight: "1rem"
 									}}
-									onMouseOver={ () => { document.querySelector("#subMenuArea").style.display = "block"; setSubMenu("post"); } }
 								>
 									게시판 ▼
 								</div>
 								
 								<div
 									onClick={() => { menuClick("/lostark/guild") }}
+									onMouseOver={ () => { controlSubmenu("hide"); } }
 									style={{
 										display: "flex"
 										, alignItems: "center"
@@ -152,13 +165,13 @@ const CommonTopMenu = (props) => {
 										, paddingLeft: "1rem"
 										, paddingRight: "1rem"
 									}}
-									onMouseOver={ () => {document.querySelector("#subMenuArea").style.display = "none"} }
 								>
 									길드
 								</div>
 								
 								<div
 									onClick={() => { menuClick("/lostark/useful") }}
+									onMouseOver={ () => { controlSubmenu("hide"); } }
 									style={{
 										display: "flex"
 										, alignItems: "center"
@@ -170,20 +183,20 @@ const CommonTopMenu = (props) => {
 										, paddingLeft: "1rem"
 										, paddingRight: "1rem"
 									}}
-									onMouseOver={ () => {document.querySelector("#subMenuArea").style.display = "none"} }
 								>
 									도구 모음
 								</div>
 							</div>
 
 							<div style={{ maxWidth: "200px", minWidth: "150px", display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}
-								onMouseOver={ () => {document.querySelector("#subMenuArea").style.display = "none"} }
+								onMouseOver={ () => { controlSubmenu("hide"); } }
 							>
 								{
 									props.accountData.status === "login" ?
 									<>
 										<div
 											onClick={() => { menuClick("/accounts/mypage") }}
+											onMouseOver={ () => { controlSubmenu("hide"); } }
 											style={{
 												display: "flex"
 												, alignItems: "center"
@@ -195,7 +208,6 @@ const CommonTopMenu = (props) => {
 												, paddingLeft: "1rem"
 												, paddingRight: "1rem"
 											}}
-											onMouseOver={ () => {document.querySelector("#subMenuArea").style.display = "none"} }
 										>
 											<div style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
 												나의 정보
@@ -204,6 +216,7 @@ const CommonTopMenu = (props) => {
 										<span style={{ fontSize: "0.65rem", color: "gray" }}>|</span>
 										<div
 											onClick={() => { logoutAccount() }}
+											onMouseOver={ () => { controlSubmenu("hide"); } }
 											style={{
 												display: "flex"
 												, alignItems: "center"
@@ -215,7 +228,6 @@ const CommonTopMenu = (props) => {
 												, paddingLeft: "1rem"
 												, paddingRight: "1rem"
 											}}
-											onMouseOver={ () => {document.querySelector("#subMenuArea").style.display = "none"} }
 										>
 											<div style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
 												로그아웃
@@ -226,6 +238,7 @@ const CommonTopMenu = (props) => {
 									<>
 										<div
 											onClick={() => { menuClick("/accounts/register") }}
+											onMouseOver={ () => { controlSubmenu("hide"); } }
 											style={{
 												display: "flex"
 												, alignItems: "center"
@@ -237,7 +250,6 @@ const CommonTopMenu = (props) => {
 												, paddingLeft: "1rem"
 												, paddingRight: "1rem"
 											}}
-											onMouseOver={ () => {document.querySelector("#subMenuArea").style.display = "none"} }
 										>
 											<div style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
 												회원가입
@@ -246,6 +258,7 @@ const CommonTopMenu = (props) => {
 										<span style={{ fontSize: "0.65rem", color: "gray" }}>|</span>
 										<div
 											onClick={() => { menuClick("/accounts/login") }}
+											onMouseOver={ () => { controlSubmenu("hide"); } }
 											style={{
 												display: "flex"
 												, alignItems: "center"
@@ -257,7 +270,6 @@ const CommonTopMenu = (props) => {
 												, paddingLeft: "1rem"
 												, paddingRight: "1rem"
 											}}
-											onMouseOver={ () => {document.querySelector("#subMenuArea").style.display = "none"} }
 										>
 											<div style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
 												로그인
@@ -272,9 +284,9 @@ const CommonTopMenu = (props) => {
 
 				<div
 					id="subMenuArea"
-					style={{ display: "none", position: "absolute", width: "100%", backgroundColor: "#212529", zIndex: 10 }}
-					onMouseOut={ () => {document.querySelector("#subMenuArea").style.display = "none"} }
-					onMouseOver={ () => { document.querySelector("#subMenuArea").style.display = "block" } }
+					style={{ position: "absolute", width: "100%", backgroundColor: "#212529", zIndex: 10 }}
+					onMouseOut={ () => { controlSubmenu("hide"); } }
+					onMouseOver={ () => { document.querySelector("#subMenuArea").classList.add("show") } }
 				>
 					<div style={{ display: "flex", alignItems: "center", justifyContent: "center", height: "fit-content", paddingTop: "20px", paddingBottom: "20px" }}>
 						{subMenuRender}
