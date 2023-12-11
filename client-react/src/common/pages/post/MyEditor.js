@@ -37,6 +37,7 @@ const editorConfiguration = {
 		'codeBlock',
 		'findAndReplace',
 	],
+	removePlugins: ["MediaEmbedToolbar"], //widget-toolbar-no-items {toolbarId: 'mediaEmbed'} 때문에 추가
 	fontFamily: {
 		options: [
 			"default",
