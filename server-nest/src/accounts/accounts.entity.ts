@@ -65,7 +65,7 @@ export class Accounts {
 	nickname: string;
 
 	/**
-	 * 유저 경험치
+	 * 유저 경험치(커뮤력), 최대에 도달하면 진화 가능
 	 */
 	@Column({
 		type: "int",
@@ -74,6 +74,17 @@ export class Accounts {
 		default: 0,
 	})
 	exp: number;
+
+	/**
+	 * 유저 진화 회수
+	 */
+	@Column({
+		type: "smallint",
+		unsigned: true,
+		nullable: false,
+		default: 0,
+	})
+	evolution: number;
 
 	/**
 	 * 유저 비밀번호(암호화), Salt는 암호화된 비밀번호에 포함되어있으니 따로 저장할 필요 없음
