@@ -879,6 +879,12 @@ export class AccountsService {
 	async updateNickname(request: Request, response: Response, updateAccountsDTO: UpdateAccountsDTO): Promise<Boolean> {
 		const loginUUID = this.LOGIN_SESSION.get(request.cookies["sessionCode"]); //로그인한 정보
 
+		const nicknameExists: boolean = await this.isExistsNickname(updateAccountsDTO.nickname);
+
+		if (nicknameExists === true){
+			return false;
+		}
+
 		const acctountData = await this.accountsRepository.findOne({
 			select: {
 				id: true,
