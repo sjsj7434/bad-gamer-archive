@@ -8,6 +8,8 @@ import * as accountsFetch from '../../../common/js/accountsFetch.js'
 import Row from 'react-bootstrap/esm/Row.js';
 import Col from 'react-bootstrap/esm/Col.js';
 import LoadingModal from '../common/LoadingModal.js';
+import Image from 'react-bootstrap/Image';
+import '../../css/MyPage.css';
 
 const MyPage = () => {
 	const [accountData, setAccountData] = useState(null);
@@ -127,6 +129,41 @@ const MyPage = () => {
 			setRenderData(
 				<Container style={{maxWidth: "600px"}}>
 					<LoadingModal showModal={isLoading} message={loadingMessage}></LoadingModal>
+
+					<div style={{ display: "flex", alignItems: "center", justifyContent: "flex-start" }}>
+						<div style={{ marginRight: "1rem" }}>
+							<Image src="https://th.bing.com/th?id=ORMS.af754456c4a0bbb236c02bf807d2d151&pid=Wdp&w=240&h=129&qlt=90&c=1&rs=1&dpr=1&p=0" roundedCircle className="profilePicture" />
+						</div>
+						<div>
+							<span style={{ fontSize: "1.2rem", fontWeight: 800 }}>
+								{accountData.nickname}
+							</span>
+							<br />
+							<span style={{ fontSize: "0.8rem" }}>
+								{accountData.email === null ? "-" : accountData.email}
+							</span>
+							<br />
+							<span style={{ fontSize: "0.8rem" }}>
+								{accountData.createdAt.substring(0, 10)} 가입
+							</span>
+						</div>
+					</div>
+
+					<div style={{ display: "flex", alignItems: "center", justifyContent: "flex-start", fontSize: "0.8rem", marginTop: "0.5rem" }}>
+						<div style={{ display: "flex", flexDirection: "column", alignItems: "center", border: "1px solid lightgray", width: "33.3%", paddingTop: "0.5rem", paddingBottom: "0.5rem" }}>
+							<span>작성 글</span>
+							<span>{new Intl.NumberFormat().format(accountData.exp)}</span>
+						</div>
+						<div style={{ display: "flex", flexDirection: "column", alignItems: "center", border: "1px solid lightgray", width: "33.3%", paddingTop: "0.5rem", paddingBottom: "0.5rem" }}>
+							<span>작성 댓글</span>
+							<span>{new Intl.NumberFormat().format(accountData.exp)}</span>
+						</div>
+						<div style={{ display: "flex", flexDirection: "column", alignItems: "center", border: "1px solid lightgray", width: "33.3%", paddingTop: "0.5rem", paddingBottom: "0.5rem" }}>
+							<span>커뮤력</span>
+							<span>{new Intl.NumberFormat().format(accountData.exp)}</span>
+						</div>
+					</div>
+
 					<div style={{paddingLeft: "10px", paddingRight: "10px", fontSize: "0.8rem"}}>
 						<Table hover>
 							<colgroup>
@@ -148,34 +185,6 @@ const MyPage = () => {
 									</td>
 								</tr>
 								*/}
-								<tr>
-									<th>아이디</th>
-									<td><div className="vr"></div></td>
-									<td>
-										{accountData.id}
-									</td>
-								</tr>
-								<tr>
-									<th>닉네임</th>
-									<td><div className="vr"></div></td>
-									<td>
-										{accountData.nickname}
-									</td>
-								</tr>
-								<tr>
-									<th>이메일</th>
-									<td><div className="vr"></div></td>
-									<td>
-										{accountData.email === null ? "-" : accountData.email}
-									</td>
-								</tr>
-								<tr>
-									<th>커뮤력</th>
-									<td><div className="vr"></div></td>
-									<td>
-										{new Intl.NumberFormat().format(accountData.exp)}
-									</td>
-								</tr>
 								<tr>
 									<th>가입일</th>
 									<td><div className="vr"></div></td>
