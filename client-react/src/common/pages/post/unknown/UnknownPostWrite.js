@@ -208,38 +208,45 @@ const UnknownPostWrite = (props) => {
 		if(writeMode === "new"){
 			setRenderData(
 				<>
-					익명 게시판
-					<Row className="g-2">
-						<Col>
-							<Form.Control id="writer" type="text" placeholder="작성자" defaultValue={"익명"} style={{marginBottom: "10px", fontSize: "0.8rem"}} readOnly />
-						</Col>
-						<Col>
-							<Form.Control id="contentPassword" type="password" placeholder="비밀번호" maxLength={20} style={{marginBottom: "10px", fontSize: "0.8rem"}} />
-						</Col>
-					</Row>
-					<Form.Control id="title" type="text" placeholder="제목" style={{marginBottom: "10px", fontSize: "0.8rem"}} defaultValue={""} />
-					
-					<MyEditor
-						editorMode={"write"}
-						savedData={""}
-						editorMaxKB={editorMaxKB}
-						setEditor={(editor) => {setEditorObject(editor)}}
-						setEditorSizeByte={(size) => {setEditorSizeByte(size)}}
-					/>
+					<Form>
+						<div style={{display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "10px", marginTop: "30px"}}>
+							익명 게시판
+							&nbsp;
+							<Button onClick={() => {saveEditorData()}} variant="primary" style={{width: "20%", minWidth: "70px", maxWidth: "100px", fontSize: "0.8rem"}}>저장</Button>
+						</div>
 
-					<ProgressBar
-						now={parseInt((editorSizeByte / editorMaxKB) * 100, 10)} label={`${parseInt((editorSizeByte / editorMaxKB) * 100, 10)} %`}
-						variant="success"
-						style={{ height: "2.5rem", fontSize: "1rem", backgroundColor: "lightgray" }}
-					/>
+						<Row className="g-2">
+							<Col>
+								<Form.Control id="writer" type="text" placeholder="작성자" defaultValue={"익명"} autoComplete="off" style={{marginBottom: "10px", fontSize: "0.8rem"}} readOnly />
+							</Col>
+							<Col>
+								<Form.Control id="contentPassword" type="password" placeholder="비밀번호" autoComplete="current-password" maxLength={20} style={{marginBottom: "10px", fontSize: "0.8rem"}} />
+							</Col>
+						</Row>
+						<Form.Control id="title" type="text" placeholder="제목" style={{marginBottom: "10px", fontSize: "0.8rem"}} defaultValue={""} maxLength={100} />
+						
+						<MyEditor
+							editorMode={"write"}
+							savedData={""}
+							editorMaxKB={editorMaxKB}
+							setEditor={(editor) => {setEditorObject(editor)}}
+							setEditorSizeByte={(size) => {setEditorSizeByte(size)}}
+						/>
 
-					<div style={{display: "flex", justifyContent: "flex-end", marginBottom: "15px", marginTop: "30px"}}>
-						<Button onClick={() => {saveEditorData()}} variant="outline-primary" style={{width: "20%", minWidth: "60px", maxWidth: "200px", fontSize: "0.8rem"}}>저장</Button>
-						&nbsp;
-						<Button onClick={() => {if(window.confirm("작성한 내용을 전부 비우시겠습니까?") === true){editorObject.setData("")}}} variant="outline-danger" style={{width: "20%", minWidth: "60px", maxWidth: "200px", fontSize: "0.8rem"}}>비우기</Button>
-						&nbsp;
-						<Button onClick={() => {if(window.confirm("작성한 내용을 저장하지않고 나가시겠습니까?") === true){navigate("/lostark/post/unknown/1")}}} variant="outline-secondary" style={{width: "20%", minWidth: "60px", maxWidth: "200px", fontSize: "0.8rem"}}>취소</Button>
-					</div>
+						<ProgressBar
+							now={parseInt((editorSizeByte / editorMaxKB) * 100, 10)} label={`${parseInt((editorSizeByte / editorMaxKB) * 100, 10)} %`}
+							variant="success"
+							style={{ height: "2.5rem", fontSize: "1rem", backgroundColor: "lightgray" }}
+						/>
+
+						<div style={{display: "flex", justifyContent: "flex-end", marginBottom: "15px", marginTop: "30px"}}>
+							<Button onClick={() => {if(window.confirm("작성한 내용을 전부 비우시겠습니까?") === true){editorObject.setData("")}}} variant="danger" style={{width: "20%", minWidth: "70px", maxWidth: "100px", fontSize: "0.8rem"}}>비우기</Button>
+							&nbsp;
+							<Button onClick={() => {if(window.confirm("작성한 내용을 저장하지않고 나가시겠습니까?") === true){navigate("/lostark/post/unknown/1")}}} variant="secondary" style={{width: "20%", minWidth: "70px", maxWidth: "100px", fontSize: "0.8rem"}}>나가기</Button>
+							&nbsp;
+							<Button onClick={() => {saveEditorData()}} variant="primary" style={{width: "20%", minWidth: "70px", maxWidth: "100px", fontSize: "0.8rem"}}>저장</Button>
+						</div>
+					</Form>
 				</>
 			)
 		}
@@ -349,7 +356,7 @@ const UnknownPostWrite = (props) => {
 	}, [writeMode, contentCode, contentTitle, contentData, identity, failMessage, editorObject, editorSizeByte, saveEditorData, editEditorData, navigate])
 	
 	return(
-		<Container style={{maxWidth: "1200px"}}>
+		<Container style={{maxWidth: "1000px"}}>
 			{renderData}
 			<LoadingModal showModal={loadingModalShow} message={loadingModalMessage}/>
 		</Container>
