@@ -798,6 +798,7 @@ export class AccountsService {
 				nickname: true,
 				email: true,
 				exp: true,
+				evolution: true,
 				passwordChangeDate: true,
 				createdAt: true,
 			},
@@ -1235,13 +1236,38 @@ export class AccountsService {
 		}
 	}
 
-	async updateAccountExp(request: Request, response: Response, direction: string, point: number) {
-		const loginUUID = this.LOGIN_SESSION.get(request.cookies["sessionCode"]); //로그인한 정보
+	/**
+	 * 유저 경험치 갱신
+	 * 경험치가 42억을 넘을 일이 생기면 진화시켜버리기
+	 */
+	async updateAccountExp(request: Request, response: Response, direction: string, expPoint: number) {
+		// const loginUUID = this.LOGIN_SESSION.get(request.cookies["sessionCode"]); //로그인한 정보
+		const UNSIGNED_INT_MAX: number = 4294967295;
+		const accountData = await this.getMyInfo(request, response);
+		let accountEXP: number = accountData.exp;
 
 		if (direction === "down"){
-			point = point * (-1);
+			expPoint = expPoint * (-1);
 		}
 
-		this.accountsRepository.increment({ uuid: Equal(loginUUID) }, "exp", point);
+		if (accountEXP + expPoint >= 0) { //unsigned int 최소 값 보다 작을 경우
+			// this.accountsRepository.increment({ uuid: Equal(loginUUID) }, "exp", expPoint);
+			accountEXP += expPoint;
+
+			if (accountEXP >= UNSIGNED_INT_MAX){
+				if (accountData.evolution < 32767){ //smallint 최대 값
+					accountData.evolution += 1; //진화
+					accountData.exp = (accountEXP - UNSIGNED_INT_MAX); //경험치 0으로 초기화
+				}
+			}
+			else{
+				accountData.exp = accountEXP;
+			}
+		}
+		else{
+			accountData.exp = 0; //0보다 낮아지면 경험치 0으로 초기화
+		}
+
+		this.accountsRepository.save(accountData);
 	}
 }
