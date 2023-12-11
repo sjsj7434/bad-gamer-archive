@@ -1241,7 +1241,6 @@ export class AccountsService {
 	 * 경험치가 42억을 넘을 일이 생기면 진화시켜버리기
 	 */
 	async updateAccountExp(request: Request, response: Response, direction: string, expPoint: number) {
-		// const loginUUID = this.LOGIN_SESSION.get(request.cookies["sessionCode"]); //로그인한 정보
 		const UNSIGNED_INT_MAX: number = 4294967295;
 		const accountData = await this.getMyInfo(request, response);
 		let accountEXP: number = accountData.exp;
@@ -1251,7 +1250,6 @@ export class AccountsService {
 		}
 
 		if (accountEXP + expPoint >= 0) { //unsigned int 최소 값 보다 작을 경우
-			// this.accountsRepository.increment({ uuid: Equal(loginUUID) }, "exp", expPoint);
 			accountEXP += expPoint;
 
 			if (accountEXP >= UNSIGNED_INT_MAX){
