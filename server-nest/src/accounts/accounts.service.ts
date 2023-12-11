@@ -1228,4 +1228,14 @@ export class AccountsService {
 			return "0004";
 		}
 	}
+
+	async updateAccountExp(request: Request, response: Response, direction: string, point: number) {
+		const loginUUID = this.LOGIN_SESSION.get(request.cookies["sessionCode"]); //로그인한 정보
+
+		if (direction === "down"){
+			point = point * (-1);
+		}
+
+		this.accountsRepository.increment({ uuid: Equal(loginUUID) }, "exp", point);
+	}
 }

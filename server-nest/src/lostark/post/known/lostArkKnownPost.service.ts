@@ -24,6 +24,10 @@ export class LostArkKnownPostService {
 	private REPlY_MAX_ROW: number = 10; //댓글 줄 수 제한
 	private HOW_MANY_CONTENTS_ON_LIST: number = 20;
 
+	private POINT_WRITE_POST: number = 50;
+	private POINT_WRITE_REPLY: number = 15;
+	private POINT_VOTE: number = 5;
+
 	async isVotablePost(contentCode: number, userId: string): Promise<boolean> {
 		try {
 			if(userId === ""){
@@ -765,6 +769,7 @@ export class LostArkKnownPostService {
 			createPostDTO.ip = Math.random().toString().substring(2, 5) + "." + Math.random().toString().substring(2, 5) + "." + Math.random().toString().substring(2, 5) + "." + Math.random().toString().substring(2, 5);
 
 			const createdPost = await this.lostArkKnownPostRepository.save(createPostDTO);
+			await this.accountsService.updateAccountExp(request, response, "up", this.POINT_WRITE_POST);
 
 			return { createdCode: createdPost.code, status: "" };
 		}
@@ -855,6 +860,7 @@ export class LostArkKnownPostService {
 				ip: ipData,
 			});
 			await this.lostArkKnownVoteHistoryRepository.insert(insertHistory);
+			await this.accountsService.updateAccountExp(request, response, "up", this.POINT_VOTE);
 		}
 
 		const contentData = await this.lostArkKnownPostRepository.findOne({
@@ -888,6 +894,7 @@ export class LostArkKnownPostService {
 				ip: ipData,
 			});
 			await this.lostArkKnownVoteHistoryRepository.insert(insertHistory);
+			await this.accountsService.updateAccountExp(request, response, "up", this.POINT_VOTE);
 		}
 
 		const contentData = await this.lostArkKnownPostRepository.findOne({
@@ -1034,6 +1041,7 @@ export class LostArkKnownPostService {
 				}
 
 				await this.lostArkKnownReplyRepository.save(replyData);
+				await this.accountsService.updateAccountExp(request, response, "up", this.POINT_WRITE_REPLY);
 
 				return true;
 			}
