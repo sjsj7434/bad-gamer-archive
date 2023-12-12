@@ -152,11 +152,11 @@ const MyPage = () => {
 					<div style={{ display: "flex", alignItems: "center", justifyContent: "flex-start", fontSize: "0.8rem", marginTop: "0.5rem" }}>
 						<div style={{ display: "flex", flexDirection: "column", alignItems: "center", border: "1px solid lightgray", width: "33.3%", paddingTop: "0.5rem", paddingBottom: "0.5rem" }}>
 							<span>작성 글</span>
-							<span>{new Intl.NumberFormat().format(accountData.exp)}</span>
+							<span>{new Intl.NumberFormat().format(accountData.postWriteCount)}</span>
 						</div>
 						<div style={{ display: "flex", flexDirection: "column", alignItems: "center", border: "1px solid lightgray", width: "33.3%", paddingTop: "0.5rem", paddingBottom: "0.5rem" }}>
 							<span>작성 댓글</span>
-							<span>{new Intl.NumberFormat().format(accountData.exp)}</span>
+							<span>{new Intl.NumberFormat().format(accountData.replyWriteCount)}</span>
 						</div>
 						<div style={{ display: "flex", flexDirection: "column", alignItems: "center", border: "1px solid lightgray", width: "33.3%", paddingTop: "0.5rem", paddingBottom: "0.5rem" }}>
 							<span>커뮤력</span>
@@ -185,13 +185,6 @@ const MyPage = () => {
 									</td>
 								</tr>
 								*/}
-								<tr>
-									<th>가입일</th>
-									<td><div className="vr"></div></td>
-									<td>
-										{accountData.createdAt.substring(0, 10)}
-									</td>
-								</tr>
 								<tr>
 									<th>비밀번호 변경일</th>
 									<td><div className="vr"></div></td>

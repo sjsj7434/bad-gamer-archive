@@ -563,6 +563,7 @@ export class LostArkKnownPostService {
 
 			const createdPost = await this.lostArkKnownPostRepository.save(createPostDTO);
 			await this.accountService.updateAccountExp(request, response, "up", this.POINT_WRITE_POST);
+			await this.accountService.updateAccountPostCount(request, response, "create");
 
 			return { createdCode: createdPost.code, status: "" };
 		}
@@ -625,6 +626,7 @@ export class LostArkKnownPostService {
 				await this.lostArkKnownPostRepository.softDelete({
 					code: Equal(deletePostDTO.code)
 				});
+				await this.accountService.updateAccountPostCount(request, response, "delete");
 			}
 
 			return isExists;
@@ -834,6 +836,7 @@ export class LostArkKnownPostService {
 
 				await this.lostArkKnownReplyRepository.save(replyData);
 				await this.accountService.updateAccountExp(request, response, "up", this.POINT_WRITE_REPLY);
+				await this.accountService.updateAccountReplyCount(request, response, "create");
 
 				return true;
 			}
@@ -871,6 +874,7 @@ export class LostArkKnownPostService {
 				code: Equal(deleteReplyDTO.code),
 				writerID: Equal(loginCookie.id),
 			});
+			await this.accountService.updateAccountReplyCount(request, response, "delete");
 
 			return true;
 		}

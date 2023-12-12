@@ -798,6 +798,10 @@ export class AccountService {
 				email: true,
 				exp: true,
 				evolution: true,
+				postWriteCount: true,
+				replyWriteCount: true,
+				postDeleteCount: true,
+				replyDeleteCount: true,
 				passwordChangeDate: true,
 				createdAt: true,
 			},
@@ -1243,39 +1247,103 @@ export class AccountService {
 	 * 경험치가 42억을 넘을 일이 생기면 진화시켜버리기
 	 */
 	async updateAccountExp(request: Request, response: Response, direction: string, expPoint: number) {
-		const UNSIGNED_INT_MAX: number = 4294967295;
+		const UNSIGNED_INT_MAX: number = 4294967295; //unsigned int의 최대값
 		const accountData = await this.getMyInfo(request, response);
 		let accountEXP: number = accountData.exp;
 		let isUpdate: boolean = false;
 
-		if (direction === "down"){
+		if (direction === "down") {
 			expPoint = expPoint * (-1);
 		}
 
 		if (accountEXP + expPoint >= 0) { //unsigned int 최소 값 보다 작을 경우
 			accountEXP += expPoint;
 
-			if (accountEXP >= UNSIGNED_INT_MAX){
-				if (accountData.evolution < 32767){ //smallint 최대 값
+			if (accountEXP >= UNSIGNED_INT_MAX) {
+				if (accountData.evolution < 32767) { //smallint 최대 값
 					accountData.evolution += 1; //진화
 					accountData.exp = (accountEXP - UNSIGNED_INT_MAX); //경험치 0으로 초기화
 
 					isUpdate = true;
 				}
 			}
-			else{
+			else {
 				accountData.exp = accountEXP;
 
 				isUpdate = true;
 			}
 		}
-		else{
+		else {
 			accountData.exp = 0; //0보다 낮아지면 경험치 0으로 초기화
 
 			isUpdate = true;
 		}
 
-		if (isUpdate === true){ //update가 필요한 경우만 코드 실행
+		if (isUpdate === true) { //update가 필요한 경우만 코드 실행
+			this.accountRepository.save(accountData);
+		}
+	}
+
+	/**
+	 * 유저 작성 글 개수 갱신
+	 */
+	async updateAccountPostCount(request: Request, response: Response, type: string) {
+		const UNSIGNED_INT_MAX: number = 4294967295; //unsigned int의 최대값
+		const accountData = await this.getMyInfo(request, response);
+		let writeCount: number = accountData.postWriteCount;
+		let deleteCount: number = accountData.postDeleteCount;
+		let isUpdate: boolean = false;
+
+		if (type === "create") {
+			writeCount = writeCount + 1;
+
+			if (writeCount >= 0 && writeCount <= UNSIGNED_INT_MAX) {
+				accountData.postWriteCount = writeCount;
+				isUpdate = true;
+			}
+		}
+		else if (type === "delete") {
+			deleteCount = deleteCount + 1;
+
+			if (deleteCount >= 0 && deleteCount <= UNSIGNED_INT_MAX) {
+				accountData.postDeleteCount = deleteCount;
+				isUpdate = true;
+			}
+		}
+
+		if (isUpdate === true) { //update가 필요한 경우만 코드 실행
+			this.accountRepository.save(accountData);
+		}
+	}
+
+	/**
+	 * 유저 작성 댓글 개수 갱신
+	 */
+	async updateAccountReplyCount(request: Request, response: Response, type: string) {
+		const UNSIGNED_INT_MAX: number = 4294967295; //unsigned int의 최대값
+		const accountData = await this.getMyInfo(request, response);
+		let writeCount: number = accountData.replyWriteCount;
+		let deleteCount: number = accountData.replyDeleteCount;
+		let isUpdate: boolean = false;
+
+		if (type === "create") {
+			writeCount = writeCount + 1;
+
+			if (writeCount >= 0 && writeCount <= UNSIGNED_INT_MAX) {
+				accountData.replyWriteCount = writeCount;
+				isUpdate = true;
+			}
+		}
+		else if (type === "delete") {
+			deleteCount = deleteCount + 1;
+
+			if (deleteCount >= 0 && deleteCount <= UNSIGNED_INT_MAX) {
+				accountData.replyDeleteCount = deleteCount;
+				isUpdate = true;
+			}
+		}
+
+		if (isUpdate === true) { //update가 필요한 경우만 코드 실행
 			this.accountRepository.save(accountData);
 		}
 	}
