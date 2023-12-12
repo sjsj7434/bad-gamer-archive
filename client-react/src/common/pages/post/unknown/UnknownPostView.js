@@ -8,6 +8,7 @@ import LoadingModal from '../../common/LoadingModal';
 import * as postFetch from '../../../js/postFetch';
 import MyEditor from '../MyEditor';
 import '../../../css/View.css';
+import * as postCommon from "../../../js/postCommon";
 
 const UnknownPostView = (props) => {
 	const [contentCode, setContentCode] = useState(null);
@@ -211,7 +212,7 @@ const UnknownPostView = (props) => {
 							</span>
 
 							<div style={{ fontWeight: "800", fontSize: "1.5rem", wordBreak: "break-all" }}>
-								<span>{contentJson.category !== "" ? `[${contentJson.category}] ` : ""}</span>
+								<span>{contentJson.category !== "" ? `[${postCommon.parseCategory(contentJson.category)}] ` : ""}</span>
 								<span>{contentJson.title}</span>
 							</div>
 							<div style={{fontWeight: "400", fontSize: "0.8rem"}}>

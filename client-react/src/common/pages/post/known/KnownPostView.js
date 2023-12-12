@@ -11,6 +11,7 @@ import MyEditor from '../MyEditor';
 import Modal from 'react-bootstrap/Modal';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
+import * as postCommon from "../../../js/postCommon";
 
 const KnownPostView = (props) => {
 	const [contentCode, setContentCode] = useState(null);
@@ -275,7 +276,7 @@ const KnownPostView = (props) => {
 							</span>
 
 							<div style={{ fontWeight: "800", fontSize: "1.5rem", wordBreak: "break-all" }}>
-								<span>{contentJson.category !== "" ? `[${contentJson.category}] ` : ""}</span>
+								<span>{contentJson.category !== "" ? `[${postCommon.parseCategory(contentJson.category)}] ` : ""}</span>
 								<span>{contentJson.title}</span>
 							</div>
 							<div style={{fontWeight: "400", fontSize: "0.8rem"}}>

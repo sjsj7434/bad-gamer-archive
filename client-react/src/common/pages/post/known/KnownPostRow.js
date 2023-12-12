@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import * as postCommon from "../../../js/postCommon";
 
 const KnownPostRow = (props) => {
 	return(
@@ -43,7 +44,7 @@ const KnownPostRow = (props) => {
 							&nbsp;
 							<div style={{overflow: "hidden", whiteSpace: "nowrap", textOverflow: "ellipsis"}}>
 								<span style={{fontSize: "0.8rem"}}>
-									{props.postData.category !== "" ? `[${props.postData.category}] ` : ""}
+									{props.postData.category !== "" ? `[${postCommon.parseCategory(props.postData.category)}] ` : ""}
 									{props.postData.title}
 								</span>
 							</div>
