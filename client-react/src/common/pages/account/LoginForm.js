@@ -7,7 +7,7 @@ import InputGroup from 'react-bootstrap/InputGroup';
 import Button from 'react-bootstrap/Button';
 import LoadingModal from '../common/LoadingModal.js';
 
-import * as accountsFetch from '../../js/accountsFetch.js'
+import * as accountFetch from '../../js/accountFetch.js'
 
 const LoginForm = () => {
 	const [showLoadingModal, setShowLoadingModal] = useState(false);
@@ -35,7 +35,7 @@ const LoginForm = () => {
 		// await asyncWaiter(1);
 		setShowLoadingModal(false);
 
-		const loginResult = await accountsFetch.loginAccount({
+		const loginResult = await accountFetch.loginAccount({
 			id: form.idInput.value,
 			password: form.passwordInput.value,
 		});
@@ -51,7 +51,7 @@ const LoginForm = () => {
 		}
 		else if(loginResult === "locked"){
 			if(window.confirm("지속된 로그인 실패로 계정이 잠금상태가 되었습니다\n\n해당 계정의 비밀번호를 잊으셨나요?") === true){
-				navigate("/accounts/find/password");
+				navigate("/account/find/password");
 			}
 		}
 		else if(loginResult === "sleep"){
@@ -105,12 +105,12 @@ const LoginForm = () => {
 				</Form>
 
 				<div style={{ display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginTop: "15px" }}>
-					<Button onClick={() => { navigate("/accounts/register"); }} variant="link" style={{ fontSize: "0.75rem", textDecoration: "none", color: "gray" }}>회원가입</Button>
+					<Button onClick={() => { navigate("/account/register"); }} variant="link" style={{ fontSize: "0.75rem", textDecoration: "none", color: "gray" }}>회원가입</Button>
 					
 					<div style={{ display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
 						{/* <Button variant="link" style={{ fontSize: "0.75rem", textDecoration: "none", color: "gray" }}>계정 찾기</Button>
 						<span style={{ fontSize: "0.65rem", color: "gray" }}>|</span> */}
-						<Button onClick={() => { navigate("/accounts/find/password"); }} variant="link" style={{ fontSize: "0.75rem", textDecoration: "none", color: "gray" }}>비밀번호 찾기</Button>
+						<Button onClick={() => { navigate("/account/find/password"); }} variant="link" style={{ fontSize: "0.75rem", textDecoration: "none", color: "gray" }}>비밀번호 찾기</Button>
 					</div>
 				</div>
 			</div>

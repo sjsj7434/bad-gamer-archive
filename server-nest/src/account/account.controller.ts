@@ -7,7 +7,7 @@ import { UpdateAuthenticationDTO } from './authentication.dto';
 import { SkipThrottle, Throttle } from '@nestjs/throttler';
 
 @SkipThrottle()
-@Controller("accounts")
+@Controller("account")
 export class  AccountController {
 	constructor(private accountService: AccountService) { }
 

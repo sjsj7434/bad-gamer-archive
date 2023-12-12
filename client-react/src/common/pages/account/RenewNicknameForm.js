@@ -7,7 +7,7 @@ import Container from 'react-bootstrap/Container';
 import Button from 'react-bootstrap/Button';
 import LoadingModal from '../common/LoadingModal.js';
 
-import * as accountsFetch from '../../js/accountsFetch.js'
+import * as accountFetch from '../../js/accountFetch.js'
 
 const RenewNicknameForm = () => {
 	const [showLoadingModal, setShowLoadingModal] = useState(false);
@@ -36,14 +36,14 @@ const RenewNicknameForm = () => {
 			await asyncWaiter(1);
 			setShowLoadingModal(false);
 
-			const updateResult = await accountsFetch.renewNickname({
+			const updateResult = await accountFetch.renewNickname({
 				nickname: form.nicknameInput.value,
 				password: form.passwordInput.value,
 			});
 			
 			if(updateResult === true){
 				alert("닉네임이 변경되었습니다");
-				navigate("/accounts/mypage");
+				navigate("/account/mypage");
 			}
 			else if(updateResult === false){
 				alert("닉네임을 변경할 수 없습니다\n비밀번호를 다시 확인해주세요");

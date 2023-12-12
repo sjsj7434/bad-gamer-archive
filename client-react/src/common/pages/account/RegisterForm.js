@@ -6,7 +6,7 @@ import Form from 'react-bootstrap/Form';
 import Container from 'react-bootstrap/Container';
 import Button from 'react-bootstrap/Button';
 
-import * as accountsFetch from '../../js/accountsFetch.js'
+import * as accountFetch from '../../js/accountFetch.js'
 import LoadingModal from '../common/LoadingModal.js';
 
 const RegisterForm = () => {
@@ -56,7 +56,7 @@ const RegisterForm = () => {
 			await asyncWaiter(1);
 			setShowLoadingModal(false);
 
-			const createResult = await accountsFetch.createAccount({
+			const createResult = await accountFetch.createAccount({
 				id: form.idInput.value,
 				nickname: form.nicknameInput.value,
 				email: form.emailInput.value,
@@ -65,7 +65,7 @@ const RegisterForm = () => {
 
 			if(createResult === 4){
 				alert("환영합니다!\n로그인 페이지로 이동합니다");
-				navigate("/accounts/login");
+				navigate("/account/login");
 			}
 			else if(createResult === 0){
 				alert("이미 사용 중인 아이디와 닉네임입니다");

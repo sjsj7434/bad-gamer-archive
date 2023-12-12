@@ -70,7 +70,7 @@ const KnownPostWrite = (props) => {
 			else if(createResult.status === "need_login"){
 				alert("로그인이 필요합니다");
 				setLoadingModalShow(false);
-				navigate("/accounts/login");
+				navigate("/account/login");
 			}
 		}
 		else{

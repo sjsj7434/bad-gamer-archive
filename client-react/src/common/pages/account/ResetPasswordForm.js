@@ -7,7 +7,7 @@ import Container from 'react-bootstrap/Container';
 import Button from 'react-bootstrap/Button';
 import LoadingModal from '../common/LoadingModal.js';
 
-import * as accountsFetch from '../../js/accountsFetch.js'
+import * as accountFetch from '../../js/accountFetch.js'
 
 const ResetPasswordForm = () => {
 	const [codeValid, setCodeValid] = useState(null);
@@ -20,7 +20,7 @@ const ResetPasswordForm = () => {
 
 	useEffect(() => {
 		const compareCode = async () => {
-			const compareResult = await accountsFetch.checkPasswordForgotCode(params.verificationCode);
+			const compareResult = await accountFetch.checkPasswordForgotCode(params.verificationCode);
 
 			if(compareResult === "verified"){
 				setCodeValid(true);
@@ -59,7 +59,7 @@ const ResetPasswordForm = () => {
 			await asyncWaiter(1);
 			setShowLoadingModal(false);
 
-			const updateResult = await accountsFetch.resetPassword({
+			const updateResult = await accountFetch.resetPassword({
 				newPassword: form.newPasswordInput.value,
 				verificationCode: params.verificationCode,
 			});
@@ -76,7 +76,7 @@ const ResetPasswordForm = () => {
 			else if(updateResult === "reset"){
 				alert("비밀번호가 변경되었습니다");
 
-				navigate("/accounts/login");
+				navigate("/account/login");
 			}
 			else if(updateResult === "no_user"){
 				alert("사용자를 확인할 수 없습니다");

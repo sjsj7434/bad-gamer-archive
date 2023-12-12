@@ -6,7 +6,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import '../css/Common.css';
 
 import Error404 from './errors/Error404';
-import * as accountsFetch from '../js/accountsFetch.js'
+import * as accountFetch from '../js/accountFetch.js'
 import LostarkMain from '../../lostark/pages/main/LostarkMain.js';
 import SetActiveMenu from './SetActiveMenu';
 import CommonTopMenu from './CommonTopMenu';
@@ -14,16 +14,16 @@ import CommonTopMenu from './CommonTopMenu';
 import UsefulSitesLostark from './common/UsefulSitesLostark';
 import HelpCenter from './common/HelpCenter';
 
-import RegisterForm from './accounts/RegisterForm';
-import LoginForm from './accounts/LoginForm';
-import MyPage from './accounts/MyPage';
-import ForgotPasswordForm from './accounts/ForgotPasswordForm';
-import BlockLoginUser from './accounts/BlockLoginUser';
-import BlockLogoutUser from './accounts/BlockLogoutUser';
-import RenewNicknameForm from './accounts/RenewNicknameForm';
-import ActivateLostarkAPI from './accounts/ActivateLostarkAPI';
-import ResetPasswordForm from './accounts/ResetPasswordForm';
-import RenewPasswordForm from './accounts/RenewPasswordForm';
+import RegisterForm from './account/RegisterForm';
+import LoginForm from './account/LoginForm';
+import MyPage from './account/MyPage';
+import ForgotPasswordForm from './account/ForgotPasswordForm';
+import BlockLoginUser from './account/BlockLoginUser';
+import BlockLogoutUser from './account/BlockLogoutUser';
+import RenewNicknameForm from './account/RenewNicknameForm';
+import ActivateLostarkAPI from './account/ActivateLostarkAPI';
+import ResetPasswordForm from './account/ResetPasswordForm';
+import RenewPasswordForm from './account/RenewPasswordForm';
 
 import AnnouncePostList from './post/announce/AnnouncePostList.js';
 import AnnouncePostView from './post/announce/AnnouncePostView.js';
@@ -45,7 +45,7 @@ const RoutesWrapper = () => {
 	let location = useLocation();
 	
 	const checkLoginStatus = async () => {
-		const statusJSON = await accountsFetch.checkLoginStatus();
+		const statusJSON = await accountFetch.checkLoginStatus();
 		setAccountData(statusJSON);
 	}
 
@@ -161,13 +161,13 @@ const RoutesWrapper = () => {
 						</Route>
 					</Route>
 
-					<Route path="accounts">
+					<Route path="account">
 						<Route path="register" element={
 							<BlockLoginUser
 								accountData={accountData}
 								ifAllow={
 									<>
-										<SetActiveMenu pageTitle="" setCurrentMenu={setCurrentMenu} menuCode={"/accounts/register"} />
+										<SetActiveMenu pageTitle="" setCurrentMenu={setCurrentMenu} menuCode={"/account/register"} />
 										<RegisterForm />
 									</>
 								}
@@ -178,7 +178,7 @@ const RoutesWrapper = () => {
 								accountData={accountData}
 								ifAllow={
 									<>
-										<SetActiveMenu pageTitle="" setCurrentMenu={setCurrentMenu} menuCode={"/accounts/login"} />
+										<SetActiveMenu pageTitle="" setCurrentMenu={setCurrentMenu} menuCode={"/account/login"} />
 										<LoginForm />
 									</>
 								}
@@ -190,7 +190,7 @@ const RoutesWrapper = () => {
 								accountData={accountData}
 								ifAllow={
 									<>
-										<SetActiveMenu pageTitle="" setCurrentMenu={setCurrentMenu} menuCode={"/accounts/find/password"} />
+										<SetActiveMenu pageTitle="" setCurrentMenu={setCurrentMenu} menuCode={"/account/find/password"} />
 										<ForgotPasswordForm />
 									</>
 								}
@@ -214,7 +214,7 @@ const RoutesWrapper = () => {
 									accountData={accountData}
 									ifAllow={
 										<>
-											<SetActiveMenu pageTitle="Agora(My)" setCurrentMenu={setCurrentMenu} menuCode={"/accounts/mypage"} />
+											<SetActiveMenu pageTitle="Agora(My)" setCurrentMenu={setCurrentMenu} menuCode={"/account/mypage"} />
 											<MyPage />
 										</>
 									}
@@ -226,7 +226,7 @@ const RoutesWrapper = () => {
 									accountData={accountData}
 									ifAllow={
 										<>
-											<SetActiveMenu pageTitle="Agora(LA 인증)" setCurrentMenu={setCurrentMenu} menuCode={"/accounts/activate/lostark"} />
+											<SetActiveMenu pageTitle="Agora(LA 인증)" setCurrentMenu={setCurrentMenu} menuCode={"/account/activate/lostark"} />
 											{/* <ActivateLostarkScrap /> */}
 											<ActivateLostarkAPI />
 										</>
@@ -239,7 +239,7 @@ const RoutesWrapper = () => {
 									accountData={accountData}
 									ifAllow={
 										<>
-											<SetActiveMenu pageTitle="Agora(LA)" setCurrentMenu={setCurrentMenu} menuCode={"/accounts/renew/password"} />
+											<SetActiveMenu pageTitle="Agora(LA)" setCurrentMenu={setCurrentMenu} menuCode={"/account/renew/password"} />
 											<RenewPasswordForm checkLoginStatus={checkLoginStatus} />
 										</>
 									}
@@ -251,7 +251,7 @@ const RoutesWrapper = () => {
 									accountData={accountData}
 									ifAllow={
 										<>
-											<SetActiveMenu pageTitle="Agora(LA)" setCurrentMenu={setCurrentMenu} menuCode={"/accounts/renew/nickname"} />
+											<SetActiveMenu pageTitle="Agora(LA)" setCurrentMenu={setCurrentMenu} menuCode={"/account/renew/nickname"} />
 											<RenewNicknameForm />
 										</>
 									}

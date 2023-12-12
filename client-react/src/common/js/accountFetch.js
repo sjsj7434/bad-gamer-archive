@@ -9,7 +9,7 @@ export const getVerificationCode = async () => {
 		, headers: {"Content-Type": "application/json",}
 		, credentials: "include", // Don't forget to specify this if you need cookies
 	};
-	const fetchResponse = await fetch(`/accounts/stove/verification/code`, fecthOption);
+	const fetchResponse = await fetch(`/account/stove/verification/code`, fecthOption);
 	const [isStatusGood, checkMessage] = isFetchStatusGood(fetchResponse);
 
 	if(isStatusGood === true){
@@ -33,7 +33,7 @@ export const checkProfileTokenMatchAPI = async (stoveCode) => {
 		, headers: {"Content-Type": "application/json",}
 		, credentials: "include", // Don't forget to specify this if you need cookies
 	};
-	const fetchResponse = await fetch(`/accounts/stove/verification/api/${stoveCode}`, fecthOption);
+	const fetchResponse = await fetch(`/account/stove/verification/api/${stoveCode}`, fecthOption);
 	const [isStatusGood, checkMessage] = isFetchStatusGood(fetchResponse);
 
 	if(isStatusGood === true){
@@ -57,7 +57,7 @@ export const checkProfileTokenMatchScrap = async (stoveCode) => {
 		, headers: {"Content-Type": "application/json",}
 		, credentials: "include", // Don't forget to specify this if you need cookies
 	};
-	const fetchResponse = await fetch(`/accounts/stove/verification/scrap/${stoveCode}`, fecthOption);
+	const fetchResponse = await fetch(`/account/stove/verification/scrap/${stoveCode}`, fecthOption);
 	const [isStatusGood, checkMessage] = isFetchStatusGood(fetchResponse);
 
 	if(isStatusGood === true){
@@ -81,7 +81,7 @@ export const isDuplicatedID = async (id) => {
 		, headers: {"Content-Type": "application/json",}
 		, credentials: "include", // Don't forget to specify this if you need cookies
 	};
-	const fetchResponse = await fetch(`/accounts/id/${id}`, fecthOption);
+	const fetchResponse = await fetch(`/account/id/${id}`, fecthOption);
 	const [isStatusGood, checkMessage] = isFetchStatusGood(fetchResponse);
 
 	if(isStatusGood === true){
@@ -105,7 +105,7 @@ export const isDuplicatedNickname = async (nickname) => {
 		, headers: {"Content-Type": "application/json",}
 		, credentials: "include", // Don't forget to specify this if you need cookies
 	};
-	const fetchResponse = await fetch(`/accounts/nickname/${nickname}`, fecthOption);
+	const fetchResponse = await fetch(`/account/nickname/${nickname}`, fecthOption);
 	const [isStatusGood, checkMessage] = isFetchStatusGood(fetchResponse);
 
 	if(isStatusGood === true){
@@ -131,7 +131,7 @@ export const createAccount = async (accountInfo) => {
 		, headers: {"Content-Type": "application/json",}
 		, credentials: "include", // Don't forget to specify this if you need cookies
 	};
-	const fetchResponse = await fetch(`/accounts`, fecthOption);
+	const fetchResponse = await fetch(`/account`, fecthOption);
 	const [isStatusGood, checkMessage] = isFetchStatusGood(fetchResponse);
 
 	if(isStatusGood === true){
@@ -161,7 +161,7 @@ export const loginAccount = async (accountInfo) => {
 		, headers: {"Content-Type": "application/json",}
 		, credentials: "include", // Don't forget to specify this if you need cookies
 	};
-	const fetchResponse = await fetch(`/accounts/login`, fecthOption);
+	const fetchResponse = await fetch(`/account/login`, fecthOption);
 	const [isStatusGood] = isFetchStatusGood(fetchResponse);
 
 	if(isStatusGood === true){
@@ -184,7 +184,7 @@ export const checkLoginStatus = async () => {
 		method: "GET"
 		, credentials: "include", // Don't forget to specify this if you need cookies
 	};
-	const fetchResponse = await fetch(`/accounts/login/status`, fecthOption);
+	const fetchResponse = await fetch(`/account/login/status`, fecthOption);
 	const [isStatusGood, checkMessage] = isFetchStatusGood(fetchResponse);
 
 	if(isStatusGood === true){
@@ -207,7 +207,7 @@ export const logoutAccount = async () => {
 		method: "POST"
 		, credentials: "include", // Don't forget to specify this if you need cookies
 	};
-	await fetch(`/accounts/logout`, fecthOption);
+	await fetch(`/account/logout`, fecthOption);
 }
 
 /**
@@ -219,7 +219,7 @@ export const getCharacterInfoScrap = async (characterName) => {
 		, headers: {"Content-Type": "application/json",}
 		, credentials: "include", // Don't forget to specify this if you need cookies
 	};
-	const fetchResponse = await fetch(`/accounts/stove/character/scrap/${characterName}`, fecthOption);
+	const fetchResponse = await fetch(`/account/stove/character/scrap/${characterName}`, fecthOption);
 	const [isStatusGood, checkMessage] = isFetchStatusGood(fetchResponse);
 
 	if(isStatusGood === true){
@@ -244,7 +244,7 @@ export const setLostarkCharacter = async (accountInfo) => {
 		, headers: {"Content-Type": "application/json",}
 		, credentials: "include", // Don't forget to specify this if you need cookies
 	};
-	const fetchResponse = await fetch(`/accounts/lostark/character/set`, fecthOption);
+	const fetchResponse = await fetch(`/account/lostark/character/set`, fecthOption);
 	const [isStatusGood, checkMessage] = isFetchStatusGood(fetchResponse);
 
 	if(isStatusGood === true){
@@ -268,7 +268,7 @@ export const changeLostarkCharacter = async () => {
 		, headers: {"Content-Type": "application/json",}
 		, credentials: "include", // Don't forget to specify this if you need cookies
 	};
-	const fetchResponse = await fetch(`/accounts/lostark/character/change`, fecthOption);
+	const fetchResponse = await fetch(`/account/lostark/character/change`, fecthOption);
 	const [isStatusGood, checkMessage] = isFetchStatusGood(fetchResponse);
 
 	if(isStatusGood === true){
@@ -292,7 +292,7 @@ export const renewLostarkCharacter = async () => {
 		, headers: {"Content-Type": "application/json",}
 		, credentials: "include", // Don't forget to specify this if you need cookies
 	};
-	const fetchResponse = await fetch(`/accounts/lostark/character/renew`, fecthOption);
+	const fetchResponse = await fetch(`/account/lostark/character/renew`, fecthOption);
 	const [isStatusGood, checkMessage] = isFetchStatusGood(fetchResponse);
 
 	if(isStatusGood === true){
@@ -317,7 +317,7 @@ export const exitLostarkAuthentication = async (accountInfo) => {
 		, headers: {"Content-Type": "application/json",}
 		, credentials: "include", // Don't forget to specify this if you need cookies
 	};
-	const fetchResponse = await fetch(`/accounts/lostark/character/exit`, fecthOption);
+	const fetchResponse = await fetch(`/account/lostark/character/exit`, fecthOption);
 	const [isStatusGood, checkMessage] = isFetchStatusGood(fetchResponse);
 
 	if(isStatusGood === true){
@@ -342,7 +342,7 @@ export const deactivateLostarkCharacter = async (sendData) => {
 		, headers: {"Content-Type": "application/json",}
 		, credentials: "include", // Don't forget to specify this if you need cookies
 	};
-	const fetchResponse = await fetch(`/accounts/lostark/character`, fecthOption);
+	const fetchResponse = await fetch(`/account/lostark/character`, fecthOption);
 	const [isStatusGood, checkMessage] = isFetchStatusGood(fetchResponse);
 
 	if(isStatusGood === true){
@@ -366,7 +366,7 @@ export const getMyInfo = async () => {
 		, headers: {"Content-Type": "application/json",}
 		, credentials: "include", // Don't forget to specify this if you need cookies
 	};
-	const fetchResponse = await fetch(`/accounts/information/my`, fecthOption);
+	const fetchResponse = await fetch(`/account/information/my`, fecthOption);
 	const [isStatusGood, checkMessage] = isFetchStatusGood(fetchResponse);
 
 	if(isStatusGood === true){
@@ -391,7 +391,7 @@ export const renewPassword = async (sendData) => {
 		, headers: {"Content-Type": "application/json",}
 		, credentials: "include", // Don't forget to specify this if you need cookies
 	};
-	const fetchResponse = await fetch(`/accounts/password`, fecthOption);
+	const fetchResponse = await fetch(`/account/password`, fecthOption);
 	const [isStatusGood, checkMessage] = isFetchStatusGood(fetchResponse);
 
 	if(isStatusGood === true){
@@ -416,7 +416,7 @@ export const renewNickname = async (sendData) => {
 		, headers: {"Content-Type": "application/json",}
 		, credentials: "include", // Don't forget to specify this if you need cookies
 	};
-	const fetchResponse = await fetch(`/accounts/nickname`, fecthOption);
+	const fetchResponse = await fetch(`/account/nickname`, fecthOption);
 	const [isStatusGood, checkMessage] = isFetchStatusGood(fetchResponse);
 
 	if(isStatusGood === true){
@@ -440,7 +440,7 @@ export const requestVerifyEmail = async () => {
 		, headers: {"Content-Type": "application/json",}
 		, credentials: "include", // Don't forget to specify this if you need cookies
 	};
-	const fetchResponse = await fetch(`/accounts/verify/send/email`, fecthOption);
+	const fetchResponse = await fetch(`/account/verify/send/email`, fecthOption);
 	const [isStatusGood, checkMessage] = isFetchStatusGood(fetchResponse);
 
 	if(isStatusGood === true){
@@ -465,7 +465,7 @@ export const requestPasswordReset = async (sendData) => {
 		, headers: {"Content-Type": "application/json",}
 		, credentials: "include", // Don't forget to specify this if you need cookies
 	};
-	const fetchResponse = await fetch(`/accounts/reset/password/request`, fecthOption);
+	const fetchResponse = await fetch(`/account/reset/password/request`, fecthOption);
 	const [isStatusGood, checkMessage] = isFetchStatusGood(fetchResponse);
 
 	if(isStatusGood === true){
@@ -490,7 +490,7 @@ export const resetPassword = async (sendData) => {
 		, headers: {"Content-Type": "application/json",}
 		, credentials: "include", // Don't forget to specify this if you need cookies
 	};
-	const fetchResponse = await fetch(`/accounts/reset/password/execute`, fecthOption);
+	const fetchResponse = await fetch(`/account/reset/password/execute`, fecthOption);
 	const [isStatusGood, checkMessage] = isFetchStatusGood(fetchResponse);
 
 	if(isStatusGood === true){
@@ -514,7 +514,7 @@ export const checkPasswordForgotCode = async (verificationCode) => {
 		, headers: {"Content-Type": "application/json",}
 		, credentials: "include", // Don't forget to specify this if you need cookies
 	};
-	const fetchResponse = await fetch(`/accounts/verify/reset/password/${verificationCode}`, fecthOption);
+	const fetchResponse = await fetch(`/account/verify/reset/password/${verificationCode}`, fecthOption);
 	const [isStatusGood, checkMessage] = isFetchStatusGood(fetchResponse);
 
 	if(isStatusGood === true){
@@ -538,7 +538,7 @@ export const deleteAccount = async () => {
 		, headers: {"Content-Type": "application/json",}
 		, credentials: "include", // Don't forget to specify this if you need cookies
 	};
-	const fetchResponse = await fetch(`/accounts`, fecthOption);
+	const fetchResponse = await fetch(`/account`, fecthOption);
 	const [isStatusGood, checkMessage] = isFetchStatusGood(fetchResponse);
 
 	if(isStatusGood === true){

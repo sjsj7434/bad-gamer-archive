@@ -7,7 +7,7 @@ import Container from 'react-bootstrap/Container';
 import Button from 'react-bootstrap/Button';
 import LoadingModal from '../common/LoadingModal.js';
 
-import * as accountsFetch from '../../js/accountsFetch.js'
+import * as accountFetch from '../../js/accountFetch.js'
 
 const RenewPasswordForm = (props) => {
 	const [passwordValid, setPasswordValid] = useState(0);
@@ -48,7 +48,7 @@ const RenewPasswordForm = (props) => {
 			await asyncWaiter(1);
 			setShowLoadingModal(false);
 
-			const updateResult = await accountsFetch.renewPassword({
+			const updateResult = await accountFetch.renewPassword({
 				oldPassword: form.oldPasswordInput.value,
 				newPassword: form.newPasswordInput.value,
 			});
@@ -64,7 +64,7 @@ const RenewPasswordForm = (props) => {
 
 				await props.checkLoginStatus();
 
-				navigate("/accounts/login");
+				navigate("/account/login");
 			}
 			else if(updateResult === 2){
 				alert("입력하신 현재 비밀번호가 올바르지 않습니다");

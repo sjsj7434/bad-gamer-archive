@@ -4,7 +4,7 @@ import Container from 'react-bootstrap/Container';
 import { useNavigate } from "react-router-dom";
 import Table from 'react-bootstrap/Table';
 
-import * as accountsFetch from '../../../common/js/accountsFetch.js'
+import * as accountsFetch from '../../js/accountFetch.js'
 import Row from 'react-bootstrap/esm/Row.js';
 import Col from 'react-bootstrap/esm/Col.js';
 import LoadingModal from '../common/LoadingModal.js';

@@ -7,7 +7,7 @@ import InputGroup from 'react-bootstrap/InputGroup';
 import Button from 'react-bootstrap/Button';
 import LoadingModal from '../common/LoadingModal.js';
 
-import * as accountsFetch from '../../js/accountsFetch.js'
+import * as accountsFetch from '../../js/accountFetch.js'
 
 const ForgotPasswordForm = (props) => {
 	const [showLoadingModal, setShowLoadingModal] = useState(false);

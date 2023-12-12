@@ -18,7 +18,7 @@ import { LostarkCharacter } from './lostarkCharacter';
 @Injectable()
 export class AccountService {
 	constructor(
-		@InjectRepository(Account) private accountsRepository: Repository<Account>,
+		@InjectRepository(Account) private accountRepository: Repository<Account>,
 		@InjectRepository(Authentication) private authenticationRepository: Repository<Authentication>,
 		@InjectRepository(LostarkCharacter) private lostarkCharacterRepository: Repository<LostarkCharacter>,
 		@Inject(CACHE_MANAGER) private cacheManager: Cache,
@@ -466,7 +466,7 @@ export class AccountService {
 			currentLoop++;
 			randomString = randomBytes(20).toString("hex");
 
-			uuidExists = await this.accountsRepository.exist({
+			uuidExists = await this.accountRepository.exist({
 				where: {
 					uuid: Equal(randomString),
 				},
@@ -486,7 +486,7 @@ export class AccountService {
 	 * 이미 존재하는 id인지 확인
 	 */
 	isExistsID(accountID: string): Promise<boolean> {
-		return this.accountsRepository.exist({
+		return this.accountRepository.exist({
 			where: {
 				id: Equal(accountID),
 			},
@@ -498,7 +498,7 @@ export class AccountService {
 	 * 이미 존재하는 nickname인지 확인
 	 */
 	isExistsNickname(accountNickname: string): Promise<boolean> {
-		return this.accountsRepository.exist({
+		return this.accountRepository.exist({
 			where: {
 				nickname: Equal(accountNickname),
 			},
@@ -541,7 +541,7 @@ export class AccountService {
 					createAccountDTO.uuid = uniqueUUID;
 					createAccountDTO.password = hash;
 
-					await this.accountsRepository.save(createAccountDTO);
+					await this.accountRepository.save(createAccountDTO);
 
 					return 4; //정상 처리
 				}
@@ -560,14 +560,14 @@ export class AccountService {
 	async deleteAccount(request: Request, response: Response): Promise<boolean> {
 		const loginUUID = this.LOGIN_SESSION.get(request.cookies["sessionCode"]); //로그인한 정보
 
-		const isExists: boolean = await this.accountsRepository.exist({
+		const isExists: boolean = await this.accountRepository.exist({
 			where: {
 				uuid: Equal(loginUUID)
 			}
 		});
 
 		if (isExists === true){
-			await this.accountsRepository.softDelete({ //계정 정보는 soft delete
+			await this.accountRepository.softDelete({ //계정 정보는 soft delete
 				uuid: loginUUID,
 			});
 
@@ -599,7 +599,7 @@ export class AccountService {
 		else if (this.LOGIN_SESSION.has(request.cookies["sessionCode"]) === true) { //정상적으로 로그인한 쿠키가 있다
 			const loginUUID = this.LOGIN_SESSION.get(request.cookies["sessionCode"]); //로그인한 정보
 
-			const account = await this.accountsRepository.findOne({
+			const account = await this.accountRepository.findOne({
 				select: {
 					id: true,
 					nickname: true,
@@ -665,7 +665,7 @@ export class AccountService {
 	async loginAccount(updateAccountDTO: UpdateAccountDTO, request: Request, response: Response): Promise<string> {
 		response.clearCookie("sessionCode");
 
-		const account = await this.accountsRepository.findOne({
+		const account = await this.accountRepository.findOne({
 			select: {
 				uuid: true,
 				password: true,
@@ -694,7 +694,7 @@ export class AccountService {
 			if (isMatch === false) { //로그인 실패
 				const failCount = account.loginFailCount + 1; //로그인 실패 횟수 + 1
 
-				await this.accountsRepository.update(
+				await this.accountRepository.update(
 					{ //조건
 						uuid: account.uuid,
 					},
@@ -720,7 +720,7 @@ export class AccountService {
 					return "sleep";
 				}
 				else{
-					await this.accountsRepository.update(
+					await this.accountRepository.update(
 						{ //조건
 							uuid: account.uuid,
 						},
@@ -789,7 +789,7 @@ export class AccountService {
 			return null;
 		}
 
-		const acctountData = await this.accountsRepository.findOne({
+		const acctountData = await this.accountRepository.findOne({
 			relations: ["authentication"], //사용자 인증 정보 join
 			select: {
 				authentication: { type: true, data: true, createdAt: true, updatedAt: true },
@@ -823,7 +823,7 @@ export class AccountService {
 	async updatePassword(request: Request, response: Response, updateAccountDTO: UpdateAccountDTO): Promise<number> {
 		const loginUUID = this.LOGIN_SESSION.get(request.cookies["sessionCode"]); //로그인한 정보
 
-		const acctountData = await this.accountsRepository.findOne({
+		const acctountData = await this.accountRepository.findOne({
 			select: {
 				id: true,
 				password: true,
@@ -847,7 +847,7 @@ export class AccountService {
 				const isRight = await bcrypt.compare(password, hash);
 
 				if (isRight === true){
-					await this.accountsRepository.update(
+					await this.accountRepository.update(
 						{ //조건
 							id: acctountData.id
 						},
@@ -886,7 +886,7 @@ export class AccountService {
 			return false;
 		}
 
-		const acctountData = await this.accountsRepository.findOne({
+		const acctountData = await this.accountRepository.findOne({
 			select: {
 				id: true,
 				password: true,
@@ -900,7 +900,7 @@ export class AccountService {
 			const isMatch: boolean = await bcrypt.compare(updateAccountDTO.password, acctountData.password);
 
 			if (isMatch === true) {
-				await this.accountsRepository.update(
+				await this.accountRepository.update(
 					{ //조건
 						id: acctountData.id
 					},
@@ -1036,7 +1036,7 @@ export class AccountService {
 	 * 비밀번호를 잊어버려 비밀번호 초기화하기 전 확인
 	 */
 	async beforeResetPassword(updateAccountDTO: UpdateAccountDTO): Promise<string> {
-		const account = await this.accountsRepository.findOne({
+		const account = await this.accountRepository.findOne({
 			select: {
 				uuid: true
 			},
@@ -1052,7 +1052,7 @@ export class AccountService {
 		else {
 			const verificationCode = randomBytes(16).toString("hex");
 			await this.cacheManager.set("PASSWORD_" + verificationCode, account.uuid, this.EMAIL_CODE_TTL);
-			console.log(`http://localhost:3001/accounts/reset/password/${verificationCode}`);
+			console.log(`http://localhost:3001/account/reset/password/${verificationCode}`);
 
 			return "email_sent";
 		}
@@ -1070,7 +1070,7 @@ export class AccountService {
 			return "error";
 		}
 		else{
-			const account = await this.accountsRepository.findOne({
+			const account = await this.accountRepository.findOne({
 				select: {
 					uuid: true
 				},
@@ -1102,7 +1102,7 @@ export class AccountService {
 			const password: string = updateAccountDTO.newPassword;
 			const encryptSalt: string = await bcrypt.genSalt(saltRounds);
 
-			const account = await this.accountsRepository.findOne({
+			const account = await this.accountRepository.findOne({
 				select: {
 					password: true
 				},
@@ -1117,7 +1117,7 @@ export class AccountService {
 				const isMatch = await bcrypt.compare(password, hash);
 
 				if (isMatch === true) {
-					await this.accountsRepository.update(
+					await this.accountRepository.update(
 						{
 							uuid: uuid
 						},
@@ -1274,7 +1274,7 @@ export class AccountService {
 		}
 
 		if (isUpdate === true){ //update가 필요한 경우만 코드 실행
-			this.accountsRepository.save(accountData);
+			this.accountRepository.save(accountData);
 		}
 	}
 }

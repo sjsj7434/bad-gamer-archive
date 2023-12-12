@@ -46,7 +46,7 @@ const HelpCenter = () => {
 						제출하기
 					</Button>
 					{/* <br></br>
-					<Button variant="success" size="lg" style={{ fontSize: "0.85rem" }} onClick={() => { if(window.confirm("작성 중인 내용은 저장되지 않습니다\n내 문의 내역을 확인하시겠습니까?") === true){navigate("/accounts/mypage")} }}>
+					<Button variant="success" size="lg" style={{ fontSize: "0.85rem" }} onClick={() => { if(window.confirm("작성 중인 내용은 저장되지 않습니다\n내 문의 내역을 확인하시겠습니까?") === true){navigate("/account/mypage")} }}>
 						내 문의 내역 확인하기
 					</Button> */}
 				</div>

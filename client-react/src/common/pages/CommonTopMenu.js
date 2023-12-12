@@ -6,7 +6,7 @@ import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
 import Offcanvas from 'react-bootstrap/Offcanvas';
 
-import * as accountsFetch from '../js/accountsFetch.js'
+import * as accountFetch from '../js/accountFetch.js'
 
 const CommonTopMenu = (props) => {
 	const [showOffcanvas, setShowOffcanvas] = useState(false);
@@ -71,7 +71,7 @@ const CommonTopMenu = (props) => {
 		if(window.confirm("로그아웃 하시겠습니까?") === false){
 			return;
 		}
-		await accountsFetch.logoutAccount();
+		await accountFetch.logoutAccount();
 		setShowOffcanvas(false);
 		props.checkLoginStatus();
 		navigate("/");
@@ -195,14 +195,14 @@ const CommonTopMenu = (props) => {
 									props.accountData.status === "login" ?
 									<>
 										<div
-											onClick={() => { menuClick("/accounts/mypage") }}
+											onClick={() => { menuClick("/account/mypage") }}
 											onMouseOver={ () => { controlSubmenu("hide"); } }
 											style={{
 												display: "flex"
 												, alignItems: "center"
 												, fontSize: "0.8rem"
-												, fontWeight: props.currentMenu === "/accounts/mypage" ? 800 : 400
-												, color: props.currentMenu === "/accounts/mypage" ? "white" : "lightgray"
+												, fontWeight: props.currentMenu === "/account/mypage" ? 800 : 400
+												, color: props.currentMenu === "/account/mypage" ? "white" : "lightgray"
 												, height: "100%"
 												, cursor: "pointer"
 												, paddingLeft: "1rem"
@@ -221,8 +221,8 @@ const CommonTopMenu = (props) => {
 												display: "flex"
 												, alignItems: "center"
 												, fontSize: "0.8rem"
-												, fontWeight: props.currentMenu === "/accounts/logout" ? 800 : 400
-												, color: props.currentMenu === "/accounts/logout" ? "white" : "lightgray"
+												, fontWeight: props.currentMenu === "/account/logout" ? 800 : 400
+												, color: props.currentMenu === "/account/logout" ? "white" : "lightgray"
 												, height: "100%"
 												, cursor: "pointer"
 												, paddingLeft: "1rem"
@@ -237,14 +237,14 @@ const CommonTopMenu = (props) => {
 									:
 									<>
 										<div
-											onClick={() => { menuClick("/accounts/register") }}
+											onClick={() => { menuClick("/account/register") }}
 											onMouseOver={ () => { controlSubmenu("hide"); } }
 											style={{
 												display: "flex"
 												, alignItems: "center"
 												, fontSize: "0.8rem"
-												, fontWeight: props.currentMenu === "/accounts/register" ? 800 : 400
-												, color: props.currentMenu === "/accounts/register" ? "white" : "lightgray"
+												, fontWeight: props.currentMenu === "/account/register" ? 800 : 400
+												, color: props.currentMenu === "/account/register" ? "white" : "lightgray"
 												, height: "100%"
 												, cursor: "pointer"
 												, paddingLeft: "1rem"
@@ -257,14 +257,14 @@ const CommonTopMenu = (props) => {
 										</div>
 										<span style={{ fontSize: "0.65rem", color: "gray" }}>|</span>
 										<div
-											onClick={() => { menuClick("/accounts/login") }}
+											onClick={() => { menuClick("/account/login") }}
 											onMouseOver={ () => { controlSubmenu("hide"); } }
 											style={{
 												display: "flex"
 												, alignItems: "center"
 												, fontSize: "0.8rem"
-												, fontWeight: props.currentMenu === "/accounts/login" ? 800 : 400
-												, color: props.currentMenu === "/accounts/login" ? "white" : "lightgray"
+												, fontWeight: props.currentMenu === "/account/login" ? 800 : 400
+												, color: props.currentMenu === "/account/login" ? "white" : "lightgray"
 												, height: "100%"
 												, cursor: "pointer"
 												, paddingLeft: "1rem"
@@ -319,7 +319,7 @@ const CommonTopMenu = (props) => {
 							</>
 							:
 							<>
-								<Nav.Link active={props.currentMenu === "/accounts/login" ? true : false} onClick={() => menuClick("/accounts/login")}>
+								<Nav.Link active={props.currentMenu === "/account/login" ? true : false} onClick={() => menuClick("/account/login")}>
 									<div style={{ display: "flex", flexDirection: "row", alignItems: "center", marginRight: "0.3rem" }}>
 										<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="#9b9d9e" className="bi bi-person-square" viewBox="0 0 16 16">
 											<path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0z"/>
@@ -360,7 +360,7 @@ const CommonTopMenu = (props) => {
 								{
 									props.accountData.status === "login" ?
 									<>
-										<Nav.Link active={props.currentMenu === "/accounts/mypage" ? true : false} onClick={() => menuClick("/accounts/mypage")}>
+										<Nav.Link active={props.currentMenu === "/account/mypage" ? true : false} onClick={() => menuClick("/account/mypage")}>
 											<div style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
 												<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor" className="bi bi-person-fill-gear" viewBox="0 0 16 16">
 													<path d="M11 5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm-9 8c0 1 1 1 1 1h5.256A4.493 4.493 0 0 1 8 12.5a4.49 4.49 0 0 1 1.544-3.393C9.077 9.038 8.564 9 8 9c-5 0-6 3-6 4Zm9.886-3.54c.18-.613 1.048-.613 1.229 0l.043.148a.64.64 0 0 0 .921.382l.136-.074c.561-.306 1.175.308.87.869l-.075.136a.64.64 0 0 0 .382.92l.149.045c.612.18.612 1.048 0 1.229l-.15.043a.64.64 0 0 0-.38.921l.074.136c.305.561-.309 1.175-.87.87l-.136-.075a.64.64 0 0 0-.92.382l-.045.149c-.18.612-1.048.612-1.229 0l-.043-.15a.64.64 0 0 0-.921-.38l-.136.074c-.561.305-1.175-.309-.87-.87l.075-.136a.64.64 0 0 0-.382-.92l-.148-.045c-.613-.18-.613-1.048 0-1.229l.148-.043a.64.64 0 0 0 .382-.921l-.074-.136c-.306-.561.308-1.175.869-.87l.136.075a.64.64 0 0 0 .92-.382l.045-.148ZM14 12.5a1.5 1.5 0 1 0-3 0 1.5 1.5 0 0 0 3 0Z"/>
@@ -381,7 +381,7 @@ const CommonTopMenu = (props) => {
 									</>
 									:
 									<>
-										<Nav.Link active={props.currentMenu === "/accounts/register" ? true : false} onClick={() => menuClick("/accounts/register")}>
+										<Nav.Link active={props.currentMenu === "/account/register" ? true : false} onClick={() => menuClick("/account/register")}>
 											<div style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
 												<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor" className="bi bi-person-square" viewBox="0 0 16 16">
 													<path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0z"/>
@@ -390,7 +390,7 @@ const CommonTopMenu = (props) => {
 												<p style={{ marginLeft: "0.7rem" }}>회원가입</p>
 											</div>
 										</Nav.Link>
-										<Nav.Link active={props.currentMenu === "/accounts/login" ? true : false} onClick={() => menuClick("/accounts/login")}>
+										<Nav.Link active={props.currentMenu === "/account/login" ? true : false} onClick={() => menuClick("/account/login")}>
 											<div style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
 												<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor" className="bi bi-box-arrow-in-up-right" viewBox="0 0 16 16">
 													<path fillRule="evenodd" d="M6.364 13.5a.5.5 0 0 0 .5.5H13.5a1.5 1.5 0 0 0 1.5-1.5v-10A1.5 1.5 0 0 0 13.5 1h-10A1.5 1.5 0 0 0 2 2.5v6.636a.5.5 0 1 0 1 0V2.5a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 .5.5v10a.5.5 0 0 1-.5.5H6.864a.5.5 0 0 0-.5.5z"/>

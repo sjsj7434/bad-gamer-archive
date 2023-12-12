@@ -10,7 +10,7 @@ import ListGroup from 'react-bootstrap/ListGroup';
 import Tab from 'react-bootstrap/Tab';
 import { useNavigate } from "react-router-dom";
 import Stack from 'react-bootstrap/esm/Stack';
-import * as accountsFetch from '../../js/accountsFetch'
+import * as accountFetch from '../../js/accountFetch'
 import '../../css/ActivateLostark.css';
 import LoadingModal from '../common/LoadingModal';
 import Card from 'react-bootstrap/Card';
@@ -34,8 +34,8 @@ const ActivateLostarkAPI = () => {
 		if(window.confirm("인증하지 않고 종료하시겠습니까?")){
 			setCharacterModalShow(false);
 			controlActivateVerify("done");
-			await accountsFetch.exitLostarkAuthentication();
-			navigate("/accounts/mypage");
+			await accountFetch.exitLostarkAuthentication();
+			navigate("/account/mypage");
 		}
 	}, [navigate])
 
@@ -47,7 +47,7 @@ const ActivateLostarkAPI = () => {
 			setIsLoading(true);
 			setLoadingMessage("캐릭터를 설정 중입니다");
 
-			const result = await accountsFetch.setLostarkCharacter({
+			const result = await accountFetch.setLostarkCharacter({
 				data: characterInfo.CharacterName,
 			});
 
@@ -65,7 +65,7 @@ const ActivateLostarkAPI = () => {
 			}
 
 			setIsLoading(false);
-			navigate("/accounts/mypage")
+			navigate("/account/mypage")
 		}
 	}, [navigate])
 
@@ -199,7 +199,7 @@ const ActivateLostarkAPI = () => {
 			document.querySelector("#stoveURL").focus();
 			return;
 		}
-		const verificationCode = await accountsFetch.getVerificationCode();
+		const verificationCode = await accountFetch.getVerificationCode();
 		document.querySelector("#verificationCode").value = verificationCode;
 		document.querySelector("#verificationArea").style.display = "";
 
@@ -231,7 +231,7 @@ const ActivateLostarkAPI = () => {
 		setIsLoading(true);
 		setLoadingMessage("스토브 소개 정보를 확인 중입니다");
 		const stoveURL = document.querySelector("#stoveURL").value;
-		const resultData = await accountsFetch.checkProfileTokenMatchAPI(stoveURL);
+		const resultData = await accountFetch.checkProfileTokenMatchAPI(stoveURL);
 
 		if(resultData === null){
 			alert("인증을 진행할 수 없습니다");
@@ -239,7 +239,7 @@ const ActivateLostarkAPI = () => {
 		}
 		else if(resultData.result === "already"){
 			alert("이미 인증이 진행된 계정입니다\n한 계정으로 여러번 인증은 불가능합니다");
-			navigate("/accounts/mypage");
+			navigate("/account/mypage");
 			setCharacterModalShow(false);
 		}
 		else if(resultData.result === "codeError"){
@@ -328,7 +328,7 @@ const ActivateLostarkAPI = () => {
 	//로그인 사용자 정보 불러오기
 	useEffect(() => {
 		const callMyInfo = async () => {
-			setAccountData(await accountsFetch.getMyInfo());
+			setAccountData(await accountFetch.getMyInfo());
 		}
 
 		callMyInfo();
@@ -341,7 +341,7 @@ const ActivateLostarkAPI = () => {
 	
 	useEffect(() => {
 		const changeLostarkCharacter = async () => {
-			const fetchData = await accountsFetch.changeLostarkCharacter();
+			const fetchData = await accountFetch.changeLostarkCharacter();
 
 			if(fetchData.result === "success"){
 				setCharacterCardList(fetchData.characterList);
@@ -349,11 +349,11 @@ const ActivateLostarkAPI = () => {
 			}
 			else if(fetchData.result === "wait"){
 				alert("이미 캐릭터 인증 또는 업데이트가 진행되었습니다\n잠시 후 다시 진행해주세요");
-				navigate("/accounts/mypage");
+				navigate("/account/mypage");
 			}
 			else{
 				alert("인증을 진행할 수 없습니다");
-				navigate("/accounts/mypage");
+				navigate("/account/mypage");
 			}
 		}
 
