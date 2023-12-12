@@ -8,7 +8,7 @@ const BlockLogoutUser = (props) => {
 		alert("로그인이 필요합니다");
 
 		return (
-			<Navigate to="/accounts/login" />
+			<Navigate to="/account/login" />
 		);
 	}
 	else{

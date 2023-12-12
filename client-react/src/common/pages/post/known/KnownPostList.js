@@ -130,6 +130,7 @@ const KnownPostList = () => {
 							<option value="titleAndContent">제목+내용</option>
 							<option value="title">제목</option>
 							<option value="content">내용</option>
+							<option value="nickname">닉네임</option>
 						</Form.Select>
 
 						<Form.Control id="searchText" style={{ fontSize: "0.8rem" }} type="search" />

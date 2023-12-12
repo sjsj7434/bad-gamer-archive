@@ -19,6 +19,7 @@ const UnknownPostWrite = (props) => {
 	const [renderData, setRenderData] = useState(<></>);
 	const [contentTitle, setContentTitle] = useState("");
 	const [contentData, setContentData] = useState("");
+	const [postCategory, setPostCategory] = useState("");
 	const [contentPassword, setContentPassword] = useState("");
 	const [identity, setIdentity] = useState(false);
 	const [failMessage, setFailMessage] = useState(<>&nbsp;</>);
@@ -37,6 +38,7 @@ const UnknownPostWrite = (props) => {
 	const saveEditorData = useCallback(async () => {
 		const passwordElement = document.querySelector("#contentPassword");
 		const titleElement = document.querySelector("#title");
+		const categoryElement = document.querySelector("#category");
 
 		if(passwordElement.value === ""){
 			alert("게시글의 수정&삭제를 위해 비밀번호를 입력해주세요");
@@ -68,6 +70,7 @@ const UnknownPostWrite = (props) => {
 			content: editorContet,
 			hasImage: editorContet.indexOf("<img") > -1 ? true : false,
 			password: passwordElement.value,
+			category: categoryElement.value,
 		};
 
 		const createResult = await postFetch.createContent("unknown", sendData);
@@ -93,6 +96,7 @@ const UnknownPostWrite = (props) => {
 	 */
 	const editEditorData = useCallback(async () => {
 		const titleElement = document.querySelector("#title");
+		const categoryElement = document.querySelector("#category");
 
 		if(titleElement.value === ""){
 			alert("제목을 입력해주세요");
@@ -121,6 +125,7 @@ const UnknownPostWrite = (props) => {
 			title: titleElement.value,
 			content: editorContet,
 			hasImage: editorContet.indexOf("<img") > -1 ? true : false,
+			category: categoryElement.value,
 		};
 
 		let result = await postFetch.updateContent("unknown", sendData);
@@ -162,6 +167,7 @@ const UnknownPostWrite = (props) => {
 	
 			setContentTitle(contentData.title);
 			setContentData(contentData.content);
+			setPostCategory(contentData.category)
 		}
 
 		if(contentCode !== null && identity === true){
@@ -223,6 +229,15 @@ const UnknownPostWrite = (props) => {
 								<Form.Control id="contentPassword" type="password" placeholder="비밀번호" autoComplete="current-password" maxLength={20} style={{marginBottom: "10px", fontSize: "0.8rem"}} />
 							</Col>
 						</Row>
+
+						<Form.Select id="category" size="sm" style={{ marginBottom: "10px" }}>
+							<option value="normal">일반</option>
+							<option value="humor">유머</option>
+							<option value="life">일상</option>
+							<option value="info">정보</option>
+							<option value="report">고발</option>
+						</Form.Select>
+
 						<Form.Control id="title" type="text" placeholder="제목" style={{marginBottom: "10px", fontSize: "0.8rem"}} defaultValue={""} maxLength={100} />
 						
 						<MyEditor
@@ -270,22 +285,10 @@ const UnknownPostWrite = (props) => {
 							</Form.Group>
 						</Form>
 
-						<div style={{display: "flex", justifyContent: "flex-end", marginBottom: "15px", marginTop: "30px"}}>
-							<Button
-								onClick={() => {checkBeforeEdit()}}
-								variant="outline-primary"
-								style={{width: "20%", minWidth: "60px", maxWidth: "200px", fontSize: "0.8rem"}}
-							>
-								확인
-							</Button>
+						<div style={{display: "flex", justifyContent: "flex-end"}}>
+							<Button onClick={() => {if(window.confirm("내용을 수정하지않고 나가시겠습니까?") === true){navigate(`/lostark/post/unknown/view/${contentCode}`)}}} variant="secondary" style={{width: "20%", minWidth: "70px", maxWidth: "100px", fontSize: "0.8rem"}}>나가기</Button>
 							&nbsp;
-							<Button
-								onClick={() => {if(window.confirm("내용을 수정하지않고 나가시겠습니까?") === true){navigate(`/lostark/post/unknown/view/${contentCode}`)}}}
-								variant="outline-secondary"
-								style={{width: "20%", minWidth: "60px", maxWidth: "200px", fontSize: "0.8rem"}}
-							>
-								취소
-							</Button>
+							<Button onClick={() => {checkBeforeEdit()}} variant="primary" style={{width: "20%", minWidth: "70px", maxWidth: "100px", fontSize: "0.8rem"}}>확인</Button>
 						</div>
 					</Container>
 				);
@@ -313,8 +316,20 @@ const UnknownPostWrite = (props) => {
 				else{
 					setRenderData(
 						<>
-							익명 게시판
-							<br />
+							<div style={{display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "10px", marginTop: "30px"}}>
+								익명 게시판
+								&nbsp;
+								<Button onClick={() => {editEditorData()}} variant="primary" style={{width: "20%", minWidth: "70px", maxWidth: "100px", fontSize: "0.8rem"}}>수정</Button>
+							</div>
+
+							<Form.Select id="category" size="sm" style={{ marginBottom: "10px" }} defaultValue={postCategory}>
+								<option value="normal">일반</option>
+								<option value="humor">유머</option>
+								<option value="life">일상</option>
+								<option value="info">정보</option>
+								<option value="report">고발</option>
+							</Form.Select>
+
 							<Form.Control id="title" type="text" placeholder="제목" style={{marginBottom: "10px", fontSize: "0.8rem"}} defaultValue={contentTitle} />
 
 							<MyEditor
@@ -332,28 +347,16 @@ const UnknownPostWrite = (props) => {
 							/>
 
 							<div style={{display: "flex", justifyContent: "flex-end", marginBottom: "15px", marginTop: "30px"}}>
-								<Button
-									onClick={() => {editEditorData()}}
-									variant="outline-primary"
-									style={{width: "20%", minWidth: "60px", maxWidth: "200px", fontSize: "0.8rem"}}
-								>
-									수정
-								</Button>
+								<Button onClick={() => {if(window.confirm("내용을 수정하지않고 나가시겠습니까?") === true){navigate(`/lostark/post/unknown/view/${contentCode}`)}}} variant="secondary" style={{width: "20%", minWidth: "70px", maxWidth: "100px", fontSize: "0.8rem"}}>나가기</Button>
 								&nbsp;
-								<Button
-									onClick={() => {if(window.confirm("내용을 수정하지않고 나가시겠습니까?") === true){navigate(`/lostark/post/unknown/view/${contentCode}`)}}}
-									variant="outline-secondary"
-									style={{width: "20%", minWidth: "60px", maxWidth: "200px", fontSize: "0.8rem"}}
-								>
-									취소
-								</Button>
+								<Button onClick={() => {editEditorData()}} variant="primary" style={{width: "20%", minWidth: "70px", maxWidth: "100px", fontSize: "0.8rem"}}>수정</Button>
 							</div>
 						</>
 					);
 				}
 			}
 		}
-	}, [writeMode, contentCode, contentTitle, contentData, identity, failMessage, editorObject, editorSizeByte, saveEditorData, editEditorData, navigate])
+	}, [writeMode, postCategory, contentCode, contentTitle, contentData, identity, failMessage, editorObject, editorSizeByte, saveEditorData, editEditorData, navigate])
 	
 	return(
 		<Container style={{maxWidth: "1000px"}}>

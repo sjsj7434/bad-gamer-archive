@@ -302,6 +302,7 @@ export class LostArkUnknownPostService {
 				select: {
 					reply: { code: true },
 					code: true,
+					category: true,
 					title: true,
 					view: true,
 					upvote: true,
@@ -439,7 +440,6 @@ export class LostArkUnknownPostService {
 			return { createdCode: 0, status: "long_content" };
 		}
 
-		createPostDTO.category = "";
 		createPostDTO.ip = ipData; //개발서버에서는 로컬만 찍혀서 임시로 비활성
 		createPostDTO.ip = Math.random().toString().substring(2, 5) + "." + Math.random().toString().substring(2, 5) + "." + Math.random().toString().substring(2, 5) + "." + Math.random().toString().substring(2, 5);
 

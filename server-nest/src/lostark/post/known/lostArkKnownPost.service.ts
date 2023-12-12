@@ -398,6 +398,7 @@ export class LostArkKnownPostService {
 				reply: { code: true },
 				account: { nickname: true, authentication: { type: true, data: true } },
 				code: true,
+				category: true,
 				writerNickname: true,
 				title: true,
 				view: true,
@@ -555,7 +556,6 @@ export class LostArkKnownPostService {
 				return { createdCode: 0, status: "long_content" };
 			}
 
-			createPostDTO.category = "";
 			createPostDTO.writerID = loginCookie.id;
 			createPostDTO.writerNickname = loginCookie.nickname;
 			createPostDTO.ip = ipData; //개발서버에서는 로컬만 찍혀서 임시로 비활성

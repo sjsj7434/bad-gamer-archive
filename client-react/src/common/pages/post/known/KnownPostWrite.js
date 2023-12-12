@@ -16,6 +16,7 @@ const KnownPostWrite = (props) => {
 	const [renderData, setRenderData] = useState(<></>);
 	const [contentTitle, setContentTitle] = useState("");
 	const [contentData, setContentData] = useState("");
+	const [postCategory, setPostCategory] = useState("");
 	const [identity, setIdentity] = useState(false);
 	const [editorSizeByte, setEditorSizeByte] = useState(0);
 	const [loadingModalShow, setLoadingModalShow] = useState(false);
@@ -31,6 +32,7 @@ const KnownPostWrite = (props) => {
 	 */
 	const saveEditorData = useCallback(async () => {
 		const titleElement = document.querySelector("#title");
+		const categoryElement = document.querySelector("#category");
 
 		if(titleElement.value === ""){
 			alert("제목을 입력해주세요");
@@ -54,6 +56,7 @@ const KnownPostWrite = (props) => {
 			title: titleElement.value,
 			content: editorContet,
 			hasImage: editorContet.indexOf("<img") > -1 ? true : false,
+			category: categoryElement.value,
 		};
 
 		const createResult = await postFetch.createContent("known", sendData);
@@ -83,6 +86,7 @@ const KnownPostWrite = (props) => {
 	 */
 	const editEditorData = useCallback(async () => {
 		const titleElement = document.querySelector("#title");
+		const categoryElement = document.querySelector("#category");
 
 		if(titleElement.value === ""){
 			alert("제목을 입력해주세요");
@@ -110,6 +114,7 @@ const KnownPostWrite = (props) => {
 			title: titleElement.value,
 			content: editorContet,
 			hasImage: editorContet.indexOf("<img") > -1 ? true : false,
+			category: categoryElement.value,
 		};
 
 		let result = await postFetch.updateContent("known", sendData);
@@ -151,6 +156,7 @@ const KnownPostWrite = (props) => {
 	
 			setContentTitle(contentData.title);
 			setContentData(contentData.content);
+			setPostCategory(contentData.category);
 		}
 
 		if(contentCode !== null && identity === true){
@@ -193,8 +199,16 @@ const KnownPostWrite = (props) => {
 						<Button onClick={() => {saveEditorData()}} variant="primary" style={{width: "20%", minWidth: "70px", maxWidth: "100px", fontSize: "0.8rem"}}>저장</Button>
 					</div>
 
+					<Form.Select id="category" size="sm" style={{ marginBottom: "10px" }}>
+						<option value="normal">일반</option>
+						<option value="humor">유머</option>
+						<option value="life">일상</option>
+						<option value="info">정보</option>
+						<option value="report">고발</option>
+					</Form.Select>
+
 					<Form.Control id="title" type="text" placeholder="제목" style={{marginBottom: "10px", fontSize: "0.8rem"}} defaultValue={""} maxLength={100} />
-					
+
 					<MyEditor
 						editorMode={"write"}
 						savedData={""}
@@ -246,8 +260,20 @@ const KnownPostWrite = (props) => {
 				else{
 					setRenderData(
 						<>
-							유저 게시판
-							<br />
+							<div style={{display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "10px", marginTop: "30px"}}>
+								자유 게시판
+								&nbsp;
+								<Button onClick={() => {editEditorData()}} variant="primary" style={{width: "20%", minWidth: "70px", maxWidth: "100px", fontSize: "0.8rem"}}>수정</Button>
+							</div>
+
+							<Form.Select id="category" size="sm" style={{ marginBottom: "10px" }} defaultValue={postCategory}>
+								<option value="normal">일반</option>
+								<option value="humor">유머</option>
+								<option value="life">일상</option>
+								<option value="info">정보</option>
+								<option value="report">고발</option>
+							</Form.Select>
+
 							<Form.Control id="title" type="text" placeholder="제목" style={{marginBottom: "10px", fontSize: "0.8rem"}} defaultValue={contentTitle} />
 
 							<MyEditor
@@ -265,32 +291,22 @@ const KnownPostWrite = (props) => {
 							/>
 
 							<div style={{display: "flex", justifyContent: "flex-end", marginBottom: "15px", marginTop: "30px"}}>
-								<Button
-									onClick={() => {editEditorData()}}
-									variant="outline-primary"
-									style={{width: "20%", minWidth: "60px", maxWidth: "200px", fontSize: "0.8rem"}}
-								>
-									수정
-								</Button>
+								<Button onClick={() => {if(window.confirm("내용을 수정하지않고 나가시겠습니까?") === true){navigate(`/lostark/post/known/view/${contentCode}`)}}} variant="secondary" style={{width: "20%", minWidth: "70px", maxWidth: "100px", fontSize: "0.8rem"}}>나가기</Button>
 								&nbsp;
-								<Button
-									onClick={() => {if(window.confirm("내용을 수정하지않고 나가시겠습니까?") === true){navigate(`/lostark/post/known/view/${contentCode}`)}}}
-									variant="outline-secondary"
-									style={{width: "20%", minWidth: "60px", maxWidth: "200px", fontSize: "0.8rem"}}
-								>
-									취소
-								</Button>
+								<Button onClick={() => {editEditorData()}} variant="primary" style={{width: "20%", minWidth: "70px", maxWidth: "100px", fontSize: "0.8rem"}}>수정</Button>
 							</div>
 						</>
 					);
 				}
 			}
 		}
-	}, [writeMode, contentCode, contentTitle, contentData, identity, editorObject, editorSizeByte, saveEditorData, editEditorData, navigate, props.accountData.id])
+	}, [writeMode, postCategory, contentCode, contentTitle, contentData, identity, editorObject, editorSizeByte, saveEditorData, editEditorData, navigate, props.accountData.id])
 	
 	return(
 		<Container style={{maxWidth: "1000px"}}>
-			{renderData}
+			<Form>
+				{renderData}
+			</Form>
 			<LoadingModal showModal={loadingModalShow} message={loadingModalMessage}/>
 		</Container>
 	);

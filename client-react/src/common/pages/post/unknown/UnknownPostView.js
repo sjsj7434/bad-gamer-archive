@@ -60,7 +60,7 @@ const UnknownPostView = (props) => {
 									<path d="M4.085 1H3.5A1.5 1.5 0 0 0 2 2.5v12A1.5 1.5 0 0 0 3.5 16h9a1.5 1.5 0 0 0 1.5-1.5v-12A1.5 1.5 0 0 0 12.5 1h-.585c.055.156.085.325.085.5V2a1.5 1.5 0 0 1-1.5 1.5h-5A1.5 1.5 0 0 1 4 2v-.5c0-.175.03-.344.085-.5ZM10 7a1 1 0 1 1 2 0v5a1 1 0 1 1-2 0V7Zm-6 4a1 1 0 1 1 2 0v1a1 1 0 1 1-2 0v-1Zm4-3a1 1 0 0 1 1 1v3a1 1 0 1 1-2 0V9a1 1 0 0 1 1-1Z"/>
 								</svg>
 								&nbsp;
-								{props.boardTitle}
+								<Placeholder style={{width: "10%"}} />{" "}<Placeholder style={{width: "40%"}} />{" "}
 							</span>
 
 							<Placeholder as={"p"} animation="glow">
@@ -211,6 +211,7 @@ const UnknownPostView = (props) => {
 							</span>
 
 							<div style={{ fontWeight: "800", fontSize: "1.5rem", wordBreak: "break-all" }}>
+								<span>{contentJson.category !== "" ? `[${contentJson.category}] ` : ""}</span>
 								<span>{contentJson.title}</span>
 							</div>
 							<div style={{fontWeight: "400", fontSize: "0.8rem"}}>
@@ -291,7 +292,7 @@ const UnknownPostView = (props) => {
 				</>
 			);
 		}
-	}, [contentCode, contentJson, upvoteCount, downvoteCount, navigate, props.boardTitle]);
+	}, [contentCode, contentJson, upvoteCount, downvoteCount, navigate]);
 	
 	return(
 		<Container style={{maxWidth: "1200px"}}>

@@ -43,6 +43,7 @@ const KnownPostRow = (props) => {
 							&nbsp;
 							<div style={{overflow: "hidden", whiteSpace: "nowrap", textOverflow: "ellipsis"}}>
 								<span style={{fontSize: "0.8rem"}}>
+									{props.postData.category !== "" ? `[${props.postData.category}] ` : ""}
 									{props.postData.title}
 								</span>
 							</div>
@@ -59,7 +60,7 @@ const KnownPostRow = (props) => {
 							&nbsp;|&nbsp;
 							<span>조회 {props.postData.view}</span>
 							&nbsp;|&nbsp;
-							<span style={{color: "green"}}>↑{props.postData.upvote}</span> | ↓<span style={{color: "red"}}>{props.postData.downvote}</span>
+							<span style={{color: "green"}}>↑{props.postData.upvote}</span> | <span style={{color: "red"}}>↓{props.postData.downvote}</span>
 						</div>
 					</div>
 					<div style={{textAlign: "end"}}>
