@@ -1,8 +1,9 @@
 import { Entity, Column, CreateDateColumn, DeleteDateColumn, UpdateDateColumn, ManyToOne, JoinColumn, PrimaryColumn } from 'typeorm';
 import { Account } from './account.entity';
 
-// This will create following database table
-// If table is already exsists there could be error
+/**
+ * 인증 정보 테이블
+ */
 @Entity()
 export class Authentication {
 	@ManyToOne(() => Account, (account) => account.authentication)
@@ -22,6 +23,15 @@ export class Authentication {
 		select: false,
 	})
 	uuid: string;
+
+	/**
+	 * 대분류 : 로스크아크, 데바데...
+	 */
+	@PrimaryColumn({
+		type: "varchar",
+		length: 100,
+	})
+	gameName: string;
 
 	/**
 	 * 분류 : stove 인증 계정 코드, lostark 캐릭, 스팀 플레이타임...

@@ -204,6 +204,17 @@ export class Account {
 	deletedAt!: Date | null;
 
 	/**
+	 * stove 인증 계정 코드
+	 */
+	@Column({
+		type: "varchar",
+		length: 100,
+		nullable: true,
+		select: false,
+	})
+	stoveCode: string;
+
+	/**
 	 * 유저 경험치(커뮤력), 최대에 도달하면 진화 가능
 	 */
 	@Column({
@@ -224,15 +235,4 @@ export class Account {
 		default: 0,
 	})
 	evolution: number;
-
-	/**
-	 * stove 인증 계정 코드
-	 */
-	@Column({
-		type: "varchar",
-		length: 100,
-		nullable: true,
-		select: false,
-	})
-	stoveCode: string;
 }
