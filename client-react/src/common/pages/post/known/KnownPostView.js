@@ -280,7 +280,7 @@ const KnownPostView = (props) => {
 							<div style={{fontWeight: "400", fontSize: "0.8rem"}}>
 								<span>
 									{contentJson.writerNickname}
-									{ contentJson.accounts.authentication[0] !== undefined ? `(${contentJson.accounts.authentication[0].data.replace(",", "")})` : "" }
+									{ contentJson.account.authentication[0] !== undefined ? `(${contentJson.account.authentication[0].data.replace(",", "")})` : "" }
 								</span>
 								&nbsp;|&nbsp;
 								<span>
