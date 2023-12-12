@@ -48,6 +48,8 @@ export class PostController {
 	}
 
 	//익명 게시판 글 작성
+	@SkipThrottle({ default: false })
+	@Throttle({ default: { limit: 10, ttl: 60000 } }) //1분에 10개 이상 금지
 	@Post("unknown")
 	async createUnknownPost(@Ip() ipData: string, @Body() createPostDTO: CreateLostArkUnknownPostDTO): Promise<{ createdCode: number, status: string }> {
 		return await this.lostArkUnknownPostService.createPost(createPostDTO, ipData);
@@ -94,6 +96,8 @@ export class PostController {
 	}
 
 	//익명 게시판 댓글 작성
+	@SkipThrottle({ default: false })
+	@Throttle({ default: { limit: 10, ttl: 60000 } }) //1분에 10개 이상 금지
 	@Post("unknown/reply")
 	async createUnknownReply(@Ip() ipData: string, @Body() createReplyDTO: CreateLostArkUnknownReplyDTO): Promise<boolean> {
 		return await this.lostArkUnknownPostService.createReply(createReplyDTO, ipData);
@@ -145,6 +149,8 @@ export class PostController {
 	}
 
 	//유저 게시판 글 작성
+	@SkipThrottle({ default: false })
+	@Throttle({ default: { limit: 10, ttl: 60000 } }) //1분에 10개 이상 금지
 	@Post("known")
 	async createKnownPost(@Req() request: Request, @Res({ passthrough: true }) response: Response, @Ip() ipData: string, @Body() createPostDTO: CreateLostArkKnownPostDTO): Promise<{ createdCode: number, status: string }> {
 		return await this.lostArkKnownPostService.createPost(createPostDTO, ipData, request, response);
@@ -207,6 +213,8 @@ export class PostController {
 	}
 
 	//유저 게시글 댓글 작성
+	@SkipThrottle({ default: false })
+	@Throttle({ default: { limit: 10, ttl: 60000 } }) //1분에 10개 이상 금지
 	@Post("known/reply")
 	async createKnownReply(@Req() request: Request, @Res({ passthrough: true }) response: Response, @Ip() ipData: string, @Body() createReplyDTO: CreateLostArkKnownReplyDTO): Promise<boolean> {
 		return await this.lostArkKnownPostService.createReply(request, response, createReplyDTO, ipData);
