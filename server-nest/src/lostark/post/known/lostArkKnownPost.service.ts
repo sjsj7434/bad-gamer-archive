@@ -22,11 +22,11 @@ export class LostArkKnownPostService {
 
 	private REPlY_MAX_LENG: number = 300; //댓글 글자 수 제한
 	private REPlY_MAX_ROW: number = 10; //댓글 줄 수 제한
-	private HOW_MANY_CONTENTS_ON_LIST: number = 20;
+	private HOW_MANY_POST_ON_LIST: number = 20; //목록에 표시할 최대 게시글 수
 
-	private POINT_WRITE_POST: number = 50;
-	private POINT_WRITE_REPLY: number = 15;
-	private POINT_VOTE: number = 5;
+	private POINT_WRITE_POST: number = 50; //글 작성 시 획득하는 포인트
+	private POINT_WRITE_REPLY: number = 15; //댓글 작성 시 획득하는 포인트
+	private POINT_VOTE: number = 5; //추천, 비추천 시 획득하는 포인트
 
 	async isVotablePost(contentCode: number, userId: string): Promise<boolean> {
 		try {
@@ -351,8 +351,8 @@ export class LostArkKnownPostService {
 		`)
 		.orderBy("boards.code", "DESC")
 		.withDeleted()
-		.skip((page - 1) * this.HOW_MANY_CONTENTS_ON_LIST)
-		.take(this.HOW_MANY_CONTENTS_ON_LIST)
+		.skip((page - 1) * this.HOW_MANY_POST_ON_LIST)
+		.take(this.HOW_MANY_POST_ON_LIST)
 
 		// const queryData = queryOBJ.getSql();
 		// console.log(queryData)
@@ -411,8 +411,8 @@ export class LostArkKnownPostService {
 				code: "DESC",
 			},
 			withDeleted: true,
-			skip: (page - 1) * this.HOW_MANY_CONTENTS_ON_LIST,
-			take: this.HOW_MANY_CONTENTS_ON_LIST,
+			skip: (page - 1) * this.HOW_MANY_POST_ON_LIST,
+			take: this.HOW_MANY_POST_ON_LIST,
 		});
 
 		return result;
@@ -589,7 +589,6 @@ export class LostArkKnownPostService {
 		})
 
 		if (loginCookie.status === "login") {
-			console.log(loginCookie.id, updateTargetPost.writerID, updatePostDTO)
 			if (loginCookie.id !== updateTargetPost.writerID) {
 				//위의 값이 아니면 누군가 값을 조작하여 전송했을 가능성이 있으므로 게시글 저장 차단
 				return false;

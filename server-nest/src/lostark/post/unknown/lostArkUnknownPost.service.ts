@@ -19,7 +19,7 @@ export class LostArkUnknownPostService {
 	private VOTE_HISTORY: Map<number, Array<string>> = new Map();
 	private REPlY_MAX_LENG: number = 300; //댓글 글자 수 제한
 	private REPlY_MAX_ROW: number = 10; //댓글 줄 수 제한
-	private HOW_MANY_CONTENTS_ON_LIST: number = 20;
+	private HOW_MANY_POST_ON_LIST: number = 20; //목록에 표시할 최대 게시글 수
 
 	//서울 시간 기준으로 [매일 00:00]에 데이터 초기화
 	@Cron(CronExpression.EVERY_DAY_AT_MIDNIGHT, {
@@ -28,7 +28,6 @@ export class LostArkUnknownPostService {
 	})
 	resetVoteData() {
 		this.VOTE_HISTORY.clear();
-		console.log("[익명 추천 초기화] Reset data every day at 00:00");
 	}
 
 	isVotableContent(contentCode: number, ipData: string): boolean {
@@ -316,8 +315,8 @@ export class LostArkUnknownPostService {
 					code: "DESC",
 				},
 				withDeleted: true,
-				skip: (page - 1) * this.HOW_MANY_CONTENTS_ON_LIST,
-				take: this.HOW_MANY_CONTENTS_ON_LIST,
+				skip: (page - 1) * this.HOW_MANY_POST_ON_LIST,
+				take: this.HOW_MANY_POST_ON_LIST,
 			});
 
 			if (result !== null) {
