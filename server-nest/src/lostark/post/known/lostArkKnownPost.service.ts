@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, IsNull, MoreThanOrEqual, Between, Equal, Like } from 'typeorm';
+import { Repository, IsNull, MoreThanOrEqual, Equal, Like, FindOptionsWhere } from 'typeorm';
 import { AccountService } from 'src/account/account.service';
 import { Request, Response } from 'express';
 import { ErrorLogService } from 'src/log/error.log.service';
@@ -111,85 +111,32 @@ export class LostArkKnownPostService {
 			const perPage: number = 5;
 			const upvoteCutline: number = 1;
 
-			let whereClause = {};
+			const whereClause: FindOptionsWhere<LostArkKnownPost> | FindOptionsWhere<LostArkKnownPost>[] = [{
+				deletedAt: IsNull(),
+				upvote: MoreThanOrEqual(upvoteCutline),
+				account: {
+					authentication: [
+						{ type: Equal("lostark_item_level") },
+						{ type: IsNull() },
+					]
+				},
+			}];
 
 			if (searchText !== "") {
 				if (searchType === "title") {
-					whereClause = {
-						deletedAt: IsNull(),
-						upvote: MoreThanOrEqual(upvoteCutline),
-						account: {
-							authentication: [
-								{ type: Equal("lostark_item_level") },
-								{ type: IsNull() },
-							]
-						},
-						title: Like(`%${searchText}%`),
-					}
+					whereClause[0].title = Like(`%${searchText}%`);
 				}
 				else if (searchType === "content") {
-					whereClause = {
-						deletedAt: IsNull(),
-						upvote: MoreThanOrEqual(upvoteCutline),
-						account: {
-							authentication: [
-								{ type: Equal("lostark_item_level") },
-								{ type: IsNull() },
-							]
-						},
-						content: Like(`%${searchText}%`),
-					}
+					whereClause[0].content = Like(`%${searchText}%`);
 				}
 				else if (searchType === "nickname") {
-					whereClause = {
-						deletedAt: IsNull(),
-						upvote: MoreThanOrEqual(upvoteCutline),
-						account: {
-							authentication: [
-								{ type: Equal("lostark_item_level") },
-								{ type: IsNull() },
-							]
-						},
-						writerNickname: Like(`%${searchText}%`),
-					}
+					whereClause[0].writerNickname = Like(`%${searchText}%`);
 				}
 				else if (searchType === "titleAndContent") {
-					whereClause = [
-						{
-							deletedAt: IsNull(),
-							upvote: MoreThanOrEqual(upvoteCutline),
-							account: {
-								authentication: [
-									{ type: Equal("lostark_item_level") },
-									{ type: IsNull() },
-								]
-							},
-							title: Like(`%${searchText}%`),
-						},
-						{
-							deletedAt: IsNull(),
-							upvote: MoreThanOrEqual(upvoteCutline),
-							account: {
-								authentication: [
-									{ type: Equal("lostark_item_level") },
-									{ type: IsNull() },
-								]
-							},
-							content: Like(`%${searchText}%`),
-						},
-					]
-				}
-			}
-			else {
-				whereClause = {
-					deletedAt: IsNull(),
-					upvote: MoreThanOrEqual(upvoteCutline),
-					account: {
-						authentication: [
-							{ type: Equal("lostark_item_level") },
-							{ type: IsNull() },
-						]
-					},
+					const deepCopiedWhere = Object.assign({}, whereClause[0]);
+					deepCopiedWhere.content = Like(`%${searchText}%`);
+					whereClause.push(deepCopiedWhere);
+					whereClause[0].title = Like(`%${searchText}%`);
 				}
 			}
 
@@ -234,85 +181,32 @@ export class LostArkKnownPostService {
 			const perPage: number = 5;
 			const downvoteCutline: number = 1;
 
-			let whereClause = {};
+			const whereClause: FindOptionsWhere<LostArkKnownPost> | FindOptionsWhere<LostArkKnownPost>[] = [{
+				deletedAt: IsNull(),
+				upvote: MoreThanOrEqual(downvoteCutline),
+				account: {
+					authentication: [
+						{ type: Equal("lostark_item_level") },
+						{ type: IsNull() },
+					]
+				},
+			}];
 
 			if (searchText !== "") {
 				if (searchType === "title") {
-					whereClause = {
-						deletedAt: IsNull(),
-						downvote: MoreThanOrEqual(downvoteCutline),
-						account: {
-							authentication: [
-								{ type: Equal("lostark_item_level") },
-								{ type: IsNull() },
-							]
-						},
-						title: Like(`%${searchText}%`),
-					}
+					whereClause[0].title = Like(`%${searchText}%`);
 				}
 				else if (searchType === "content") {
-					whereClause = {
-						deletedAt: IsNull(),
-						downvote: MoreThanOrEqual(downvoteCutline),
-						account: {
-							authentication: [
-								{ type: Equal("lostark_item_level") },
-								{ type: IsNull() },
-							]
-						},
-						content: Like(`%${searchText}%`),
-					}
+					whereClause[0].content = Like(`%${searchText}%`);
 				}
 				else if (searchType === "nickname") {
-					whereClause = {
-						deletedAt: IsNull(),
-						downvote: MoreThanOrEqual(downvoteCutline),
-						account: {
-							authentication: [
-								{ type: Equal("lostark_item_level") },
-								{ type: IsNull() },
-							]
-						},
-						writerNickname: Like(`%${searchText}%`),
-					}
+					whereClause[0].writerNickname = Like(`%${searchText}%`);
 				}
 				else if (searchType === "titleAndContent") {
-					whereClause = [
-						{
-							deletedAt: IsNull(),
-							downvote: MoreThanOrEqual(downvoteCutline),
-							account: {
-								authentication: [
-									{ type: Equal("lostark_item_level") },
-									{ type: IsNull() },
-								]
-							},
-							title: Like(`%${searchText}%`),
-						},
-						{
-							deletedAt: IsNull(),
-							downvote: MoreThanOrEqual(downvoteCutline),
-							account: {
-								authentication: [
-									{ type: Equal("lostark_item_level") },
-									{ type: IsNull() },
-								]
-							},
-							content: Like(`%${searchText}%`),
-						},
-					]
-				}
-			}
-			else {
-				whereClause = {
-					deletedAt: IsNull(),
-					downvote: MoreThanOrEqual(downvoteCutline),
-					account: {
-						authentication: [
-							{ type: Equal("lostark_item_level") },
-							{ type: IsNull() },
-						]
-					},
+					const deepCopiedWhere = Object.assign({}, whereClause[0]);
+					deepCopiedWhere.content = Like(`%${searchText}%`);
+					whereClause.push(deepCopiedWhere);
+					whereClause[0].title = Like(`%${searchText}%`);
 				}
 			}
 
@@ -357,85 +251,32 @@ export class LostArkKnownPostService {
 			const perPage: number = 5;
 			const viewCutline: number = 1;
 
-			let whereClause = {};
+			const whereClause: FindOptionsWhere<LostArkKnownPost> | FindOptionsWhere<LostArkKnownPost>[] = [{
+				deletedAt: IsNull(),
+				upvote: MoreThanOrEqual(viewCutline),
+				account: {
+					authentication: [
+						{ type: Equal("lostark_item_level") },
+						{ type: IsNull() },
+					]
+				},
+			}];
 
 			if (searchText !== "") {
 				if (searchType === "title") {
-					whereClause = {
-						deletedAt: IsNull(),
-						view: MoreThanOrEqual(viewCutline),
-						account: {
-							authentication: [
-								{ type: Equal("lostark_item_level") },
-								{ type: IsNull() },
-							]
-						},
-						title: Like(`%${searchText}%`),
-					}
+					whereClause[0].title = Like(`%${searchText}%`);
 				}
 				else if (searchType === "content") {
-					whereClause = {
-						deletedAt: IsNull(),
-						view: MoreThanOrEqual(viewCutline),
-						account: {
-							authentication: [
-								{ type: Equal("lostark_item_level") },
-								{ type: IsNull() },
-							]
-						},
-						content: Like(`%${searchText}%`),
-					}
+					whereClause[0].content = Like(`%${searchText}%`);
 				}
 				else if (searchType === "nickname") {
-					whereClause = {
-						deletedAt: IsNull(),
-						view: MoreThanOrEqual(viewCutline),
-						account: {
-							authentication: [
-								{ type: Equal("lostark_item_level") },
-								{ type: IsNull() },
-							]
-						},
-						writerNickname: Like(`%${searchText}%`),
-					}
+					whereClause[0].writerNickname = Like(`%${searchText}%`);
 				}
 				else if (searchType === "titleAndContent") {
-					whereClause = [
-						{
-							deletedAt: IsNull(),
-							view: MoreThanOrEqual(viewCutline),
-							account: {
-								authentication: [
-									{ type: Equal("lostark_item_level") },
-									{ type: IsNull() },
-								]
-							},
-							title: Like(`%${searchText}%`),
-						},
-						{
-							deletedAt: IsNull(),
-							view: MoreThanOrEqual(viewCutline),
-							account: {
-								authentication: [
-									{ type: Equal("lostark_item_level") },
-									{ type: IsNull() },
-								]
-							},
-							content: Like(`%${searchText}%`),
-						},
-					]
-				}
-			}
-			else {
-				whereClause = {
-					deletedAt: IsNull(),
-					view: MoreThanOrEqual(viewCutline),
-					account: {
-						authentication: [
-							{ type: Equal("lostark_item_level") },
-							{ type: IsNull() },
-						]
-					},
+					const deepCopiedWhere = Object.assign({}, whereClause[0]);
+					deepCopiedWhere.content = Like(`%${searchText}%`);
+					whereClause.push(deepCopiedWhere);
+					whereClause[0].title = Like(`%${searchText}%`);
 				}
 			}
 
@@ -523,79 +364,31 @@ export class LostArkKnownPostService {
 		return [result3, result3.length];
 		*/
 
-		let whereClause = {};
+		const whereClause: FindOptionsWhere<LostArkKnownPost> | FindOptionsWhere<LostArkKnownPost>[] = [{
+			deletedAt: IsNull(),
+			account: {
+				authentication: [
+					{ type: Equal("lostark_item_level") },
+					{ type: IsNull() },
+				]
+			},
+		}];
 
 		if (searchText !== "") {
 			if (searchType === "title") {
-				whereClause = {
-					deletedAt: IsNull(),
-					account: {
-						authentication: [
-							{ type: Equal("lostark_item_level") },
-							{ type: IsNull() },
-						]
-					},
-					title: Like(`%${searchText}%`),
-				}
+				whereClause[0].title = Like(`%${searchText}%`);
 			}
 			else if (searchType === "content") {
-				whereClause = {
-					deletedAt: IsNull(),
-					account: {
-						authentication: [
-							{ type: Equal("lostark_item_level") },
-							{ type: IsNull() },
-						]
-					},
-					content: Like(`%${searchText}%`),
-				}
+				whereClause[0].content = Like(`%${searchText}%`);
 			}
 			else if (searchType === "nickname") {
-				whereClause = {
-					deletedAt: IsNull(),
-					account: {
-						authentication: [
-							{ type: Equal("lostark_item_level") },
-							{ type: IsNull() },
-						]
-					},
-					writerNickname: Like(`%${searchText}%`),
-				}
+				whereClause[0].writerNickname = Like(`%${searchText}%`);
 			}
 			else if (searchType === "titleAndContent") {
-				whereClause = [
-					{
-						deletedAt: IsNull(),
-						account: {
-							authentication: [
-								{ type: Equal("lostark_item_level") },
-								{ type: IsNull() },
-							]
-						},
-						title: Like(`%${searchText}%`),
-					},
-					{
-						deletedAt: IsNull(),
-						account: {
-							authentication: [
-								{ type: Equal("lostark_item_level") },
-								{ type: IsNull() },
-							]
-						},
-						content: Like(`%${searchText}%`),
-					},
-				]
-			}
-		}
-		else {
-			whereClause = {
-				deletedAt: IsNull(),
-				account: {
-					authentication: [
-						{ type: Equal("lostark_item_level") },
-						{ type: IsNull() },
-					]
-				},
+				const deepCopiedWhere = Object.assign({}, whereClause[0]);
+				deepCopiedWhere.content = Like(`%${searchText}%`);
+				whereClause.push(deepCopiedWhere);
+				whereClause[0].title = Like(`%${searchText}%`);
 			}
 		}
 
