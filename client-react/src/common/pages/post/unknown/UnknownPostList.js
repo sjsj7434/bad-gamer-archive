@@ -16,11 +16,14 @@ const UnknownPostList = () => {
 	
 	const [contentList, setContentList] = useState(null);
 	const [contentCount, setContentCount] = useState(null);
-	const [paginationData, setPaginationData] = useState(<></>);
+	const [paginationDataPC, setPaginationDataPC] = useState(<></>);
+	const [paginationDataMO, setPaginationDataMO] = useState(<></>);
 	const navigate = useNavigate();
 	const params = useParams();
-	const contentPerPage = 20;
-	const howManyPages = 5;
+	const contentPerPagePC = 20;
+	const howManyPagesPC = 10;
+	const contentPerPageMO = 20;
+	const howManyPagesMO = 5;
 
 	const readContentList = useCallback(async () => {
 		const contentListData = await postFetch.getPostList("unknown", searchType, searchText, page);
@@ -85,9 +88,15 @@ const UnknownPostList = () => {
 			navigate(`/lostark/post/unknown/${pageIndex}`);
 		}
 
-		setPaginationData(
-			<div style={{display: "flex", justifyContent: "center"}} key="paginationData">
-				<CustomPagination currentPage={page} contentPerPage={contentPerPage} contentCount={contentCount} howManyPages={howManyPages} pageMoveFunc={pageMoveFunc}/>
+		setPaginationDataPC(
+			<div style={{display: "flex", justifyContent: "center"}} key="paginationDataPC">
+				<CustomPagination currentPage={page} contentPerPage={contentPerPagePC} howManyPages={howManyPagesPC} contentCount={contentCount} pageMoveFunc={pageMoveFunc}/>
+			</div>
+		);
+
+		setPaginationDataMO(
+			<div style={{display: "flex", justifyContent: "center"}} key="paginationDataMO">
+				<CustomPagination currentPage={page} contentPerPage={contentPerPageMO} howManyPages={howManyPagesMO} contentCount={contentCount} pageMoveFunc={pageMoveFunc}/>
 			</div>
 		);
 	}, [page, contentCount, navigate])
@@ -120,7 +129,12 @@ const UnknownPostList = () => {
 			</div>
 
 			<div style={{ marginTop: "2rem" }}>
-				{paginationData}
+				<div className="desktopMode">
+					{paginationDataPC}
+				</div>
+				<div className="mobileMode">
+					{paginationDataMO}
+				</div>
 			</div>
 
 			<div style={{ display: "flex", justifyContent: "center", marginTop: "2rem", marginBottom: "2rem" }}>
