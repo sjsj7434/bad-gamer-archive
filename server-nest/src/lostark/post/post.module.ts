@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { AccountsModule } from 'src/accounts/accounts.module';
+import { AccountModule } from 'src/account/account.module';
 import { PostController } from './post.controller';
 import { LostArkKnownPost } from './known/lostArkKnownPost.entity';
 import { LostArkKnownReply } from './known/lostArkKnownReply.entity';
@@ -16,11 +16,11 @@ import { LostarkAnnounceVoteHistory } from './announce/lostarkAnnounceVoteHistor
 /**
  * 게시판 관련 기능 모듈
  * 
- * imports: AccountsModule
+ * imports: AccountModule
  */
 @Module({
 	imports: [
-		AccountsModule,
+		AccountModule,
 
 		TypeOrmModule.forFeature([
 			LostarkAnnouncePost, LostarkAnnounceVoteHistory

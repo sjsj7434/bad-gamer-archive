@@ -1,8 +1,8 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Equal, In, IsNull, Not, Repository } from 'typeorm';
-import { Accounts } from './accounts.entity';
-import { CreateAccountsDTO, UpdateAccountsDTO } from './accounts.dto';
+import { Account } from './account.entity';
+import { CreateAccountDTO, UpdateAccountDTO } from './account.dto';
 import { randomBytes } from 'crypto';
 import puppeteer from 'puppeteer';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
@@ -16,9 +16,9 @@ import { ErrorLogService } from 'src/log/error.log.service';
 import { LostarkCharacter } from './lostarkCharacter';
 
 @Injectable()
-export class AccountsService {
+export class AccountService {
 	constructor(
-		@InjectRepository(Accounts) private accountsRepository: Repository<Accounts>,
+		@InjectRepository(Account) private accountsRepository: Repository<Account>,
 		@InjectRepository(Authentication) private authenticationRepository: Repository<Authentication>,
 		@InjectRepository(LostarkCharacter) private lostarkCharacterRepository: Repository<LostarkCharacter>,
 		@Inject(CACHE_MANAGER) private cacheManager: Cache,
@@ -509,11 +509,11 @@ export class AccountsService {
 	/**
 	 * 중복되는 정보가 있는지 확인 후 계정을 생성한다
 	 */
-	async createAccount(createAccountsDTO: CreateAccountsDTO): Promise<number> {
+	async createAccount(createAccountDTO: CreateAccountDTO): Promise<number> {
 		try {
 			const uniqueUUID: string = await this.getUniqueUUID();
-			const idExists: boolean = await this.isExistsID(createAccountsDTO.id);
-			const nicknameExists: boolean = await this.isExistsNickname(createAccountsDTO.nickname);
+			const idExists: boolean = await this.isExistsID(createAccountDTO.id);
+			const nicknameExists: boolean = await this.isExistsNickname(createAccountDTO.nickname);
 
 			if (idExists === true && nicknameExists === true) {
 				return 0; //이미 ID & Nickname 존재
@@ -529,7 +529,7 @@ export class AccountsService {
 			}
 			else{
 				const saltRounds: number = 10;
-				const password: string = createAccountsDTO.password;
+				const password: string = createAccountDTO.password;
 				const encryptSalt: string = await bcrypt.genSalt(saltRounds);
 				const hash = await bcrypt.hash(password, encryptSalt);
 				const isMatch = await bcrypt.compare(password, hash);
@@ -538,10 +538,10 @@ export class AccountsService {
 					return 3; //비밀번호 암호화 도중 오류 발생
 				}
 				else {
-					createAccountsDTO.uuid = uniqueUUID;
-					createAccountsDTO.password = hash;
+					createAccountDTO.uuid = uniqueUUID;
+					createAccountDTO.password = hash;
 
-					await this.accountsRepository.save(createAccountsDTO);
+					await this.accountsRepository.save(createAccountDTO);
 
 					return 4; //정상 처리
 				}
@@ -662,7 +662,7 @@ export class AccountsService {
 	/**
 	 * 로그인
 	 */
-	async loginAccount(updateAccountsDTO: UpdateAccountsDTO, request: Request, response: Response): Promise<string> {
+	async loginAccount(updateAccountDTO: UpdateAccountDTO, request: Request, response: Response): Promise<string> {
 		response.clearCookie("sessionCode");
 
 		const account = await this.accountsRepository.findOne({
@@ -675,7 +675,7 @@ export class AccountsService {
 				isSleep: true,
 			},
 			where: {
-				id: Equal(updateAccountsDTO.id),
+				id: Equal(updateAccountDTO.id),
 			}
 		});
 
@@ -689,7 +689,7 @@ export class AccountsService {
 			return "locked";
 		}
 		else{
-			const isMatch: boolean = await bcrypt.compare(updateAccountsDTO.password, account.password);
+			const isMatch: boolean = await bcrypt.compare(updateAccountDTO.password, account.password);
 
 			if (isMatch === false) { //로그인 실패
 				const failCount = account.loginFailCount + 1; //로그인 실패 횟수 + 1
@@ -742,7 +742,7 @@ export class AccountsService {
 	/**
 	 * 로그인 시 Cookie 설정
 	 */
-	setLoginCookie(account: Accounts, request: Request, response: Response) {
+	setLoginCookie(account: Account, request: Request, response: Response) {
 		const saltRounds: number = 15;
 		const sessionCode: string = bcrypt.genSaltSync(saltRounds);
 
@@ -782,7 +782,7 @@ export class AccountsService {
 	/**
 	 * 내 정보 가져오기
 	 */
-	async getMyInfo(request: Request, response: Response): Promise<Accounts> {
+	async getMyInfo(request: Request, response: Response): Promise<Account> {
 		const loginUUID = this.LOGIN_SESSION.get(request.cookies["sessionCode"]); //로그인한 정보
 
 		if (loginUUID === null || loginUUID === undefined){
@@ -820,7 +820,7 @@ export class AccountsService {
 	/**
 	 * 비밀번호 변경
 	 */
-	async updatePassword(request: Request, response: Response, updateAccountsDTO: UpdateAccountsDTO): Promise<number> {
+	async updatePassword(request: Request, response: Response, updateAccountDTO: UpdateAccountDTO): Promise<number> {
 		const loginUUID = this.LOGIN_SESSION.get(request.cookies["sessionCode"]); //로그인한 정보
 
 		const acctountData = await this.accountsRepository.findOne({
@@ -834,14 +834,14 @@ export class AccountsService {
 		});
 
 		if (acctountData !== null){
-			const isMatch: boolean = await bcrypt.compare(updateAccountsDTO.oldPassword, acctountData.password);
+			const isMatch: boolean = await bcrypt.compare(updateAccountDTO.oldPassword, acctountData.password);
 
-			if (updateAccountsDTO.oldPassword === updateAccountsDTO.newPassword) {
+			if (updateAccountDTO.oldPassword === updateAccountDTO.newPassword) {
 				return 0;
 			}
 			else if (isMatch === true) {
 				const saltRounds: number = 10;
-				const password: string = updateAccountsDTO.newPassword;
+				const password: string = updateAccountDTO.newPassword;
 				const encryptSalt: string = await bcrypt.genSalt(saltRounds);
 				const hash = await bcrypt.hash(password, encryptSalt);
 				const isRight = await bcrypt.compare(password, hash);
@@ -877,10 +877,10 @@ export class AccountsService {
 	/**
 	 * 닉네임 변경
 	 */
-	async updateNickname(request: Request, response: Response, updateAccountsDTO: UpdateAccountsDTO): Promise<Boolean> {
+	async updateNickname(request: Request, response: Response, updateAccountDTO: UpdateAccountDTO): Promise<Boolean> {
 		const loginUUID = this.LOGIN_SESSION.get(request.cookies["sessionCode"]); //로그인한 정보
 
-		const nicknameExists: boolean = await this.isExistsNickname(updateAccountsDTO.nickname);
+		const nicknameExists: boolean = await this.isExistsNickname(updateAccountDTO.nickname);
 
 		if (nicknameExists === true){
 			return false;
@@ -897,7 +897,7 @@ export class AccountsService {
 		});
 
 		if (acctountData !== null) {
-			const isMatch: boolean = await bcrypt.compare(updateAccountsDTO.password, acctountData.password);
+			const isMatch: boolean = await bcrypt.compare(updateAccountDTO.password, acctountData.password);
 
 			if (isMatch === true) {
 				await this.accountsRepository.update(
@@ -905,7 +905,7 @@ export class AccountsService {
 						id: acctountData.id
 					},
 					{ //변경 값
-						nickname: updateAccountsDTO.nickname,
+						nickname: updateAccountDTO.nickname,
 					}
 				)
 
@@ -1035,13 +1035,13 @@ export class AccountsService {
 	/**
 	 * 비밀번호를 잊어버려 비밀번호 초기화하기 전 확인
 	 */
-	async beforeResetPassword(updateAccountsDTO: UpdateAccountsDTO): Promise<string> {
+	async beforeResetPassword(updateAccountDTO: UpdateAccountDTO): Promise<string> {
 		const account = await this.accountsRepository.findOne({
 			select: {
 				uuid: true
 			},
 			where: {
-				id: Equal(updateAccountsDTO.id),
+				id: Equal(updateAccountDTO.id),
 				isBanned: Equal(false),
 			},
 		});
@@ -1061,10 +1061,10 @@ export class AccountsService {
 	/**
 	 * 비밀번호 잊어버린 사용자, 이메일로 전달받은 코드 확인
 	 */
-	async checkPasswordForgotCode(updateAccountsDTO: UpdateAccountsDTO, verificationCode: string): Promise<string> {
-		updateAccountsDTO.verificationCode = verificationCode;
+	async checkPasswordForgotCode(updateAccountDTO: UpdateAccountDTO, verificationCode: string): Promise<string> {
+		updateAccountDTO.verificationCode = verificationCode;
 
-		const uuid: string = await this.cacheManager.get("PASSWORD_" + updateAccountsDTO.verificationCode);
+		const uuid: string = await this.cacheManager.get("PASSWORD_" + updateAccountDTO.verificationCode);
 
 		if (uuid === undefined){
 			return "error";
@@ -1091,15 +1091,15 @@ export class AccountsService {
 	/**
 	 * 메일로 전달한 링크를 클릭하여 비밀번호 초기화
 	 */
-	async resetPassword(updateAccountsDTO: UpdateAccountsDTO): Promise<string> {
-		const uuid: string = await this.cacheManager.get("PASSWORD_" + updateAccountsDTO.verificationCode);
+	async resetPassword(updateAccountDTO: UpdateAccountDTO): Promise<string> {
+		const uuid: string = await this.cacheManager.get("PASSWORD_" + updateAccountDTO.verificationCode);
 
 		if (uuid === undefined) {
 			return "no_user";
 		}
 		else {
 			const saltRounds: number = 10;
-			const password: string = updateAccountsDTO.newPassword;
+			const password: string = updateAccountDTO.newPassword;
 			const encryptSalt: string = await bcrypt.genSalt(saltRounds);
 
 			const account = await this.accountsRepository.findOne({
@@ -1129,7 +1129,7 @@ export class AccountsService {
 						}
 					)
 
-					this.cacheManager.del("PASSWORD_" + updateAccountsDTO.verificationCode);
+					this.cacheManager.del("PASSWORD_" + updateAccountDTO.verificationCode);
 
 					return "reset";
 				}

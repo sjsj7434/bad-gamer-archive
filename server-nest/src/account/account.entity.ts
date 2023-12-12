@@ -5,11 +5,11 @@ import { LostArkKnownPost } from 'src/lostark/post/known/lostArkKnownPost.entity
 // This will create following database table
 // If table is already exsists there could be error
 @Entity()
-export class Accounts {
-	@OneToMany(() => Authentication, (authentication) => authentication.accounts)
+export class Account {
+	@OneToMany(() => Authentication, (authentication) => authentication.account)
 	authentication: Authentication[];
 
-	@OneToMany(() => LostArkKnownPost, (lostArkKnownPost) => lostArkKnownPost.accounts)
+	@OneToMany(() => LostArkKnownPost, (lostArkKnownPost) => lostArkKnownPost.account)
 	lostArkKnownPost: LostArkKnownPost[];
 
 	/**
@@ -65,28 +65,6 @@ export class Accounts {
 	nickname: string;
 
 	/**
-	 * 유저 경험치(커뮤력), 최대에 도달하면 진화 가능
-	 */
-	@Column({
-		type: "int",
-		unsigned: true,
-		nullable: false,
-		default: 0,
-	})
-	exp: number;
-
-	/**
-	 * 유저 진화 회수
-	 */
-	@Column({
-		type: "smallint",
-		unsigned: true,
-		nullable: false,
-		default: 0,
-	})
-	evolution: number;
-
-	/**
 	 * 유저 비밀번호(암호화), Salt는 암호화된 비밀번호에 포함되어있으니 따로 저장할 필요 없음
 	 */
 	@Column({
@@ -106,17 +84,6 @@ export class Accounts {
 		select: false,
 	})
 	passwordChangeDate: Date | null;
-
-	/**
-	 * stove 인증 계정 코드
-	 */
-	@Column({
-		type: "varchar",
-		length: 100,
-		nullable: true,
-		select: false,
-	})
-	stoveCode: string;
 
 	/**
 	 * 유저 마지막 로그인 날짜
@@ -235,4 +202,37 @@ export class Accounts {
 	 */
 	@DeleteDateColumn()
 	deletedAt!: Date | null;
+
+	/**
+	 * 유저 경험치(커뮤력), 최대에 도달하면 진화 가능
+	 */
+	@Column({
+		type: "int",
+		unsigned: true,
+		nullable: false,
+		default: 0,
+	})
+	exp: number;
+
+	/**
+	 * 유저 진화 회수
+	 */
+	@Column({
+		type: "smallint",
+		unsigned: true,
+		nullable: false,
+		default: 0,
+	})
+	evolution: number;
+
+	/**
+	 * stove 인증 계정 코드
+	 */
+	@Column({
+		type: "varchar",
+		length: 100,
+		nullable: true,
+		select: false,
+	})
+	stoveCode: string;
 }

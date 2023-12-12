@@ -1,16 +1,16 @@
 import { Entity, Column, CreateDateColumn, DeleteDateColumn, UpdateDateColumn, ManyToOne, JoinColumn, PrimaryColumn } from 'typeorm';
-import { Accounts } from './accounts.entity';
+import { Account } from './account.entity';
 
 // This will create following database table
 // If table is already exsists there could be error
 @Entity()
 export class Authentication {
-	@ManyToOne(() => Accounts, (accounts) => accounts.authentication)
-	@JoinColumn({ name: "uuid", referencedColumnName: "uuid" }) //this code reference the accounts.code column
+	@ManyToOne(() => Account, (account) => account.authentication)
+	@JoinColumn({ name: "uuid", referencedColumnName: "uuid" }) //this code reference the account.code column
 	// @JoinColumn() //this decorator is optional for @ManyToOne, This code will create a boardsCode column in the database
 	// By default your relation always refers to [the primary column] of the related entity
 	// https://typeorm.io/relations#joincolumn-options
-	accounts: Accounts;
+	account: Account;
 
 	/**
 	 * 유저 uuid, 서버에서 랜덤 생성값을 부여함, 사용자에게 공개하지 않는 것이 중요

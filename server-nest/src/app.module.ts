@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { APP_GUARD } from '@nestjs/core';
 import { CommonModule } from './common.module';
-import { AccountsModule } from './accounts/accounts.module';
+import { AccountModule } from './account/account.module';
 import { GlobalModule } from './global.module';
 import { PostModule } from './lostark/post/post.module';
 
@@ -13,7 +13,7 @@ import { PostModule } from './lostark/post/post.module';
 	imports: [
 		CommonModule,
 		GlobalModule,
-		AccountsModule,
+		AccountModule,
 		PostModule,
 		ThrottlerModule.forRoot([ //과다 호출 방지 쓰로틀러
 			{

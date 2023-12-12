@@ -3,7 +3,7 @@ import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateCol
 // This will create following database table
 // If table is already exsists there could be error
 @Entity()
-export class Level {
+export class AccountDetail {
 	/**
 	 * 자동으로 생성되는 코드
 	 */
@@ -11,47 +11,37 @@ export class Level {
 	code: number;
 
 	/**
-	 * 등급
+	 * 유저 경험치(커뮤력), 최대에 도달하면 진화 가능
 	 */
 	@Column({
 		type: "int",
-		nullable: false,
 		unsigned: true,
-		unique: true,
+		nullable: false,
+		default: 0,
 	})
-	level: number;
+	exp: number;
 
 	/**
-	 * 등급 최소 요구치
+	 * 유저 진화 회수
 	 */
 	@Column({
-		type: "int",
-		nullable: false,
+		type: "smallint",
 		unsigned: true,
-		unique: true,
+		nullable: false,
+		default: 0,
 	})
-	minumumEXP: number;
+	evolution: number;
 
 	/**
-	 * 등급 최대 요구치
+	 * stove 인증 계정 코드
 	 */
 	@Column({
-		type: "int",
-		nullable: false,
-		unsigned: true,
-		unique: true,
+		type: "varchar",
+		length: 100,
+		nullable: true,
+		select: false,
 	})
-	maximumEXP: number;
-
-	/**
-	 * 등급 활성활
-	 */
-	@Column({
-		type: "boolean",
-		nullable: false,
-		default: true,
-	})
-	isActive: boolean;
+	stoveCode: string;
 
 	/**
 	 * 생성일자(자동)

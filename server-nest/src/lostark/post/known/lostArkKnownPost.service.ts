@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, IsNull, MoreThanOrEqual, Between, Equal, Like } from 'typeorm';
-import { AccountsService } from 'src/accounts/accounts.service';
+import { AccountService } from 'src/account/account.service';
 import { Request, Response } from 'express';
 import { ErrorLogService } from 'src/log/error.log.service';
 import { LostArkKnownPost } from './lostArkKnownPost.entity';
@@ -16,7 +16,7 @@ export class LostArkKnownPostService {
 		@InjectRepository(LostArkKnownPost) private lostArkKnownPostRepository: Repository<LostArkKnownPost>,
 		@InjectRepository(LostArkKnownReply) private lostArkKnownReplyRepository: Repository<LostArkKnownReply>,
 		@InjectRepository(LostArkKnownVoteHistory) private lostArkKnownVoteHistoryRepository: Repository<LostArkKnownVoteHistory>,
-		private accountsService: AccountsService,
+		private accountService: AccountService,
 		private errorLogService: ErrorLogService,
 	) { }
 
@@ -118,7 +118,7 @@ export class LostArkKnownPostService {
 					whereClause = {
 						deletedAt: IsNull(),
 						upvote: MoreThanOrEqual(upvoteCutline),
-						accounts: {
+						account: {
 							authentication: [
 								{ type: Equal("lostark_item_level") },
 								{ type: IsNull() },
@@ -131,7 +131,7 @@ export class LostArkKnownPostService {
 					whereClause = {
 						deletedAt: IsNull(),
 						upvote: MoreThanOrEqual(upvoteCutline),
-						accounts: {
+						account: {
 							authentication: [
 								{ type: Equal("lostark_item_level") },
 								{ type: IsNull() },
@@ -144,7 +144,7 @@ export class LostArkKnownPostService {
 					whereClause = {
 						deletedAt: IsNull(),
 						upvote: MoreThanOrEqual(upvoteCutline),
-						accounts: {
+						account: {
 							authentication: [
 								{ type: Equal("lostark_item_level") },
 								{ type: IsNull() },
@@ -158,7 +158,7 @@ export class LostArkKnownPostService {
 						{
 							deletedAt: IsNull(),
 							upvote: MoreThanOrEqual(upvoteCutline),
-							accounts: {
+							account: {
 								authentication: [
 									{ type: Equal("lostark_item_level") },
 									{ type: IsNull() },
@@ -169,7 +169,7 @@ export class LostArkKnownPostService {
 						{
 							deletedAt: IsNull(),
 							upvote: MoreThanOrEqual(upvoteCutline),
-							accounts: {
+							account: {
 								authentication: [
 									{ type: Equal("lostark_item_level") },
 									{ type: IsNull() },
@@ -184,7 +184,7 @@ export class LostArkKnownPostService {
 				whereClause = {
 					deletedAt: IsNull(),
 					upvote: MoreThanOrEqual(upvoteCutline),
-					accounts: {
+					account: {
 						authentication: [
 							{ type: Equal("lostark_item_level") },
 							{ type: IsNull() },
@@ -194,10 +194,10 @@ export class LostArkKnownPostService {
 			}
 
 			const result = await this.lostArkKnownPostRepository.findAndCount({
-				relations: ["reply", "accounts", "accounts.authentication"], //정보 join
+				relations: ["reply", "account", "account.authentication"], //정보 join
 				select: {
 					reply: { code: true },
-					accounts: { nickname: true, authentication: { type: true, data: true } },
+					account: { nickname: true, authentication: { type: true, data: true } },
 					code: true,
 					category: true,
 					writerNickname: true,
@@ -241,7 +241,7 @@ export class LostArkKnownPostService {
 					whereClause = {
 						deletedAt: IsNull(),
 						downvote: MoreThanOrEqual(downvoteCutline),
-						accounts: {
+						account: {
 							authentication: [
 								{ type: Equal("lostark_item_level") },
 								{ type: IsNull() },
@@ -254,7 +254,7 @@ export class LostArkKnownPostService {
 					whereClause = {
 						deletedAt: IsNull(),
 						downvote: MoreThanOrEqual(downvoteCutline),
-						accounts: {
+						account: {
 							authentication: [
 								{ type: Equal("lostark_item_level") },
 								{ type: IsNull() },
@@ -267,7 +267,7 @@ export class LostArkKnownPostService {
 					whereClause = {
 						deletedAt: IsNull(),
 						downvote: MoreThanOrEqual(downvoteCutline),
-						accounts: {
+						account: {
 							authentication: [
 								{ type: Equal("lostark_item_level") },
 								{ type: IsNull() },
@@ -281,7 +281,7 @@ export class LostArkKnownPostService {
 						{
 							deletedAt: IsNull(),
 							downvote: MoreThanOrEqual(downvoteCutline),
-							accounts: {
+							account: {
 								authentication: [
 									{ type: Equal("lostark_item_level") },
 									{ type: IsNull() },
@@ -292,7 +292,7 @@ export class LostArkKnownPostService {
 						{
 							deletedAt: IsNull(),
 							downvote: MoreThanOrEqual(downvoteCutline),
-							accounts: {
+							account: {
 								authentication: [
 									{ type: Equal("lostark_item_level") },
 									{ type: IsNull() },
@@ -307,7 +307,7 @@ export class LostArkKnownPostService {
 				whereClause = {
 					deletedAt: IsNull(),
 					downvote: MoreThanOrEqual(downvoteCutline),
-					accounts: {
+					account: {
 						authentication: [
 							{ type: Equal("lostark_item_level") },
 							{ type: IsNull() },
@@ -317,10 +317,10 @@ export class LostArkKnownPostService {
 			}
 
 			const result = await this.lostArkKnownPostRepository.findAndCount({
-				relations: ["reply", "accounts", "accounts.authentication"], //정보 join
+				relations: ["reply", "account", "account.authentication"], //정보 join
 				select: {
 					reply: { code: true },
-					accounts: { nickname: true, authentication: { type: true, data: true } },
+					account: { nickname: true, authentication: { type: true, data: true } },
 					code: true,
 					category: true,
 					writerNickname: true,
@@ -364,7 +364,7 @@ export class LostArkKnownPostService {
 					whereClause = {
 						deletedAt: IsNull(),
 						view: MoreThanOrEqual(viewCutline),
-						accounts: {
+						account: {
 							authentication: [
 								{ type: Equal("lostark_item_level") },
 								{ type: IsNull() },
@@ -377,7 +377,7 @@ export class LostArkKnownPostService {
 					whereClause = {
 						deletedAt: IsNull(),
 						view: MoreThanOrEqual(viewCutline),
-						accounts: {
+						account: {
 							authentication: [
 								{ type: Equal("lostark_item_level") },
 								{ type: IsNull() },
@@ -390,7 +390,7 @@ export class LostArkKnownPostService {
 					whereClause = {
 						deletedAt: IsNull(),
 						view: MoreThanOrEqual(viewCutline),
-						accounts: {
+						account: {
 							authentication: [
 								{ type: Equal("lostark_item_level") },
 								{ type: IsNull() },
@@ -404,7 +404,7 @@ export class LostArkKnownPostService {
 						{
 							deletedAt: IsNull(),
 							view: MoreThanOrEqual(viewCutline),
-							accounts: {
+							account: {
 								authentication: [
 									{ type: Equal("lostark_item_level") },
 									{ type: IsNull() },
@@ -415,7 +415,7 @@ export class LostArkKnownPostService {
 						{
 							deletedAt: IsNull(),
 							view: MoreThanOrEqual(viewCutline),
-							accounts: {
+							account: {
 								authentication: [
 									{ type: Equal("lostark_item_level") },
 									{ type: IsNull() },
@@ -430,7 +430,7 @@ export class LostArkKnownPostService {
 				whereClause = {
 					deletedAt: IsNull(),
 					view: MoreThanOrEqual(viewCutline),
-					accounts: {
+					account: {
 						authentication: [
 							{ type: Equal("lostark_item_level") },
 							{ type: IsNull() },
@@ -440,10 +440,10 @@ export class LostArkKnownPostService {
 			}
 
 			const result = await this.lostArkKnownPostRepository.findAndCount({
-				relations: ["reply", "accounts", "accounts.authentication"], //정보 join
+				relations: ["reply", "account", "account.authentication"], //정보 join
 				select: {
 					reply: { code: true },
-					accounts: { nickname: true, authentication: { type: true, data: true } },
+					account: { nickname: true, authentication: { type: true, data: true } },
 					code: true,
 					category: true,
 					writerNickname: true,
@@ -483,8 +483,8 @@ export class LostArkKnownPostService {
 		const queryOBJ = this.lostArkKnownPostRepository
 		.createQueryBuilder("boards")
 		.leftJoinAndSelect("boards.replies", "replies", "replies.parentContentCode = boards.code")
-		.leftJoinAndSelect("boards.accounts", "accounts", "accounts.id = boards.writerID")
-		.innerJoinAndSelect("accounts.authentication", "authentication", "authentication.uuid = accounts.uuid AND authentication.type = 'lostark_item_level'")
+		.leftJoinAndSelect("boards.account", "account", "account.id = boards.writerID")
+		.innerJoinAndSelect("account.authentication", "authentication", "authentication.uuid = account.uuid AND authentication.type = 'lostark_item_level'")
 
 		.select("boards.code", "code")
 		.addSelect("boards.writerNickname", "writerNickname")
@@ -529,7 +529,7 @@ export class LostArkKnownPostService {
 			if (searchType === "title") {
 				whereClause = {
 					deletedAt: IsNull(),
-					accounts: {
+					account: {
 						authentication: [
 							{ type: Equal("lostark_item_level") },
 							{ type: IsNull() },
@@ -541,7 +541,7 @@ export class LostArkKnownPostService {
 			else if (searchType === "content") {
 				whereClause = {
 					deletedAt: IsNull(),
-					accounts: {
+					account: {
 						authentication: [
 							{ type: Equal("lostark_item_level") },
 							{ type: IsNull() },
@@ -553,7 +553,7 @@ export class LostArkKnownPostService {
 			else if (searchType === "nickname") {
 				whereClause = {
 					deletedAt: IsNull(),
-					accounts: {
+					account: {
 						authentication: [
 							{ type: Equal("lostark_item_level") },
 							{ type: IsNull() },
@@ -566,7 +566,7 @@ export class LostArkKnownPostService {
 				whereClause = [
 					{
 						deletedAt: IsNull(),
-						accounts: {
+						account: {
 							authentication: [
 								{ type: Equal("lostark_item_level") },
 								{ type: IsNull() },
@@ -576,7 +576,7 @@ export class LostArkKnownPostService {
 					},
 					{
 						deletedAt: IsNull(),
-						accounts: {
+						account: {
 							authentication: [
 								{ type: Equal("lostark_item_level") },
 								{ type: IsNull() },
@@ -590,7 +590,7 @@ export class LostArkKnownPostService {
 		else {
 			whereClause = {
 				deletedAt: IsNull(),
-				accounts: {
+				account: {
 					authentication: [
 						{ type: Equal("lostark_item_level") },
 						{ type: IsNull() },
@@ -600,10 +600,10 @@ export class LostArkKnownPostService {
 		}
 
 		const result = await this.lostArkKnownPostRepository.findAndCount({
-			relations: ["reply", "accounts", "accounts.authentication"], //댓글 정보 join
+			relations: ["reply", "account", "account.authentication"], //댓글 정보 join
 			select: {
 				reply: { code: true },
-				accounts: { nickname: true, authentication: { type: true, data: true } },
+				account: { nickname: true, authentication: { type: true, data: true } },
 				code: true,
 				writerNickname: true,
 				title: true,
@@ -629,7 +629,7 @@ export class LostArkKnownPostService {
 	 * 유저 게시판 글 읽기, 조회수 + 1
 	 */
 	async readPost(request: Request, response: Response, contentCode: number): Promise<{ contentData: LostArkKnownPost, isWriter: boolean }> {
-		const loginCookie = await this.accountsService.checkLoginStatus(request, response);
+		const loginCookie = await this.accountService.checkLoginStatus(request, response);
 
 		if (isNaN(contentCode) === true) {
 			return null;
@@ -640,7 +640,7 @@ export class LostArkKnownPostService {
 		await this.lostArkKnownPostRepository.increment({ code: contentCode }, "view", 1);
 
 		const contentData = await this.lostArkKnownPostRepository.findOne({
-			relations: ["accounts", "accounts.authentication"],
+			relations: ["account", "account.authentication"],
 			select: {
 				code: true,
 				category: true,
@@ -653,7 +653,7 @@ export class LostArkKnownPostService {
 				writerNickname: true,
 				createdAt: true,
 				updatedAt: true,
-				accounts: {
+				account: {
 					nickname: true,
 					authentication: {
 						type: true,
@@ -663,7 +663,7 @@ export class LostArkKnownPostService {
 			},
 			where: {
 				code: Equal(contentCode),
-				accounts: {
+				account: {
 					authentication: [
 						{ type: Equal("lostark_item_level") },
 						{ type: IsNull() },
@@ -684,7 +684,7 @@ export class LostArkKnownPostService {
 	 * 유저 게시판 글 데이터 가져오기
 	 */
 	async getPost(request: Request, response: Response, contentCode: number): Promise<{ contentData: LostArkKnownPost, isWriter: boolean }> {
-		const loginCookie = await this.accountsService.checkLoginStatus(request, response);
+		const loginCookie = await this.accountService.checkLoginStatus(request, response);
 
 		if (isNaN(contentCode) === true) {
 			return null;
@@ -723,7 +723,7 @@ export class LostArkKnownPostService {
 	 * 유저 게시글 작성자 확인
 	 */
 	async isAuthor(request: Request, response: Response, code: number): Promise<boolean> {
-		const loginCookie = await this.accountsService.checkLoginStatus(request, response);
+		const loginCookie = await this.accountService.checkLoginStatus(request, response);
 
 		if (loginCookie.status === "login") {
 			if (isNaN(code) === true) {
@@ -752,7 +752,7 @@ export class LostArkKnownPostService {
 	 * 유저 게시판에 게시글을 생성한다
 	 */
 	async createPost(createPostDTO: CreateLostArkKnownPostDTO, ipData: string, request: Request, response: Response): Promise<{ createdCode: number, status: string }> {
-		const loginCookie = await this.accountsService.checkLoginStatus(request, response);
+		const loginCookie = await this.accountService.checkLoginStatus(request, response);
 
 		if (loginCookie.status === "login") {
 			if (createPostDTO.title.length > 200) {
@@ -769,7 +769,7 @@ export class LostArkKnownPostService {
 			createPostDTO.ip = Math.random().toString().substring(2, 5) + "." + Math.random().toString().substring(2, 5) + "." + Math.random().toString().substring(2, 5) + "." + Math.random().toString().substring(2, 5);
 
 			const createdPost = await this.lostArkKnownPostRepository.save(createPostDTO);
-			await this.accountsService.updateAccountExp(request, response, "up", this.POINT_WRITE_POST);
+			await this.accountService.updateAccountExp(request, response, "up", this.POINT_WRITE_POST);
 
 			return { createdCode: createdPost.code, status: "" };
 		}
@@ -782,7 +782,7 @@ export class LostArkKnownPostService {
 	 * 유저 게시판에 글을 수정한다
 	 */
 	async updatePost(request: Request, response: Response, updatePostDTO: UpdateLostArkKnownPostDTO): Promise<boolean> {
-		const loginCookie = await this.accountsService.checkLoginStatus(request, response);
+		const loginCookie = await this.accountService.checkLoginStatus(request, response);
 
 		const updateTargetPost = await this.lostArkKnownPostRepository.findOne({
 			select: {
@@ -819,7 +819,7 @@ export class LostArkKnownPostService {
 	 * 유저 게시판 글을 softDelete한다
 	 */
 	async softDeletePost(request: Request, response: Response, deletePostDTO: DeleteLostArkKnownPostDTO): Promise<boolean> {
-		const loginCookie = await this.accountsService.checkLoginStatus(request, response);
+		const loginCookie = await this.accountService.checkLoginStatus(request, response);
 
 		if (loginCookie.status === "login") {
 			const isExists = await this.lostArkKnownPostRepository.exist({
@@ -846,7 +846,7 @@ export class LostArkKnownPostService {
 	 * 유저 게시판 글 추천
 	 */
 	async upvotePost(request: Request, response: Response, contentCode: number, ipData: string): Promise<{ upvote: number, downvote: number, isVotable: boolean }> {
-		const loginCookie = await this.accountsService.checkLoginStatus(request, response);
+		const loginCookie = await this.accountService.checkLoginStatus(request, response);
 		const isVotable: boolean = await this.isVotablePost(contentCode, loginCookie.id);
 
 		if (isVotable === true && loginCookie !== null) {
@@ -860,7 +860,7 @@ export class LostArkKnownPostService {
 				ip: ipData,
 			});
 			await this.lostArkKnownVoteHistoryRepository.insert(insertHistory);
-			await this.accountsService.updateAccountExp(request, response, "up", this.POINT_VOTE);
+			await this.accountService.updateAccountExp(request, response, "up", this.POINT_VOTE);
 		}
 
 		const contentData = await this.lostArkKnownPostRepository.findOne({
@@ -880,7 +880,7 @@ export class LostArkKnownPostService {
 	 * 유저 게시판 글 비추천
 	 */
 	async downvotePost(request: Request, response: Response, contentCode: number, ipData: string): Promise<{ upvote: number, downvote: number, isVotable: boolean }> {
-		const loginCookie = await this.accountsService.checkLoginStatus(request, response);
+		const loginCookie = await this.accountService.checkLoginStatus(request, response);
 		const isVotable: boolean = await this.isVotablePost(contentCode, loginCookie.id);
 
 		if (isVotable === true) {
@@ -894,7 +894,7 @@ export class LostArkKnownPostService {
 				ip: ipData,
 			});
 			await this.lostArkKnownVoteHistoryRepository.insert(insertHistory);
-			await this.accountsService.updateAccountExp(request, response, "up", this.POINT_VOTE);
+			await this.accountService.updateAccountExp(request, response, "up", this.POINT_VOTE);
 		}
 
 		const contentData = await this.lostArkKnownPostRepository.findOne({
@@ -914,7 +914,7 @@ export class LostArkKnownPostService {
 	 * 유저 게시판 추천자 목록
 	 */
 	async getPostUpvoteList(request: Request, response: Response, contentCode: number): Promise<LostArkKnownVoteHistory[]> {
-		// const loginCookie = await this.accountsService.checkLoginStatus(request, response);
+		// const loginCookie = await this.accountService.checkLoginStatus(request, response);
 
 		const contentData = await this.lostArkKnownVoteHistoryRepository.find({
 			select: {
@@ -934,7 +934,7 @@ export class LostArkKnownPostService {
 	 * 유저 게시판 비추천자 목록
 	 */
 	async getPostDownvoteList(request: Request, response: Response, contentCode: number): Promise<LostArkKnownVoteHistory[]> {
-		// const loginCookie = await this.accountsService.checkLoginStatus(request, response);
+		// const loginCookie = await this.accountService.checkLoginStatus(request, response);
 
 		const contentData = await this.lostArkKnownVoteHistoryRepository.find({
 			select: {
@@ -1008,7 +1008,7 @@ export class LostArkKnownPostService {
 			return false;
 		}
 
-		const loginCookie = await this.accountsService.checkLoginStatus(request, response);
+		const loginCookie = await this.accountService.checkLoginStatus(request, response);
 
 		if (loginCookie.status === "login") {
 			createReplyDTO.writerID = loginCookie.id;
@@ -1041,7 +1041,7 @@ export class LostArkKnownPostService {
 				}
 
 				await this.lostArkKnownReplyRepository.save(replyData);
-				await this.accountsService.updateAccountExp(request, response, "up", this.POINT_WRITE_REPLY);
+				await this.accountService.updateAccountExp(request, response, "up", this.POINT_WRITE_REPLY);
 
 				return true;
 			}
@@ -1058,7 +1058,7 @@ export class LostArkKnownPostService {
 	 * 유저 게시판 댓글 삭제
 	 */
 	async deleteReply(request: Request, response: Response, deleteReplyDTO: DeleteLostArkKnownReplyDTO): Promise<boolean> {
-		const loginCookie = await this.accountsService.checkLoginStatus(request, response);
+		const loginCookie = await this.accountService.checkLoginStatus(request, response);
 
 		if (loginCookie.status !== "login") {
 			return false;

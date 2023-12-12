@@ -1,7 +1,7 @@
 import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, DeleteDateColumn, OneToMany, ManyToOne, JoinColumn } from 'typeorm';
 import { LostArkKnownReply } from './lostArkKnownReply.entity';
 import { LostArkKnownVoteHistory } from './lostArkKnownVoteHistory.entity';
-import { Accounts } from 'src/accounts/accounts.entity';
+import { Account } from 'src/account/account.entity';
 
 // This will create following database table
 // If table is already exsists there could be error
@@ -18,9 +18,9 @@ export class LostArkKnownPost {
 	@OneToMany(() => LostArkKnownVoteHistory, (lostArkKnownVoteHistory) => lostArkKnownVoteHistory.lostArkKnownPost)
 	lostArkKnownVoteHistory: LostArkKnownVoteHistory[];
 
-	@ManyToOne(() => Accounts, (accounts) => accounts.lostArkKnownPost)
+	@ManyToOne(() => Account, (account) => account.lostArkKnownPost)
 	@JoinColumn({ name: "writerID", referencedColumnName: "id" })
-	accounts: Accounts;
+	account: Account;
 
 	/**
 	 * 자동으로 생성되는 코드

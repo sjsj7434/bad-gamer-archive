@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, IsNull, Equal } from 'typeorm';
-import { AccountsService } from 'src/accounts/accounts.service';
+import { AccountService } from 'src/account/account.service';
 import { Request, Response } from 'express';
 import { ErrorLogService } from 'src/log/error.log.service';
 import { LostarkAnnounceVoteHistory } from './lostarkAnnounceVoteHistory.entity';
@@ -12,7 +12,7 @@ export class LostarkAnnouncePostService {
 	constructor(
 		@InjectRepository(LostarkAnnouncePost) private lostarkAnnouncePostRepository: Repository<LostarkAnnouncePost>,
 		@InjectRepository(LostarkAnnounceVoteHistory) private lostarkAnnounceVoteHistoryRepository: Repository<LostarkAnnounceVoteHistory>,
-		private accountsService: AccountsService,
+		private accountService: AccountService,
 		private errorLogService: ErrorLogService,
 	) { }
 
@@ -74,7 +74,7 @@ export class LostarkAnnouncePostService {
 	 * 유저 게시판 글 읽기, 조회수 + 1
 	 */
 	async readPost(request: Request, response: Response, contentCode: number): Promise<{ contentData: LostarkAnnouncePost, isWriter: boolean }> {
-		const loginCookie = await this.accountsService.checkLoginStatus(request, response);
+		const loginCookie = await this.accountService.checkLoginStatus(request, response);
 
 		if (isNaN(contentCode) === true) {
 			return null;
@@ -114,7 +114,7 @@ export class LostarkAnnouncePostService {
 	 * 유저 게시판 글 데이터 가져오기
 	 */
 	async getPost(request: Request, response: Response, contentCode: number): Promise<{ contentData: LostarkAnnouncePost, isWriter: boolean }> {
-		const loginCookie = await this.accountsService.checkLoginStatus(request, response);
+		const loginCookie = await this.accountService.checkLoginStatus(request, response);
 
 		if (isNaN(contentCode) === true) {
 			return null;
@@ -153,7 +153,7 @@ export class LostarkAnnouncePostService {
 	 * 유저 게시판 글 추천
 	 */
 	async upvotePost(request: Request, response: Response, contentCode: number, ipData: string): Promise<{ upvote: number, downvote: number, isVotable: boolean }> {
-		const loginCookie = await this.accountsService.checkLoginStatus(request, response);
+		const loginCookie = await this.accountService.checkLoginStatus(request, response);
 		const isVotable: boolean = await this.isVotablePost(contentCode, loginCookie.id);
 
 		if (isVotable === true && loginCookie !== null) {
@@ -186,7 +186,7 @@ export class LostarkAnnouncePostService {
 	 * 유저 게시판 글 비추천
 	 */
 	async downvotePost(request: Request, response: Response, contentCode: number, ipData: string): Promise<{ upvote: number, downvote: number, isVotable: boolean }> {
-		const loginCookie = await this.accountsService.checkLoginStatus(request, response);
+		const loginCookie = await this.accountService.checkLoginStatus(request, response);
 		const isVotable: boolean = await this.isVotablePost(contentCode, loginCookie.id);
 
 		if (isVotable === true) {
@@ -219,7 +219,7 @@ export class LostarkAnnouncePostService {
 	 * 유저 게시판 추천자 목록
 	 */
 	async getPostUpvoteList(request: Request, response: Response, contentCode: number): Promise<LostarkAnnounceVoteHistory[]> {
-		// const loginCookie = await this.accountsService.checkLoginStatus(request, response);
+		// const loginCookie = await this.accountService.checkLoginStatus(request, response);
 
 		const contentData = await this.lostarkAnnounceVoteHistoryRepository.find({
 			select: {
@@ -239,7 +239,7 @@ export class LostarkAnnouncePostService {
 	 * 유저 게시판 비추천자 목록
 	 */
 	async getPostDownvoteList(request: Request, response: Response, contentCode: number): Promise<LostarkAnnounceVoteHistory[]> {
-		// const loginCookie = await this.accountsService.checkLoginStatus(request, response);
+		// const loginCookie = await this.accountService.checkLoginStatus(request, response);
 
 		const contentData = await this.lostarkAnnounceVoteHistoryRepository.find({
 			select: {
