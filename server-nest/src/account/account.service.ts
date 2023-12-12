@@ -42,7 +42,6 @@ export class AccountService {
 	})
 	resetCharacterUpdateCount() {
 		this.WHO_USE_API_TODAY.clear(); //초기화
-		console.log("[resetCharacterUpdateCount] Reset data : " + new Date());
 	}
 
 	/**
@@ -136,6 +135,7 @@ export class AccountService {
 
 		const isExist = await this.authenticationRepository.exist({ //이미 인증된 계정으로는 다시 인증 불가능
 			where: {
+				gameName: "lostark",
 				type: Equal("stove_code"),
 				data: Equal(stoveCodeWithOutProtocol),
 			}
@@ -194,8 +194,6 @@ export class AccountService {
 	 * 이미 인증한 계정만 가능한 간편 스토브 로아 캐릭터 인증
 	 */
 	async changeLostarkChatacter(request: Request): Promise<{ result: string, characterList: object }> {
-		// let hello = await this.authenticationRepository.query("SELECT ? AS TEST", ["dd"]);
-		// console.log(hello);
 		const loginUUID = this.LOGIN_SESSION.get(request.cookies["sessionCode"]); //로그인한 정보
 
 		if (loginUUID === null || loginUUID === undefined) {
@@ -213,6 +211,7 @@ export class AccountService {
 			},
 			where: {
 				uuid: Equal(loginUUID),
+				gameName: "lostark",
 				type: Equal("stove_code"),
 			}
 		});
@@ -965,6 +964,7 @@ export class AccountService {
 			//다시 인증을 진행하면 이전에 인증 해제한 데이터 완전 삭제 처리
 			await this.authenticationRepository.delete({
 				uuid: loginUUID,
+				gameName: "lostark",
 				type: In(["lostark_name", "lostark_item_level", "lostark_server", "lostark_character_level", "stove_code"]),
 				deletedAt: Not(IsNull()),
 			});
@@ -974,13 +974,13 @@ export class AccountService {
 
 			await this.authenticationRepository.upsert(
 				[
-					{ uuid: loginUUID, type: "stove_code", data: stoveCode },
-					{ uuid: loginUUID, type: "lostark_name", data: characterList[infoIndex].CharacterName },
-					{ uuid: loginUUID, type: "lostark_character_level", data: characterList[infoIndex].CharacterLevel },
-					{ uuid: loginUUID, type: "lostark_item_level", data: simpleItemLevel },
-					{ uuid: loginUUID, type: "lostark_server", data: characterList[infoIndex].ServerName },
+					{ uuid: loginUUID, gameName: "lostark", type: "stove_code", data: stoveCode },
+					{ uuid: loginUUID, gameName: "lostark", type: "lostark_name", data: characterList[infoIndex].CharacterName },
+					{ uuid: loginUUID, gameName: "lostark", type: "lostark_character_level", data: characterList[infoIndex].CharacterLevel },
+					{ uuid: loginUUID, gameName: "lostark", type: "lostark_item_level", data: simpleItemLevel },
+					{ uuid: loginUUID, gameName: "lostark", type: "lostark_server", data: characterList[infoIndex].ServerName },
 				],
-				["uuid", "type"]
+				["uuid", "gameName", "type"]
 			);
 
 			await this.cacheManager.del("LOSTARK_" + sessionCode);
@@ -1002,6 +1002,7 @@ export class AccountService {
 		const isExists: boolean = await this.authenticationRepository.exist({
 			where: {
 				uuid: Equal(loginUUID),
+				gameName: "lostark",
 				type: In(["lostark_name", "lostark_item_level", "lostark_server", "lostark_character_level", "stove_code"]),
 				deletedAt: IsNull(),
 			}
@@ -1011,6 +1012,7 @@ export class AccountService {
 			//다시 인증을 진행하지 않으면 데이터는 완전 삭제되지 않음
 			await this.authenticationRepository.softDelete({
 				uuid: Equal(loginUUID),
+				gameName: "lostark",
 				type: In(["lostark_name", "lostark_item_level", "lostark_server", "lostark_character_level", "stove_code"]),
 				deletedAt: IsNull(),
 			});
