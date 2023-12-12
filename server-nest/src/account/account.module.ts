@@ -3,7 +3,6 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AccountController } from './account.controller';
 import { AccountService } from './account.service';
 import { Account } from './account.entity';
-import { AccountDetail } from './accountDetail.entity';
 import { Authentication } from './authentication.entity';
 import { LostarkCharacter } from './lostarkCharacter';
 
@@ -13,7 +12,7 @@ import { LostarkCharacter } from './lostarkCharacter';
 @Module({
 	imports: [
 		TypeOrmModule.forFeature([
-			Account, AccountDetail, Authentication
+			Account, Authentication
 			, LostarkCharacter
 		]),
 	],

@@ -76,6 +76,72 @@ export class Account {
 	password: string;
 
 	/**
+	 * 유저 경험치(커뮤력), 최대에 도달하면 진화 가능
+	 */
+	@Column({
+		type: "int",
+		unsigned: true,
+		nullable: false,
+		default: 0,
+	})
+	exp: number;
+
+	/**
+	 * 유저 진화 회수
+	 */
+	@Column({
+		type: "smallint",
+		unsigned: true,
+		nullable: false,
+		default: 0,
+	})
+	evolution: number;
+
+	/**
+	 * 작성한 글 개수
+	 */
+	@Column({
+		type: "int",
+		unsigned: true,
+		nullable: false,
+		default: 0,
+	})
+	postWriteCount: number;
+
+	/**
+	 * 작성한 댓글 개수
+	 */
+	@Column({
+		type: "int",
+		unsigned: true,
+		nullable: false,
+		default: 0,
+	})
+	replyWriteCount: number;
+
+	/**
+	 * 삭제한 글 개수
+	 */
+	@Column({
+		type: "int",
+		unsigned: true,
+		nullable: false,
+		default: 0,
+	})
+	postDeleteCount: number;
+
+	/**
+	 * 삭제한 댓글 개수
+	 */
+	@Column({
+		type: "int",
+		unsigned: true,
+		nullable: false,
+		default: 0,
+	})
+	replyDeleteCount: number;
+
+	/**
 	 * 유저 비밀번호 변경 일자
 	 */
 	@Column({
@@ -202,37 +268,4 @@ export class Account {
 	 */
 	@DeleteDateColumn()
 	deletedAt!: Date | null;
-
-	/**
-	 * stove 인증 계정 코드
-	 */
-	@Column({
-		type: "varchar",
-		length: 100,
-		nullable: true,
-		select: false,
-	})
-	stoveCode: string;
-
-	/**
-	 * 유저 경험치(커뮤력), 최대에 도달하면 진화 가능
-	 */
-	@Column({
-		type: "int",
-		unsigned: true,
-		nullable: false,
-		default: 0,
-	})
-	exp: number;
-
-	/**
-	 * 유저 진화 회수
-	 */
-	@Column({
-		type: "smallint",
-		unsigned: true,
-		nullable: false,
-		default: 0,
-	})
-	evolution: number;
 }
