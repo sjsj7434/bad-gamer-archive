@@ -4,7 +4,7 @@ import { AccountController } from './account.controller';
 import { AccountService } from './account.service';
 import { Account } from './account.entity';
 import { Authentication } from './authentication.entity';
-import { LostarkCharacter } from './lostarkCharacter';
+import { LostarkCharacter } from './lostarkCharacter.entity';
 
 /**
  * 사용자 계정 관련 기능 모듈

@@ -13,7 +13,7 @@ import { Authentication } from './authentication.entity';
 import { LostarkAPIService } from 'src/lostark/api/lostark.api.service';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { ErrorLogService } from 'src/log/error.log.service';
-import { LostarkCharacter } from './lostarkCharacter';
+import { LostarkCharacter } from './lostarkCharacter.entity';
 
 @Injectable()
 export class AccountService {
