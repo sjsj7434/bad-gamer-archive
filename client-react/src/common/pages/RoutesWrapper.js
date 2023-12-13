@@ -60,259 +60,261 @@ const RoutesWrapper = () => {
 			<>
 				<CommonTopMenu accountData={accountData} currentMenu={currentMenu} checkLoginStatus={checkLoginStatus} />
 
-				<Routes>
-					{/* Contents */}
-					<Route path="" element={ <Navigate to="/lostark/main" replace={true} /> } />
+				<div style={{ minHeight: "50vh" }}>
+					<Routes>
+						{/* Contents */}
+						<Route path="" element={ <Navigate to="/lostark/main" replace={true} /> } />
 
-					<Route path="lostark">
-						<Route path="" element={
-							<Navigate to="main" replace={true} />
-						} />
-						<Route path="main" element={
-							<>
-								<SetActiveMenu pageTitle="Agora(LA)" setCurrentMenu={setCurrentMenu} menuCode={"/lostark/main"} />
-								<LostarkMain />
-							</>
-						} />
-
-						<Route path="useful" element={
-							<>
-								<SetActiveMenu pageTitle="Agora(LA)" setCurrentMenu={setCurrentMenu} menuCode={"/lostark/useful"} />
-								<UsefulSitesLostark />
-							</>
-						} />
-
-						<Route path="post">
-							<Route path="unknown">
-								<Route path="" element={
-									<Navigate to="1" replace={true} />
-								} />
-
-								<Route path=":page" element={
-									<>
-										<SetActiveMenu pageTitle="Agora(LA)" setCurrentMenu={setCurrentMenu} menuCode={"/lostark/post/unknown"} />
-										<UnknownPostList />
-									</>
-								} />
-
-								<Route path="view/:postCode" element={
-									<>
-										<SetActiveMenu pageTitle="Agora(LA)" setCurrentMenu={setCurrentMenu} menuCode={"/lostark/post/unknown"} />
-										<UnknownPostView />
-									</>
-								} />
-
-								<Route path="write" element={
-									<>
-										<SetActiveMenu pageTitle="Agora(LA)" setCurrentMenu={setCurrentMenu} menuCode={"/lostark/post/unknown"} />
-										<UnknownPostWrite />
-									</>
-								} />
-
-								<Route path="edit/:postCode" element={
-									<>
-										<SetActiveMenu pageTitle="Agora(LA)" setCurrentMenu={setCurrentMenu} menuCode={"/lostark/post/unknown"} />
-										<UnknownPostWrite />
-									</>
-								} />
-							</Route>
-
-							<Route path="known">
-								<Route path="" element={
-									<Navigate to="1" replace={true} />
-								} />
-
-								<Route path=":page" element={
-									<>
-										<SetActiveMenu pageTitle="Agora(LA)" setCurrentMenu={setCurrentMenu} menuCode={"/lostark/post/known"} />
-										<KnownPostList />
-									</>
-								} />
-
-								<Route path="view/:postCode" element={
-									<>
-										<SetActiveMenu pageTitle="Agora(LA)" setCurrentMenu={setCurrentMenu} menuCode={"/lostark/post/known"} />
-										<KnownPostView accountData={accountData} />
-									</>
-								} />
-
-								<Route path="write" element={
-									<BlockLogoutUser
-										accountData={accountData}
-										ifAllow={
-											<>
-												<SetActiveMenu pageTitle="Agora(LA)" setCurrentMenu={setCurrentMenu} menuCode={"/lostark/post/known"} />
-												<KnownPostWrite accountData={accountData} />
-											</>
-										}
-									/>
-								} />
-
-								<Route path="edit/:postCode" element={
-									<BlockLogoutUser
-										accountData={accountData}
-										ifAllow={
-											<>
-												<SetActiveMenu pageTitle="Agora(LA)" setCurrentMenu={setCurrentMenu} menuCode={"/lostark/post/known"} />
-												<KnownPostWrite accountData={accountData} />
-											</>
-										}
-									/>
-								} />
-							</Route>
-						</Route>
-					</Route>
-
-					<Route path="account">
-						<Route path="register" element={
-							<BlockLoginUser
-								accountData={accountData}
-								ifAllow={
-									<>
-										<SetActiveMenu pageTitle="" setCurrentMenu={setCurrentMenu} menuCode={"/account/register"} />
-										<RegisterForm />
-									</>
-								}
-							/>
-						} />
-						<Route path="login" element={
-							<BlockLoginUser
-								accountData={accountData}
-								ifAllow={
-									<>
-										<SetActiveMenu pageTitle="" setCurrentMenu={setCurrentMenu} menuCode={"/account/login"} />
-										<LoginForm />
-									</>
-								}
-							/>
-						} />
-
-						<Route path="find/password" element={
-							<BlockLoginUser
-								accountData={accountData}
-								ifAllow={
-									<>
-										<SetActiveMenu pageTitle="" setCurrentMenu={setCurrentMenu} menuCode={"/account/find/password"} />
-										<ForgotPasswordForm />
-									</>
-								}
-							/>
-						} />
-
-						<Route path="reset/password/:verificationCode" element={
-							<BlockLoginUser
-								accountData={accountData}
-								ifAllow={
-									<>
-										<ResetPasswordForm />
-									</>
-								}
-							/>
-						} />
-						
-						<Route path="mypage">
+						<Route path="lostark">
 							<Route path="" element={
-								<BlockLogoutUser
+								<Navigate to="main" replace={true} />
+							} />
+							<Route path="main" element={
+								<>
+									<SetActiveMenu pageTitle="Agora(LA)" setCurrentMenu={setCurrentMenu} menuCode={"/lostark/main"} />
+									<LostarkMain />
+								</>
+							} />
+
+							<Route path="useful" element={
+								<>
+									<SetActiveMenu pageTitle="Agora(LA)" setCurrentMenu={setCurrentMenu} menuCode={"/lostark/useful"} />
+									<UsefulSitesLostark />
+								</>
+							} />
+
+							<Route path="post">
+								<Route path="unknown">
+									<Route path="" element={
+										<Navigate to="1" replace={true} />
+									} />
+
+									<Route path=":page" element={
+										<>
+											<SetActiveMenu pageTitle="Agora(LA)" setCurrentMenu={setCurrentMenu} menuCode={"/lostark/post/unknown"} />
+											<UnknownPostList />
+										</>
+									} />
+
+									<Route path="view/:postCode" element={
+										<>
+											<SetActiveMenu pageTitle="Agora(LA)" setCurrentMenu={setCurrentMenu} menuCode={"/lostark/post/unknown"} />
+											<UnknownPostView />
+										</>
+									} />
+
+									<Route path="write" element={
+										<>
+											<SetActiveMenu pageTitle="Agora(LA)" setCurrentMenu={setCurrentMenu} menuCode={"/lostark/post/unknown"} />
+											<UnknownPostWrite />
+										</>
+									} />
+
+									<Route path="edit/:postCode" element={
+										<>
+											<SetActiveMenu pageTitle="Agora(LA)" setCurrentMenu={setCurrentMenu} menuCode={"/lostark/post/unknown"} />
+											<UnknownPostWrite />
+										</>
+									} />
+								</Route>
+
+								<Route path="known">
+									<Route path="" element={
+										<Navigate to="1" replace={true} />
+									} />
+
+									<Route path=":page" element={
+										<>
+											<SetActiveMenu pageTitle="Agora(LA)" setCurrentMenu={setCurrentMenu} menuCode={"/lostark/post/known"} />
+											<KnownPostList />
+										</>
+									} />
+
+									<Route path="view/:postCode" element={
+										<>
+											<SetActiveMenu pageTitle="Agora(LA)" setCurrentMenu={setCurrentMenu} menuCode={"/lostark/post/known"} />
+											<KnownPostView accountData={accountData} />
+										</>
+									} />
+
+									<Route path="write" element={
+										<BlockLogoutUser
+											accountData={accountData}
+											ifAllow={
+												<>
+													<SetActiveMenu pageTitle="Agora(LA)" setCurrentMenu={setCurrentMenu} menuCode={"/lostark/post/known"} />
+													<KnownPostWrite accountData={accountData} />
+												</>
+											}
+										/>
+									} />
+
+									<Route path="edit/:postCode" element={
+										<BlockLogoutUser
+											accountData={accountData}
+											ifAllow={
+												<>
+													<SetActiveMenu pageTitle="Agora(LA)" setCurrentMenu={setCurrentMenu} menuCode={"/lostark/post/known"} />
+													<KnownPostWrite accountData={accountData} />
+												</>
+											}
+										/>
+									} />
+								</Route>
+							</Route>
+						</Route>
+
+						<Route path="account">
+							<Route path="register" element={
+								<BlockLoginUser
 									accountData={accountData}
 									ifAllow={
 										<>
-											<SetActiveMenu pageTitle="Agora(My)" setCurrentMenu={setCurrentMenu} menuCode={"/account/mypage"} />
-											<MyPage />
+											<SetActiveMenu pageTitle="" setCurrentMenu={setCurrentMenu} menuCode={"/account/register"} />
+											<RegisterForm />
+										</>
+									}
+								/>
+							} />
+							<Route path="login" element={
+								<BlockLoginUser
+									accountData={accountData}
+									ifAllow={
+										<>
+											<SetActiveMenu pageTitle="" setCurrentMenu={setCurrentMenu} menuCode={"/account/login"} />
+											<LoginForm />
+										</>
+									}
+								/>
+							} />
+
+							<Route path="find/password" element={
+								<BlockLoginUser
+									accountData={accountData}
+									ifAllow={
+										<>
+											<SetActiveMenu pageTitle="" setCurrentMenu={setCurrentMenu} menuCode={"/account/find/password"} />
+											<ForgotPasswordForm />
+										</>
+									}
+								/>
+							} />
+
+							<Route path="reset/password/:verificationCode" element={
+								<BlockLoginUser
+									accountData={accountData}
+									ifAllow={
+										<>
+											<ResetPasswordForm />
 										</>
 									}
 								/>
 							} />
 							
-							<Route path="activate/lostark" element={
-								<BlockLogoutUser
-									accountData={accountData}
-									ifAllow={
-										<>
-											<SetActiveMenu pageTitle="Agora(LA 인증)" setCurrentMenu={setCurrentMenu} menuCode={"/account/activate/lostark"} />
-											{/* <ActivateLostarkScrap /> */}
-											<ActivateLostarkAPI />
-										</>
-									}
-								/>
+							<Route path="mypage">
+								<Route path="" element={
+									<BlockLogoutUser
+										accountData={accountData}
+										ifAllow={
+											<>
+												<SetActiveMenu pageTitle="Agora(My)" setCurrentMenu={setCurrentMenu} menuCode={"/account/mypage"} />
+												<MyPage />
+											</>
+										}
+									/>
+								} />
+								
+								<Route path="activate/lostark" element={
+									<BlockLogoutUser
+										accountData={accountData}
+										ifAllow={
+											<>
+												<SetActiveMenu pageTitle="Agora(LA 인증)" setCurrentMenu={setCurrentMenu} menuCode={"/account/activate/lostark"} />
+												{/* <ActivateLostarkScrap /> */}
+												<ActivateLostarkAPI />
+											</>
+										}
+									/>
+								} />
+								
+								<Route path="renew/password" element={
+									<BlockLogoutUser
+										accountData={accountData}
+										ifAllow={
+											<>
+												<SetActiveMenu pageTitle="Agora(LA)" setCurrentMenu={setCurrentMenu} menuCode={"/account/renew/password"} />
+												<RenewPasswordForm checkLoginStatus={checkLoginStatus} />
+											</>
+										}
+									/>
+								} />
+								
+								<Route path="renew/nickname" element={
+									<BlockLogoutUser
+										accountData={accountData}
+										ifAllow={
+											<>
+												<SetActiveMenu pageTitle="Agora(LA)" setCurrentMenu={setCurrentMenu} menuCode={"/account/renew/nickname"} />
+												<RenewNicknameForm />
+											</>
+										}
+									/>
+								} />
+							</Route>
+						</Route>
+
+						{/* <Route path="/character/:characterName" element={ <CharacterInfo /> } /> */}
+
+						<Route path="post/announce">
+							<Route path="" element={
+								<Navigate to="1" replace={true} />
 							} />
-							
-							<Route path="renew/password" element={
-								<BlockLogoutUser
-									accountData={accountData}
-									ifAllow={
-										<>
-											<SetActiveMenu pageTitle="Agora(LA)" setCurrentMenu={setCurrentMenu} menuCode={"/account/renew/password"} />
-											<RenewPasswordForm checkLoginStatus={checkLoginStatus} />
-										</>
-									}
-								/>
+
+							<Route path=":page" element={
+								<>
+									<SetActiveMenu pageTitle="Agora(LA)" setCurrentMenu={setCurrentMenu} menuCode={"/post/announce"} />
+									<AnnouncePostList />
+								</>
 							} />
-							
-							<Route path="renew/nickname" element={
-								<BlockLogoutUser
-									accountData={accountData}
-									ifAllow={
-										<>
-											<SetActiveMenu pageTitle="Agora(LA)" setCurrentMenu={setCurrentMenu} menuCode={"/account/renew/nickname"} />
-											<RenewNicknameForm />
-										</>
-									}
-								/>
+
+							<Route path="view/:postCode" element={
+								<>
+									<SetActiveMenu pageTitle="Agora(LA)" setCurrentMenu={setCurrentMenu} menuCode={"/post/announce"} />
+									<AnnouncePostView accountData={accountData} />
+								</>
 							} />
 						</Route>
-					</Route>
-
-					{/* <Route path="/character/:characterName" element={ <CharacterInfo /> } /> */}
-
-					<Route path="post/announce">
-						<Route path="" element={
-							<Navigate to="1" replace={true} />
+						
+						<Route path="help" element={
+							<BlockLogoutUser
+								accountData={accountData}
+								ifAllow={
+									<>
+										<SetActiveMenu pageTitle="Agora(LA)" setCurrentMenu={setCurrentMenu} menuCode={"/help"} />
+										<HelpCenter />
+									</>
+								}
+							/>
 						} />
 
-						<Route path=":page" element={
+						{/* 상단에 위치하는 라우트들의 규칙을 모두 확인, 일치하는 라우트가 없는경우 처리 */}
+						<Route path="*" element={
 							<>
-								<SetActiveMenu pageTitle="Agora(LA)" setCurrentMenu={setCurrentMenu} menuCode={"/post/announce"} />
-								<AnnouncePostList />
+								<SetActiveMenu pageTitle="Agora(LA)" setCurrentMenu={setCurrentMenu} menuCode={""} />
+								<Error404 />
 							</>
 						} />
-
-						<Route path="view/:postCode" element={
-							<>
-								<SetActiveMenu pageTitle="Agora(LA)" setCurrentMenu={setCurrentMenu} menuCode={"/post/announce"} />
-								<AnnouncePostView accountData={accountData} />
-							</>
-						} />
-					</Route>
-					
-					<Route path="help" element={
-						<BlockLogoutUser
-							accountData={accountData}
-							ifAllow={
-								<>
-									<SetActiveMenu pageTitle="Agora(LA)" setCurrentMenu={setCurrentMenu} menuCode={"/help"} />
-									<HelpCenter />
-								</>
-							}
-						/>
-					} />
-
-					{/* 상단에 위치하는 라우트들의 규칙을 모두 확인, 일치하는 라우트가 없는경우 처리 */}
-					<Route path="*" element={
-						<>
-							<SetActiveMenu pageTitle="Agora(LA)" setCurrentMenu={setCurrentMenu} menuCode={""} />
-							<Error404 />
-						</>
-					} />
-				</Routes>
+					</Routes>
+				</div>
 
 				<footer>
 					<div style={{ display: "flex", justifyContent: "center", alignItems: "flex-end", height: "150px", marginTop: "15px", marginBottom: "15px", padding: "5px" }}>
 						<div style={{ display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
-							<Button variant="link" style={{ fontSize: "0.75rem", textDecoration: "none", color: "gray" }}>소개</Button>
+							<Button onClick={() => { navigate("/intro"); }} variant="link" style={{ fontSize: "0.75rem", textDecoration: "none", color: "gray" }}>소개</Button>
 							<span style={{ fontSize: "0.65rem", color: "gray" }}>|</span>
-							<Button onClick={() => { navigate("/account/find/password"); }} variant="link" style={{ fontSize: "0.75rem", textDecoration: "none", color: "gray" }}>고객센터</Button>
+							<Button onClick={() => { navigate("/help"); }} variant="link" style={{ fontSize: "0.75rem", textDecoration: "none", color: "gray" }}>고객센터</Button>
 							<span style={{ fontSize: "0.65rem", color: "gray" }}>|</span>
-							<Button onClick={() => { navigate("/account/register"); }} variant="link" style={{ fontSize: "0.75rem", textDecoration: "none", color: "gray" }}>개인정보처리방침</Button>
+							<Button onClick={() => { navigate("/privacy"); }} variant="link" style={{ fontSize: "0.75rem", textDecoration: "none", color: "gray" }}>개인정보처리방침</Button>
 						</div>
 					</div>
 				</footer>

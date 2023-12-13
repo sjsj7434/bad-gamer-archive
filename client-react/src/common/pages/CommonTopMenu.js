@@ -349,7 +349,6 @@ const CommonTopMenu = (props) => {
 								<Nav.Link active={props.currentMenu === "/lostark/post/known" ? true : false} onClick={() => menuClick("/lostark/post/known/1")}>자유 게시판</Nav.Link>
 								<Nav.Link active={props.currentMenu === "/lostark/useful" ? true : false} onClick={() => menuClick("/lostark/useful")}>유용한 사이트</Nav.Link>
 								
-								<Nav.Link active={props.currentMenu === "/help" ? true : false} onClick={() => menuClick("/help")}>고객센터</Nav.Link>
 								<Nav.Link active={props.currentMenu === "/lostark/bus" ? true : false} onClick={() => menuClick("/lostark/bus")}>버스 정류장</Nav.Link>
 								<Nav.Link active={props.currentMenu === "/lostark/academy" ? true : false} onClick={() => menuClick("/lostark/academy")}>학원</Nav.Link>
 								<Nav.Link active={props.currentMenu === "/lostark/incruit" ? true : false} onClick={() => menuClick("/lostark/incruit")}>구인구직</Nav.Link>
@@ -422,7 +421,6 @@ const CommonTopMenu = (props) => {
 							<Nav.Link style={{ marginRight: "1.4rem" }} active={props.currentMenu === "/lostark/post/known" ? true : false} onClick={() => menuClick("/lostark/post/known/1")}>자유 게시판</Nav.Link>
 							<Nav.Link style={{ marginRight: "1.4rem" }} active={props.currentMenu === "/lostark/useful" ? true : false} onClick={() => menuClick("/lostark/useful")}>유용한 사이트</Nav.Link>
 
-							<Nav.Link style={{ marginRight: "1.4rem" }} active={props.currentMenu === "/help" ? true : false} onClick={() => menuClick("/help")}>고객센터</Nav.Link>
 							<Nav.Link style={{ marginRight: "1.4rem" }} active={props.currentMenu === "/bus" ? true : false} onClick={() => menuClick("/bus")}>버스 정류장</Nav.Link>
 							<Nav.Link style={{ marginRight: "1.4rem" }} active={props.currentMenu === "/academy" ? true : false} onClick={() => menuClick("/academy")}>학원</Nav.Link>
 							<Nav.Link style={{ marginRight: "1.4rem" }} active={props.currentMenu === "/incruit" ? true : false} onClick={() => menuClick("/incruit")}>구인구직</Nav.Link>
