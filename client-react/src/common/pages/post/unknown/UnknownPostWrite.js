@@ -15,7 +15,7 @@ import '../../../css/View.css';
 
 const UnknownPostWrite = (props) => {
 	const [writeMode, setWriteMode] = useState("");
-	const [contentCode, setContentCode] = useState(null);
+	const [postCode, setPostCode] = useState(null);
 	const [renderData, setRenderData] = useState(<></>);
 	const [contentTitle, setContentTitle] = useState("");
 	const [contentData, setContentData] = useState("");
@@ -120,7 +120,7 @@ const UnknownPostWrite = (props) => {
 		const editorContet = editorObject.getData();
 
 		const sendData = {
-			code: contentCode,
+			code: postCode,
 			password: contentPassword,
 			title: titleElement.value,
 			content: editorContet,
@@ -142,27 +142,27 @@ const UnknownPostWrite = (props) => {
 		}
 		else{
 			//정상적으로 처리 성공
-			navigate(`/lostark/post/unknown/view/${contentCode}`);
+			navigate(`/lostark/post/unknown/view/${postCode}`);
 		}
-	}, [contentCode, contentPassword, editorObject, editorSizeByte, editorMaxKB, navigate])
+	}, [postCode, contentPassword, editorObject, editorSizeByte, editorMaxKB, navigate])
 
 	useEffect(() => {
-		if(params.contentCode !== undefined){
-			setContentCode(params.contentCode);
+		if(params.postCode !== undefined){
+			setPostCode(params.postCode);
 			setWriteMode("edit");
 		}
 		else{
-			setContentCode(null);
+			setPostCode(null);
 			setWriteMode("new");
 		}
-	}, [params.contentCode])
+	}, [params.postCode])
 
 	useEffect(() => {
 		/**
 		 * 게시글 정보 가져오기
 		 */
 		const getContentData = async () => {
-			const readResult = await postFetch.getContentData("unknown", contentCode);
+			const readResult = await postFetch.getContentData("unknown", postCode);
 			const contentData = readResult.contentData;
 	
 			setContentTitle(contentData.title);
@@ -170,10 +170,10 @@ const UnknownPostWrite = (props) => {
 			setPostCategory(contentData.category)
 		}
 
-		if(contentCode !== null && identity === true){
+		if(postCode !== null && identity === true){
 			getContentData();
 		}
-	}, [contentCode, identity])
+	}, [postCode, identity])
 
 	useEffect(() => {
 		/**
@@ -193,7 +193,7 @@ const UnknownPostWrite = (props) => {
 			setFailMessage(<>&nbsp;</>);
 
 			const sendData = {
-				code: contentCode,
+				code: postCode,
 				password: contentPasswordElement.value,
 			};
 			
@@ -286,7 +286,7 @@ const UnknownPostWrite = (props) => {
 						</Form>
 
 						<div style={{display: "flex", justifyContent: "flex-end"}}>
-							<Button onClick={() => {if(window.confirm("내용을 수정하지않고 나가시겠습니까?") === true){navigate(`/lostark/post/unknown/view/${contentCode}`)}}} variant="secondary" style={{width: "20%", minWidth: "70px", maxWidth: "100px", fontSize: "0.8rem"}}>나가기</Button>
+							<Button onClick={() => {if(window.confirm("내용을 수정하지않고 나가시겠습니까?") === true){navigate(`/lostark/post/unknown/view/${postCode}`)}}} variant="secondary" style={{width: "20%", minWidth: "70px", maxWidth: "100px", fontSize: "0.8rem"}}>나가기</Button>
 							&nbsp;
 							<Button onClick={() => {checkBeforeEdit()}} variant="primary" style={{width: "20%", minWidth: "70px", maxWidth: "100px", fontSize: "0.8rem"}}>확인</Button>
 						</div>
@@ -347,7 +347,7 @@ const UnknownPostWrite = (props) => {
 							/>
 
 							<div style={{display: "flex", justifyContent: "flex-end", marginBottom: "15px", marginTop: "30px"}}>
-								<Button onClick={() => {if(window.confirm("내용을 수정하지않고 나가시겠습니까?") === true){navigate(`/lostark/post/unknown/view/${contentCode}`)}}} variant="secondary" style={{width: "20%", minWidth: "70px", maxWidth: "100px", fontSize: "0.8rem"}}>나가기</Button>
+								<Button onClick={() => {if(window.confirm("내용을 수정하지않고 나가시겠습니까?") === true){navigate(`/lostark/post/unknown/view/${postCode}`)}}} variant="secondary" style={{width: "20%", minWidth: "70px", maxWidth: "100px", fontSize: "0.8rem"}}>나가기</Button>
 								&nbsp;
 								<Button onClick={() => {editEditorData()}} variant="primary" style={{width: "20%", minWidth: "70px", maxWidth: "100px", fontSize: "0.8rem"}}>수정</Button>
 							</div>
@@ -356,7 +356,7 @@ const UnknownPostWrite = (props) => {
 				}
 			}
 		}
-	}, [writeMode, postCategory, contentCode, contentTitle, contentData, identity, failMessage, editorObject, editorSizeByte, saveEditorData, editEditorData, navigate])
+	}, [writeMode, postCategory, postCode, contentTitle, contentData, identity, failMessage, editorObject, editorSizeByte, saveEditorData, editEditorData, navigate])
 	
 	return(
 		<Container style={{maxWidth: "1000px"}}>

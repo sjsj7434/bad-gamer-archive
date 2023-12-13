@@ -51,13 +51,13 @@ export const getTrendPostList = async (postType, trendType, searchType, searchTe
 /**
  * 특정 게시글을 조회
  */
-export const readContent = async (postType, contentCode) => {
+export const readContent = async (postType, postCode) => {
 	const fecthOption = {
 		method: "GET"
 		, headers: {"Content-Type": "application/json",}
 		, credentials: "include", // Don't forget to specify this if you need cookies
 	};
-	const fetchResponse = await fetch(`/post/${postType}/view/${contentCode}`, fecthOption);
+	const fetchResponse = await fetch(`/post/${postType}/view/${postCode}`, fecthOption);
 	const [isStatusGood, checkMessage] = isFetchStatusGood(fetchResponse);
 
 	if(isStatusGood === true){
@@ -76,13 +76,13 @@ export const readContent = async (postType, contentCode) => {
 /**
  * 특정 게시글 정보를 가져온다
  */
-export const getContentData = async (postType, contentCode) => {
+export const getContentData = async (postType, postCode) => {
 	const fecthOption = {
 		method: "GET"
 		, headers: {"Content-Type": "application/json",}
 		, credentials: "include", // Don't forget to specify this if you need cookies
 	};
-	const fetchResponse = await fetch(`/post/${postType}/data/${contentCode}`, fecthOption);
+	const fetchResponse = await fetch(`/post/${postType}/data/${postCode}`, fecthOption);
 	const [isStatusGood, checkMessage] = isFetchStatusGood(fetchResponse);
 
 	if(isStatusGood === true){
@@ -261,13 +261,13 @@ export const checkBeforeEdit = async (postType, sendData) => {
 /**
  * 유저 게시글 추천자 목록
  */
-export const showUpvoteUserList = async (contentCode) => {
+export const showUpvoteUserList = async (postCode) => {
 	const fecthOption = {
 		method: "GET"
 		, headers: {"Content-Type": "application/json",}
 		, credentials: "include", // Don't forget to specify this if you need cookies
 	};
-	const fetchResponse = await fetch(`/post/known/upvote/list/${contentCode}`, fecthOption);
+	const fetchResponse = await fetch(`/post/known/upvote/list/${postCode}`, fecthOption);
 	const [isStatusGood, checkMessage] = isFetchStatusGood(fetchResponse);
 
 	if(isStatusGood === true){
@@ -286,13 +286,13 @@ export const showUpvoteUserList = async (contentCode) => {
 /**
  * 유저 게시글 비추천자 목록
  */
-export const showDownvoteUserList = async (contentCode) => {
+export const showDownvoteUserList = async (postCode) => {
 	const fecthOption = {
 		method: "GET"
 		, headers: {"Content-Type": "application/json",}
 		, credentials: "include", // Don't forget to specify this if you need cookies
 	};
-	const fetchResponse = await fetch(`/post/known/downvote/list/${contentCode}`, fecthOption);
+	const fetchResponse = await fetch(`/post/known/downvote/list/${postCode}`, fecthOption);
 	const [isStatusGood, checkMessage] = isFetchStatusGood(fetchResponse);
 
 	if(isStatusGood === true){

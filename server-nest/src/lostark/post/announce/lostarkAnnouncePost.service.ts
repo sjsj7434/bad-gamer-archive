@@ -18,7 +18,7 @@ export class LostarkAnnouncePostService {
 
 	private HOW_MANY_CONTENTS_ON_LIST: number = 20;
 
-	async isVotablePost(contentCode: number, userId: string): Promise<boolean> {
+	async isVotablePost(postCode: number, userId: string): Promise<boolean> {
 		try {
 			if (userId === "") {
 				return false;
@@ -29,7 +29,7 @@ export class LostarkAnnouncePostService {
 						voterNickname: true
 					},
 					where: {
-						parentContentCode: Equal(contentCode),
+						postCode: Equal(postCode),
 						voterID: Equal(userId),
 					},
 				});
@@ -73,16 +73,16 @@ export class LostarkAnnouncePostService {
 	/**
 	 * 유저 게시판 글 읽기, 조회수 + 1
 	 */
-	async readPost(request: Request, response: Response, contentCode: number): Promise<{ contentData: LostarkAnnouncePost, isWriter: boolean }> {
+	async readPost(request: Request, response: Response, postCode: number): Promise<{ contentData: LostarkAnnouncePost, isWriter: boolean }> {
 		const loginCookie = await this.accountService.checkLoginStatus(request, response);
 
-		if (isNaN(contentCode) === true) {
+		if (isNaN(postCode) === true) {
 			return null;
 		}
 
 		let isAuthor: boolean = false;
 
-		await this.lostarkAnnouncePostRepository.increment({ code: contentCode }, "view", 1);
+		await this.lostarkAnnouncePostRepository.increment({ code: postCode }, "view", 1);
 
 		const contentData = await this.lostarkAnnouncePostRepository.findOne({
 			select: {
@@ -99,7 +99,7 @@ export class LostarkAnnouncePostService {
 				updatedAt: true,
 			},
 			where: {
-				code: Equal(contentCode),
+				code: Equal(postCode),
 			},
 		});
 
@@ -113,10 +113,10 @@ export class LostarkAnnouncePostService {
 	/**
 	 * 유저 게시판 글 데이터 가져오기
 	 */
-	async getPost(request: Request, response: Response, contentCode: number): Promise<{ contentData: LostarkAnnouncePost, isWriter: boolean }> {
+	async getPost(request: Request, response: Response, postCode: number): Promise<{ contentData: LostarkAnnouncePost, isWriter: boolean }> {
 		const loginCookie = await this.accountService.checkLoginStatus(request, response);
 
-		if (isNaN(contentCode) === true) {
+		if (isNaN(postCode) === true) {
 			return null;
 		}
 
@@ -137,7 +137,7 @@ export class LostarkAnnouncePostService {
 				updatedAt: true,
 			},
 			where: {
-				code: Equal(contentCode),
+				code: Equal(postCode),
 			},
 		});
 
@@ -152,15 +152,15 @@ export class LostarkAnnouncePostService {
 	/**
 	 * 유저 게시판 글 추천
 	 */
-	async upvotePost(request: Request, response: Response, contentCode: number, ipData: string): Promise<{ upvote: number, downvote: number, isVotable: boolean }> {
+	async upvotePost(request: Request, response: Response, postCode: number, ipData: string): Promise<{ upvote: number, downvote: number, isVotable: boolean }> {
 		const loginCookie = await this.accountService.checkLoginStatus(request, response);
-		const isVotable: boolean = await this.isVotablePost(contentCode, loginCookie.id);
+		const isVotable: boolean = await this.isVotablePost(postCode, loginCookie.id);
 
 		if (isVotable === true && loginCookie !== null) {
-			await this.lostarkAnnouncePostRepository.increment({ code: Equal(contentCode) }, "upvote", 1);
+			await this.lostarkAnnouncePostRepository.increment({ code: Equal(postCode) }, "upvote", 1);
 
 			const insertHistory = this.lostarkAnnounceVoteHistoryRepository.create({
-				parentContentCode: contentCode,
+				postCode: postCode,
 				voteType: "up",
 				voterID: loginCookie.id,
 				voterNickname: loginCookie.nickname,
@@ -175,7 +175,7 @@ export class LostarkAnnouncePostService {
 				downvote: true,
 			},
 			where: {
-				code: Equal(contentCode),
+				code: Equal(postCode),
 			},
 		});
 
@@ -185,15 +185,15 @@ export class LostarkAnnouncePostService {
 	/**
 	 * 유저 게시판 글 비추천
 	 */
-	async downvotePost(request: Request, response: Response, contentCode: number, ipData: string): Promise<{ upvote: number, downvote: number, isVotable: boolean }> {
+	async downvotePost(request: Request, response: Response, postCode: number, ipData: string): Promise<{ upvote: number, downvote: number, isVotable: boolean }> {
 		const loginCookie = await this.accountService.checkLoginStatus(request, response);
-		const isVotable: boolean = await this.isVotablePost(contentCode, loginCookie.id);
+		const isVotable: boolean = await this.isVotablePost(postCode, loginCookie.id);
 
 		if (isVotable === true) {
-			await this.lostarkAnnouncePostRepository.increment({ code: Equal(contentCode) }, "downvote", 1);
+			await this.lostarkAnnouncePostRepository.increment({ code: Equal(postCode) }, "downvote", 1);
 
 			const insertHistory = this.lostarkAnnounceVoteHistoryRepository.create({
-				parentContentCode: contentCode,
+				postCode: postCode,
 				voteType: "down",
 				voterID: loginCookie.id,
 				voterNickname: loginCookie.nickname,
@@ -208,7 +208,7 @@ export class LostarkAnnouncePostService {
 				downvote: true,
 			},
 			where: {
-				code: Equal(contentCode),
+				code: Equal(postCode),
 			},
 		});
 
@@ -218,7 +218,7 @@ export class LostarkAnnouncePostService {
 	/**
 	 * 유저 게시판 추천자 목록
 	 */
-	async getPostUpvoteList(request: Request, response: Response, contentCode: number): Promise<LostarkAnnounceVoteHistory[]> {
+	async getPostUpvoteList(request: Request, response: Response, postCode: number): Promise<LostarkAnnounceVoteHistory[]> {
 		// const loginCookie = await this.accountService.checkLoginStatus(request, response);
 
 		const contentData = await this.lostarkAnnounceVoteHistoryRepository.find({
@@ -227,7 +227,7 @@ export class LostarkAnnouncePostService {
 				createdAt: true,
 			},
 			where: {
-				parentContentCode: Equal(contentCode),
+				postCode: Equal(postCode),
 				voteType: Equal("up"),
 			},
 		});
@@ -238,7 +238,7 @@ export class LostarkAnnouncePostService {
 	/**
 	 * 유저 게시판 비추천자 목록
 	 */
-	async getPostDownvoteList(request: Request, response: Response, contentCode: number): Promise<LostarkAnnounceVoteHistory[]> {
+	async getPostDownvoteList(request: Request, response: Response, postCode: number): Promise<LostarkAnnounceVoteHistory[]> {
 		// const loginCookie = await this.accountService.checkLoginStatus(request, response);
 
 		const contentData = await this.lostarkAnnounceVoteHistoryRepository.find({
@@ -247,7 +247,7 @@ export class LostarkAnnouncePostService {
 				createdAt: true,
 			},
 			where: {
-				parentContentCode: Equal(contentCode),
+				postCode: Equal(postCode),
 				voteType: Equal("down"),
 			},
 		});

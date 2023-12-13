@@ -22,13 +22,13 @@ const UnknownReply = (props) => {
 	// 	upvoteReply.disabled = true;
 	// 	downvoteReply.disabled = true;
 
-	// 	if(props.contentCode !== null){
+	// 	if(props.postCode !== null){
 	// 		const fecthOption = {
 	// 			method: "POST"
 	// 			, headers: {"Content-Type": "application/json",}
 	// 			, credentials: "include", // Don't forget to specify this if you need cookies
 	// 		};
-	// 		const jsonString = await fetch(`${process.env.REACT_APP_SERVER}/boards/reply/${type}/${props.contentCode}`, fecthOption);
+	// 		const jsonString = await fetch(`${process.env.REACT_APP_SERVER}/boards/reply/${type}/${props.postCode}`, fecthOption);
 	// 		const jsonData = await parseStringToJson(jsonString);
 
 	// 		if(jsonData === null){
@@ -42,7 +42,7 @@ const UnknownReply = (props) => {
 	// 		upvoteReply.disabled = false;
 	// 		downvoteReply.disabled = false;
 	// 	}
-	// }, [props.contentCode])
+	// }, [props.postCode])
 
 	/**
 	 * 댓글 가져오기
@@ -80,7 +80,7 @@ const UnknownReply = (props) => {
 				return;
 			}
 			else{
-				if(props.contentCode !== null){
+				if(props.postCode !== null){
 					const sendData = {
 						code: replyCode,
 						password: deletePassword,
@@ -151,7 +151,7 @@ const UnknownReply = (props) => {
 			}
 
 			const sendData = {
-				parentContentCode: props.contentCode,
+				postCode: props.postCode,
 				parentReplyCode: replyCode,
 				level: 1,
 				password: formElement.password.value,
@@ -173,8 +173,8 @@ const UnknownReply = (props) => {
 			}
 		}
 
-		if(props.contentCode !== null){
-			const replyArray = await replyFetch.getReplies("unknown", props.contentCode, currentPage);
+		if(props.postCode !== null){
+			const replyArray = await replyFetch.getReplies("unknown", props.postCode, currentPage);
 
 			if(replyArray !== null){
 				if(replyArray[1] === 0){
@@ -306,7 +306,7 @@ const UnknownReply = (props) => {
 				}
 			}
 		}
-	}, [props.contentCode])
+	}, [props.postCode])
 
 	/**
 	 * 댓글 작성할 떄 글자 수 제한 확인
@@ -346,9 +346,9 @@ const UnknownReply = (props) => {
 			return;
 		}
 
-		if(props.contentCode !== null){
+		if(props.postCode !== null){
 			const sendData = {
-				parentContentCode: props.contentCode,
+				postCode: props.postCode,
 				parentReplyCode: 0,
 				level: 0,
 				password: replyPasswordElement.value,
@@ -368,11 +368,11 @@ const UnknownReply = (props) => {
 				document.querySelector("#replyForm").reset();
 			}
 		}
-	}, [props.contentCode, getReplies])
+	}, [props.postCode, getReplies])
 
 	useEffect(() => {
 		getReplies(1);
-	}, [props.contentCode, getReplies])
+	}, [props.postCode, getReplies])
 
 	return(
 		<Container style={{maxWidth: "1200px"}}>

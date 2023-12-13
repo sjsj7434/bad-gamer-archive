@@ -23,13 +23,13 @@ const KnownReply = (props) => {
 	// 	upvoteReply.disabled = true;
 	// 	downvoteReply.disabled = true;
 
-	// 	if(props.contentCode !== null){
+	// 	if(props.postCode !== null){
 	// 		const fecthOption = {
 	// 			method: "POST"
 	// 			, headers: {"Content-Type": "application/json",}
 	// 			, credentials: "include", // Don't forget to specify this if you need cookies
 	// 		};
-	// 		const jsonString = await fetch(`${process.env.REACT_APP_SERVER}/boards/reply/${type}/${props.contentCode}`, fecthOption);
+	// 		const jsonString = await fetch(`${process.env.REACT_APP_SERVER}/boards/reply/${type}/${props.postCode}`, fecthOption);
 	// 		const jsonData = await parseStringToJson(jsonString);
 
 	// 		if(jsonData === null){
@@ -43,7 +43,7 @@ const KnownReply = (props) => {
 	// 		upvoteReply.disabled = false;
 	// 		downvoteReply.disabled = false;
 	// 	}
-	// }, [props.contentCode])
+	// }, [props.postCode])
 
 	/**
 	 * 댓글 가져오기
@@ -75,7 +75,7 @@ const KnownReply = (props) => {
 				return;
 			}
 			else{
-				if(props.contentCode !== null){
+				if(props.postCode !== null){
 					const sendData = {
 						code: replyCode,
 					}
@@ -145,7 +145,7 @@ const KnownReply = (props) => {
 			}
 
 			const sendData = {
-				parentContentCode: props.contentCode,
+				postCode: props.postCode,
 				parentReplyCode: replyCode,
 				level: 1,
 				content: formElement.content.value,
@@ -164,8 +164,8 @@ const KnownReply = (props) => {
 			}
 		}
 
-		if(props.contentCode !== null){
-			const replyArray = await replyFetch.getReplies("known", props.contentCode, currentPage);
+		if(props.postCode !== null){
+			const replyArray = await replyFetch.getReplies("known", props.postCode, currentPage);
 
 			if(replyArray !== null){
 				if(replyArray[1] === 0){
@@ -304,7 +304,7 @@ const KnownReply = (props) => {
 				}
 			}
 		}
-	}, [props.contentCode, props.accountData.nickname])
+	}, [props.postCode, props.accountData.nickname])
 
 	/**
 	 * 댓글 작성할 떄 글자 수 제한 확인
@@ -344,7 +344,7 @@ const KnownReply = (props) => {
 		}
 
 		const sendData = {
-			parentContentCode: props.contentCode,
+			postCode: props.postCode,
 			parentReplyCode: 0,
 			level: 0,
 			content: replyDataElement.value,
@@ -360,11 +360,11 @@ const KnownReply = (props) => {
 			alert("댓글을 작성할 수 없습니다");
 			document.querySelector("#replyForm").reset();
 		}
-	}, [props.contentCode, getReplies])
+	}, [props.postCode, getReplies])
 
 	useEffect(() => {
 		getReplies(1);
-	}, [props.contentCode, getReplies])
+	}, [props.postCode, getReplies])
 
 	if(props.accountData.nickname === ""){
 		//유저 전용이라 비로그인 사용 불가능

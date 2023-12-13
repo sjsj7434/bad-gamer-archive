@@ -14,7 +14,7 @@ import Col from 'react-bootstrap/Col';
 import * as postCommon from "../../../js/postCommon";
 
 const KnownPostView = (props) => {
-	const [contentCode, setContentCode] = useState(null);
+	const [postCode, setPostCode] = useState(null);
 	const [upvoteCount, setUpvoteCount] = useState(0);
 	const [downvoteCount, setDownvoteCount] = useState(0);
 	const [contentJson, setContentJson] = useState(null);
@@ -32,15 +32,15 @@ const KnownPostView = (props) => {
 	const showVoteModal = () => setShowVote(true);
 	
 	useEffect(() => {
-		setContentCode(params.contentCode);
-	}, [params.contentCode]);
+		setPostCode(params.postCode);
+	}, [params.postCode]);
 
 	useEffect(() => {
 		/**
 		 * code로 게시글 정보 가져오기
 		 */
 		const getContentData = async () => {
-			const readResult = await postFetch.readContent("known", contentCode);
+			const readResult = await postFetch.readContent("known", postCode);
 			const contentData = readResult.contentData;
 
 			if(contentData === null){
@@ -55,10 +55,10 @@ const KnownPostView = (props) => {
 			}
 		}
 
-		if(contentCode !== null){
+		if(postCode !== null){
 			getContentData();
 		}
-	}, [contentCode, navigate]);
+	}, [postCode, navigate]);
 
 	useEffect(() => {
 		if(contentJson === null){
@@ -109,7 +109,7 @@ const KnownPostView = (props) => {
 			 */
 			const deleteContent = async () => {
 				const sendData = {
-					code: contentCode,
+					code: postCode,
 				};
 
 				if(window.confirm("게시글을 삭제하시겠습니까?") === false){
@@ -137,7 +137,7 @@ const KnownPostView = (props) => {
 			 * 수정은 비밀번호 입력한 사람만 가능한데, 굳이 DB에서 다시 읽어와야하나?
 			 */
 			const editContent = async () => {
-				navigate(`/lostark/post/known/edit/${contentCode}`);
+				navigate(`/lostark/post/known/edit/${postCode}`);
 			}
 
 			/**
@@ -155,10 +155,10 @@ const KnownPostView = (props) => {
 				downvoteButton.disabled = true;
 
 				const sendData = {
-					code: contentCode,
+					code: postCode,
 				}
 
-				if(contentCode !== null){
+				if(postCode !== null){
 					const voteResult = await postFetch.upvoteContent("known", sendData);
 
 					if(voteResult === null){
@@ -192,10 +192,10 @@ const KnownPostView = (props) => {
 				downvoteButton.disabled = true;
 
 				const sendData = {
-					code: contentCode,
+					code: postCode,
 				}
 
-				if(contentCode !== null){
+				if(postCode !== null){
 					const voteResult = await postFetch.downvoteContent("known", sendData);
 
 					if(voteResult === null){
@@ -219,7 +219,7 @@ const KnownPostView = (props) => {
 				showVoteModal();
 				setVoteModalTitle("추천 목록");
 
-				const voteResult = await postFetch.showUpvoteUserList(contentCode);
+				const voteResult = await postFetch.showUpvoteUserList(postCode);
 
 				const voteListElement = voteResult.map((element) => {
 					return(
@@ -243,7 +243,7 @@ const KnownPostView = (props) => {
 				showVoteModal();
 				setVoteModalTitle("비추천 목록");
 
-				const voteResult = await postFetch.showDownvoteUserList(contentCode);
+				const voteResult = await postFetch.showDownvoteUserList(postCode);
 
 				const voteListElement = voteResult.map((element) => {
 					return(
@@ -367,12 +367,12 @@ const KnownPostView = (props) => {
 
 						<hr style={{border: "1px solid #5893ff"}} />
 						
-						<UserReply accountData={props.accountData} contentCode={contentCode} />
+						<UserReply accountData={props.accountData} postCode={postCode} />
 					</div>
 				</>
 			);
 		}
-	}, [contentCode, contentJson, upvoteCount, downvoteCount, isContentWriter, voteHistory, navigate, props.accountData]);
+	}, [postCode, contentJson, upvoteCount, downvoteCount, isContentWriter, voteHistory, navigate, props.accountData]);
 	
 	return(
 		<Container style={{maxWidth: "1200px"}}>

@@ -7,7 +7,7 @@ import { LostarkAnnouncePost } from './lostarkAnnouncePost.entity';
 @Entity()
 export class LostarkAnnounceVoteHistory {
 	@ManyToOne(() => LostarkAnnouncePost, (lostarkAnnouncePost) => lostarkAnnouncePost.lostarkAnnounceVoteHistory)
-	@JoinColumn({ name: "parentContentCode", referencedColumnName: "code" })
+	@JoinColumn({ name: "postCode", referencedColumnName: "code" })
 	lostarkAnnouncePost: LostarkAnnouncePost;
 
 	/**
@@ -26,7 +26,7 @@ export class LostarkAnnounceVoteHistory {
 		type: "int",
 		unsigned: true,
 	})
-	parentContentCode: number;
+	postCode: number;
 
 	/**
 	 * 추천인지 비추천인지

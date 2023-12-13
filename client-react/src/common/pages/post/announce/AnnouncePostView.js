@@ -8,7 +8,7 @@ import '../../../css/View.css';
 import MyEditor from '../MyEditor';
 
 const AnnouncePostView = (props) => {
-	const [contentCode, setContentCode] = useState(null);
+	const [postCode, setPostCode] = useState(null);
 	const [upvoteCount, setUpvoteCount] = useState(0);
 	const [downvoteCount, setDownvoteCount] = useState(0);
 	const [contentJson, setContentJson] = useState(null);
@@ -17,15 +17,15 @@ const AnnouncePostView = (props) => {
 	const params = useParams();
 
 	useEffect(() => {
-		setContentCode(params.contentCode);
-	}, [params.contentCode]);
+		setPostCode(params.postCode);
+	}, [params.postCode]);
 
 	useEffect(() => {
 		/**
 		 * code로 게시글 정보 가져오기
 		 */
 		const getContentData = async () => {
-			const readResult = await postFetch.readContent("announcement", contentCode);
+			const readResult = await postFetch.readContent("announcement", postCode);
 			const contentData = readResult.contentData;
 
 			if(contentData === null){
@@ -39,10 +39,10 @@ const AnnouncePostView = (props) => {
 			}
 		}
 
-		if(contentCode !== null){
+		if(postCode !== null){
 			getContentData();
 		}
-	}, [contentCode, navigate]);
+	}, [postCode, navigate]);
 
 	useEffect(() => {
 		if(contentJson === null){
@@ -103,10 +103,10 @@ const AnnouncePostView = (props) => {
 				downvoteButton.disabled = true;
 
 				const sendData = {
-					code: contentCode,
+					code: postCode,
 				}
 
-				if(contentCode !== null){
+				if(postCode !== null){
 					const voteResult = await postFetch.upvoteContent("announcement", sendData);
 
 					if(voteResult === null){
@@ -140,10 +140,10 @@ const AnnouncePostView = (props) => {
 				downvoteButton.disabled = true;
 
 				const sendData = {
-					code: contentCode,
+					code: postCode,
 				}
 
-				if(contentCode !== null){
+				if(postCode !== null){
 					const voteResult = await postFetch.downvoteContent("announcement", sendData);
 
 					if(voteResult === null){
@@ -246,7 +246,7 @@ const AnnouncePostView = (props) => {
 				</>
 			);
 		}
-	}, [contentCode, contentJson, upvoteCount, downvoteCount, navigate, props.accountData]);
+	}, [postCode, contentJson, upvoteCount, downvoteCount, navigate, props.accountData]);
 	
 	return(
 		<Container style={{maxWidth: "1200px"}}>

@@ -93,7 +93,7 @@ const RoutesWrapper = () => {
 									</>
 								} />
 
-								<Route path="view/:contentCode" element={
+								<Route path="view/:postCode" element={
 									<>
 										<SetActiveMenu pageTitle="Agora(LA)" setCurrentMenu={setCurrentMenu} menuCode={"/lostark/post/unknown"} />
 										<UnknownPostView />
@@ -107,7 +107,7 @@ const RoutesWrapper = () => {
 									</>
 								} />
 
-								<Route path="edit/:contentCode" element={
+								<Route path="edit/:postCode" element={
 									<>
 										<SetActiveMenu pageTitle="Agora(LA)" setCurrentMenu={setCurrentMenu} menuCode={"/lostark/post/unknown"} />
 										<UnknownPostWrite />
@@ -127,7 +127,7 @@ const RoutesWrapper = () => {
 									</>
 								} />
 
-								<Route path="view/:contentCode" element={
+								<Route path="view/:postCode" element={
 									<>
 										<SetActiveMenu pageTitle="Agora(LA)" setCurrentMenu={setCurrentMenu} menuCode={"/lostark/post/known"} />
 										<KnownPostView accountData={accountData} />
@@ -146,7 +146,7 @@ const RoutesWrapper = () => {
 									/>
 								} />
 
-								<Route path="edit/:contentCode" element={
+								<Route path="edit/:postCode" element={
 									<BlockLogoutUser
 										accountData={accountData}
 										ifAllow={
@@ -274,7 +274,7 @@ const RoutesWrapper = () => {
 							</>
 						} />
 
-						<Route path="view/:contentCode" element={
+						<Route path="view/:postCode" element={
 							<>
 								<SetActiveMenu pageTitle="Agora(LA)" setCurrentMenu={setCurrentMenu} menuCode={"/post/announce"} />
 								<AnnouncePostView accountData={accountData} />

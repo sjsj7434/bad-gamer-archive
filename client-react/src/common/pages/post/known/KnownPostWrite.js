@@ -12,7 +12,7 @@ import '../../../css/View.css';
 
 const KnownPostWrite = (props) => {
 	const [writeMode, setWriteMode] = useState("");
-	const [contentCode, setContentCode] = useState(null);
+	const [postCode, setPostCode] = useState(null);
 	const [renderData, setRenderData] = useState(<></>);
 	const [contentTitle, setContentTitle] = useState("");
 	const [contentData, setContentData] = useState("");
@@ -110,7 +110,7 @@ const KnownPostWrite = (props) => {
 		const editorContet = editorObject.getData();
 
 		const sendData = {
-			code: contentCode,
+			code: postCode,
 			title: titleElement.value,
 			content: editorContet,
 			hasImage: editorContet.indexOf("<img") > -1 ? true : false,
@@ -131,27 +131,27 @@ const KnownPostWrite = (props) => {
 		}
 		else{
 			//정상적으로 처리 성공
-			navigate(`/lostark/post/known/view/${contentCode}`);
+			navigate(`/lostark/post/known/view/${postCode}`);
 		}
-	}, [contentCode, editorObject, editorSizeByte, editorMaxKB, navigate])
+	}, [postCode, editorObject, editorSizeByte, editorMaxKB, navigate])
 
 	useEffect(() => {
-		if(params.contentCode !== undefined){
-			setContentCode(params.contentCode);
+		if(params.postCode !== undefined){
+			setPostCode(params.postCode);
 			setWriteMode("edit");
 		}
 		else{
-			setContentCode(null);
+			setPostCode(null);
 			setWriteMode("new");
 		}
-	}, [params.contentCode])
+	}, [params.postCode])
 
 	useEffect(() => {
 		/**
 		 * 게시글 정보 가져오기
 		 */
 		const readContent = async () => {
-			const readResult = await postFetch.readContent("known", contentCode, "edit");
+			const readResult = await postFetch.readContent("known", postCode, "edit");
 			const contentData = readResult.contentData;
 	
 			setContentTitle(contentData.title);
@@ -159,10 +159,10 @@ const KnownPostWrite = (props) => {
 			setPostCategory(contentData.category);
 		}
 
-		if(contentCode !== null && identity === true){
+		if(postCode !== null && identity === true){
 			readContent();
 		}
-	}, [contentCode, identity])
+	}, [postCode, identity])
 
 	useEffect(() => {
 		/**
@@ -173,7 +173,7 @@ const KnownPostWrite = (props) => {
 			setLoadingModalMessage("작성자 정보 확인 중...");
 
 			const sendData = {
-				code: contentCode,
+				code: postCode,
 			};
 			
 			const checkResult = await postFetch.checkBeforeEdit("known", sendData);
@@ -291,7 +291,7 @@ const KnownPostWrite = (props) => {
 							/>
 
 							<div style={{display: "flex", justifyContent: "flex-end", marginBottom: "15px", marginTop: "30px"}}>
-								<Button onClick={() => {if(window.confirm("내용을 수정하지않고 나가시겠습니까?") === true){navigate(`/lostark/post/known/view/${contentCode}`)}}} variant="secondary" style={{width: "20%", minWidth: "70px", maxWidth: "100px", fontSize: "0.8rem"}}>나가기</Button>
+								<Button onClick={() => {if(window.confirm("내용을 수정하지않고 나가시겠습니까?") === true){navigate(`/lostark/post/known/view/${postCode}`)}}} variant="secondary" style={{width: "20%", minWidth: "70px", maxWidth: "100px", fontSize: "0.8rem"}}>나가기</Button>
 								&nbsp;
 								<Button onClick={() => {editEditorData()}} variant="primary" style={{width: "20%", minWidth: "70px", maxWidth: "100px", fontSize: "0.8rem"}}>수정</Button>
 							</div>
@@ -300,7 +300,7 @@ const KnownPostWrite = (props) => {
 				}
 			}
 		}
-	}, [writeMode, postCategory, contentCode, contentTitle, contentData, identity, editorObject, editorSizeByte, saveEditorData, editEditorData, navigate, props.accountData.id])
+	}, [writeMode, postCategory, postCode, contentTitle, contentData, identity, editorObject, editorSizeByte, saveEditorData, editEditorData, navigate, props.accountData.id])
 	
 	return(
 		<Container style={{maxWidth: "1000px"}}>

@@ -30,17 +30,17 @@ export class LostArkUnknownPostService {
 		this.VOTE_HISTORY.clear();
 	}
 
-	isVotableContent(contentCode: number, ipData: string): boolean {
+	isVotableContent(postCode: number, ipData: string): boolean {
 		try {
-			const ipArray: Array<string> | undefined = this.VOTE_HISTORY.get(contentCode);
+			const ipArray: Array<string> | undefined = this.VOTE_HISTORY.get(postCode);
 
 			if (ipArray === undefined) {
-				this.VOTE_HISTORY.set(contentCode, [ipData]);
+				this.VOTE_HISTORY.set(postCode, [ipData]);
 				return true;
 			}
 			else if (ipArray.includes(ipData) === false) {
 				ipArray.push(ipData);
-				this.VOTE_HISTORY.set(contentCode, ipArray);
+				this.VOTE_HISTORY.set(postCode, ipArray);
 				return true;
 			}
 			else {
@@ -337,14 +337,14 @@ export class LostArkUnknownPostService {
 	/**
 	 * 익명 게시판 글 읽기, 조회수 + 1
 	 */
-	async readPost(contentCode: number): Promise<{ contentData: LostArkUnknownPost, isWriter: boolean }> {
-		if (isNaN(contentCode) === true) {
+	async readPost(postCode: number): Promise<{ contentData: LostArkUnknownPost, isWriter: boolean }> {
+		if (isNaN(postCode) === true) {
 			return null;
 		}
 
 		let isAuthor: boolean = false;
 
-		await this.lostArkUnknownPostRepository.increment({ code: contentCode }, "view", 1);
+		await this.lostArkUnknownPostRepository.increment({ code: postCode }, "view", 1);
 
 		const lostArkUnknownPost = await this.lostArkUnknownPostRepository.findOne({
 			select: {
@@ -360,7 +360,7 @@ export class LostArkUnknownPostService {
 				updatedAt: true,
 			},
 			where: {
-				code: Equal(contentCode),
+				code: Equal(postCode),
 			},
 		});
 
@@ -375,8 +375,8 @@ export class LostArkUnknownPostService {
 	/**
 	 * 익명 게시판 글 데이터 가져오기
 	 */
-	async getPost(contentCode: number): Promise<{ contentData: LostArkUnknownPost, isWriter: boolean }> {
-		if (isNaN(contentCode) === true) {
+	async getPost(postCode: number): Promise<{ contentData: LostArkUnknownPost, isWriter: boolean }> {
+		if (isNaN(postCode) === true) {
 			return null;
 		}
 
@@ -396,7 +396,7 @@ export class LostArkUnknownPostService {
 				updatedAt: true,
 			},
 			where: {
-				code: Equal(contentCode),
+				code: Equal(postCode),
 			},
 		});
 
@@ -491,11 +491,11 @@ export class LostArkUnknownPostService {
 	/**
 	 * 익명 게시판 글 추천
 	 */
-	async upvotePost(contentCode: number, ipData: string): Promise<{ upvote: number, downvote: number, isVotable: boolean }> {
-		const isVotable: boolean = this.isVotableContent(contentCode, ipData);
+	async upvotePost(postCode: number, ipData: string): Promise<{ upvote: number, downvote: number, isVotable: boolean }> {
+		const isVotable: boolean = this.isVotableContent(postCode, ipData);
 
 		if (isVotable === true) {
-			await this.lostArkUnknownPostRepository.increment({ code: Equal(contentCode) }, "upvote", 1);
+			await this.lostArkUnknownPostRepository.increment({ code: Equal(postCode) }, "upvote", 1);
 		}
 
 		const contentData = await this.lostArkUnknownPostRepository.findOne({
@@ -504,7 +504,7 @@ export class LostArkUnknownPostService {
 				downvote: true,
 			},
 			where: {
-				code: Equal(contentCode),
+				code: Equal(postCode),
 			},
 		});
 
@@ -514,11 +514,11 @@ export class LostArkUnknownPostService {
 	/**
 	 * 익명 게시판 글 비추천
 	 */
-	async downvotePost(contentCode: number, ipData: string): Promise<{ upvote: number, downvote: number, isVotable: boolean }> {
-		const isVotable: boolean = this.isVotableContent(contentCode, ipData);
+	async downvotePost(postCode: number, ipData: string): Promise<{ upvote: number, downvote: number, isVotable: boolean }> {
+		const isVotable: boolean = this.isVotableContent(postCode, ipData);
 
 		if (isVotable === true) {
-			await this.lostArkUnknownPostRepository.increment({ code: Equal(contentCode) }, "downvote", 1);
+			await this.lostArkUnknownPostRepository.increment({ code: Equal(postCode) }, "downvote", 1);
 		}
 
 		const contentData = await this.lostArkUnknownPostRepository.findOne({
@@ -527,7 +527,7 @@ export class LostArkUnknownPostService {
 				downvote: true,
 			},
 			where: {
-				code: Equal(contentCode),
+				code: Equal(postCode),
 			},
 		});
 
@@ -537,7 +537,7 @@ export class LostArkUnknownPostService {
 	/**
 	 * 익명 게시판 댓글 목록 가져오기
 	 */
-	async getReply(contentCode: number, page: number): Promise<[LostArkUnknownReply[], number]> {
+	async getReply(postCode: number, page: number): Promise<[LostArkUnknownReply[], number]> {
 		const perPage = 50;
 
 		const repliesData = await this.lostArkUnknownReplyRepository.findAndCount({
@@ -556,7 +556,7 @@ export class LostArkUnknownPostService {
 				deletedAt: true
 			},
 			where: {
-				parentContentCode: Equal(contentCode),
+				postCode: Equal(postCode),
 			},
 			order: {
 				replyOrder: "DESC",
@@ -604,7 +604,7 @@ export class LostArkUnknownPostService {
 
 		const contentData = await this.lostArkUnknownPostRepository.exist({
 			where: {
-				code: Equal(createReplyDTO.parentContentCode),
+				code: Equal(createReplyDTO.postCode),
 			},
 		});
 

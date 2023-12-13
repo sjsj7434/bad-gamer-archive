@@ -11,7 +11,7 @@ import '../../../css/View.css';
 import * as postCommon from "../../../js/postCommon";
 
 const UnknownPostView = (props) => {
-	const [contentCode, setContentCode] = useState(null);
+	const [postCode, setPostCode] = useState(null);
 	const [upvoteCount, setUpvoteCount] = useState(0);
 	const [downvoteCount, setDownvoteCount] = useState(0);
 	const [contentJson, setContentJson] = useState(null);
@@ -22,15 +22,15 @@ const UnknownPostView = (props) => {
 	const params = useParams();
 
 	useEffect(() => {
-		setContentCode(params.contentCode);
-	}, [params.contentCode]);
+		setPostCode(params.postCode);
+	}, [params.postCode]);
 
 	useEffect(() => {
 		/**
 		 * code로 게시글 정보 가져오기
 		 */
 		const getContentData = async () => {
-			const readResult = await postFetch.readContent("unknown", contentCode);
+			const readResult = await postFetch.readContent("unknown", postCode);
 			const contentData = readResult.contentData;
 
 			if(contentData === null){
@@ -44,10 +44,10 @@ const UnknownPostView = (props) => {
 			}
 		}
 
-		if(contentCode !== null){
+		if(postCode !== null){
 			getContentData();
 		}
-	}, [contentCode, navigate]);
+	}, [postCode, navigate]);
 
 	useEffect(() => {
 		if(contentJson === null){
@@ -98,7 +98,7 @@ const UnknownPostView = (props) => {
 			 */
 			const deleteContent = async () => {
 				const sendData = {
-					code: contentCode,
+					code: postCode,
 					password: "",
 				};
 
@@ -131,7 +131,7 @@ const UnknownPostView = (props) => {
 			 * 수정은 비밀번호 입력한 사람만 가능한데, 굳이 DB에서 다시 읽어와야하나?
 			 */
 			const editContent = async () => {
-				navigate(`/lostark/post/unknown/edit/${contentCode}`);
+				navigate(`/lostark/post/unknown/edit/${postCode}`);
 			}
 
 			/**
@@ -144,10 +144,10 @@ const UnknownPostView = (props) => {
 				downvoteButton.disabled = true;
 
 				const sendData = {
-					code: contentCode,
+					code: postCode,
 				}
 
-				if(contentCode !== null){
+				if(postCode !== null){
 					const voteResult = await postFetch.upvoteContent("unknown", sendData);
 
 					if(voteResult === null){
@@ -176,10 +176,10 @@ const UnknownPostView = (props) => {
 				downvoteButton.disabled = true;
 
 				const sendData = {
-					code: contentCode,
+					code: postCode,
 				}
 
-				if(contentCode !== null){
+				if(postCode !== null){
 					const voteResult = await postFetch.downvoteContent("unknown", sendData);
 
 					if(voteResult === null){
@@ -288,12 +288,12 @@ const UnknownPostView = (props) => {
 
 						<hr style={{border: "1px solid #5893ff"}} />
 						
-						<AnonymousReply contentCode={contentCode} />
+						<AnonymousReply postCode={postCode} />
 					</div>
 				</>
 			);
 		}
-	}, [contentCode, contentJson, upvoteCount, downvoteCount, navigate]);
+	}, [postCode, contentJson, upvoteCount, downvoteCount, navigate]);
 	
 	return(
 		<Container style={{maxWidth: "1200px"}}>

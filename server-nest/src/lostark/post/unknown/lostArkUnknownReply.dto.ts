@@ -7,7 +7,7 @@ export class BasicLostArkUnknownReplyDTO extends LostArkUnknownReply {
 	@IsNumber()
 	code: number;
 	@IsNumber()
-	parentContentCode: number;
+	postCode: number;
 	@IsNumber()
 	parentReplyCode: number;
 	@IsNumber()

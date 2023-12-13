@@ -63,7 +63,7 @@ npm run start
 - <input type='checkbox' checked> 마이페이지 본캐 인증 정보 캐릭 변경
 - <input type='checkbox' checked> react에 프록시 설정하니까 서버랑 통신이 느려진 느낌이 있음 / build된 환경은 빠른 듯?
 - <input type='checkbox' checked> 서버에 배포하면 배포된 웹에서는 로그인이 되지 않음, security cookie 문제였음
-- <input type='checkbox'> ckEditor5 Media embed 추가 / https://ckeditor.com/docs/ckeditor5/latest/features/media-embed.html
+- <input type='checkbox' checked> ckEditor5 Media embed 추가 / https://ckeditor.com/docs/ckeditor5/latest/features/media-embed.html
 - <input type='checkbox'> 게시글 신고 기능
 - <input type='checkbox'> 자기소개 및 인장 시스템
 - <input type='checkbox'> 게시글 작성자 IP차단 & 아이디 차단 기능(회원 전용)

@@ -35,16 +35,16 @@ export class PostController {
 		return await this.lostArkUnknownPostService.getPostList(page, searchType, searchText);
 	}
 
-	//익명 게시판 글 조회, contentCode 값이 number가 아니면 호출되지 않음
-	@Get("unknown/view/:contentCode")
-	async readUnknownPost(@Param("contentCode") contentCode: number): Promise<{ contentData: LostArkUnknownPost, isWriter: boolean }> {
-		return await this.lostArkUnknownPostService.readPost(contentCode);
+	//익명 게시판 글 조회, postCode 값이 number가 아니면 호출되지 않음
+	@Get("unknown/view/:postCode")
+	async readUnknownPost(@Param("postCode") postCode: number): Promise<{ contentData: LostArkUnknownPost, isWriter: boolean }> {
+		return await this.lostArkUnknownPostService.readPost(postCode);
 	}
 
-	//익명 게시판 글 데이터 가져오기, contentCode 값이 number가 아니면 호출되지 않음
-	@Get("unknown/data/:contentCode")
-	async getUnknownPost(@Param("contentCode") contentCode: number): Promise<{ contentData: LostArkUnknownPost, isWriter: boolean }> {
-		return await this.lostArkUnknownPostService.getPost(contentCode);
+	//익명 게시판 글 데이터 가져오기, postCode 값이 number가 아니면 호출되지 않음
+	@Get("unknown/data/:postCode")
+	async getUnknownPost(@Param("postCode") postCode: number): Promise<{ contentData: LostArkUnknownPost, isWriter: boolean }> {
+		return await this.lostArkUnknownPostService.getPost(postCode);
 	}
 
 	//익명 게시판 글 작성
@@ -90,9 +90,9 @@ export class PostController {
 	}
 
 	//익명 게시판 댓글 조회
-	@Get("unknown/reply/:contentCode/:page")
-	async getUnknownReply(@Param("contentCode") contentCode: number, @Param("page") page: number): Promise<[LostArkUnknownReply[], number]> {
-		return await this.lostArkUnknownPostService.getReply(contentCode, page);
+	@Get("unknown/reply/:postCode/:page")
+	async getUnknownReply(@Param("postCode") postCode: number, @Param("page") page: number): Promise<[LostArkUnknownReply[], number]> {
+		return await this.lostArkUnknownPostService.getReply(postCode, page);
 	}
 
 	//익명 게시판 댓글 작성
@@ -135,17 +135,17 @@ export class PostController {
 		return await this.lostArkKnownPostService.getPostList(page, searchType, searchText);
 	}
 
-	//유저 게시판 글 조회, contentCode 값이 number가 아니면 호출되지 않음
-	@Get("known/view/:contentCode")
-	async readKnownPost(@Req() request: Request, @Res({ passthrough: true }) response: Response, @Param("contentCode") contentCode: number): Promise<{ contentData: LostArkKnownPost, isWriter: boolean }> {
+	//유저 게시판 글 조회, postCode 값이 number가 아니면 호출되지 않음
+	@Get("known/view/:postCode")
+	async readKnownPost(@Req() request: Request, @Res({ passthrough: true }) response: Response, @Param("postCode") postCode: number): Promise<{ contentData: LostArkKnownPost, isWriter: boolean }> {
 		//set cookies/headers 정도만 사용하고, 나머지는 프레임워크에 떠넘기는 식으로 @Res()를 사용하는 거라면 passthrough: true 옵션은 필수! 그렇지 않으면 fetch 요청이 마무리가 안됨
-		return await this.lostArkKnownPostService.readPost(request, response, contentCode);
+		return await this.lostArkKnownPostService.readPost(request, response, postCode);
 	}
 
-	//유저 게시판 글 데이터 가져오기, contentCode 값이 number가 아니면 호출되지 않음
-	@Get("known/data/:contentCode")
-	async getKnownPost(@Req() request: Request, @Res({ passthrough: true }) response: Response, @Param("contentCode") contentCode: number): Promise<{ contentData: LostArkKnownPost, isWriter: boolean }> {
-		return await this.lostArkKnownPostService.getPost(request, response, contentCode);
+	//유저 게시판 글 데이터 가져오기, postCode 값이 number가 아니면 호출되지 않음
+	@Get("known/data/:postCode")
+	async getKnownPost(@Req() request: Request, @Res({ passthrough: true }) response: Response, @Param("postCode") postCode: number): Promise<{ contentData: LostArkKnownPost, isWriter: boolean }> {
+		return await this.lostArkKnownPostService.getPost(request, response, postCode);
 	}
 
 	//유저 게시판 글 작성
@@ -193,23 +193,23 @@ export class PostController {
 	//유저 게시글 추천자 목록
 	@SkipThrottle({ default: false })
 	@Throttle({ default: { limit: 20, ttl: 60000 } }) //1분에 20개 이상 금지
-	@Get("known/upvote/list/:contentCode")
-	async getKnownPostUpvoteList(@Req() request: Request, @Res({ passthrough: true }) response: Response, @Param("contentCode") contentCode: number): Promise<LostArkKnownVoteHistory[]> {
-		return await this.lostArkKnownPostService.getPostUpvoteList(request, response, contentCode);
+	@Get("known/upvote/list/:postCode")
+	async getKnownPostUpvoteList(@Req() request: Request, @Res({ passthrough: true }) response: Response, @Param("postCode") postCode: number): Promise<LostArkKnownVoteHistory[]> {
+		return await this.lostArkKnownPostService.getPostUpvoteList(request, response, postCode);
 	}
 
 	//유저 게시글 비추천자 목록
 	@SkipThrottle({ default: false })
 	@Throttle({ default: { limit: 20, ttl: 60000 } }) //1분에 20개 이상 금지
-	@Get("known/downvote/list/:contentCode")
-	async getKnownPostDownvoteList(@Req() request: Request, @Res({ passthrough: true }) response: Response, @Param("contentCode") contentCode: number): Promise<LostArkKnownVoteHistory[]> {
-		return await this.lostArkKnownPostService.getPostDownvoteList(request, response, contentCode);
+	@Get("known/downvote/list/:postCode")
+	async getKnownPostDownvoteList(@Req() request: Request, @Res({ passthrough: true }) response: Response, @Param("postCode") postCode: number): Promise<LostArkKnownVoteHistory[]> {
+		return await this.lostArkKnownPostService.getPostDownvoteList(request, response, postCode);
 	}
 
 	//유저 게시글 댓글 조회
-	@Get("known/reply/:contentCode/:page")
-	async getKnownReply(@Param("contentCode") contentCode: number, @Param("page") page: number): Promise<[LostArkKnownReply[], number]> {
-		return await this.lostArkKnownPostService.getReply(contentCode, page);
+	@Get("known/reply/:postCode/:page")
+	async getKnownReply(@Param("postCode") postCode: number, @Param("page") page: number): Promise<[LostArkKnownReply[], number]> {
+		return await this.lostArkKnownPostService.getReply(postCode, page);
 	}
 
 	//유저 게시글 댓글 작성
@@ -252,11 +252,11 @@ export class PostController {
 		return await this.lostarkAnnouncePostService.getPostList(page);
 	}
 
-	//공지 게시판 글 조회, contentCode 값이 number가 아니면 호출되지 않음
-	@Get("announcement/content/view/:contentCode")
-	async readAnnouncementPost(@Req() request: Request, @Res({ passthrough: true }) response: Response, @Param("contentCode") contentCode: number): Promise<{ contentData: LostarkAnnouncePost, isWriter: boolean }> {
+	//공지 게시판 글 조회, postCode 값이 number가 아니면 호출되지 않음
+	@Get("announcement/content/view/:postCode")
+	async readAnnouncementPost(@Req() request: Request, @Res({ passthrough: true }) response: Response, @Param("postCode") postCode: number): Promise<{ contentData: LostarkAnnouncePost, isWriter: boolean }> {
 		//set cookies/headers 정도만 사용하고, 나머지는 프레임워크에 떠넘기는 식으로 @Res()를 사용하는 거라면 passthrough: true 옵션은 필수! 그렇지 않으면 fetch 요청이 마무리가 안됨
-		return await this.lostarkAnnouncePostService.readPost(request, response, contentCode);
+		return await this.lostarkAnnouncePostService.readPost(request, response, postCode);
 	}
 
 	// //게시글 추천

@@ -28,7 +28,7 @@ export class LostArkKnownPostService {
 	private POINT_WRITE_REPLY: number = 15; //댓글 작성 시 획득하는 포인트
 	private POINT_VOTE: number = 5; //추천, 비추천 시 획득하는 포인트
 
-	async isVotablePost(contentCode: number, userId: string): Promise<boolean> {
+	async isVotablePost(postCode: number, userId: string): Promise<boolean> {
 		try {
 			if(userId === ""){
 				return false;
@@ -39,7 +39,7 @@ export class LostArkKnownPostService {
 						voterNickname: true
 					},
 					where: {
-						parentContentCode: Equal(contentCode),
+						postCode: Equal(postCode),
 						voterID: Equal(userId),
 					},
 				});
@@ -323,7 +323,7 @@ export class LostArkKnownPostService {
 		/*
 		const queryOBJ = this.lostArkKnownPostRepository
 		.createQueryBuilder("boards")
-		.leftJoinAndSelect("boards.replies", "replies", "replies.parentContentCode = boards.code")
+		.leftJoinAndSelect("boards.replies", "replies", "replies.postCode = boards.code")
 		.leftJoinAndSelect("boards.account", "account", "account.id = boards.writerID")
 		.innerJoinAndSelect("account.authentication", "authentication", "authentication.uuid = account.uuid AND authentication.type = 'lostark_item_level'")
 
@@ -422,16 +422,16 @@ export class LostArkKnownPostService {
 	/**
 	 * 유저 게시판 글 읽기, 조회수 + 1
 	 */
-	async readPost(request: Request, response: Response, contentCode: number): Promise<{ contentData: LostArkKnownPost, isWriter: boolean }> {
+	async readPost(request: Request, response: Response, postCode: number): Promise<{ contentData: LostArkKnownPost, isWriter: boolean }> {
 		const loginCookie = await this.accountService.checkLoginStatus(request, response);
 
-		if (isNaN(contentCode) === true) {
+		if (isNaN(postCode) === true) {
 			return null;
 		}
 
 		let isWriter: boolean = false;
 
-		await this.lostArkKnownPostRepository.increment({ code: contentCode }, "view", 1);
+		await this.lostArkKnownPostRepository.increment({ code: postCode }, "view", 1);
 
 		const contentData = await this.lostArkKnownPostRepository.findOne({
 			relations: ["account", "account.authentication"],
@@ -456,7 +456,7 @@ export class LostArkKnownPostService {
 				},
 			},
 			where: {
-				code: Equal(contentCode),
+				code: Equal(postCode),
 				account: {
 					authentication: [
 						{ type: Equal("lostark_item_level") },
@@ -477,10 +477,10 @@ export class LostArkKnownPostService {
 	/**
 	 * 유저 게시판 글 데이터 가져오기
 	 */
-	async getPost(request: Request, response: Response, contentCode: number): Promise<{ contentData: LostArkKnownPost, isWriter: boolean }> {
+	async getPost(request: Request, response: Response, postCode: number): Promise<{ contentData: LostArkKnownPost, isWriter: boolean }> {
 		const loginCookie = await this.accountService.checkLoginStatus(request, response);
 
-		if (isNaN(contentCode) === true) {
+		if (isNaN(postCode) === true) {
 			return null;
 		}
 
@@ -501,7 +501,7 @@ export class LostArkKnownPostService {
 				updatedAt: true,
 			},
 			where: {
-				code: Equal(contentCode),
+				code: Equal(postCode),
 			},
 		});
 
@@ -639,15 +639,15 @@ export class LostArkKnownPostService {
 	/**
 	 * 유저 게시판 글 추천
 	 */
-	async upvotePost(request: Request, response: Response, contentCode: number, ipData: string): Promise<{ upvote: number, downvote: number, isVotable: boolean }> {
+	async upvotePost(request: Request, response: Response, postCode: number, ipData: string): Promise<{ upvote: number, downvote: number, isVotable: boolean }> {
 		const loginCookie = await this.accountService.checkLoginStatus(request, response);
-		const isVotable: boolean = await this.isVotablePost(contentCode, loginCookie.id);
+		const isVotable: boolean = await this.isVotablePost(postCode, loginCookie.id);
 
 		if (isVotable === true && loginCookie !== null) {
-			await this.lostArkKnownPostRepository.increment({ code: Equal(contentCode) }, "upvote", 1);
+			await this.lostArkKnownPostRepository.increment({ code: Equal(postCode) }, "upvote", 1);
 			
 			const insertHistory = this.lostArkKnownVoteHistoryRepository.create({
-				parentContentCode: contentCode,
+				postCode: postCode,
 				voteType: "up",
 				voterID: loginCookie.id,
 				voterNickname: loginCookie.nickname,
@@ -663,7 +663,7 @@ export class LostArkKnownPostService {
 				downvote: true,
 			},
 			where: {
-				code: Equal(contentCode),
+				code: Equal(postCode),
 			},
 		});
 
@@ -673,15 +673,15 @@ export class LostArkKnownPostService {
 	/**
 	 * 유저 게시판 글 비추천
 	 */
-	async downvotePost(request: Request, response: Response, contentCode: number, ipData: string): Promise<{ upvote: number, downvote: number, isVotable: boolean }> {
+	async downvotePost(request: Request, response: Response, postCode: number, ipData: string): Promise<{ upvote: number, downvote: number, isVotable: boolean }> {
 		const loginCookie = await this.accountService.checkLoginStatus(request, response);
-		const isVotable: boolean = await this.isVotablePost(contentCode, loginCookie.id);
+		const isVotable: boolean = await this.isVotablePost(postCode, loginCookie.id);
 
 		if (isVotable === true) {
-			await this.lostArkKnownPostRepository.increment({ code: Equal(contentCode) }, "downvote", 1);
+			await this.lostArkKnownPostRepository.increment({ code: Equal(postCode) }, "downvote", 1);
 
 			const insertHistory = this.lostArkKnownVoteHistoryRepository.create({
-				parentContentCode: contentCode,
+				postCode: postCode,
 				voteType: "down",
 				voterID: loginCookie.id,
 				voterNickname: loginCookie.nickname,
@@ -697,7 +697,7 @@ export class LostArkKnownPostService {
 				downvote: true,
 			},
 			where: {
-				code: Equal(contentCode),
+				code: Equal(postCode),
 			},
 		});
 
@@ -707,7 +707,7 @@ export class LostArkKnownPostService {
 	/**
 	 * 유저 게시판 추천자 목록
 	 */
-	async getPostUpvoteList(request: Request, response: Response, contentCode: number): Promise<LostArkKnownVoteHistory[]> {
+	async getPostUpvoteList(request: Request, response: Response, postCode: number): Promise<LostArkKnownVoteHistory[]> {
 		// const loginCookie = await this.accountService.checkLoginStatus(request, response);
 
 		const contentData = await this.lostArkKnownVoteHistoryRepository.find({
@@ -716,7 +716,7 @@ export class LostArkKnownPostService {
 				createdAt: true,
 			},
 			where: {
-				parentContentCode: Equal(contentCode),
+				postCode: Equal(postCode),
 				voteType: Equal("up"),
 			},
 		});
@@ -727,7 +727,7 @@ export class LostArkKnownPostService {
 	/**
 	 * 유저 게시판 비추천자 목록
 	 */
-	async getPostDownvoteList(request: Request, response: Response, contentCode: number): Promise<LostArkKnownVoteHistory[]> {
+	async getPostDownvoteList(request: Request, response: Response, postCode: number): Promise<LostArkKnownVoteHistory[]> {
 		// const loginCookie = await this.accountService.checkLoginStatus(request, response);
 
 		const contentData = await this.lostArkKnownVoteHistoryRepository.find({
@@ -736,7 +736,7 @@ export class LostArkKnownPostService {
 				createdAt: true,
 			},
 			where: {
-				parentContentCode: Equal(contentCode),
+				postCode: Equal(postCode),
 				voteType: Equal("down"),
 			},
 		});
@@ -747,7 +747,7 @@ export class LostArkKnownPostService {
 	/**
 	 * 유저 게시판 댓글 목록 가져오기
 	 */
-	async getReply(contentCode: number, page: number): Promise<[LostArkKnownReply[], number]> {
+	async getReply(postCode: number, page: number): Promise<[LostArkKnownReply[], number]> {
 		const perPage = 50;
 
 		const repliesData = await this.lostArkKnownReplyRepository.findAndCount({
@@ -765,7 +765,7 @@ export class LostArkKnownPostService {
 				deletedAt: true
 			},
 			where: {
-				parentContentCode: Equal(contentCode),
+				postCode: Equal(postCode),
 			},
 			order: {
 				replyOrder: "DESC",
@@ -818,7 +818,7 @@ export class LostArkKnownPostService {
 
 			const contentData = await this.lostArkKnownPostRepository.exist({
 				where: {
-					code: Equal(createReplyDTO.parentContentCode),
+					code: Equal(createReplyDTO.postCode),
 				},
 			});
 

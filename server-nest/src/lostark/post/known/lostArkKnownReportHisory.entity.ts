@@ -5,7 +5,7 @@ import { LostArkKnownPost } from './lostArkKnownPost.entity';
 // If table is already exsists there could be error
 
 @Entity()
-export class LostArkKnownVoteHistory {
+export class LostArkKnownReportHistory {
 	@ManyToOne(() => LostArkKnownPost, (lostArkKnownPost) => lostArkKnownPost.lostArkKnownVoteHistory)
 	@JoinColumn({ name: "postCode", referencedColumnName: "code" })
 	lostArkKnownPost: LostArkKnownPost;
@@ -36,7 +36,7 @@ export class LostArkKnownVoteHistory {
 		length: 4,
 		nullable: false,
 	})
-	voteType: string;
+	reportType: string;
 
 	/**
 	 * 작성자 ID
@@ -47,7 +47,7 @@ export class LostArkKnownVoteHistory {
 		nullable: false,
 		select: false,
 	})
-	voterID: string;
+	reporterID: string;
 
 	/**
 	 * 작성자 Nickname
@@ -57,7 +57,7 @@ export class LostArkKnownVoteHistory {
 		length: 50,
 		nullable: false,
 	})
-	voterNickname: string;
+	reporterNickname: string;
 
 	/**
 	 * 작성자 ip

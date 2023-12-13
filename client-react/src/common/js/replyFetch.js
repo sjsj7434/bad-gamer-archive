@@ -29,13 +29,13 @@ export const deleteReply = async (boardType, sendData) => {
 /**
  * 댓글 가져오기
  */
-export const getReplies = async (boardType, contentCode, currentPage) => {
+export const getReplies = async (boardType, postCode, currentPage) => {
 	const fecthOption = {
 		method: "GET"
 		, headers: {"Content-Type": "application/json",}
 		, credentials: "include", // Don't forget to specify this if you need cookies
 	};
-	const fetchResponse = await fetch(`/post/${boardType}/reply/${contentCode}/${currentPage}`, fecthOption);
+	const fetchResponse = await fetch(`/post/${boardType}/reply/${postCode}/${currentPage}`, fecthOption);
 	const [isStatusGood, checkMessage] = isFetchStatusGood(fetchResponse);
 
 	if(isStatusGood === true){
