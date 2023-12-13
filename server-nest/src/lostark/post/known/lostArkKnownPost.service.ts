@@ -183,7 +183,7 @@ export class LostArkKnownPostService {
 
 			const whereClause: FindOptionsWhere<LostArkKnownPost> | FindOptionsWhere<LostArkKnownPost>[] = [{
 				deletedAt: IsNull(),
-				upvote: MoreThanOrEqual(downvoteCutline),
+				downvote: MoreThanOrEqual(downvoteCutline),
 				account: {
 					authentication: [
 						{ type: Equal("lostark_item_level") },
@@ -253,7 +253,7 @@ export class LostArkKnownPostService {
 
 			const whereClause: FindOptionsWhere<LostArkKnownPost> | FindOptionsWhere<LostArkKnownPost>[] = [{
 				deletedAt: IsNull(),
-				upvote: MoreThanOrEqual(viewCutline),
+				view: MoreThanOrEqual(viewCutline),
 				account: {
 					authentication: [
 						{ type: Equal("lostark_item_level") },
