@@ -28,6 +28,7 @@ const MyPage = () => {
 		}
 
 		setAccountData(myInfo);
+
 		setIsLoading(false);
 	}, [navigate])
 
@@ -161,6 +162,12 @@ const MyPage = () => {
 						<div style={{ display: "flex", flexDirection: "column", alignItems: "center", border: "1px solid lightgray", width: "33.3%", paddingTop: "0.5rem", paddingBottom: "0.5rem" }}>
 							<span>커뮤력</span>
 							<span>{new Intl.NumberFormat().format(accountData.exp)}</span>
+						</div>
+					</div>
+
+					<div style={{ display: "flex", alignItems: "center", justifyContent: "flex-start", fontSize: "0.8rem", marginTop: "0.5rem" }}>
+						<div onClick={ () => { navigate("/account/mypage/blacklist") } } style={{ cursor: "pointer", display: "flex", flexDirection: "column", alignItems: "center", border: "1px solid lightgray", width: "100%", paddingTop: "0.5rem", paddingBottom: "0.5rem" }}>
+							<span>차단 목록 관리</span>
 						</div>
 					</div>
 

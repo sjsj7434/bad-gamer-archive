@@ -6,6 +6,7 @@ import { Account } from './account.entity';
 import { UpdateAuthenticationDTO } from './authentication.dto';
 import { SkipThrottle, Throttle } from '@nestjs/throttler';
 import { CreatePersonalBlackListDTO } from './personalBlackList.dto';
+import { PersonalBlackList } from './personalBlackList.entity';
 
 @SkipThrottle()
 @Controller("account")
@@ -127,6 +128,11 @@ export class  AccountController {
 	@Post("blacklist")
 	async addToBlacklist(@Req() request: Request, @Res({ passthrough: true }) response: Response, @Body() createBlacklistDTO: CreatePersonalBlackListDTO): Promise<string> {
 		return await this.accountService.addToBlacklist(request, response, createBlacklistDTO);
+	}
+
+	@Get("blacklist")
+	async getMyBlacklist(@Req() request: Request, @Res({ passthrough: true }) response: Response): Promise<PersonalBlackList[]> {
+		return await this.accountService.getMyBlacklist(request, response);
 	}
 
 	/*

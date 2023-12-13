@@ -577,3 +577,27 @@ export const addToBlacklist = async (sendData) => {
 		return null;
 	}
 }
+
+/**
+ * 차단 목록 가져오기
+ */
+export const getMyBlacklist = async () => {
+	const fecthOption = {
+		method: "GET"
+		, headers: {"Content-Type": "application/json",}
+		, credentials: "include", // Don't forget to specify this if you need cookies
+	};
+	const fetchResponse = await fetch(`/account/blacklist`, fecthOption);
+	const [isStatusGood, checkMessage] = isFetchStatusGood(fetchResponse);
+
+	if(isStatusGood === true){
+		const fetchData = await getFetchJson(fetchResponse);
+
+		return fetchData;
+	}
+	else{
+		alert(checkMessage);
+
+		return null;
+	}
+}

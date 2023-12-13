@@ -36,6 +36,7 @@ import KnownPostList from './post/known/KnownPostList.js';
 import KnownPostView from './post/known/KnownPostView.js';
 import KnownPostWrite from './post/known/KnownPostWrite.js';
 import Button from 'react-bootstrap/Button';
+import MyBlacklist from './account/MyBlacklist.js';
 
 // import CharacterInfo from '../../lostark/pages/character/CharacterInfo';
 
@@ -224,6 +225,18 @@ const RoutesWrapper = () => {
 									/>
 								} />
 								
+								<Route path="blacklist" element={
+									<BlockLogoutUser
+										accountData={accountData}
+										ifAllow={
+											<>
+												<SetActiveMenu pageTitle="Agora(LA 인증)" setCurrentMenu={setCurrentMenu} menuCode={"/account/mypage/blacklist"} />
+												<MyBlacklist />
+											</>
+										}
+									/>
+								} />
+
 								<Route path="activate/lostark" element={
 									<BlockLogoutUser
 										accountData={accountData}
