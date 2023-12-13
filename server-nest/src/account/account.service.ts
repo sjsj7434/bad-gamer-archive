@@ -14,12 +14,16 @@ import { LostarkAPIService } from 'src/lostark/api/lostark.api.service';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { ErrorLogService } from 'src/log/error.log.service';
 import { LostarkCharacter } from './lostarkCharacter.entity';
+import { PersonalBlackList } from './personalBlackList.entity';
+import { CreatePersonalBlackListDTO } from './personalBlackList.dto';
+import { LostArkKnownPostService } from 'src/lostark/post/known/lostArkKnownPost.service';
 
 @Injectable()
 export class AccountService {
 	constructor(
 		@InjectRepository(Account) private accountRepository: Repository<Account>,
 		@InjectRepository(Authentication) private authenticationRepository: Repository<Authentication>,
+		@InjectRepository(PersonalBlackList) private personalBlackListRepository: Repository<PersonalBlackList>,
 		@InjectRepository(LostarkCharacter) private lostarkCharacterRepository: Repository<LostarkCharacter>,
 		@Inject(CACHE_MANAGER) private cacheManager: Cache,
 		private lostarkAPIService: LostarkAPIService,
@@ -1345,6 +1349,74 @@ export class AccountService {
 
 		if (isUpdate === true) { //update가 필요한 경우만 코드 실행
 			this.accountRepository.save(accountData);
+		}
+	}
+
+	/**
+	 * 유저 차단하기
+	 */
+	async addToBlacklist(request: Request, response: Response, createBlacklistDTO: CreatePersonalBlackListDTO): Promise<string> {
+		const loginUUID = this.LOGIN_SESSION.get(request.cookies["sessionCode"]); //로그인한 정보
+		const accountData = await this.getMyInfo(request, response);
+
+		if (accountData !== null) {
+			const blackUserData = await this.accountRepository.findOne({
+				select: {
+					uuid: true,
+					nickname: true,
+				},
+				where: {
+					nickname: Equal(createBlacklistDTO.blackNickname),
+				}
+			});
+
+			const isExist: boolean = await this.personalBlackListRepository.exist({
+				where: {
+					ownerUUID: Equal(loginUUID),
+					blackUUID: Equal(blackUserData.uuid),
+				}
+			});
+
+			if (isExist === true) {
+				return "0001";
+			}
+			else {
+				createBlacklistDTO.ownerUUID = loginUUID;
+				createBlacklistDTO.blackUUID = blackUserData.uuid;
+				createBlacklistDTO.blackNickname = blackUserData.nickname;
+				await this.personalBlackListRepository.save(createBlacklistDTO);
+
+				return "0002";
+			}
+		}
+		else {
+			return "0003";
+		}
+	}
+
+	/**
+	 * 차단 목록 가져오기
+	 */
+	async getMyBlacklist(request: Request, response: Response): Promise<PersonalBlackList[]> {
+		const loginUUID = this.LOGIN_SESSION.get(request.cookies["sessionCode"]); //로그인한 정보
+		const accountData = await this.getMyInfo(request, response);
+
+		if (accountData !== null) {
+			const blacklist: PersonalBlackList[] = await this.personalBlackListRepository.find({
+				select: {
+					blackNickname: true,
+					blackReason: true,
+					createdAt: true,
+				},
+				where: {
+					ownerUUID: Equal(loginUUID),
+				}
+			});
+
+			return blacklist;
+		}
+		else {
+			return [];
 		}
 	}
 }

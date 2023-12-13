@@ -5,6 +5,7 @@ import { AccountService } from './account.service';
 import { Account } from './account.entity';
 import { Authentication } from './authentication.entity';
 import { LostarkCharacter } from './lostarkCharacter.entity';
+import { PersonalBlackList } from './personalBlackList.entity';
 
 /**
  * 사용자 계정 관련 기능 모듈
@@ -12,7 +13,7 @@ import { LostarkCharacter } from './lostarkCharacter.entity';
 @Module({
 	imports: [
 		TypeOrmModule.forFeature([
-			Account, Authentication
+			Account, Authentication, PersonalBlackList
 			, LostarkCharacter
 		]),
 	],

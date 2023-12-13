@@ -211,7 +211,7 @@ const UnknownPostView = (props) => {
 								익명 게시판
 							</span>
 
-							<div style={{ fontWeight: "800", fontSize: "1.5rem", wordBreak: "break-all" }}>
+							<div style={{ fontWeight: "800", fontSize: "1.3rem", wordBreak: "break-all" }}>
 								<span>{contentJson.category !== "" ? `[${postCommon.parseCategory(contentJson.category)}] ` : ""}</span>
 								<span>{contentJson.title}</span>
 							</div>
@@ -233,7 +233,7 @@ const UnknownPostView = (props) => {
 							</div>
 							<div style={{fontWeight: "400", fontSize: "0.75rem", color: "orange"}}>
 								<span>
-									{contentJson.updatedAt !== null ? `${new Date(contentJson.updatedAt).toLocaleString("sv-SE")}에 게시글이 수정되었습니다` : ""}
+									{contentJson.updatedAt !== null ? `${new Date(contentJson.updatedAt).toLocaleString("sv-SE")}에 수정되었습니다` : ""}
 								</span>
 							</div>
 

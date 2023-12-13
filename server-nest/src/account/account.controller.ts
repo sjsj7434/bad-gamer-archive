@@ -5,6 +5,7 @@ import { Request, Response } from 'express';
 import { Account } from './account.entity';
 import { UpdateAuthenticationDTO } from './authentication.dto';
 import { SkipThrottle, Throttle } from '@nestjs/throttler';
+import { CreatePersonalBlackListDTO } from './personalBlackList.dto';
 
 @SkipThrottle()
 @Controller("account")
@@ -121,6 +122,11 @@ export class  AccountController {
 	@Patch("nickname")
 	async updateNickname(@Req() request: Request, @Res({ passthrough: true }) response: Response, @Body() updateAccountDTO: UpdateAccountDTO): Promise<Boolean> {
 		return await this.accountService.updateNickname(request, response, updateAccountDTO);
+	}
+
+	@Post("blacklist")
+	async addToBlacklist(@Req() request: Request, @Res({ passthrough: true }) response: Response, @Body() createBlacklistDTO: CreatePersonalBlackListDTO): Promise<string> {
+		return await this.accountService.addToBlacklist(request, response, createBlacklistDTO);
 	}
 
 	/*

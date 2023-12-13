@@ -79,7 +79,7 @@ const CommonTopMenu = (props) => {
 
 	return(
 		<>
-			<div className="desktopMode" style={{ position: "sticky", top: 0, zIndex: 10, width: "100%", marginBottom: "70px" }}>
+			<div className="desktopMode" style={{ position: "sticky", top: 0, zIndex: 2000, width: "100%", marginBottom: "70px" }}>
 				<div style={{ display: "flex", alignItems: "center", justifyContent: "center", backgroundColor: "#212529" }}>
 					<div style={{ maxWidth: "1200px", width: "100%" }}>
 						<div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", height: "50px", paddingLeft: "1.5rem", paddingRight: "1.5rem" }}>
@@ -284,7 +284,7 @@ const CommonTopMenu = (props) => {
 
 				<div
 					id="subMenuArea"
-					style={{ position: "absolute", width: "100%", backgroundColor: "#212529", zIndex: 10 }}
+					style={{ position: "absolute", width: "100%", backgroundColor: "#212529", zIndex: 2000 }}
 					onMouseOut={ () => { controlSubmenu("hide"); } }
 					onMouseOver={ () => { document.querySelector("#subMenuArea").classList.add("show") } }
 				>

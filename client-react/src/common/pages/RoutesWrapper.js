@@ -1,6 +1,6 @@
 import { Routes, Route, useLocation } from 'react-router-dom';
 import { useState, useEffect } from 'react';
-import { Navigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '../css/Common.css';
@@ -35,6 +35,7 @@ import UnknownPostWrite from './post/unknown/UnknownPostWrite.js';
 import KnownPostList from './post/known/KnownPostList.js';
 import KnownPostView from './post/known/KnownPostView.js';
 import KnownPostWrite from './post/known/KnownPostWrite.js';
+import Button from 'react-bootstrap/Button';
 
 // import CharacterInfo from '../../lostark/pages/character/CharacterInfo';
 
@@ -43,6 +44,7 @@ const RoutesWrapper = () => {
 	const [accountData, setAccountData] = useState(null);
 	const [currentMenu, setCurrentMenu] = useState(null);
 	let location = useLocation();
+	const navigate = useNavigate();
 	
 	const checkLoginStatus = async () => {
 		const statusJSON = await accountFetch.checkLoginStatus();
@@ -302,6 +304,18 @@ const RoutesWrapper = () => {
 						</>
 					} />
 				</Routes>
+
+				<footer>
+					<div style={{ display: "flex", justifyContent: "center", alignItems: "flex-end", height: "150px", marginTop: "15px", marginBottom: "15px", padding: "5px" }}>
+						<div style={{ display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
+							<Button variant="link" style={{ fontSize: "0.75rem", textDecoration: "none", color: "gray" }}>소개</Button>
+							<span style={{ fontSize: "0.65rem", color: "gray" }}>|</span>
+							<Button onClick={() => { navigate("/account/find/password"); }} variant="link" style={{ fontSize: "0.75rem", textDecoration: "none", color: "gray" }}>고객센터</Button>
+							<span style={{ fontSize: "0.65rem", color: "gray" }}>|</span>
+							<Button onClick={() => { navigate("/account/register"); }} variant="link" style={{ fontSize: "0.75rem", textDecoration: "none", color: "gray" }}>개인정보처리방침</Button>
+						</div>
+					</div>
+				</footer>
 			</>
 		);
 	}
