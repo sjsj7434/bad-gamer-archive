@@ -61,6 +61,20 @@ p {
 	margin: 0px;
 }
 
+.smallButton{
+	padding: 2px;
+	min-width: 70px;
+	max-width: 100px;
+	font-size: 0.8rem;
+}
+
+.mediumButton{
+	width: 30%;
+	max-width: 130px;
+	padding: 2px;
+	font-size: 0.8rem;
+}
+
 #subMenuArea{
 	/* display: none; */
 	visibility: hidden;
