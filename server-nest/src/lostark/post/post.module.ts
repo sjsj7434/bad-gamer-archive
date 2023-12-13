@@ -12,7 +12,6 @@ import { LostArkUnknownPostService } from './unknown/lostArkUnknownPost.service'
 import { LostarkAnnouncePostService } from './announce/lostarkAnnouncePost.service';
 import { LostarkAnnouncePost } from './announce/lostarkAnnouncePost.entity';
 import { LostarkAnnounceVoteHistory } from './announce/lostarkAnnounceVoteHistory.entity';
-import { LostArkKnownReportHistory } from './known/lostArkKnownReportHisory.entity';
 
 /**
  * 게시판 관련 기능 모듈
@@ -25,7 +24,7 @@ import { LostArkKnownReportHistory } from './known/lostArkKnownReportHisory.enti
 
 		TypeOrmModule.forFeature([
 			LostarkAnnouncePost, LostarkAnnounceVoteHistory
-			, LostArkKnownPost, LostArkKnownReply, LostArkKnownVoteHistory, LostArkKnownReportHistory
+			, LostArkKnownPost, LostArkKnownReply, LostArkKnownVoteHistory
 			, LostArkUnknownPost, LostArkUnknownReply
 		]),
 	],

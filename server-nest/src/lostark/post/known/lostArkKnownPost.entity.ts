@@ -2,7 +2,6 @@ import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, DeleteDateCol
 import { LostArkKnownReply } from './lostArkKnownReply.entity';
 import { LostArkKnownVoteHistory } from './lostArkKnownVoteHistory.entity';
 import { Account } from 'src/account/account.entity';
-import { LostArkKnownReportHistory } from './lostArkKnownReportHisory.entity';
 
 // This will create following database table
 // If table is already exsists there could be error
@@ -18,9 +17,6 @@ export class LostArkKnownPost {
 
 	@OneToMany(() => LostArkKnownVoteHistory, (lostArkKnownVoteHistory) => lostArkKnownVoteHistory.lostArkKnownPost)
 	lostArkKnownVoteHistory: LostArkKnownVoteHistory[];
-
-	@OneToMany(() => LostArkKnownReportHistory, (lostArkKnownReportHistory) => lostArkKnownReportHistory.lostArkKnownPost)
-	lostArkKnownReportHistory: LostArkKnownReportHistory[];
 
 	@ManyToOne(() => Account, (account) => account.lostArkKnownPost)
 	@JoinColumn({ name: "writerID", referencedColumnName: "id" })
