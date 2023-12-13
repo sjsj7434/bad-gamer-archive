@@ -217,9 +217,12 @@ const KnownPostView = (props) => {
 			const showUpvoteUserList = async () => {
 				setVoteHistory(<><Placeholder xs={3} /> <Placeholder xs={1} /> <Placeholder xs={4} /></>);
 				showVoteModal();
-				setVoteModalTitle("추천 목록");
+
+				setVoteModalTitle(`추천자`);
 
 				const voteResult = await postFetch.showUpvoteUserList(postCode);
+
+				setVoteModalTitle(`추천자 : ${voteResult.length}명`);
 
 				const voteListElement = voteResult.map((element) => {
 					return(
@@ -241,9 +244,12 @@ const KnownPostView = (props) => {
 			const showDownvoteUserList = async () => {
 				setVoteHistory(<><Placeholder xs={3} /> <Placeholder xs={1} /> <Placeholder xs={4} /></>);
 				showVoteModal();
-				setVoteModalTitle("비추천 목록");
+
+				setVoteModalTitle(`비추천자`);
 
 				const voteResult = await postFetch.showDownvoteUserList(postCode);
+
+				setVoteModalTitle(`비추천자 : ${voteResult.length}명`);
 
 				const voteListElement = voteResult.map((element) => {
 					return(
@@ -341,9 +347,9 @@ const KnownPostView = (props) => {
 							</Button>
 						</div>
 						<div style={{display: "flex", justifyContent: "center", marginTop: "10px"}}>
-							<Button variant="success" onClick={() => { showUpvoteUserList() }} style={{ width: "30%", maxWidth: "130px", padding: "2px", fontSize: "0.85rem" }}>목록 확인</Button>
+							<Button variant="success" onClick={() => { showUpvoteUserList() }} style={{ width: "30%", maxWidth: "130px", padding: "2px", fontSize: "0.85rem" }}>추천자</Button>
 							&nbsp;&nbsp;
-							<Button variant="danger" onClick={() => { showDownvoteUserList() }} style={{ width: "30%", maxWidth: "130px", padding: "2px", fontSize: "0.85rem" }}>목록 확인</Button>
+							<Button variant="danger" onClick={() => { showDownvoteUserList() }} style={{ width: "30%", maxWidth: "130px", padding: "2px", fontSize: "0.85rem" }}>비추천자</Button>
 						</div>
 						
 						{
@@ -382,13 +388,13 @@ const KnownPostView = (props) => {
 			
 			<Modal show={showVote} onHide={closeVoteModal} backdrop="static" keyboard={false} centered>
 				<Modal.Header closeButton>
-					<Modal.Title>{voteModalTitle}</Modal.Title>
+					<Modal.Title style={{ fontSize: "1.3rem" }}>{voteModalTitle}</Modal.Title>
 				</Modal.Header>
 
-				<Modal.Body style={{ maxHeight: "20rem", overflow: "auto" }}>{voteHistory}</Modal.Body>
+				<Modal.Body style={{ maxHeight: "20rem", overflow: "auto", fontSize: "0.8rem" }}>{voteHistory}</Modal.Body>
 
 				<Modal.Footer>
-					<Button variant="secondary" onClick={closeVoteModal}>
+					<Button variant="secondary" onClick={closeVoteModal} style={{padding: "2px", width: "8%", minWidth: "70px", maxWidth: "100px", fontSize: "0.8rem"}}>
 						닫기
 					</Button>
 				</Modal.Footer>
