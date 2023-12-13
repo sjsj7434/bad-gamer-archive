@@ -19,7 +19,6 @@
 }
 
 .ck.ck-content.ck-editor__editable.ck-read-only.ck-focused {
-    color: red;
     border: 0px !important;
     box-shadow: none;
 }
