@@ -12,9 +12,6 @@ export class CreatePersonalBlackListDTO extends PickType(PersonalBlackList, ["ow
 	blackUUID: string;
 	@IsString()
 	blackNickname: string;
-
-	@IsNumber()
-	postCode: number;
 }
 
 export class UpdatePersonalBlackListDTO extends PartialType(PersonalBlackList) {
