@@ -753,6 +753,19 @@ export class LostArkKnownPostService {
 		const perPage = 50;
 		const blacklist = await this.accountService.getMyBlacklistUUID(request, response);
 
+		const blackRepliesData = await this.lostArkKnownReplyRepository.find({
+			select: {
+				code: true,
+			},
+			where: {
+				postCode: Equal(postCode),
+				writerUUID: In(blacklist), //내가 차단한 유저
+			},
+			withDeleted: true,
+		});
+
+		const replyblacklist = blackRepliesData.flatMap((element) => (element.code));
+
 		const repliesData = await this.lostArkKnownReplyRepository.findAndCount({
 			skip: (page - 1) * perPage, //시작 인덱스
 			take: perPage, //페이지 당 갯수
@@ -769,7 +782,8 @@ export class LostArkKnownPostService {
 			},
 			where: {
 				postCode: Equal(postCode),
-				writerUUID: Not(In(blacklist)), //내가 차단한 유저는 가져오지 않음
+				code: Not(In(replyblacklist)), //내가 차단한 유저는 가져오지 않음
+				parentReplyCode: Not(In(replyblacklist)), //내가 차단한 유저는 가져오지 않음
 			},
 			order: {
 				replyOrder: "DESC",
