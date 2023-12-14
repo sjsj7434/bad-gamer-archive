@@ -18,6 +18,8 @@ import Form from 'react-bootstrap/Form';
 import * as accountFetch from "../../../js/accountFetch";
 
 const KnownPostView = (props) => {
+	const BLACK_REASON_MAX_LEN = 200; //블랙 사유 최대 길이
+
 	const [postCode, setPostCode] = useState(null);
 	const [upvoteCount, setUpvoteCount] = useState(0);
 	const [downvoteCount, setDownvoteCount] = useState(0);
@@ -44,6 +46,11 @@ const KnownPostView = (props) => {
 		const writerNicknameElement = document.querySelector("#writerNickname");
 
 		if(window.confirm("해당 유저를 차단하시겠습니까?") === false){
+			return;
+		}
+
+		if(blackReasonElement.value.length > BLACK_REASON_MAX_LEN){
+			alert(`${BLACK_REASON_MAX_LEN}자가 넘으면`);
 			return;
 		}
 
@@ -354,16 +361,14 @@ const KnownPostView = (props) => {
 								<span>{contentJson.category !== "" ? `[${postCommon.parseCategory(contentJson.category)}] ` : ""}</span>
 								<span>{contentJson.title}</span>
 							</div>
-							<div style={{fontWeight: "400", fontSize: "0.8rem"}}>
+							<div style={{ display: "flex", alignItems: "center", fontSize: "0.8rem" }}>
 								<span>
 									<input type="hidden" id="writerNickname" value={ contentJson.writerNickname } />
 									{
 										isContentWriter === false ?
 										<>
 											<OverlayTrigger trigger="click" placement="right" overlay={userPopover} rootClose={true}>
-												<span style={{ cursor: "pointer", textDecoration: "underline" }}>
-													{ contentJson.writerNickname }
-												</span>
+												<Button variant="link" style={{ fontSize: "0.8rem", padding: "2px" }}>{ contentJson.writerNickname }</Button>
 											</OverlayTrigger>
 										</>
 										:
@@ -497,7 +502,7 @@ const KnownPostView = (props) => {
 					<Form>
 						<Form.Group className="mb-3" controlId="blackReason">
 							<Form.Label>차단 사유</Form.Label>
-							<Form.Control as="textarea" rows={3} style={{ fontSize: "0.8rem" }} />
+							<Form.Control as="textarea" rows={3} maxLength={BLACK_REASON_MAX_LEN} style={{ fontSize: "0.8rem" }} />
 						</Form.Group>
 					</Form>
 				</Modal.Body>

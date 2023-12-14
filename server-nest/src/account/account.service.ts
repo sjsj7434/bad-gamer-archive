@@ -15,7 +15,7 @@ import { Cron, CronExpression } from '@nestjs/schedule';
 import { ErrorLogService } from 'src/log/error.log.service';
 import { LostarkCharacter } from './lostarkCharacter.entity';
 import { PersonalBlackList } from './personalBlackList.entity';
-import { CreatePersonalBlackListDTO } from './personalBlackList.dto';
+import { CreatePersonalBlackListDTO, DeletePersonalBlackListDTO, UpdatePersonalBlackListDTO } from './personalBlackList.dto';
 import { LostArkKnownPostService } from 'src/lostark/post/known/lostArkKnownPost.service';
 
 @Injectable()
@@ -1404,12 +1404,16 @@ export class AccountService {
 		if (accountData !== null) {
 			const blacklist: PersonalBlackList[] = await this.personalBlackListRepository.find({
 				select: {
+					code: true,
 					blackNickname: true,
 					blackReason: true,
 					createdAt: true,
 				},
 				where: {
 					ownerUUID: Equal(loginUUID),
+				},
+				order: {
+					createdAt: "DESC",
 				}
 			});
 
@@ -1417,6 +1421,86 @@ export class AccountService {
 		}
 		else {
 			return [];
+		}
+	}
+
+	/**
+	 * 차단 목록 초기화
+	 */
+	async resetMyBlacklist(request: Request, response: Response): Promise<boolean> {
+		const loginUUID = this.LOGIN_SESSION.get(request.cookies["sessionCode"]); //로그인한 정보
+		const accountData = await this.getMyInfo(request, response);
+
+		if (accountData !== null) {
+			await this.personalBlackListRepository.softDelete({
+				ownerUUID: Equal(loginUUID),
+			});
+
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
+
+	/**
+	 * 차단 정보 삭제
+	 */
+	async deleteMyBlacklist(request: Request, response: Response, deleteBlacklistDTO: DeletePersonalBlackListDTO): Promise<boolean> {
+		const loginUUID = this.LOGIN_SESSION.get(request.cookies["sessionCode"]); //로그인한 정보
+		const accountData = await this.getMyInfo(request, response);
+
+		if (accountData !== null) {
+			const isExist: boolean = await this.personalBlackListRepository.exist({
+				where: {
+					ownerUUID: Equal(loginUUID),
+					code: Equal(deleteBlacklistDTO.code),
+				}
+			});
+
+			if (isExist === true) {
+				await this.personalBlackListRepository.softDelete({
+					ownerUUID: Equal(loginUUID),
+					code: Equal(deleteBlacklistDTO.code),
+				});
+			}
+
+			return isExist;
+		}
+		else {
+			return false;
+		}
+	}
+
+	/**
+	 * 차단 정보 수정
+	 */
+	async updateMyBlacklist(request: Request, response: Response, updateBlacklistDTO: UpdatePersonalBlackListDTO): Promise<boolean> {
+		const loginUUID = this.LOGIN_SESSION.get(request.cookies["sessionCode"]); //로그인한 정보
+		const accountData = await this.getMyInfo(request, response);
+
+		if (accountData !== null) {
+			const isExist: boolean = await this.personalBlackListRepository.exist({
+				where: {
+					ownerUUID: Equal(loginUUID),
+					code: Equal(updateBlacklistDTO.code),
+				}
+			});
+
+			if (isExist === true) {
+				await this.personalBlackListRepository.update(
+					{
+						ownerUUID: Equal(loginUUID),
+						code: Equal(updateBlacklistDTO.code),
+					},
+					updateBlacklistDTO
+				);
+			}
+
+			return isExist;
+		}
+		else {
+			return false;
 		}
 	}
 }

@@ -5,7 +5,7 @@ import { Request, Response } from 'express';
 import { Account } from './account.entity';
 import { UpdateAuthenticationDTO } from './authentication.dto';
 import { SkipThrottle, Throttle } from '@nestjs/throttler';
-import { CreatePersonalBlackListDTO } from './personalBlackList.dto';
+import { CreatePersonalBlackListDTO, DeletePersonalBlackListDTO, UpdatePersonalBlackListDTO } from './personalBlackList.dto';
 import { PersonalBlackList } from './personalBlackList.entity';
 
 @SkipThrottle()
@@ -133,6 +133,21 @@ export class  AccountController {
 	@Get("blacklist")
 	async getMyBlacklist(@Req() request: Request, @Res({ passthrough: true }) response: Response): Promise<PersonalBlackList[]> {
 		return await this.accountService.getMyBlacklist(request, response);
+	}
+
+	@Delete("blacklist/reset")
+	async resetMyBlacklist(@Req() request: Request, @Res({ passthrough: true }) response: Response): Promise<boolean> {
+		return await this.accountService.resetMyBlacklist(request, response);
+	}
+
+	@Delete("blacklist")
+	async deleteMyBlacklist(@Req() request: Request, @Res({ passthrough: true }) response: Response, @Body() deleteBlacklistDTO: DeletePersonalBlackListDTO): Promise<boolean> {
+		return await this.accountService.deleteMyBlacklist(request, response, deleteBlacklistDTO);
+	}
+
+	@Patch("blacklist")
+	async updateMyBlacklist(@Req() request: Request, @Res({ passthrough: true }) response: Response, @Body() updateBlacklistDTO: UpdatePersonalBlackListDTO): Promise<boolean> {
+		return await this.accountService.updateMyBlacklist(request, response, updateBlacklistDTO);
 	}
 
 	/*
