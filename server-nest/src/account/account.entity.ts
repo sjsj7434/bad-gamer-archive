@@ -142,6 +142,16 @@ export class Account {
 	replyDeleteCount: number;
 
 	/**
+	 * 프로필 내용
+	 */
+	@Column({
+		type: "text",
+		nullable: false,
+		select: false,
+	})
+	introduce: string;
+
+	/**
 	 * 유저 비밀번호 변경 일자
 	 */
 	@Column({

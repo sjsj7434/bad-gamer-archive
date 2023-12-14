@@ -57,12 +57,12 @@ const NicknameMenu = (props) => {
 		}
 
 		showAddBlacklistModal();
-		document.querySelector("#popover-basic").style.display = "none";
+		document.querySelector("#nicknamePopover").style.display = "none";
 	}
 
 	const userPopover = (
-		<Popover id="popover-basic" style={{ minWidth: "200px", fontSize: "0.8rem" }}>
-			<Popover.Header as="h3">메뉴</Popover.Header>
+		<Popover id={"nicknamePopover"} style={{ minWidth: "170px", fontSize: "0.8rem" }}>
+			{/* <Popover.Header as="h3">메뉴</Popover.Header> */}
 			<Popover.Body style={{ paddingTop: "10px", paddingBottom: "10px", paddingLeft: "10px", paddingRight: "30px" }}>
 				<div>
 					<div style={{ marginBottom: "10px" }}>
@@ -78,14 +78,26 @@ const NicknameMenu = (props) => {
 			</Popover.Body>
 		</Popover>
 	);
+
+	const testFocus = () => {
+		const inter = setInterval(() => {
+			const ele = document.querySelector("#nicknamePopover");
+			if(ele !== null){
+				clearInterval(inter);
+				window.scrollTo(0, document.querySelector("#nicknamePopover").getBoundingClientRect().top);
+			}
+		}, 500)
+		
+		// document.querySelector("#nicknamePopover").focus();
+	}
 	
 	return(
 		<>
 			{
 				(props.accountData.nickname === props.targetNickname) === false ?
 				<>
-					<OverlayTrigger trigger="click" placement="right" overlay={userPopover} rootClose={true}>
-						<Button variant="link" style={{ fontSize: "0.8rem", padding: "2px" }}>{ props.targetNickname }</Button>
+					<OverlayTrigger trigger="click" placement="right-start" overlay={userPopover} rootClose={true}>
+						<Button onClick={() => { testFocus() }} variant="link" style={{ fontSize: "0.8rem", padding: "2px" }}>{ props.targetNickname }</Button>
 					</OverlayTrigger>
 				</>
 				:
