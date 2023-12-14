@@ -64,9 +64,9 @@ npm run start
 - <input type='checkbox' checked> react에 프록시 설정하니까 서버랑 통신이 느려진 느낌이 있음 / build된 환경은 빠른 듯?
 - <input type='checkbox' checked> 서버에 배포하면 배포된 웹에서는 로그인이 되지 않음, security cookie 문제였음
 - <input type='checkbox' checked> ckEditor5 Media embed 추가 / https://ckeditor.com/docs/ckeditor5/latest/features/media-embed.html
-- <input type='checkbox'> 게시글 신고 기능
+- <input type='checkbox' checked> 아이디 차단 기능(회원 전용)
+- <input type='checkbox'> 아이디 차단 목록 관리 기능(회원 전용)
 - <input type='checkbox'> 자기소개 및 인장 시스템
-- <input type='checkbox'> 게시글 작성자 IP차단 & 아이디 차단 기능(회원 전용)
 - <input type='checkbox'> 직업 게시판 > 소유한 캐릭터(1500 이상) 없으면 글 작성 불가능
 - <input type='checkbox'> AWS SES(이메일 발송) 도입
 - <input type='checkbox'> 비밀번호 찾기(비번 초기화, 인증은 이메일 사용)
