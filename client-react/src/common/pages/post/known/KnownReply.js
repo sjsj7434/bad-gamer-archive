@@ -6,6 +6,7 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import CustomPagination from '../CustomPagination';
 import * as replyFetch from '../../../js/replyFetch';
+import NicknameMenu from './NicknameMenu';
 
 const KnownReply = (props) => {
 	// const [upvoteCount, setUpvoteCount] = useState(0);
@@ -191,7 +192,7 @@ const KnownReply = (props) => {
 								<div id={`reply_${replyData.code}`} key={`reply_${replyData.code}`} style={{display: "flex", flexDirection: "column", paddingBottom: "5px", marginBottom: "", borderBottom: "1px solid lightgray"}}>
 									<div style={{display: "flex", justifyContent: "space-between", alignItems: "center"}}>
 										<div>
-											<span style={{fontSize: "0.8rem", color: "black"}}>{replyData.writerNickname}</span>
+											<NicknameMenu targetNickname={replyData.writerNickname} accountData={props.accountData}/>
 											&nbsp;
 											<span style={{fontSize: "0.75rem", color: "lightgray"}}>{new Date(replyData.createdAt).toLocaleString("sv-SE")}</span>
 										</div>
@@ -268,7 +269,7 @@ const KnownReply = (props) => {
 									<div style={{width: "100%", display: "flex", flexDirection: "column", marginLeft: "8px", paddingBottom: "5px", marginBottom: "5px"}}>
 										<div style={{display: "flex", justifyContent: "space-between", alignItems: "center"}}>
 											<div>
-												<span style={{fontSize: "0.8rem", color: "black"}}>{replyData.writerNickname}</span>
+												<NicknameMenu targetNickname={replyData.writerNickname} accountData={props.accountData}/>
 												&nbsp;
 												<span style={{fontSize: "0.75rem", color: "lightgray"}}>{new Date(replyData.createdAt).toLocaleString("sv-SE")}</span>
 											</div>
