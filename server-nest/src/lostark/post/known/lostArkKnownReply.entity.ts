@@ -95,6 +95,17 @@ export class LostArkKnownReply {
 	downvote: number;
 
 	/**
+	 * 작성자 UUID
+	 */
+	@Column({
+		type: "varchar",
+		length: 50,
+		nullable: false,
+		select: false,
+	})
+	writerUUID: string;
+
+	/**
 	 * 작성자 ID
 	 */
 	@Column({

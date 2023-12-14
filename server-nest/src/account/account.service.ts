@@ -112,6 +112,14 @@ export class AccountService {
 	}
 
 	/**
+	 * 로그인했으면 나의 UUID를 가져온다
+	 */
+	async getMyUUID(request: Request): Promise<string> {
+		const loginUUID = this.LOGIN_SESSION.get(request.cookies["sessionCode"]); //로그인한 정보
+		return loginUUID;
+	}
+
+	/**
 	 * 스토브 소개란에 적을 인증 코드(32글자)를 생성한다
 	 */
 	async createStoveVerificationCode(request: Request): Promise<string>{
@@ -1418,6 +1426,30 @@ export class AccountService {
 			});
 
 			return blacklist;
+		}
+		else {
+			return [];
+		}
+	}
+
+	/**
+	 * 차단 UUID 가져오기
+	 */
+	async getMyBlacklistUUID(request: Request, response: Response): Promise<string[]> {
+		const loginUUID = this.LOGIN_SESSION.get(request.cookies["sessionCode"]); //로그인한 정보
+		const accountData = await this.getMyInfo(request, response);
+
+		if (accountData !== null) {
+			const blacklist: PersonalBlackList[] = await this.personalBlackListRepository.find({
+				select: {
+					blackUUID: true,
+				},
+				where: {
+					ownerUUID: Equal(loginUUID),
+				},
+			});
+
+			return blacklist.flatMap((element) => (element.blackUUID));
 		}
 		else {
 			return [];

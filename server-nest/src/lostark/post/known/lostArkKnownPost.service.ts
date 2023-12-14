@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, IsNull, MoreThanOrEqual, Equal, Like, FindOptionsWhere } from 'typeorm';
+import { Repository, IsNull, MoreThanOrEqual, Equal, Like, FindOptionsWhere, Not, In } from 'typeorm';
 import { AccountService } from 'src/account/account.service';
 import { Request, Response } from 'express';
 import { ErrorLogService } from 'src/log/error.log.service';
@@ -319,54 +319,13 @@ export class LostArkKnownPostService {
 	/**
 	 * 유저 게시판 목록 가져오기
 	 */
-	async getPostList(page: number, searchType: string, searchText: string): Promise<[LostArkKnownPost[], number]> {
-		/*
-		const queryOBJ = this.lostArkKnownPostRepository
-		.createQueryBuilder("boards")
-		.leftJoinAndSelect("boards.replies", "replies", "replies.postCode = boards.code")
-		.leftJoinAndSelect("boards.account", "account", "account.id = boards.writerID")
-		.innerJoinAndSelect("account.authentication", "authentication", "authentication.uuid = account.uuid AND authentication.type = 'lostark_item_level'")
-
-		.select("boards.code", "code")
-		.addSelect("boards.writerNickname", "writerNickname")
-		.addSelect("boards.title", "title")
-		.addSelect("boards.view", "view")
-		.addSelect("boards.upvote", "upvote")
-		.addSelect("boards.downvote", "downvote")
-		.addSelect("boards.hasImage", "hasImage")
-		.addSelect("boards.createdAt", "createdAt")
-		.addSelect("REPLACE(authentication.data, ',', '')", 'simpleItemLevel')
-		.addSelect("COUNT(replies.code)", "repliesCount")
-
-		.where("boards.category = :category", { category: "user" })
-		.groupBy(`
-			boards.code
-			, boards.writerNickname
-			, boards.title
-			, boards.view
-			, boards.upvote
-			, boards.downvote
-			, boards.hasImage
-			, boards.createdAt
-		`)
-		.orderBy("boards.code", "DESC")
-		.withDeleted()
-		.skip((page - 1) * this.HOW_MANY_POST_ON_LIST)
-		.take(this.HOW_MANY_POST_ON_LIST)
-
-		// const queryData = queryOBJ.getSql();
-		// console.log(queryData)
-
-		const result3 = await queryOBJ.getRawMany(); // getMany를 하게 되면 entity와 같은 값만 나옴, getRawMany를 해야 위와 같은 연산 처리가 가능하다.
-		console.log(result3)
-
-		// return result2;
-		return [result3, result3.length];
-		*/
+	async getPostList(request: Request, response: Response, page: number, searchType: string, searchText: string): Promise<[LostArkKnownPost[], number]> {
+		const blacklist = await this.accountService.getMyBlacklistUUID(request, response);
 
 		const whereClause: FindOptionsWhere<LostArkKnownPost> | FindOptionsWhere<LostArkKnownPost>[] = [{
 			deletedAt: IsNull(),
 			account: {
+				uuid: Not(In(blacklist)), //내가 차단한 유저는 가져오지 않음
 				authentication: [
 					{ type: Equal("lostark_item_level") },
 					{ type: IsNull() },
@@ -417,6 +376,50 @@ export class LostArkKnownPostService {
 		});
 
 		return result;
+
+		/*
+		const queryOBJ = this.lostArkKnownPostRepository
+		.createQueryBuilder("boards")
+		.leftJoinAndSelect("boards.replies", "replies", "replies.postCode = boards.code")
+		.leftJoinAndSelect("boards.account", "account", "account.id = boards.writerID")
+		.innerJoinAndSelect("account.authentication", "authentication", "authentication.uuid = account.uuid AND authentication.type = 'lostark_item_level'")
+
+		.select("boards.code", "code")
+		.addSelect("boards.writerNickname", "writerNickname")
+		.addSelect("boards.title", "title")
+		.addSelect("boards.view", "view")
+		.addSelect("boards.upvote", "upvote")
+		.addSelect("boards.downvote", "downvote")
+		.addSelect("boards.hasImage", "hasImage")
+		.addSelect("boards.createdAt", "createdAt")
+		.addSelect("REPLACE(authentication.data, ',', '')", 'simpleItemLevel')
+		.addSelect("COUNT(replies.code)", "repliesCount")
+
+		.where("boards.category = :category", { category: "user" })
+		.groupBy(`
+			boards.code
+			, boards.writerNickname
+			, boards.title
+			, boards.view
+			, boards.upvote
+			, boards.downvote
+			, boards.hasImage
+			, boards.createdAt
+		`)
+		.orderBy("boards.code", "DESC")
+		.withDeleted()
+		.skip((page - 1) * this.HOW_MANY_POST_ON_LIST)
+		.take(this.HOW_MANY_POST_ON_LIST)
+
+		// const queryData = queryOBJ.getSql();
+		// console.log(queryData)
+
+		const result3 = await queryOBJ.getRawMany(); // getMany를 하게 되면 entity와 같은 값만 나옴, getRawMany를 해야 위와 같은 연산 처리가 가능하다.
+		console.log(result3)
+
+		// return result2;
+		return [result3, result3.length];
+		*/
 	}
 
 	/**
@@ -518,6 +521,7 @@ export class LostArkKnownPostService {
 	 */
 	async isAuthor(request: Request, response: Response, code: number): Promise<boolean> {
 		const loginCookie = await this.accountService.checkLoginStatus(request, response);
+		const loginUUID = await this.accountService.getMyUUID(request);
 
 		if (loginCookie.status === "login") {
 			if (isNaN(code) === true) {
@@ -527,11 +531,10 @@ export class LostArkKnownPostService {
 			const isExists = await this.lostArkKnownPostRepository.exist({
 				select: {
 					code: true,
-					writerID: true,
 				},
 				where: {
 					code: Equal(code),
-					writerID: Equal(loginCookie.id),
+					writerUUID: Equal(loginUUID),
 				},
 			});
 
@@ -547,6 +550,7 @@ export class LostArkKnownPostService {
 	 */
 	async createPost(createPostDTO: CreateLostArkKnownPostDTO, ipData: string, request: Request, response: Response): Promise<{ createdCode: number, status: string }> {
 		const loginCookie = await this.accountService.checkLoginStatus(request, response);
+		const loginUUID = await this.accountService.getMyUUID(request);
 
 		if (loginCookie.status === "login") {
 			if (createPostDTO.title.length > 200) {
@@ -556,6 +560,7 @@ export class LostArkKnownPostService {
 				return { createdCode: 0, status: "long_content" };
 			}
 
+			createPostDTO.writerUUID = loginUUID;
 			createPostDTO.writerID = loginCookie.id;
 			createPostDTO.writerNickname = loginCookie.nickname;
 			createPostDTO.ip = ipData; //개발서버에서는 로컬만 찍혀서 임시로 비활성
@@ -577,31 +582,23 @@ export class LostArkKnownPostService {
 	 */
 	async updatePost(request: Request, response: Response, updatePostDTO: UpdateLostArkKnownPostDTO): Promise<boolean> {
 		const loginCookie = await this.accountService.checkLoginStatus(request, response);
+		const loginUUID = await this.accountService.getMyUUID(request);
 
-		const updateTargetPost = await this.lostArkKnownPostRepository.findOne({
-			select: {
-				code: true,
-				writerID: true,
-				writerNickname: true,
-			},
+		const isExist = await this.lostArkKnownPostRepository.exist({
 			where: {
-				code: Equal(updatePostDTO.code)
+				code: Equal(updatePostDTO.code),
+				writerUUID: Equal(loginUUID),
 			}
 		})
 
 		if (loginCookie.status === "login") {
-			if (loginCookie.id !== updateTargetPost.writerID) {
-				//위의 값이 아니면 누군가 값을 조작하여 전송했을 가능성이 있으므로 게시글 저장 차단
-				return false;
+			if (isExist === true) {
+				updatePostDTO.updatedAt = new Date(); //update 날짜 수정
+
+				await this.lostArkKnownPostRepository.update({ code: updatePostDTO.code }, updatePostDTO)
 			}
 
-			// updatePostDTO.writerNickname = loginCookie.nickname;
-			updatePostDTO.updatedAt = new Date(); //update 날짜 수정
-
-			// await this.lostArkKnownPostRepository.save(updatePostDTO);
-			await this.lostArkKnownPostRepository.update({ code: updatePostDTO.code }, updatePostDTO)
-
-			return true;
+			return isExist;
 		}
 		else {
 			return false;
@@ -613,12 +610,13 @@ export class LostArkKnownPostService {
 	 */
 	async softDeletePost(request: Request, response: Response, deletePostDTO: DeleteLostArkKnownPostDTO): Promise<boolean> {
 		const loginCookie = await this.accountService.checkLoginStatus(request, response);
+		const loginUUID = await this.accountService.getMyUUID(request);
 
 		if (loginCookie.status === "login") {
 			const isExists = await this.lostArkKnownPostRepository.exist({
 				where: {
 					code: Equal(deletePostDTO.code),
-					writerID: Equal(loginCookie.id),
+					writerUUID: Equal(loginUUID),
 				}
 			});
 
@@ -641,6 +639,7 @@ export class LostArkKnownPostService {
 	 */
 	async upvotePost(request: Request, response: Response, postCode: number, ipData: string): Promise<{ upvote: number, downvote: number, isVotable: boolean }> {
 		const loginCookie = await this.accountService.checkLoginStatus(request, response);
+		const loginUUID = await this.accountService.getMyUUID(request);
 		const isVotable: boolean = await this.isVotablePost(postCode, loginCookie.id);
 
 		if (isVotable === true && loginCookie !== null) {
@@ -649,6 +648,7 @@ export class LostArkKnownPostService {
 			const insertHistory = this.lostArkKnownVoteHistoryRepository.create({
 				postCode: postCode,
 				voteType: "up",
+				voterUUID: loginUUID,
 				voterID: loginCookie.id,
 				voterNickname: loginCookie.nickname,
 				ip: ipData,
@@ -675,6 +675,7 @@ export class LostArkKnownPostService {
 	 */
 	async downvotePost(request: Request, response: Response, postCode: number, ipData: string): Promise<{ upvote: number, downvote: number, isVotable: boolean }> {
 		const loginCookie = await this.accountService.checkLoginStatus(request, response);
+		const loginUUID = await this.accountService.getMyUUID(request);
 		const isVotable: boolean = await this.isVotablePost(postCode, loginCookie.id);
 
 		if (isVotable === true) {
@@ -683,6 +684,7 @@ export class LostArkKnownPostService {
 			const insertHistory = this.lostArkKnownVoteHistoryRepository.create({
 				postCode: postCode,
 				voteType: "down",
+				voterUUID: loginUUID,
 				voterID: loginCookie.id,
 				voterNickname: loginCookie.nickname,
 				ip: ipData,
@@ -747,8 +749,9 @@ export class LostArkKnownPostService {
 	/**
 	 * 유저 게시판 댓글 목록 가져오기
 	 */
-	async getReply(postCode: number, page: number): Promise<[LostArkKnownReply[], number]> {
+	async getReply(request: Request, response: Response, postCode: number, page: number): Promise<[LostArkKnownReply[], number]> {
 		const perPage = 50;
+		const blacklist = await this.accountService.getMyBlacklistUUID(request, response);
 
 		const repliesData = await this.lostArkKnownReplyRepository.findAndCount({
 			skip: (page - 1) * perPage, //시작 인덱스
@@ -766,6 +769,7 @@ export class LostArkKnownPostService {
 			},
 			where: {
 				postCode: Equal(postCode),
+				writerUUID: Not(In(blacklist)), //내가 차단한 유저는 가져오지 않음
 			},
 			order: {
 				replyOrder: "DESC",
@@ -803,8 +807,10 @@ export class LostArkKnownPostService {
 		}
 
 		const loginCookie = await this.accountService.checkLoginStatus(request, response);
+		const loginUUID = await this.accountService.getMyUUID(request);
 
 		if (loginCookie.status === "login") {
+			createReplyDTO.writerUUID = loginUUID;
 			createReplyDTO.writerID = loginCookie.id;
 			createReplyDTO.writerNickname = loginCookie.nickname;
 			createReplyDTO.replyOrder = 0;
@@ -854,6 +860,7 @@ export class LostArkKnownPostService {
 	 */
 	async deleteReply(request: Request, response: Response, deleteReplyDTO: DeleteLostArkKnownReplyDTO): Promise<boolean> {
 		const loginCookie = await this.accountService.checkLoginStatus(request, response);
+		const loginUUID = await this.accountService.getMyUUID(request);
 
 		if (loginCookie.status !== "login") {
 			return false;
@@ -862,7 +869,7 @@ export class LostArkKnownPostService {
 		const replyData = await this.lostArkKnownReplyRepository.exist({
 			where: {
 				code: Equal(deleteReplyDTO.code),
-				writerID: Equal(loginCookie.id),
+				writerUUID: Equal(loginUUID),
 			}
 		});
 
@@ -872,7 +879,7 @@ export class LostArkKnownPostService {
 		else {
 			await this.lostArkKnownReplyRepository.softDelete({
 				code: Equal(deleteReplyDTO.code),
-				writerID: Equal(loginCookie.id),
+				writerUUID: Equal(loginUUID),
 			});
 			await this.accountService.updateAccountReplyCount(request, response, "delete");
 
@@ -884,6 +891,10 @@ export class LostArkKnownPostService {
 	 * 게시판 글 이미지 삽입
 	 */
 	async uploadImage(file: Express.Multer.File): Promise<{ url: string } | { error: { message: string } }> {
+		// Multer is --save-dev option installed, same as -d option
+		// If the upload is successful, the server should return: An object containing [the url property] which points to the uploaded image on the server
+		// 이미지 업로드가 성공했으면 서버가 이미지 주소 정보가 담긴 오브젝트(url 프로퍼티를 가진)를 반환해야만 함
+		
 		// const timeOfNow = new Date();
 		// const timeString = timeOfNow.toLocaleDateString("sv-SE").replace(/-/g, "") + timeOfNow.toLocaleTimeString("sv-SE").replace(/:/g, "");
 		// const randomName = Array(10).fill(null).map(() => (Math.round(Math.random() * 16)).toString(16).substring(0, 1)).join("");

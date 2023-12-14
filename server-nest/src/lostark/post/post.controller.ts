@@ -131,8 +131,8 @@ export class PostController {
 
 	//유저 게시판 목록, page 값이 number가 아니면 호출되지 않음
 	@Get("known/list/:page")
-	async getKnownPostList(@Param("page") page: number, @Query("searchType") searchType: string, @Query("searchText") searchText: string): Promise<[LostArkKnownPost[], number]> {
-		return await this.lostArkKnownPostService.getPostList(page, searchType, searchText);
+	async getKnownPostList(@Req() request: Request, @Res({ passthrough: true }) response: Response, @Param("page") page: number, @Query("searchType") searchType: string, @Query("searchText") searchText: string): Promise<[LostArkKnownPost[], number]> {
+		return await this.lostArkKnownPostService.getPostList(request, response, page, searchType, searchText);
 	}
 
 	//유저 게시판 글 조회, postCode 값이 number가 아니면 호출되지 않음
@@ -208,8 +208,8 @@ export class PostController {
 
 	//유저 게시글 댓글 조회
 	@Get("known/reply/:postCode/:page")
-	async getKnownReply(@Param("postCode") postCode: number, @Param("page") page: number): Promise<[LostArkKnownReply[], number]> {
-		return await this.lostArkKnownPostService.getReply(postCode, page);
+	async getKnownReply(@Req() request: Request, @Res({ passthrough: true }) response: Response, @Param("postCode") postCode: number, @Param("page") page: number): Promise<[LostArkKnownReply[], number]> {
+		return await this.lostArkKnownPostService.getReply(request, response, postCode, page);
 	}
 
 	//유저 게시글 댓글 작성
@@ -279,10 +279,6 @@ export class PostController {
 	@Post("image")
 	@UseInterceptors(FileInterceptor("upload"))
 	async uploadImage(@UploadedFile() file: Express.Multer.File): Promise<{ url: string } | { error: { message: string } }> {
-		//Multer is --save-dev option installed, same as -d option
-		//If the upload is successful, the server should return: An object containing [the url property] which points to the uploaded image on the server
-		//이미지 업로드가 성공했으면 서버가 이미지 주소 정보가 담긴 오브젝트(url 프로퍼티를 가진)를 반환해야만 함
-
 		return await this.lostarkAnnouncePostService.uploadImage(file);
 	}
 }

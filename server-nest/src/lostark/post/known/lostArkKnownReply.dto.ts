@@ -1,5 +1,5 @@
 import { PartialType, PickType } from "@nestjs/mapped-types";
-import { IsNumber, IsString, IsDate, IsOptional } from 'class-validator';
+import { IsNumber, IsString, IsDate, IsOptional, IsEmpty } from 'class-validator';
 import { LostArkKnownReply } from "./lostArkKnownReply.entity";
 
 //Entity 클래스는 실제 테이블과 매핑되어 만일 변경되게 되면 여러 다른 클래스에 영향을 끼치고, DTO 클래스는 View와 통신하며 자주 변경되므로 분리
@@ -24,6 +24,8 @@ export class BasicLostArkKnownReplyDTO extends LostArkKnownReply {
 	password: string;
 	@IsString()
 	ip: string;
+	@IsEmpty()
+	writerUUID: string;
 	@IsString()
 	writerID: string;
 	@IsString()
@@ -41,8 +43,7 @@ export class CreateLostArkKnownReplyDTO extends PartialType(BasicLostArkKnownRep
 export class DeleteLostArkKnownReplyDTO extends PickType(BasicLostArkKnownReplyDTO, ["code", "password"] as const) {
 	@IsNumber()
 	code: number;
-	@IsOptional()
-	@IsString()
+	@IsOptional() @IsString()
 	password: string;
 }
 

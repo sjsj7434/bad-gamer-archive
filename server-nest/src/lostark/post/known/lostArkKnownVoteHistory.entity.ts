@@ -39,6 +39,17 @@ export class LostArkKnownVoteHistory {
 	voteType: string;
 
 	/**
+	 * 작성자 UUID
+	 */
+	@Column({
+		type: "varchar",
+		length: 50,
+		nullable: false,
+		select: false,
+	})
+	voterUUID: string;
+
+	/**
 	 * 작성자 ID
 	 */
 	@Column({

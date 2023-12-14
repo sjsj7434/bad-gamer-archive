@@ -1,5 +1,5 @@
 import { OmitType, PartialType, PickType } from "@nestjs/mapped-types";
-import { IsBoolean, IsNumber, IsOptional, IsString } from "class-validator";
+import { IsBoolean, IsEmpty, IsNumber, IsOptional, IsString } from "class-validator";
 import { LostArkKnownPost } from "./lostArkKnownPost.entity";
 
 //Entity 클래스는 실제 테이블과 매핑되어 만일 변경되게 되면 여러 다른 클래스에 영향을 끼치고, DTO 클래스는 View와 통신하며 자주 변경되므로 분리
@@ -12,6 +12,8 @@ export class CreateLostArkKnownPostDTO extends OmitType(LostArkKnownPost, ["code
 	content: string;
 	@IsBoolean()
 	hasImage: boolean;
+	@IsEmpty()
+	writerUUID: string;
 	@IsOptional() @IsString()
 	writerID: string;
 	@IsOptional() @IsString()
