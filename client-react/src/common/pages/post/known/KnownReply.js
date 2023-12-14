@@ -309,7 +309,7 @@ const KnownReply = (props) => {
 				}
 			}
 		}
-	}, [props.postCode, props.accountData.nickname])
+	}, [props.postCode, props.accountData])
 
 	/**
 	 * 댓글 작성할 떄 글자 수 제한 확인
