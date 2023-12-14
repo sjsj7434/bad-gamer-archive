@@ -288,7 +288,7 @@ const KnownPostView = (props) => {
 							</div>
 							<div style={{ display: "flex", alignItems: "center", fontSize: "0.8rem" }}>
 								<span>
-									<NicknameMenu nickname={contentJson.writerNickname} accountData={props.accountData}/>
+									<NicknameMenu targetNickname={contentJson.writerNickname} accountData={props.accountData}/>
 
 									{ contentJson.account.authentication[0] !== undefined ? `(${contentJson.account.authentication[0].data.replace(",", "")})` : "" }
 								</span>

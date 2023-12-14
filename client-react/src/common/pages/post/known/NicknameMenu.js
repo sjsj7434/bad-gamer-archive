@@ -38,6 +38,7 @@ const NicknameMenu = (props) => {
 		}
 		else if(result === "0002"){
 			alert("차단 되었습니다");
+			window.location.reload();
 		}
 		else if(result === "0003"){
 			alert("유저를 차단하려면 로그인이 필요합니다");
