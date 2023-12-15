@@ -78,18 +78,6 @@ const NicknameMenu = (props) => {
 			</Popover.Body>
 		</Popover>
 	);
-
-	const testFocus = () => {
-		const inter = setInterval(() => {
-			const ele = document.querySelector("#nicknamePopover");
-			if(ele !== null){
-				clearInterval(inter);
-				window.scrollTo(0, document.querySelector("#nicknamePopover").getBoundingClientRect().top);
-			}
-		}, 500)
-		
-		// document.querySelector("#nicknamePopover").focus();
-	}
 	
 	return(
 		<>
@@ -97,7 +85,7 @@ const NicknameMenu = (props) => {
 				(props.accountData.nickname === props.targetNickname) === false ?
 				<>
 					<OverlayTrigger trigger="click" placement="right-start" overlay={userPopover} rootClose={true}>
-						<Button onClick={() => { testFocus() }} variant="link" style={{ fontSize: "0.8rem", padding: "2px" }}>{ props.targetNickname }</Button>
+						<Button variant="link" style={{ fontSize: "0.8rem", padding: "2px" }}>{ props.targetNickname }</Button>
 					</OverlayTrigger>
 				</>
 				:

@@ -321,7 +321,7 @@ const RoutesWrapper = () => {
 				</div>
 
 				<footer>
-					<div style={{ display: "flex", justifyContent: "center", alignItems: "flex-end", height: "150px", marginTop: "15px", marginBottom: "15px", padding: "5px" }}>
+					<div style={{ display: "flex", justifyContent: "center", alignItems: "flex-end", height: "300px", marginTop: "15px", marginBottom: "15px", padding: "5px" }}>
 						<div style={{ display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
 							<Button onClick={() => { navigate("/intro"); }} variant="link" style={{ fontSize: "0.75rem", textDecoration: "none", color: "gray" }}>소개</Button>
 							<span style={{ fontSize: "0.65rem", color: "gray" }}>|</span>
