@@ -10,6 +10,7 @@ import Col from 'react-bootstrap/esm/Col.js';
 import LoadingModal from '../common/LoadingModal.js';
 import Image from 'react-bootstrap/Image';
 import '../../css/MyPage.css';
+import EditIntroduce from './EditIntroduce.js';
 
 const MyPage = () => {
 	const [accountData, setAccountData] = useState(null);
@@ -169,6 +170,16 @@ const MyPage = () => {
 						<div onClick={ () => { navigate("/account/mypage/blacklist") } } style={{ cursor: "pointer", display: "flex", flexDirection: "column", alignItems: "center", border: "1px solid lightgray", width: "100%", paddingTop: "0.5rem", paddingBottom: "0.5rem" }}>
 							<span>차단 목록 관리</span>
 						</div>
+					</div>
+
+					<div style={{ marginTop: "10rem", marginBottom: "10rem" }}>
+						<h4>* Introduce</h4>
+						
+						<div>{accountData.introduce}</div>
+
+						<Button>Edit</Button>
+
+						<EditIntroduce accountData={accountData}></EditIntroduce>
 					</div>
 
 					<div style={{paddingLeft: "10px", paddingRight: "10px", fontSize: "0.8rem"}}>

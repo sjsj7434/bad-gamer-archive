@@ -814,6 +814,7 @@ export class AccountService {
 				replyWriteCount: true,
 				postDeleteCount: true,
 				replyDeleteCount: true,
+				introduce: true,
 				passwordChangeDate: true,
 				createdAt: true,
 			},
