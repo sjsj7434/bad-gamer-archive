@@ -146,7 +146,6 @@ export class Account {
 	 */
 	@Column({
 		type: "text",
-		nullable: false,
 		select: false,
 	})
 	introduce: string;
