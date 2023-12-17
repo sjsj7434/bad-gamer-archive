@@ -34,6 +34,7 @@
 
 <div>
 	<h1>NginX 프록시 설정</h1>
+	<p>이것을 설정하면 80포트로 접근해도 3000포트로 이동시켜줌</p>
 	<pre>
 		sudo vi /etc/nginx/sites-available/nest-server
 		--------------------------------------------------------
@@ -77,8 +78,9 @@
 </div>
 
 <div>
-	<h1>NginX 프록시 설정</h1>
+	<h1>puppeteer 설치</h1>
 	<a href="https://s55ma.radioamater.si/2023/05/30/ubuntu-22-04-install-puppeteer/">https://s55ma.radioamater.si/2023/05/30/ubuntu-22-04-install-puppeteer/</a>
+	<p>ARM 프로세서와 Amazon Linux에서는 오류가 발생하여 Ubuntu로 이주하게 됨</p>
 	<pre>
 		apt update -y && apt upgrade -y
 		apt install -y npm
