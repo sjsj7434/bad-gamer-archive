@@ -65,6 +65,7 @@ npm run start
 - <input type='checkbox' checked> 서버에 배포하면 배포된 웹에서는 로그인이 되지 않음, security cookie 문제였음
 - <input type='checkbox' checked> ckEditor5 Media embed 추가 / https://ckeditor.com/docs/ckeditor5/latest/features/media-embed.html
 - <input type='checkbox' checked> 아이디 차단 기능(회원 전용)
+- <input type='checkbox'> 닉네임 바꾸면 예전에 작성한 글에서는 차단 불가능한 오류(회원 전용)
 - <input type='checkbox'> 아이디 차단 목록 관리 기능(회원 전용)
 - <input type='checkbox'> 자기소개 및 인장 시스템
 - <input type='checkbox'> 직업 게시판 > 소유한 캐릭터(1500 이상) 없으면 글 작성 불가능
