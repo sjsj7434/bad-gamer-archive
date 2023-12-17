@@ -259,7 +259,7 @@ export class AccountService {
 		const stoveCodeWithOutProtocol: string = stoveCode.replace(/https:\/\/|http:\/\//g, "");
 
 		const browser = await puppeteer.launch({
-			headless: true,
+			headless: "new", // In the near feature `headless: true` will default to the new Headless mode
 			waitForInitialPage: false,
 		});
 
@@ -293,7 +293,7 @@ export class AccountService {
 			const stoveCodeWithOutProtocol: string = stoveCode.replace(/https:\/\/|http:\/\//g, "");
 
 			const browser = await puppeteer.launch({
-				headless: true,
+				headless: "new", // In the near feature `headless: true` will default to the new Headless mode
 				waitForInitialPage: false,
 			});
 			const page = await browser.newPage();
@@ -332,7 +332,7 @@ export class AccountService {
 	 */
 	async getStoveUserCharacters_scrap(stoveCode: string): Promise<Array<{ ServerName: string, CharacterName: string, ItemMaxLevel: string, CharacterClassName: string }>>{
 		const browser = await puppeteer.launch({
-			headless: true,
+			headless: "new", // In the near feature `headless: true` will default to the new Headless mode
 			waitForInitialPage: false,
 		});
 		const page = await browser.newPage();
@@ -401,7 +401,7 @@ export class AccountService {
 	 */
 	async getCharacterInfo_scrap(characterName: string): Promise<object>{
 		const browser = await puppeteer.launch({
-			headless: true,
+			headless: "new", // In the near feature `headless: true` will default to the new Headless mode
 			waitForInitialPage: false,
 		});
 		const page = await browser.newPage();
