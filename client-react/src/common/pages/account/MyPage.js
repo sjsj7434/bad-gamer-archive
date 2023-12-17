@@ -201,6 +201,8 @@ const MyPage = () => {
 							</tbody>
 						</Table> */}
 						
+						<div className="rowDivider"></div>
+						
 						<Table>
 							<tbody>
 								{
@@ -260,7 +262,9 @@ const MyPage = () => {
 							}
 						</div>
 						
-						<div style={{ marginTop: "5rem", marginBottom: "5rem" }}>
+						<div className="rowDivider"></div>
+
+						<div>
 							{
 								accountData.introduce !== null ?
 								<>
@@ -272,6 +276,8 @@ const MyPage = () => {
 								</>
 							}
 						</div>
+						
+						<div className="rowDivider"></div>
 
 						<Row>
 							<Col>

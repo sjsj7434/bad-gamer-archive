@@ -84,3 +84,13 @@ p {
 	/* display: block; */
 	visibility: visible;
 }
+
+.rowDivider{
+	height: 0.4rem;
+	width: 100vw;
+	position: relative;
+	left: calc(-50vw + 50%);
+	background-color: lightgray;
+	margin-top: 3.0rem;
+	margin-bottom: 3.0rem;
+}
