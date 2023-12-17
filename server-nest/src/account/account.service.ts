@@ -1536,4 +1536,52 @@ export class AccountService {
 			return false;
 		}
 	}
+
+	/**
+	 * 자기소개 정보 저장
+	 */
+	async saveMyIntroduce(request: Request, response: Response, introduce: string): Promise<boolean> {
+		const loginUUID = this.LOGIN_SESSION.get(request.cookies["sessionCode"]); //로그인한 정보
+		const accountData = await this.getMyInfo(request, response);
+
+		if (accountData !== null) {
+			await this.accountRepository.update(
+				{
+					uuid: Equal(loginUUID),
+				},
+				{
+					introduce: introduce,
+				}
+			);
+
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
+
+	/**
+	 * 자기소개 정보 삭제
+	 */
+	async deleteMyIntroduce(request: Request, response: Response): Promise<boolean> {
+		const loginUUID = this.LOGIN_SESSION.get(request.cookies["sessionCode"]); //로그인한 정보
+		const accountData = await this.getMyInfo(request, response);
+
+		if (accountData !== null) {
+			await this.accountRepository.update(
+				{
+					uuid: Equal(loginUUID),
+				},
+				{
+					introduce: null,
+				}
+			);
+
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
 }

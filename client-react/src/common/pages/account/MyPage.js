@@ -172,25 +172,14 @@ const MyPage = () => {
 						</div>
 					</div>
 
-					<div style={{ marginTop: "10rem", marginBottom: "10rem" }}>
-						<h4>* Introduce</h4>
-						
-						<div>{accountData.introduce}</div>
-
-						<Button>Edit</Button>
-
-						<EditIntroduce accountData={accountData}></EditIntroduce>
-					</div>
-
-					<div style={{paddingLeft: "10px", paddingRight: "10px", fontSize: "0.8rem"}}>
-						<Table hover>
+					<div style={{paddingLeft: "10px", paddingRight: "10px", fontSize: "0.8rem", marginTop: "2rem", marginBottom: "2rem"}}>
+						{/* <Table hover>
 							<colgroup>
 								<col width="30%" />
 								<col width="5%" />
 								<col width="*" />
 							</colgroup>
 							<tbody>
-								{/*
 								<tr>
 									<th>이메일</th>
 									<td><div className="vr"></div></td>
@@ -202,7 +191,6 @@ const MyPage = () => {
 										</div>
 									</td>
 								</tr>
-								*/}
 								<tr>
 									<th>비밀번호 변경일</th>
 									<td><div className="vr"></div></td>
@@ -210,73 +198,80 @@ const MyPage = () => {
 										{accountData.passwordChangeDate === null ? "-" : accountData.passwordChangeDate.substring(0, 10)}
 									</td>
 								</tr>
-								<tr>
-									<th>LA 인증</th>
-									<td><div className="vr"></div></td>
-									<td>
-										<Table>
-											<tbody>
-												{
-													accountData.authentication.map((element) => (
-														<tr key={element.type}>
-															<th>
-																{stringParser(element.type)}
-															</th>
-															<td>
-																{element.data}
-															</td>
-														</tr>
-													))
-												}
-												{
-													accountData.authentication.length === 0 ?
-													<tr>
-														<td colSpan="2">인증되지 않음</td>
-													</tr>
-													:
-													<tr>
-														<th>인증일</th>
-														<td>{accountData.authentication.filter((element) => element.type === "lostark_item_level")[0].updatedAt.substring(0, 10)}</td>
-													</tr>
-												}
-											</tbody>
-										</Table>
-										<div style={{ display: "flex", alignItems: "center" }}>
-											<Row>
-											</Row>
-											{
-												accountData.authentication.length === 0 ? 
-												<>
-													<Col>
-														<div className="d-grid gap-2" style={{ margin: "0.4rem" }}>
-															<Button onClick={() => { navigate("activate/lostark") }} variant="outline-success" style={{ padding: "2px", fontSize: "0.8rem" }}>인증하기</Button>
-														</div>
-													</Col>
-												</>
-												:
-												<>
-													<Col>
-														<div className="d-grid gap-2" style={{ margin: "0.4rem" }}>
-															<Button onClick={() => { renewLostarkCharacter() }} variant="outline-success" style={{ padding: "2px", fontSize: "0.8rem" }}>업데이트</Button>
-														</div>
-													</Col>
-													<Col>
-														<div className="d-grid gap-2" style={{ margin: "0.4rem" }}>
-															<Button onClick={() => { navigate("activate/lostark") }} variant="outline-warning" style={{ padding: "2px", fontSize: "0.8rem" }}>변경하기</Button>
-														</div>
-													</Col>
-													<Col>
-														<div className="d-grid gap-2" style={{ margin: "0.4rem" }}>
-															<Button onClick={() => { deactivateLostarkCharacter() }} variant="outline-danger" style={{ padding: "2px", fontSize: "0.8rem" }}>해제하기</Button>
-														</div>
-													</Col>
-												</>
-											}
-										</div>
-									</td>
-								</tr>
+							</tbody>
+						</Table> */}
+						
+						<Table>
+							<tbody>
+								{
+									accountData.authentication.map((element) => (
+										<tr key={element.type}>
+											<th>
+												{stringParser(element.type)}
+											</th>
+											<td>
+												{element.data}
+											</td>
+										</tr>
+									))
+								}
+								{
+									accountData.authentication.length === 0 ?
+									<tr>
+										<td colSpan="2">인증되지 않음</td>
+									</tr>
+									:
+									<tr>
+										<th>인증일</th>
+										<td>{accountData.authentication.filter((element) => element.type === "lostark_item_level")[0].updatedAt.substring(0, 10)}</td>
+									</tr>
+								}
 							</tbody>
 						</Table>
+
+						<div style={{ display: "flex", alignItems: "center" }}>
+							{
+								accountData.authentication.length === 0 ? 
+								<>
+									<Col>
+										<div className="d-grid gap-2" style={{ margin: "0.4rem" }}>
+											<Button onClick={() => { navigate("activate/lostark") }} variant="outline-success" style={{ padding: "2px", fontSize: "0.8rem" }}>인증하기</Button>
+										</div>
+									</Col>
+								</>
+								:
+								<>
+									<Col>
+										<div className="d-grid gap-2" style={{ margin: "0.4rem" }}>
+											<Button onClick={() => { renewLostarkCharacter() }} variant="outline-success" style={{ padding: "2px", fontSize: "0.8rem" }}>갱신</Button>
+										</div>
+									</Col>
+									<Col>
+										<div className="d-grid gap-2" style={{ margin: "0.4rem" }}>
+											<Button onClick={() => { navigate("activate/lostark") }} variant="outline-warning" style={{ padding: "2px", fontSize: "0.8rem" }}>변경</Button>
+										</div>
+									</Col>
+									<Col>
+										<div className="d-grid gap-2" style={{ margin: "0.4rem" }}>
+											<Button onClick={() => { deactivateLostarkCharacter() }} variant="outline-danger" style={{ padding: "2px", fontSize: "0.8rem" }}>해제</Button>
+										</div>
+									</Col>
+								</>
+							}
+						</div>
+						
+						<div style={{ marginTop: "5rem", marginBottom: "5rem" }}>
+							{
+								accountData.introduce !== null ?
+								<>
+									<EditIntroduce status={"read"} accountData={accountData} introduce={accountData.introduce}></EditIntroduce>
+								</>
+								:
+								<>
+									<EditIntroduce status={"empty"} accountData={accountData} introduce={"자기소개를 작성해보세요!"}></EditIntroduce>
+								</>
+							}
+						</div>
 
 						<Row>
 							<Col>

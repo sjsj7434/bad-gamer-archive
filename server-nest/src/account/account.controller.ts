@@ -150,6 +150,16 @@ export class  AccountController {
 		return await this.accountService.updateMyBlacklist(request, response, updateBlacklistDTO);
 	}
 
+	@Patch("introduce")
+	async saveMyIntroduce(@Req() request: Request, @Res({ passthrough: true }) response: Response, @Body() updateAccounttDTO: UpdateAccountDTO): Promise<boolean> {
+		return await this.accountService.saveMyIntroduce(request, response, updateAccounttDTO.introduce);
+	}
+
+	@Delete("introduce")
+	async deleteMyIntroduce(@Req() request: Request, @Res({ passthrough: true }) response: Response): Promise<boolean> {
+		return await this.accountService.deleteMyIntroduce(request, response);
+	}
+
 	/*
 	@Post("verify/send/email")
 	async setVerifyEmailTokenLater(@Req() request: Request, @Res({ passthrough: true }) response: Response): Promise<string> {
