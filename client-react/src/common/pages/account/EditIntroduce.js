@@ -90,9 +90,9 @@ const EditIntroduce = (props) => {
 						자기소개
 						&nbsp;
 						<div>
-							<Button onClick={() => { if(window.confirm("자기소개 작성을 취소하시겠습니까?") === true){window.location.reload()} }} variant="danger" style={{width: "20%", minWidth: "70px", maxWidth: "100px", fontSize: "0.8rem"}}>취소</Button>
+							<Button onClick={() => { if(window.confirm("자기소개 작성을 취소하시겠습니까?") === true){window.location.reload()} }} variant="danger" className="smallButton">취소</Button>
 							&nbsp;
-							<Button onClick={() => {saveEditorData()}} variant="primary" style={{width: "20%", minWidth: "70px", maxWidth: "100px", fontSize: "0.8rem"}}>저장</Button>
+							<Button onClick={() => {saveEditorData()}} variant="primary" className="smallButton">저장</Button>
 						</div>
 					</div>
 
@@ -119,9 +119,9 @@ const EditIntroduce = (props) => {
 						자기소개
 						&nbsp;
 						<div>
-							<Button onClick={() => {deleteIntroduce()}} variant="danger" style={{width: "20%", minWidth: "70px", maxWidth: "100px", fontSize: "0.8rem"}} disabled={props.status === "empty" ? true : false}>삭제</Button>
+							<Button onClick={() => {deleteIntroduce()}} variant="danger" className="smallButton" disabled={props.status === "empty" ? true : false}>삭제</Button>
 							&nbsp;
-							<Button onClick={() => {setEditorMode("write")}} variant="primary" style={{width: "20%", minWidth: "70px", maxWidth: "100px", fontSize: "0.8rem"}}>{props.status === "empty" ? "작성" : "수정"}</Button>
+							<Button onClick={() => {setEditorMode("write")}} variant="primary" className="smallButton">{props.status === "empty" ? "작성" : "수정"}</Button>
 						</div>
 					</div>
 		
