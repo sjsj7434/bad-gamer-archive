@@ -142,6 +142,17 @@ export class Account {
 	replyDeleteCount: number;
 
 	/**
+	 * 프로필 사진 url
+	 */
+	@Column({
+		type: "varchar",
+		length: 200,
+		nullable: true,
+		select: false,
+	})
+	profilePictureURL: string;
+
+	/**
 	 * 프로필 내용
 	 */
 	@Column({
@@ -265,7 +276,7 @@ export class Account {
 		nullable: true,
 		select: false,
 	})
-	banneddAt!: Date;
+	bannedAt!: Date;
 
 	/**
 	 * 유저 계정 생성일자(자동)
