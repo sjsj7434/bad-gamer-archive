@@ -63,12 +63,16 @@ const EditIntroduce = (props) => {
 			}
 		}
 		else{
-			window.location.reload();
+			setEditorMode("read");
+			setLoadingModalShow(false);
+			props.afterUpdate();
 		}
 	}, [editorObject, editorSizeByte, editorMaxKB, navigate])
 
 	const deleteIntroduce = async () => {
 		if(window.confirm("자기소개를 삭제하시겠습니까?") === true){
+			setLoadingModalShow(true);
+			setLoadingModalMessage("자기소개를 삭제 중입니다...");
 			const deleteResult = await accountFetch.deleteMyIntroduce();
 
 			if(deleteResult === "true"){
@@ -78,7 +82,9 @@ const EditIntroduce = (props) => {
 				alert("자기소개를 삭제할 수 없습니다");
 			}
 
-			window.location.reload();
+			setEditorMode("read");
+			setLoadingModalShow(false);
+			props.afterUpdate();
 		}
 	}
 
@@ -90,7 +96,7 @@ const EditIntroduce = (props) => {
 						자기소개
 						&nbsp;
 						<div>
-							<Button onClick={() => { if(window.confirm("자기소개 작성을 취소하시겠습니까?") === true){window.location.reload()} }} variant="danger" className="smallButton">취소</Button>
+							<Button onClick={() => { if(window.confirm("자기소개 작성을 취소하시겠습니까?") === true){setEditorMode("read")} }} variant="danger" className="smallButton">취소</Button>
 							&nbsp;
 							<Button onClick={() => {saveEditorData()}} variant="primary" className="smallButton">저장</Button>
 						</div>

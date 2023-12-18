@@ -332,11 +332,11 @@ const MyPage = () => {
 							{
 								accountData.introduce !== null ?
 								<>
-									<EditIntroduce status={"read"} accountData={accountData} introduce={accountData.introduce}></EditIntroduce>
+									<EditIntroduce status={"read"} accountData={accountData} introduce={accountData.introduce} afterUpdate={callMyInfo}></EditIntroduce>
 								</>
 								:
 								<>
-									<EditIntroduce status={"empty"} accountData={accountData} introduce={"자기소개를 작성해보세요!"}></EditIntroduce>
+									<EditIntroduce status={"empty"} accountData={accountData} introduce={"자기소개를 작성해보세요!"} afterUpdate={callMyInfo}></EditIntroduce>
 								</>
 							}
 						</div>
