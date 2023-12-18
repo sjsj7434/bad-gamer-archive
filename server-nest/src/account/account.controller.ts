@@ -1,4 +1,4 @@
-import { Param, Controller, Get, Post, Put, Delete, Body, Res, Req, Patch, NotFoundException } from '@nestjs/common';
+import { Param, Controller, Get, Post, Put, Delete, Body, Res, Req, Patch, NotFoundException, UseInterceptors, UploadedFile } from '@nestjs/common';
 import { AccountService } from './account.service';
 import { CreateAccountDTO, UpdateAccountDTO } from './account.dto';
 import { Request, Response } from 'express';
@@ -7,6 +7,7 @@ import { UpdateAuthenticationDTO } from './authentication.dto';
 import { SkipThrottle, Throttle } from '@nestjs/throttler';
 import { CreatePersonalBlackListDTO, DeletePersonalBlackListDTO, UpdatePersonalBlackListDTO } from './personalBlackList.dto';
 import { PersonalBlackList } from './personalBlackList.entity';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @SkipThrottle()
 @Controller("account")
@@ -158,6 +159,13 @@ export class  AccountController {
 	@Delete("introduce")
 	async deleteMyIntroduce(@Req() request: Request, @Res({ passthrough: true }) response: Response): Promise<boolean> {
 		return await this.accountService.deleteMyIntroduce(request, response);
+	}
+
+	//게시글 이미지 삽입
+	@Post("image")
+	@UseInterceptors(FileInterceptor("upload"))
+	async uploadImage(@Req() request: Request, @Res({ passthrough: true }) response: Response, @UploadedFile() file: Express.Multer.File): Promise<{ url: string } | { error: { message: string } }> {
+		return await this.accountService.uploadImage(request, response, file);
 	}
 
 	/*

@@ -126,15 +126,50 @@ const MyPage = () => {
 				callMyInfo();
 			}
 		}
+
+		//프로필 사진 저장
+		const uploadProfilePicture = async () => {
+			const fileData = document.querySelector("#profilePictureInput").files[0];
+			if(fileData !== null && fileData !== undefined){
+				const sendData = new FormData();
+				sendData.append("upload", fileData);
+				
+				const uploadResult = await accountsFetch.uploadProfilePicture(sendData);
+				console.log(uploadResult);
+				
+				callMyInfo();
+			}
+		}
 		
 		if(accountData !== null){
 			setRenderData(
 				<Container style={{maxWidth: "600px"}}>
 					<LoadingModal showModal={isLoading} message={loadingMessage}></LoadingModal>
 
-					<div style={{ display: "flex", alignItems: "center", justifyContent: "flex-start" }}>
+					<div style={{ display: "flex", alignItems: "center", justifyContent: "flex-start", minHeight: "100px", maxHeight: "100px", overflow: "hidden" }}>
 						<div style={{ marginRight: "1rem" }}>
-							<Image src="https://th.bing.com/th?id=ORMS.af754456c4a0bbb236c02bf807d2d151&pid=Wdp&w=240&h=129&qlt=90&c=1&rs=1&dpr=1&p=0" roundedCircle className="profilePicture" />
+							{
+								accountData.profilePictureURL !== null ? 
+								<>
+									<label htmlFor="profilePictureInput" style={{ cursor: "pointer" }}>
+										{/* <Image src="https://th.bing.com/th?id=ORMS.af754456c4a0bbb236c02bf807d2d151&pid=Wdp&w=240&h=129&qlt=90&c=1&rs=1&dpr=1&p=0" roundedCircle className="profilePicture" /> */}
+										<Image src={accountData.profilePictureURL} roundedCircle className="profilePicture" />
+									</label>
+								</>
+								:
+								<>
+									<Button variant="light" style={{ padding: "0px", margin: "0px", border: "0px" }}>
+										<label htmlFor="profilePictureInput" style={{ cursor: "pointer" }}>
+											<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="gray" className="bi bi-person-bounding-box profilePictureNone" viewBox="0 0 16 16">
+												<path d="M1.5 1a.5.5 0 0 0-.5.5v3a.5.5 0 0 1-1 0v-3A1.5 1.5 0 0 1 1.5 0h3a.5.5 0 0 1 0 1zM11 .5a.5.5 0 0 1 .5-.5h3A1.5 1.5 0 0 1 16 1.5v3a.5.5 0 0 1-1 0v-3a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 1-.5-.5M.5 11a.5.5 0 0 1 .5.5v3a.5.5 0 0 0 .5.5h3a.5.5 0 0 1 0 1h-3A1.5 1.5 0 0 1 0 14.5v-3a.5.5 0 0 1 .5-.5m15 0a.5.5 0 0 1 .5.5v3a1.5 1.5 0 0 1-1.5 1.5h-3a.5.5 0 0 1 0-1h3a.5.5 0 0 0 .5-.5v-3a.5.5 0 0 1 .5-.5"/>
+												<path d="M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1zm8-9a3 3 0 1 1-6 0 3 3 0 0 1 6 0"/>
+											</svg>
+										</label>
+									</Button>
+								</>
+							}
+
+							<input type="file" id="profilePictureInput" onChange={ () => { uploadProfilePicture() } } accept=".png, .jpg, .webp, .gif, .jpeg" style={{ display: "none" }} />
 						</div>
 						<div>
 							<span style={{ fontSize: "1.2rem", fontWeight: 800 }}>

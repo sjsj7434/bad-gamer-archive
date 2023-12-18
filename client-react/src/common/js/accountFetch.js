@@ -724,3 +724,28 @@ export const deleteMyIntroduce = async () => {
 		return null;
 	}
 }
+
+/**
+ * 프로필 사진 저장
+ */
+export const uploadProfilePicture = async (fileData) => {
+	const fecthOption = {
+		method: "POST"
+		, body: fileData
+		, headers: {}
+		, credentials: "include", // Don't forget to specify this if you need cookies
+	};
+	const fetchResponse = await fetch(`/account/image`, fecthOption);
+	const [isStatusGood, checkMessage] = isFetchStatusGood(fetchResponse);
+
+	if(isStatusGood === true){
+		const fetchData = await getFetchJson(fetchResponse);
+
+		return fetchData;
+	}
+	else{
+		alert(checkMessage);
+
+		return null;
+	}
+}

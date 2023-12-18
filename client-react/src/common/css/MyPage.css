@@ -4,3 +4,9 @@
 	object-fit: none;
 	border: 1px solid lightgray
 }
+
+.profilePictureNone {
+	width: 5.8rem;
+	height: 5.8rem;
+	object-fit: none;
+}
