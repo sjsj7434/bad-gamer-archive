@@ -3,7 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import Container from 'react-bootstrap/Container';
 import Placeholder from 'react-bootstrap/Placeholder';
 import Button from 'react-bootstrap/Button';
-import UserReply from './KnownReply';
+import KnownReply from './KnownReply';
 import LoadingModal from '../../common/LoadingModal';
 import * as postFetch from '../../../js/postFetch';
 import '../../../css/View.css';
@@ -377,7 +377,7 @@ const KnownPostView = (props) => {
 
 						<hr style={{border: "1px solid #5893ff"}} />
 						
-						<UserReply accountData={props.accountData} postCode={postCode} />
+						<KnownReply accountData={props.accountData} postCode={postCode} />
 					</div>
 				</>
 			);

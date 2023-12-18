@@ -12,14 +12,14 @@ import { Account } from 'src/account/account.entity';
 
 @Entity()
 export class LostArkKnownPost {
-	@OneToMany(() => LostArkKnownReply, (reply) => reply.lostArkKnownPost)
+	@OneToMany(() => LostArkKnownReply, (reply) => reply.post)
 	reply: LostArkKnownReply[];
 
-	@OneToMany(() => LostArkKnownVoteHistory, (lostArkKnownVoteHistory) => lostArkKnownVoteHistory.lostArkKnownPost)
-	lostArkKnownVoteHistory: LostArkKnownVoteHistory[];
+	@OneToMany(() => LostArkKnownVoteHistory, (voteHistory) => voteHistory.post)
+	voteHistory: LostArkKnownVoteHistory[];
 
-	@ManyToOne(() => Account, (account) => account.lostArkKnownPost)
-	@JoinColumn({ name: "writerID", referencedColumnName: "id" })
+	@ManyToOne(() => Account, (account) => account.post)
+	@JoinColumn({ name: "writerUUID", referencedColumnName: "uuid" })
 	account: Account;
 
 	/**

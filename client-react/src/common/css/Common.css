@@ -94,3 +94,10 @@ p {
 	margin-top: 3.0rem;
 	margin-bottom: 3.0rem;
 }
+
+.replyProfilePicture{
+	width: 3.5rem;
+	height: 3.5rem;
+	border: 1px solid lightgray;
+	cursor: pointer;
+}

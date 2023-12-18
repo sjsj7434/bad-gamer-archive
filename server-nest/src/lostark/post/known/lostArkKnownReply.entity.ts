@@ -1,5 +1,6 @@
 import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, DeleteDateColumn, ManyToOne, JoinColumn } from 'typeorm';
 import { LostArkKnownPost } from './lostArkKnownPost.entity';
+import { Account } from 'src/account/account.entity';
 
 // This will create following database table
 // If table is already exsists there could be error
@@ -10,9 +11,13 @@ import { LostArkKnownPost } from './lostArkKnownPost.entity';
 
 @Entity()
 export class LostArkKnownReply {
-	@ManyToOne(() => LostArkKnownPost, (lostArkKnownPost) => lostArkKnownPost.reply)
-	@JoinColumn({ name: "postCode", referencedColumnName: "code" }) //this code reference the boards.code column
-	lostArkKnownPost: LostArkKnownPost;
+	@ManyToOne(() => LostArkKnownPost, (post) => post.reply)
+	@JoinColumn({ name: "postCode", referencedColumnName: "code" }) //this code reference the LostArkKnownPost.code column
+	post: LostArkKnownPost;
+
+	@ManyToOne(() => Account, (account) => account.reply)
+	@JoinColumn({ name: "writerUUID", referencedColumnName: "uuid" }) //this code reference the Account.uuid column
+	account: Account;
 	
 	/**
 	 * 자동으로 생성되는 코드

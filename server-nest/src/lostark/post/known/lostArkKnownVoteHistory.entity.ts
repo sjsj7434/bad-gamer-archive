@@ -6,9 +6,9 @@ import { LostArkKnownPost } from './lostArkKnownPost.entity';
 
 @Entity()
 export class LostArkKnownVoteHistory {
-	@ManyToOne(() => LostArkKnownPost, (lostArkKnownPost) => lostArkKnownPost.lostArkKnownVoteHistory)
+	@ManyToOne(() => LostArkKnownPost, (post) => post.voteHistory)
 	@JoinColumn({ name: "postCode", referencedColumnName: "code" })
-	lostArkKnownPost: LostArkKnownPost;
+	post: LostArkKnownPost;
 
 	/**
 	 * 자동으로 생성되는 코드

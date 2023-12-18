@@ -767,18 +767,19 @@ export class LostArkKnownPostService {
 		const replyblacklist = blackRepliesData.flatMap((element) => (element.code));
 
 		const repliesData = await this.lostArkKnownReplyRepository.findAndCount({
-			skip: (page - 1) * perPage, //시작 인덱스
-			take: perPage, //페이지 당 갯수
+			relations: ["account"],
 			select: {
+				account: { profilePictureURL: true },
 				code: true,
 				parentReplyCode: true,
 				level: true,
+				writerNickname: true,
+				replyOrder: true,
 				content: true,
 				upvote: true,
 				downvote: true,
-				writerNickname: true,
 				createdAt: true,
-				deletedAt: true
+				deletedAt: true,
 			},
 			where: {
 				postCode: Equal(postCode),
@@ -791,6 +792,8 @@ export class LostArkKnownPostService {
 				code: "ASC",
 			},
 			withDeleted: true,
+			skip: (page - 1) * perPage, //시작 인덱스
+			take: perPage, //페이지 당 갯수
 		});
 
 		if (repliesData[1] !== 0) {

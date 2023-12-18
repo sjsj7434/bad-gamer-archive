@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import MyEditor from '../post/MyEditor'
 import MyEditorReload from '../post/MyEditorReload'
 import Form from 'react-bootstrap/Form';
@@ -20,75 +20,77 @@ const EditIntroduce = (props) => {
 
 	const editorMaxKB = 30;
 
-	/**
-	 * 신규 게시글 작성
-	 */
-	const saveEditorData = useCallback(async () => {
-		const editorContet = editorObject.getData();
+	useEffect(() => {
+		/**
+		 * 자기소개 저장
+		 */
+		const saveEditorData = async () => {
+			const editorContet = editorObject.getData();
 
-		if(editorContet === ""){
-			alert("자기소개를 작성해주세요");
-			return;
-		}
-		else if(editorSizeByte >= editorMaxKB){
-			alert("작성된 글의 용량이 너무 큽니다");
-			return;
-		}
-		else if(window.confirm("자기소개를 저장하시겠습니까?") === false){
-			return;
-		}
-
-		setLoadingModalShow(true);
-		setLoadingModalMessage("자기소개를 저장 중입니다...");
-
-		const sendData = {
-			introduce: editorContet,
-		};
-
-		const createResult = await accountFetch.saveMyIntroduce(sendData);
-
-		if(createResult.createdCode === 0){
-			if(createResult.status === "long_title"){
-				alert("제목이 너무 길어 저장할 수 없습니다(최대 100자)");
-				setLoadingModalShow(false);
+			if(editorContet === ""){
+				alert("자기소개를 작성해주세요");
+				return;
 			}
-			else if(createResult.status === "long_content"){
-				alert(`작성된 글의 용량이 너무 커 저장할 수 없습니다(최대 ${editorMaxKB}KB)`);
-				setLoadingModalShow(false);
+			else if(editorSizeByte >= editorMaxKB){
+				alert("작성된 글의 용량이 너무 큽니다");
+				return;
 			}
-			else if(createResult.status === "need_login"){
-				alert("로그인이 필요합니다");
-				setLoadingModalShow(false);
-				navigate("/account/login");
+			else if(window.confirm("자기소개를 저장하시겠습니까?") === false){
+				return;
 			}
-		}
-		else{
-			setEditorMode("read");
-			setLoadingModalShow(false);
-			props.afterUpdate();
-		}
-	}, [editorObject, editorSizeByte, editorMaxKB, navigate])
 
-	const deleteIntroduce = async () => {
-		if(window.confirm("자기소개를 삭제하시겠습니까?") === true){
 			setLoadingModalShow(true);
-			setLoadingModalMessage("자기소개를 삭제 중입니다...");
-			const deleteResult = await accountFetch.deleteMyIntroduce();
+			setLoadingModalMessage("자기소개를 저장 중입니다...");
 
-			if(deleteResult === "true"){
-				alert("자기소개가 삭제 되었습니다");
+			const sendData = {
+				introduce: editorContet,
+			};
+
+			const createResult = await accountFetch.saveMyIntroduce(sendData);
+
+			if(createResult.createdCode === 0){
+				if(createResult.status === "long_title"){
+					alert("제목이 너무 길어 저장할 수 없습니다(최대 100자)");
+					setLoadingModalShow(false);
+				}
+				else if(createResult.status === "long_content"){
+					alert(`작성된 글의 용량이 너무 커 저장할 수 없습니다(최대 ${editorMaxKB}KB)`);
+					setLoadingModalShow(false);
+				}
+				else if(createResult.status === "need_login"){
+					alert("로그인이 필요합니다");
+					setLoadingModalShow(false);
+					navigate("/account/login");
+				}
 			}
 			else{
-				alert("자기소개를 삭제할 수 없습니다");
+				setEditorMode("read");
+				setLoadingModalShow(false);
+				props.afterUpdate();
 			}
-
-			setEditorMode("read");
-			setLoadingModalShow(false);
-			props.afterUpdate();
 		}
-	}
 
-	useEffect(() => {
+		/**
+		 * 자기소개 삭제
+		 */
+		const deleteIntroduce = async () => {
+			if(window.confirm("자기소개를 삭제하시겠습니까?") === true){
+				setLoadingModalShow(true);
+				setLoadingModalMessage("자기소개를 삭제 중입니다...");
+				const deleteResult = await accountFetch.deleteMyIntroduce();
+
+				if(deleteResult === "true"){
+					alert("자기소개가 삭제 되었습니다");
+				}
+				else{
+					alert("자기소개를 삭제할 수 없습니다");
+				}
+
+				setEditorMode("read");
+				setLoadingModalShow(false);
+			}
+		}
+
 		if(editorMode === "write"){
 			setRenderData(
 				<>
@@ -143,7 +145,7 @@ const EditIntroduce = (props) => {
 				</>
 			);
 		}
-	}, [props.status, props.introduce, editorMode, editorObject, editorSizeByte, saveEditorData, navigate])
+	}, [props, editorMode, editorObject, editorSizeByte, navigate])
 	
 	return(
 		<div style={{maxWidth: "1000px"}}>
