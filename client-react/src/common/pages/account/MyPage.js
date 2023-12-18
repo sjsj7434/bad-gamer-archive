@@ -11,6 +11,8 @@ import LoadingModal from '../common/LoadingModal.js';
 import Image from 'react-bootstrap/Image';
 import '../../css/MyPage.css';
 import EditIntroduce from './EditIntroduce.js';
+import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
+import Popover from 'react-bootstrap/Popover';
 
 const MyPage = () => {
 	const [accountData, setAccountData] = useState(null);
@@ -135,12 +137,40 @@ const MyPage = () => {
 				sendData.append("upload", fileData);
 				
 				const uploadResult = await accountsFetch.uploadProfilePicture(sendData);
+				document.querySelector("#profilePictureInput").value = ""; //사진 데이터 초기화
 				console.log(uploadResult);
 				
 				callMyInfo();
 			}
 		}
-		
+
+		//프로필 사진 저장
+		const deleteProfilePicture = async () => {
+			if(window.confirm("프로필 사진을 삭제하시겠습니까?") === true){
+				const deleteResult = await accountsFetch.deleteProfilePicture();
+				console.log(deleteResult);
+				
+				callMyInfo();
+			}
+		}
+
+		const userPopover = (
+			<Popover id={"nicknamePopover"} style={{ minWidth: "80px", fontSize: "0.8rem" }}>
+				<Popover.Body style={{ paddingTop: "10px", paddingBottom: "10px", paddingLeft: "10px", paddingRight: "30px" }}>
+					<div>
+						<div style={{ marginBottom: "10px" }}>
+							<label htmlFor="profilePictureInput" style={{ cursor: "pointer" }}>
+								<span style={{ cursor: "pointer", color: "black" }}>변경</span>
+							</label>
+						</div>
+						<div style={{ }}>
+							<span onClick={() => { deleteProfilePicture() }} style={{ cursor: "pointer", color: "red" }}>삭제</span>
+						</div>
+					</div>
+				</Popover.Body>
+			</Popover>
+		);
+
 		if(accountData !== null){
 			setRenderData(
 				<Container style={{maxWidth: "600px"}}>
@@ -151,15 +181,14 @@ const MyPage = () => {
 							{
 								accountData.profilePictureURL !== null ? 
 								<>
-									<label htmlFor="profilePictureInput" style={{ cursor: "pointer" }}>
-										{/* <Image src="https://th.bing.com/th?id=ORMS.af754456c4a0bbb236c02bf807d2d151&pid=Wdp&w=240&h=129&qlt=90&c=1&rs=1&dpr=1&p=0" roundedCircle className="profilePicture" /> */}
+									<OverlayTrigger trigger="click" placement="right-start" overlay={userPopover} rootClose={true}>
 										<Image src={accountData.profilePictureURL} roundedCircle className="profilePicture" />
-									</label>
+									</OverlayTrigger>
 								</>
 								:
 								<>
 									<Button variant="light" style={{ padding: "0px", margin: "0px", border: "0px" }}>
-										<label htmlFor="profilePictureInput" style={{ cursor: "pointer" }}>
+										<label htmlFor="profilePictureInput">
 											<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="gray" className="bi bi-person-bounding-box profilePictureNone" viewBox="0 0 16 16">
 												<path d="M1.5 1a.5.5 0 0 0-.5.5v3a.5.5 0 0 1-1 0v-3A1.5 1.5 0 0 1 1.5 0h3a.5.5 0 0 1 0 1zM11 .5a.5.5 0 0 1 .5-.5h3A1.5 1.5 0 0 1 16 1.5v3a.5.5 0 0 1-1 0v-3a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 1-.5-.5M.5 11a.5.5 0 0 1 .5.5v3a.5.5 0 0 0 .5.5h3a.5.5 0 0 1 0 1h-3A1.5 1.5 0 0 1 0 14.5v-3a.5.5 0 0 1 .5-.5m15 0a.5.5 0 0 1 .5.5v3a1.5 1.5 0 0 1-1.5 1.5h-3a.5.5 0 0 1 0-1h3a.5.5 0 0 0 .5-.5v-3a.5.5 0 0 1 .5-.5"/>
 												<path d="M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1zm8-9a3 3 0 1 1-6 0 3 3 0 0 1 6 0"/>

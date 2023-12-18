@@ -161,11 +161,17 @@ export class  AccountController {
 		return await this.accountService.deleteMyIntroduce(request, response);
 	}
 
-	//게시글 이미지 삽입
+	//프로필 사진 정보 저장
 	@Post("image")
 	@UseInterceptors(FileInterceptor("upload"))
-	async uploadImage(@Req() request: Request, @Res({ passthrough: true }) response: Response, @UploadedFile() file: Express.Multer.File): Promise<{ url: string } | { error: { message: string } }> {
-		return await this.accountService.uploadImage(request, response, file);
+	async uploadProfilePicture(@Req() request: Request, @Res({ passthrough: true }) response: Response, @UploadedFile() file: Express.Multer.File): Promise<{ url: string } | { error: { message: string } }> {
+		return await this.accountService.uploadProfilePicture(request, response, file);
+	}
+
+	//프로필 사진 정보 삭제
+	@Delete("image")
+	async deleteProfilePicture(@Req() request: Request, @Res({ passthrough: true }) response: Response): Promise<boolean> {
+		return await this.accountService.deleteProfilePicture(request, response);
 	}
 
 	/*

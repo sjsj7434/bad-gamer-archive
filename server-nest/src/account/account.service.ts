@@ -1589,15 +1589,15 @@ export class AccountService {
 	/**
 	 * 프로필 사진 정보 저장
 	 */
-	async uploadImage(request: Request, response: Response, file: Express.Multer.File): Promise<{ url: string } | { error: { message: string } }> {
+	async uploadProfilePicture(request: Request, response: Response, file: Express.Multer.File): Promise<{ url: string } | { error: { message: string } }> {
 		const loginUUID = this.LOGIN_SESSION.get(request.cookies["sessionCode"]); //로그인한 정보
 		// const timeOfNow = new Date();
 		// const timeString = timeOfNow.toLocaleDateString("sv-SE").replace(/-/g, "") + timeOfNow.toLocaleTimeString("sv-SE").replace(/:/g, "");
 		// const randomName = Array(10).fill(null).map(() => (Math.round(Math.random() * 16)).toString(16).substring(0, 1)).join("");
 		file.originalname = Buffer.from(file.originalname, "latin1").toString("utf8"); //한글 파일 이름이 깨져서 인코딩 추가
-		console.log("uploadImage : ", file);
+		console.log("uploadProfilePicture : ", file);
 
-		this.accountRepository.update(
+		await this.accountRepository.update(
 			{
 				uuid: loginUUID
 			},
@@ -1608,5 +1608,28 @@ export class AccountService {
 
 		return { url: "https://img-s-msn-com.akamaized.net/tenant/amp/entityid/AAZrqDW?w=300&h=157&q=60&m=6&f=jpg&u=t" };
 		// return { error: { message: "test error" } };
+	}
+
+	/**
+	 * 프로필 사진 정보 삭제
+	 */
+	async deleteProfilePicture(request: Request, response: Response): Promise<boolean> {
+		const loginUUID = this.LOGIN_SESSION.get(request.cookies["sessionCode"]); //로그인한 정보
+
+		if (loginUUID !== null){
+			await this.accountRepository.update(
+				{
+					uuid: loginUUID
+				},
+				{
+					profilePictureURL: null,
+				}
+			)
+
+			return true;
+		}
+		else{
+			return false;
+		}
 	}
 }

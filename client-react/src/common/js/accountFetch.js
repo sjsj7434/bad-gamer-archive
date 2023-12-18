@@ -749,3 +749,27 @@ export const uploadProfilePicture = async (fileData) => {
 		return null;
 	}
 }
+
+/**
+ * 프로필 사진 삭제
+ */
+export const deleteProfilePicture = async () => {
+	const fecthOption = {
+		method: "DELETE"
+		, headers: {"Content-Type": "application/json",}
+		, credentials: "include", // Don't forget to specify this if you need cookies
+	};
+	const fetchResponse = await fetch(`/account/image`, fecthOption);
+	const [isStatusGood, checkMessage] = isFetchStatusGood(fetchResponse);
+
+	if(isStatusGood === true){
+		const fetchData = await getFetchText(fetchResponse);
+
+		return fetchData;
+	}
+	else{
+		alert(checkMessage);
+
+		return null;
+	}
+}

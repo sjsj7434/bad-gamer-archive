@@ -2,11 +2,13 @@
 	width: 5.8rem;
 	height: 5.8rem;
 	object-fit: none;
-	border: 1px solid lightgray
+	border: 1px solid lightgray;
+	cursor: pointer;
 }
 
 .profilePictureNone {
 	width: 5.8rem;
 	height: 5.8rem;
 	object-fit: none;
+	cursor: pointer;
 }
