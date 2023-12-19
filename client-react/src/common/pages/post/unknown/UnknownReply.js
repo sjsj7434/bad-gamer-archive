@@ -1,8 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
-import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
 import CustomPagination from '../CustomPagination';
 import * as replyFetch from '../../../js/replyFetch';
 
@@ -228,7 +226,7 @@ const UnknownReply = (props) => {
 
 						let replyForm = <></>;
 
-						const styleData = {
+						const replyStyleData = {
 							borderBottom: "1px solid lightgray",
 							marginTop: "8px",
 							paddingBottom: "8px",
@@ -250,7 +248,7 @@ const UnknownReply = (props) => {
 												<Form.Label style={{fontSize: "0.8rem", width: "100%"}}>
 													<div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
 														<strong>답글 작성</strong>
-														<Button onClick={() => {createRecursiveReply(replyData.code, currentPage)}} variant="primary" className="smallButton">저장</Button>
+														<Button onClick={() => {createRecursiveReply(replyData.code, currentPage)}} variant="primary" className="smallButton">등록</Button>
 													</div>
 												</Form.Label>
 
@@ -268,11 +266,12 @@ const UnknownReply = (props) => {
 						}
 						else{
 							//답글, LEVEL = 1
-							styleData["marginLeft"] = "1.3rem";
+							replyStyleData["marginLeft"] = "1.3rem";
+							replyStyleData["backgroundColor"] = "#fff1de";
 						}
 
 						renderElement.push(
-							<div id={`reply_${replyData.code}`} key={`reply_${replyData.code}`} style={styleData}>
+							<div id={`reply_${replyData.code}`} key={`reply_${replyData.code}`} style={replyStyleData}>
 								{replyBody}
 
 								{replyForm}
@@ -363,26 +362,21 @@ const UnknownReply = (props) => {
 			<div>
 				<Form id="replyForm">
 					<Form.Group className="mb-3">
-						<Form.Label>댓글 작성</Form.Label>
+						<Form.Label style={{fontSize: "0.8rem", width: "100%"}}>
+							<div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+								<strong>댓글 작성</strong>
+								<Button id="createReply" onClick={() => {createReply()}} variant="primary" className="smallButton">등록</Button>
+							</div>
+						</Form.Label>
 
-						<Row className="g-2">
-							<Col style={{maxWidth: "70px"}}>
-								<Form.Control id="writer" type="text" autoComplete="off" placeholder="작성자" defaultValue={"익명"} style={{marginBottom: "10px", fontSize: "0.8rem"}} readOnly plaintext />
-							</Col>
-							<Col style={{maxWidth: "230px"}}>
-								<Form.Control id="replyPassword" autoComplete="off" type="password" placeholder="비밀번호" maxLength={20} style={{marginBottom: "10px", fontSize: "0.8rem"}} />
-							</Col>
-						</Row>
+						<div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: "0.2rem", marginBottom: "1rem" }}>
+							<Form.Control id="writer" type="text" autoComplete="off" placeholder="작성자" defaultValue={"익명"} style={{fontSize: "0.8rem", maxWidth: "60px"}} readOnly plaintext />
+							<Form.Control id="replyPassword" autoComplete="off" type="password" placeholder="비밀번호" maxLength={20} style={{fontSize: "0.8rem"}} />
+						</div>
 
-						<Form.Control id="replyData" as="textarea" rows={4} onChange={(event) => {checkReplyLimit(event)}} style={{fontSize: "0.8rem"}} />
+						<Form.Control id="replyData" as="textarea" rows={5} onChange={(event) => {checkReplyLimit(event)}} style={{fontSize: "0.8rem"}} />
 					</Form.Group>
 				</Form>
-
-				<div style={{display: "flex", justifyContent: "flex-end"}}>
-					<Button id="createReply" onClick={() => {createReply()}} variant="outline-primary" style={{width: "30%", maxWidth: "200px", padding: "1px"}}>
-						<span style={{fontSize: "0.8rem"}}>등록</span>
-					</Button>
-				</div>
 
 				<hr/>
 			</div>

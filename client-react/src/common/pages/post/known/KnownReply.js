@@ -235,7 +235,7 @@ const KnownReply = (props) => {
 
 						let replyForm = <></>;
 
-						const styleData = {
+						const replyStyleData = {
 							borderBottom: "1px solid lightgray",
 							marginTop: "8px",
 							paddingBottom: "8px",
@@ -258,7 +258,7 @@ const KnownReply = (props) => {
 													<Form.Label style={{fontSize: "0.8rem", width: "100%"}}>
 														<div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
 															<strong>답글 작성</strong>
-															<Button onClick={() => {createRecursiveReply(replyData.code, currentPage)}} variant="primary" className="smallButton">저장</Button>
+															<Button onClick={() => {createRecursiveReply(replyData.code, currentPage)}} variant="primary" className="smallButton">등록</Button>
 														</div>
 													</Form.Label>
 
@@ -272,11 +272,12 @@ const KnownReply = (props) => {
 						}
 						else{
 							//답글, LEVEL = 1
-							styleData["marginLeft"] = "1.3rem";
+							replyStyleData["marginLeft"] = "1.3rem";
+							replyStyleData["backgroundColor"] = "#fff1de";
 						}
 
 						renderElement.push(
-							<div id={`reply_${replyData.code}`} key={`reply_${replyData.code}`} style={styleData}>
+							<div id={`reply_${replyData.code}`} key={`reply_${replyData.code}`} style={replyStyleData}>
 								{replyBody}
 
 								{replyForm}
@@ -363,7 +364,11 @@ const KnownReply = (props) => {
 				<div>
 					<Form id="replyForm">
 						<Form.Group className="mb-3">
-							<Form.Label>댓글 작성</Form.Label>
+							<Form.Label style={{fontSize: "0.8rem", width: "100%"}}>
+								<div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+									<strong>댓글 작성</strong>
+								</div>
+							</Form.Label>
 
 							<Row className="g-2">
 								<Col>
@@ -371,16 +376,9 @@ const KnownReply = (props) => {
 								</Col>
 							</Row>
 
-							<Form.Control id="replyData" as="textarea" rows={4} style={{fontSize: "0.8rem"}} onChange={(event) => {checkReplyLimit(event)}} disabled />
+							<Form.Control id="replyData" as="textarea" rows={5} style={{fontSize: "0.8rem"}} onChange={(event) => {checkReplyLimit(event)}} disabled />
 						</Form.Group>
 					</Form>
-					
-					<div style={{display: "flex", justifyContent: "flex-end"}}>
-						<Button variant="outline-primary" style={{width: "30%", maxWidth: "200px", padding: "1px"}} disabled>
-							<span style={{fontSize: "0.8rem"}}>등록</span>
-						</Button>
-					</div>
-	
 					<hr/>
 				</div>
 	
@@ -394,24 +392,16 @@ const KnownReply = (props) => {
 				<div>
 					<Form id="replyForm">
 						<Form.Group className="mb-3">
-							<Form.Label>댓글 작성</Form.Label>
+							<Form.Label style={{fontSize: "0.8rem", width: "100%"}}>
+								<div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+									<strong>댓글 작성</strong>
+									<Button id="createReply" onClick={() => {createReply()}} variant="primary" className="smallButton">등록</Button>
+								</div>
+							</Form.Label>
 
-							<Row className="g-2" id="whenWriteNoticeable">
-								<Col>
-									<Form.Control id="writer" type="text" placeholder="작성자" defaultValue={props.accountData.nickname} style={{marginBottom: "10px", fontSize: "0.8rem"}} readOnly plaintext />
-								</Col>
-							</Row>
-
-							<Form.Control id="replyData" as="textarea" rows={4} style={{fontSize: "0.8rem"}} onChange={(event) => {checkReplyLimit(event)}} />
+							<Form.Control id="replyData" as="textarea" rows={5} style={{fontSize: "0.8rem"}} onChange={(event) => {checkReplyLimit(event)}} />
 						</Form.Group>
 					</Form>
-
-					<div style={{display: "flex", justifyContent: "flex-end"}}>
-						<Button id="createReply" onClick={() => {createReply()}} variant="outline-primary" style={{width: "30%", maxWidth: "200px", padding: "1px"}}>
-							<span style={{fontSize: "0.8rem"}}>등록</span>
-						</Button>
-					</div>
-	
 					<hr/>
 				</div>
 	
