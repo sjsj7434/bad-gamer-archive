@@ -85,13 +85,15 @@ const NicknameMenu = (props) => {
 				(props.accountData.nickname === props.targetNickname) === false ?
 				<>
 					<OverlayTrigger trigger="click" placement="right-start" overlay={userPopover} rootClose={true}>
-						<Button variant="link" style={{ fontSize: "0.8rem", padding: "2px" }}>{ props.targetNickname }</Button>
+						<Button variant="link" style={{ fontSize: "0.8rem", padding: "2px" }}>
+							<strong>{props.targetNickname}</strong>
+						</Button>
 					</OverlayTrigger>
 				</>
 				:
 				<>
 					<span style={{fontSize: "0.8rem", color: "black"}}>
-						{ props.targetNickname }
+						<strong>{props.targetNickname}</strong>
 					</span>
 				</>
 			}

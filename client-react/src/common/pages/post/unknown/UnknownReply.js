@@ -1,5 +1,4 @@
 import { useState, useEffect, useCallback } from 'react';
-import Container from 'react-bootstrap/Container';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
@@ -194,106 +193,91 @@ const UnknownReply = (props) => {
 					);
 
 					for (const replyData of replyArray[0]) {
-						if(replyData.level === 0){
-							renderElement.push(
-								<div id={`reply_${replyData.code}`} key={`reply_${replyData.code}`} style={{display: "flex", flexDirection: "column", paddingBottom: "5px", marginBottom: "", borderBottom: "1px solid lightgray"}}>
-									<div style={{display: "flex", justifyContent: "space-between", alignItems: "center"}}>
-										<div>
-											<span style={{fontSize: "0.8rem", color: "gray"}}>익명 ({replyData.ip})</span>
-											&nbsp;
-											<span style={{fontSize: "0.75rem", color: "lightgray"}}>{new Date(replyData.createdAt).toLocaleString("sv-SE")}</span>
-										</div>
-										<div>
-											{
-												replyData.deletedAt === null ?
-												<>
-													<svg onClick={() => {deleteReply(replyData.code, currentPage)}} xmlns="http://www.w3.org/2000/svg" width="1.2rem" height="1.2rem" fill="palevioletred" className="bi bi-x-circle" viewBox="0 0 16 16">
-														<path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
-														<path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
-													</svg>
-												</>
-												:
-												<></>
-											}
-										</div>
+						const replyBody = (
+							<div style={{width: "100%", display: "flex", flexDirection: "column", paddingBottom: "5px", marginBottom: "5px"}}>
+								<div style={{display: "flex", justifyContent: "space-between", alignItems: "center"}}>
+									<div>
+										<span style={{fontSize: "0.8rem", color: "gray"}}>익명 ({replyData.ip})</span>
 									</div>
+									
 
-									<div style={{fontSize: "0.75rem", marginTop: "5px", whiteSpace: "break-spaces", overflowWrap: "anywhere", overflow: "auto", marginRight: "3%"}}>
-										{(replyData.deletedAt === null ? replyData.content : <span style={{color: "palevioletred"}}>{replyData.content}</span>)}
+									<div onClick={() => {deleteReply(replyData.code, currentPage)}} style={{ display: "flex", alignItems: "center",cursor: "pointer" }}>
+										{
+											replyData.deletedAt === null ?
+											<>
+												<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="palevioletred" className="bi bi-x-circle" viewBox="0 0 16 16">
+													<path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+													<path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
+												</svg>
+											</>
+											:
+											<></>
+										}
 									</div>
-
-									<div style={{marginTop: "5px"}}>
-											<Button id={"appendReply"} onClick={() => {appendReply(replyData.code)}} variant="outline-secondary" style={{padding: "1px", width: "15%", maxWidth: "150px", fontSize: "0.7rem"}}>
-												답글
-											</Button>
-										</div>
-
-										<Form id={`replyOfReplyForm_${replyData.code}`} style={{display: "none", marginTop: "5px", borderRadius: "8px", backgroundColor: "#f1f4ff"}}>
-											<div style={{padding: "8px"}}>
-												<Form.Group className="mb-3">
-													<Form.Label style={{fontSize: "0.8rem"}}>
-														<svg xmlns="http://www.w3.org/2000/svg" width="1.0rem" height="1.0rem" fill="currentColor" className="bi bi-arrow-return-right" viewBox="0 0 16 16">
-															<path fillRule="evenodd" d="M1.5 1.5A.5.5 0 0 0 1 2v4.8a2.5 2.5 0 0 0 2.5 2.5h9.793l-3.347 3.346a.5.5 0 0 0 .708.708l4.2-4.2a.5.5 0 0 0 0-.708l-4-4a.5.5 0 0 0-.708.708L13.293 8.3H3.5A1.5 1.5 0 0 1 2 6.8V2a.5.5 0 0 0-.5-.5z"/>
-														</svg>
-														&nbsp;
-														<strong>답글 작성</strong>
-													</Form.Label>
-
-													<Row className="g-2">
-														<Col style={{maxWidth: "70px"}}>
-															<Form.Control name="writer" type="text" placeholder="작성자" defaultValue={"익명"} style={{marginBottom: "10px", fontSize: "0.8rem"}} readOnly plaintext />
-														</Col>
-														<Col style={{maxWidth: "230px"}}>
-															<Form.Control name="password" type="password" autoComplete="off" placeholder="비밀번호" maxLength={20} style={{marginBottom: "10px", fontSize: "0.8rem"}} />
-														</Col>
-													</Row>
-													
-													<Form.Control name="content" as="textarea" rows={3} style={{fontSize: "0.8rem"}} />
-													<Button onClick={() => {createRecursiveReply(replyData.code, currentPage)}} variant="primary" style={{width: "100%", marginTop: "10px", fontSize: "0.8rem"}}>
-														저장
-													</Button>
-												</Form.Group>
-											</div>
-										</Form>
 								</div>
+
+								<div style={{fontSize: "0.75rem", marginTop: "5px", whiteSpace: "break-spaces", overflowWrap: "anywhere", overflow: "auto", marginRight: "3%"}}>
+									{replyData.deletedAt === null ? replyData.content : <span style={{color: "palevioletred"}}>{replyData.content}</span>}
+								</div>
+
+								<p style={{fontSize: "0.75rem", color: "lightgray", marginTop: "0.8rem"}}>
+									{new Date(replyData.createdAt).toLocaleString("sv-SE")}
+								</p>
+							</div>
+						);
+
+						let replyForm = <></>;
+
+						const styleData = {
+							borderBottom: "1px solid lightgray",
+							marginTop: "8px",
+							paddingBottom: "8px",
+						};
+						
+						if(replyData.level === 0){
+							//댓글, LEVEL = 0
+							replyForm = (
+								<>
+									<div style={{marginTop: "5px"}}>
+										<Button id={"appendReply"} onClick={() => {appendReply(replyData.code)}} variant="outline-secondary" className="smallButton">
+											답글
+										</Button>
+									</div>
+
+									<Form id={`replyOfReplyForm_${replyData.code}`} style={{display: "none", marginTop: "5px", borderRadius: "8px", backgroundColor: "#f1f4ff"}}>
+										<div style={{padding: "8px"}}>
+											<Form.Group className="mb-2">
+												<Form.Label style={{fontSize: "0.8rem", width: "100%"}}>
+													<div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+														<strong>답글 작성</strong>
+														<Button onClick={() => {createRecursiveReply(replyData.code, currentPage)}} variant="primary" className="smallButton">저장</Button>
+													</div>
+												</Form.Label>
+
+												<div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: "0.2rem", marginBottom: "1rem" }}>
+													<Form.Control name="writer" type="text" placeholder="작성자" defaultValue={"익명"} style={{fontSize: "0.8rem", maxWidth: "60px"}} readOnly plaintext />
+													<Form.Control name="password" type="password" autoComplete="off" placeholder="비밀번호" maxLength={20} style={{fontSize: "0.8rem"}} />
+												</div>
+												
+												<Form.Control name="content" as="textarea" rows={3} style={{fontSize: "0.8rem"}} onChange={(event) => {checkReplyLimit(event)}} />
+											</Form.Group>
+										</div>
+									</Form>
+								</>
 							);
 						}
 						else{
-							renderElement.push(
-								<div id={`reply_${replyData.code}`} key={`reply_${replyData.code}`} style={{display: "flex", flexDirection: "row", alignItems: "baseline", marginLeft: "1rem", backgroundColor: "#f1f4ff", padding: "2px", paddingRight: "0.4rem", borderBottom: "1px solid lightgray"}}>
-									<svg xmlns="http://www.w3.org/2000/svg" width="1.1rem" height="1.1rem" fill="currentColor" className="bi bi-arrow-return-right" viewBox="0 0 16 16">
-										<path fillRule="evenodd" d="M1.5 1.5A.5.5 0 0 0 1 2v4.8a2.5 2.5 0 0 0 2.5 2.5h9.793l-3.347 3.346a.5.5 0 0 0 .708.708l4.2-4.2a.5.5 0 0 0 0-.708l-4-4a.5.5 0 0 0-.708.708L13.293 8.3H3.5A1.5 1.5 0 0 1 2 6.8V2a.5.5 0 0 0-.5-.5z"/>
-									</svg>
-									
-									<div style={{width: "100%", display: "flex", flexDirection: "column", marginLeft: "8px", paddingBottom: "5px", marginBottom: "5px"}}>
-										<div style={{display: "flex", justifyContent: "space-between", alignItems: "center"}}>
-											<div>
-												<span style={{fontSize: "0.8rem", color: "gray"}}>익명 ({replyData.ip})</span>
-												&nbsp;
-												<span style={{fontSize: "0.75rem", color: "lightgray"}}>{new Date(replyData.createdAt).toLocaleString("sv-SE")}</span>
-											</div>
-											<div>
-												{
-													replyData.deletedAt === null ?
-													<>
-														<svg onClick={() => {deleteReply(replyData.code, currentPage)}} xmlns="http://www.w3.org/2000/svg" width="1.2rem" height="1.2rem" fill="palevioletred" className="bi bi-x-circle" viewBox="0 0 16 16">
-															<path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
-															<path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
-														</svg>
-													</>
-													:
-													<></>
-												}
-											</div>
-										</div>
-
-										<div style={{fontSize: "0.75rem", marginTop: "5px", whiteSpace: "break-spaces", overflowWrap: "anywhere", overflow: "auto", marginRight: "5%"}}>
-											{replyData.deletedAt === null ? replyData.content : <span style={{color: "palevioletred"}}>{replyData.content}</span>}
-										</div>
-									</div>
-								</div>
-							);
+							//답글, LEVEL = 1
+							styleData["marginLeft"] = "1.3rem";
 						}
+
+						renderElement.push(
+							<div id={`reply_${replyData.code}`} key={`reply_${replyData.code}`} style={styleData}>
+								{replyBody}
+
+								{replyForm}
+							</div>
+						);
 					}
 
 					renderElement.push(
@@ -375,7 +359,7 @@ const UnknownReply = (props) => {
 	}, [props.postCode, getReplies])
 
 	return(
-		<Container style={{maxWidth: "1200px"}}>
+		<>
 			<div>
 				<Form id="replyForm">
 					<Form.Group className="mb-3">
@@ -404,7 +388,7 @@ const UnknownReply = (props) => {
 			</div>
 
 			{renderData}
-		</Container>
+		</>
 	);
 }
 

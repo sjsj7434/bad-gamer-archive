@@ -204,7 +204,7 @@ const KnownReply = (props) => {
 									{profilePictureElement}
 								</div>
 								<div style={{ width: "100%" }}>
-									<div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+									<div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.5rem" }}>
 										<NicknameMenu targetNickname={replyData.writerNickname} accountData={props.accountData}/>
 
 										<div onClick={() => {deleteReply(replyData.code, currentPage)}} style={{ display: "flex", alignItems: "center",cursor: "pointer" }}>
@@ -253,17 +253,15 @@ const KnownReply = (props) => {
 										</div>
 
 										<Form id={`replyOfReplyForm_${replyData.code}`} style={{display: "none", marginTop: "5px", borderRadius: "8px", backgroundColor: "#f1f4ff"}}>
-											<div style={{padding: "8px"}}>
-												<Form.Group className="mb-3">
-													<Form.Label style={{fontSize: "0.8rem"}}>
-														<strong>답글 작성</strong>
+											<div style={{padding: "8px", width: "100%"}}>
+												<Form.Group className="mb-2">
+													<Form.Label style={{fontSize: "0.8rem", width: "100%"}}>
+														<div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+															<strong>답글 작성</strong>
+															<Button onClick={() => {createRecursiveReply(replyData.code, currentPage)}} variant="primary" className="smallButton">저장</Button>
+														</div>
 													</Form.Label>
 
-													<div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: "0.2rem", marginBottom: "1rem" }}>
-														<Form.Control name="writer" type="text" placeholder="작성자" defaultValue={props.accountData.nickname} style={{fontSize: "0.8rem"}} readOnly plaintext />
-														<Button onClick={() => {createRecursiveReply(replyData.code, currentPage)}} variant="primary" className="smallButton">저장</Button>
-													</div>
-													
 													<Form.Control name="content" as="textarea" rows={3} style={{fontSize: "0.8rem"}} onChange={(event) => {checkReplyLimit(event)}} />
 												</Form.Group>
 											</div>
