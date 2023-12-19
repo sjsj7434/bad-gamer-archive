@@ -243,11 +243,8 @@ const KnownReply = (props) => {
 
 						if(replyData.level === 0){
 							//댓글, LEVEL = 0
-							replyForm = (
-								props.accountData.nickname === "" ?
-									<></>
-								:
-								<>
+							if(props.accountData.nickname !== ""){
+								replyForm = (
 									<div>
 										<div style={{marginTop: "5px"}}>
 											<Button id={"appendReply"} onClick={() => {appendReply(replyData.code)}} variant="outline-secondary" className="smallButton">
@@ -272,8 +269,8 @@ const KnownReply = (props) => {
 											</div>
 										</Form>
 									</div>
-								</>
-							);
+								);
+							}
 						}
 						else{
 							//답글, LEVEL = 1
