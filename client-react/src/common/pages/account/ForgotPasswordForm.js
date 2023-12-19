@@ -78,8 +78,12 @@ const ForgotPasswordForm = (props) => {
 						</Form.Text>
 					</Form.Group>
 
-					<Button type="submit" variant="success" size="lg" style={{ width: "100%", marginTop: "10px", marginBottom: "200px", fontSize: "1.1rem", fontWeight: 800 }}>메일 보내기</Button>
+					<Button type="submit" variant="success" size="lg" style={{ width: "100%", marginTop: "10px", fontSize: "1.1rem", fontWeight: 800 }}>메일 보내기</Button>
 				</Form>
+
+				<div style={{ display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "center", marginBottom: "200px", marginTop: "15px" }}>
+					<Button onClick={() => { navigate("/account/login"); }} variant="link" style={{ fontSize: "0.75rem", textDecoration: "none", color: "gray" }}>이미 계정이 있으신가요?</Button>
+				</div>
 			</div>
 		</Container>
 	);

@@ -186,115 +186,107 @@ const KnownReply = (props) => {
 					);
 
 					for (const replyData of replyArray[0]) {
+						let profilePictureElement = <>
+							<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-person-fill replyProfilePictureNone" viewBox="0 0 16 16">
+								<path d="M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6"/>
+							</svg>
+						</>;
+
+						if(replyData.account !== null && replyData.account !== undefined){
+							if(replyData.account.profilePictureURL !== null || replyData.account.profilePictureURL !== ""){
+								profilePictureElement = <Image src={replyData.account.profilePictureURL} roundedCircle className="replyProfilePicture" />;
+							}
+						}
+
+						const replyBody = (
+							<div style={{display: "flex", flexDirection: "row"}}>
+								<div style={{ marginRight: "0.4rem" }}>
+									{profilePictureElement}
+								</div>
+								<div style={{ width: "100%" }}>
+									<div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+										<NicknameMenu targetNickname={replyData.writerNickname} accountData={props.accountData}/>
+
+										<div onClick={() => {deleteReply(replyData.code, currentPage)}} style={{ display: "flex", alignItems: "center",cursor: "pointer" }}>
+											{
+												replyData.deletedAt === null && (replyData.writerNickname === props.accountData.nickname) ?
+												<>
+													<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="palevioletred" className="bi bi-x-circle" viewBox="0 0 16 16">
+														<path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+														<path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
+													</svg>
+												</>
+												:
+												<></>
+											}
+										</div>
+									</div>
+
+									<div style={{fontSize: "0.75rem", marginTop: "5px", whiteSpace: "break-spaces", overflowWrap: "anywhere", overflow: "auto", marginRight: "3%"}}>
+										{(replyData.deletedAt === null ? replyData.content : <span style={{color: "palevioletred"}}>{replyData.content}</span>)}
+									</div>
+
+									<p style={{fontSize: "0.75rem", color: "lightgray", marginTop: "0.8rem"}}>
+										{new Date(replyData.createdAt).toLocaleString("sv-SE")}
+									</p>
+								</div>
+							</div>
+						);
+
+						let replyForm = <></>;
+
+						const styleData = {
+							borderBottom: "1px solid lightgray",
+							marginTop: "8px",
+							paddingBottom: "8px",
+						};
+
 						if(replyData.level === 0){
 							//댓글, LEVEL = 0
-							renderElement.push(
-								<div id={`reply_${replyData.code}`} key={`reply_${replyData.code}`} style={{borderBottom: "1px solid lightgray", paddingBottom: "5px", marginTop: "5px"}}>
-									<div style={{display: "flex", flexDirection: "row"}}>
-										<div style={{ marginRight: "0.3rem" }}>
-											<Image src={replyData.account.profilePictureURL} roundedCircle className="replyProfilePicture" />
-										</div>
-										<div style={{ width: "100%" }}>
-											<div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-												<NicknameMenu targetNickname={replyData.writerNickname} accountData={props.accountData}/>
-
-												<div onClick={() => {deleteReply(replyData.code, currentPage)}} style={{ display: "flex", alignItems: "center",cursor: "pointer" }}>
-													{
-														replyData.deletedAt === null && (replyData.writerNickname === props.accountData.nickname) ?
-														<>
-															<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="palevioletred" className="bi bi-x-circle" viewBox="0 0 16 16">
-																<path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
-																<path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
-															</svg>
-														</>
-														:
-														<></>
-													}
-												</div>
-											</div>
-
-											<div style={{fontSize: "0.75rem", marginTop: "5px", whiteSpace: "break-spaces", overflowWrap: "anywhere", overflow: "auto", marginRight: "3%"}}>
-												{(replyData.deletedAt === null ? replyData.content : <span style={{color: "palevioletred"}}>{replyData.content}</span>)}
-											</div>
-
-											<span style={{fontSize: "0.75rem", color: "lightgray"}}>{new Date(replyData.createdAt).toLocaleString("sv-SE")}</span>
-										</div>
-									</div>
-
+							replyForm = (
+								props.accountData.nickname === "" ?
+									<></>
+								:
+								<>
 									<div>
-										{
-											props.accountData.nickname === "" ?
-											<></>
-											:
-											<>
-												<div style={{marginTop: "5px"}}>
-													<Button id={"appendReply"} onClick={() => {appendReply(replyData.code)}} variant="outline-secondary" className="smallButton">
-														답글
-													</Button>
-												</div>
+										<div style={{marginTop: "5px"}}>
+											<Button id={"appendReply"} onClick={() => {appendReply(replyData.code)}} variant="outline-secondary" className="smallButton">
+												답글
+											</Button>
+										</div>
 
-												<Form id={`replyOfReplyForm_${replyData.code}`} style={{display: "none", marginTop: "5px", borderRadius: "8px", backgroundColor: "#f1f4ff"}}>
-													<div style={{padding: "8px"}}>
-														<Form.Group className="mb-3">
-															<Form.Label style={{fontSize: "0.8rem"}}>
-																<strong>답글 작성</strong>
-															</Form.Label>
+										<Form id={`replyOfReplyForm_${replyData.code}`} style={{display: "none", marginTop: "5px", borderRadius: "8px", backgroundColor: "#f1f4ff"}}>
+											<div style={{padding: "8px"}}>
+												<Form.Group className="mb-3">
+													<Form.Label style={{fontSize: "0.8rem"}}>
+														<strong>답글 작성</strong>
+													</Form.Label>
 
-															<Row className="g-2">
-																<Col style={{maxWidth: "70px"}}>
-																	<Form.Control name="writer" type="text" placeholder="작성자" defaultValue={props.accountData.nickname} style={{marginBottom: "10px", fontSize: "0.8rem"}} readOnly plaintext />
-																</Col>
-															</Row>
-															
-															<Form.Control name="content" as="textarea" rows={3} style={{fontSize: "0.8rem"}} onChange={(event) => {checkReplyLimit(event)}} />
-															
-															<Button onClick={() => {createRecursiveReply(replyData.code, currentPage)}} variant="primary" style={{width: "100%", marginTop: "10px", fontSize: "0.8rem"}}>
-																저장
-															</Button>
-														</Form.Group>
+													<div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: "0.2rem", marginBottom: "1rem" }}>
+														<Form.Control name="writer" type="text" placeholder="작성자" defaultValue={props.accountData.nickname} style={{fontSize: "0.8rem"}} readOnly plaintext />
+														<Button onClick={() => {createRecursiveReply(replyData.code, currentPage)}} variant="primary" className="smallButton">저장</Button>
 													</div>
-												</Form>
-											</>
-										}
+													
+													<Form.Control name="content" as="textarea" rows={3} style={{fontSize: "0.8rem"}} onChange={(event) => {checkReplyLimit(event)}} />
+												</Form.Group>
+											</div>
+										</Form>
 									</div>
-								</div>
+								</>
 							);
 						}
 						else{
 							//답글, LEVEL = 1
-							renderElement.push(
-								<div id={`reply_${replyData.code}`} key={`reply_${replyData.code}`} style={{display: "flex", flexDirection: "row", marginLeft: "1.2rem", paddingBottom: "5px", marginTop: "5px", borderBottom: "1px solid lightgray"}}>
-									<div style={{ marginRight: "0.3rem" }}>
-										<Image src={replyData.account.profilePictureURL} roundedCircle className="replyProfilePicture" />
-									</div>
-									<div style={{ width: "100%" }}>
-										<div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-											<NicknameMenu targetNickname={replyData.writerNickname} accountData={props.accountData}/>
-
-											<div onClick={() => {deleteReply(replyData.code, currentPage)}} style={{ display: "flex", alignItems: "center",cursor: "pointer" }}>
-												{
-													replyData.deletedAt === null && (replyData.writerNickname === props.accountData.nickname) ?
-													<>
-														<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="palevioletred" className="bi bi-x-circle" viewBox="0 0 16 16">
-															<path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
-															<path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
-														</svg>
-													</>
-													:
-													<></>
-												}
-											</div>
-										</div>
-
-										<div style={{fontSize: "0.75rem", marginTop: "5px", whiteSpace: "break-spaces", overflowWrap: "anywhere", overflow: "auto", marginRight: "3%"}}>
-											{(replyData.deletedAt === null ? replyData.content : <span style={{color: "palevioletred"}}>{replyData.content}</span>)}
-										</div>
-
-										<span style={{fontSize: "0.75rem", color: "lightgray"}}>{new Date(replyData.createdAt).toLocaleString("sv-SE")}</span>
-									</div>
-								</div>
-							);
+							styleData["marginLeft"] = "1.3rem";
 						}
+
+						renderElement.push(
+							<div id={`reply_${replyData.code}`} key={`reply_${replyData.code}`} style={styleData}>
+								{replyBody}
+
+								{replyForm}
+							</div>
+						);
 					}
 
 					renderElement.push(

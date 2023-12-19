@@ -248,7 +248,7 @@ const RegisterForm = () => {
 							이메일 (Email)
 						</Form.Label>
 						<Col>
-							<Form.Control className={statusParser(emailValid)} id="emailInput" maxLength={20} type="text" placeholder="이메일을 입력해주세요" onChange={() => {isValidEmail()}} autoComplete="off" style={{fontSize: "0.9rem"}} />
+							<Form.Control className={statusParser(emailValid)} id="emailInput" maxLength={20} type="email" placeholder="이메일을 입력해주세요" onChange={() => {isValidEmail()}} autoComplete="off" style={{fontSize: "0.9rem"}} />
 							{/* <Form.Text muted style={{fontSize: "0.72rem"}}>
 								비밀번호를 찾을 때 사용됩니다
 							</Form.Text> */}
@@ -332,13 +332,17 @@ const RegisterForm = () => {
 						</Col>
 					</Form.Group>
 
-					<Button type="submit" variant="success" size="lg" style={{ width: "100%", marginTop: "10px", marginBottom: "200px", fontSize: "1.1rem", fontWeight: 800 }}>가입하기</Button>
+					<Button type="submit" variant="success" size="lg" style={{ width: "100%", marginTop: "10px", fontSize: "1.1rem", fontWeight: 800 }}>가입하기</Button>
 					{/* <span style={{fontSize: "0.75rem"}}>
 						사용자의 비밀번호는 <strong>단방향 암호화</strong> 되어 보관됩니다
 						<br />
 						관리자가 사용자의 비밀번호를 알아낼 수 없습니다
 					</span> */}
 				</Form>
+
+				<div style={{ display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "center", marginBottom: "200px", marginTop: "15px" }}>
+					<Button onClick={() => { navigate("/account/login"); }} variant="link" style={{ fontSize: "0.75rem", textDecoration: "none", color: "gray" }}>이미 계정이 있으신가요?</Button>
+				</div>
 			</div>
 		</Container>
 	);
