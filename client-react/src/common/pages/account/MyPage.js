@@ -60,7 +60,7 @@ const MyPage = () => {
 	// 	await accountsFetch.requestVerifyEmail();
 	// }
 
-	const stringParser = (value) => {
+	const lostarkTextParser = (value) => {
 		let name = "";
 
 		if(value === "lostark_character_level"){
@@ -279,7 +279,7 @@ const MyPage = () => {
 									accountData.authentication.map((element) => (
 										<tr key={element.type}>
 											<th>
-												{stringParser(element.type)}
+												{lostarkTextParser(element.type)}
 											</th>
 											<td>
 												{element.data}
