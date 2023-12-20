@@ -242,6 +242,8 @@ const MyPage = () => {
 						</div>
 					</div>
 
+					<div className="rowDivider"></div>
+
 					<div style={{paddingLeft: "10px", paddingRight: "10px", fontSize: "0.8rem", marginTop: "2rem", marginBottom: "2rem"}}>
 						{/* <Table hover>
 							<colgroup>
@@ -271,8 +273,6 @@ const MyPage = () => {
 							</tbody>
 						</Table> */}
 						
-						<div className="rowDivider"></div>
-						
 						<Table>
 							<tbody>
 								{
@@ -290,7 +290,17 @@ const MyPage = () => {
 								{
 									accountData.authentication.length === 0 ?
 									<tr>
-										<td colSpan="2">인증되지 않음</td>
+										<td colSpan="2" style={{ height: "5rem" }}>
+											<div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+												<p>
+													<strong>인증 정보가 존재하지 않습니다</strong>
+												</p>
+												<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="black" className="bi bi-x-circle" viewBox="0 0 16 16" style={{ width: "4rem", height: "4rem", margin: "1rem" }}>
+													<path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
+													<path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708"/>
+												</svg>
+											</div>
+										</td>
 									</tr>
 									:
 									<tr>
