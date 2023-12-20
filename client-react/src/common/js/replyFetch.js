@@ -76,3 +76,29 @@ export const createReply = async (boardType, sendData) => {
 		return null;
 	}
 }
+
+/**
+ * 댓글 작성
+ */
+export const voteReply = async (boardType, type, sendData) => {
+	const fecthOption = {
+		method: "POST"
+		, body: JSON.stringify(sendData)
+		, headers: {"Content-Type": "application/json",}
+		, credentials: "include", // Don't forget to specify this if you need cookies
+	};
+	const fetchResponse = await fetch(`/post/${boardType}/reply/${type}`, fecthOption);
+	const [isStatusGood, checkMessage] = isFetchStatusGood(fetchResponse);
+
+	if(isStatusGood === true){
+		const fetchData = await getFetchJson(fetchResponse);
+		console.log('voteReply =>', fetchData)
+
+		return fetchData;
+	}
+	else{
+		alert(checkMessage);
+
+		return null;
+	}
+}

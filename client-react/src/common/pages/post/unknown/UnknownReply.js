@@ -229,7 +229,7 @@ const UnknownReply = (props) => {
 						const replyStyleData = {
 							borderBottom: "1px solid lightgray",
 							marginTop: "8px",
-							paddingBottom: "8px",
+							padding: "8px",
 						};
 						
 						if(replyData.level === 0){
@@ -245,12 +245,10 @@ const UnknownReply = (props) => {
 									<Form id={`replyOfReplyForm_${replyData.code}`} style={{display: "none", marginTop: "5px", borderRadius: "8px", backgroundColor: "#f1f4ff"}}>
 										<div style={{padding: "8px"}}>
 											<Form.Group className="mb-2">
-												<Form.Label style={{fontSize: "0.8rem", width: "100%"}}>
-													<div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-														<strong>답글 작성</strong>
-														<Button onClick={() => {createRecursiveReply(replyData.code, currentPage)}} variant="primary" className="smallButton">등록</Button>
-													</div>
-												</Form.Label>
+												<div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", fontSize: "0.8rem", marginBottom: "12px" }}>
+													<strong>답글 작성</strong>
+													<Button onClick={() => {createRecursiveReply(replyData.code, currentPage)}} variant="primary" className="smallButton">등록</Button>
+												</div>
 
 												<div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: "0.2rem", marginBottom: "1rem" }}>
 													<Form.Control name="writer" type="text" placeholder="작성자" defaultValue={"익명"} style={{fontSize: "0.8rem", maxWidth: "60px"}} readOnly plaintext />
@@ -267,7 +265,7 @@ const UnknownReply = (props) => {
 						else{
 							//답글, LEVEL = 1
 							replyStyleData["marginLeft"] = "1.3rem";
-							replyStyleData["backgroundColor"] = "#fff1de";
+							// replyStyleData["backgroundColor"] = "#fff1de";
 						}
 
 						renderElement.push(
@@ -362,12 +360,10 @@ const UnknownReply = (props) => {
 			<div>
 				<Form id="replyForm">
 					<Form.Group className="mb-3">
-						<Form.Label style={{fontSize: "0.8rem", width: "100%"}}>
-							<div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-								<strong>댓글 작성</strong>
-								<Button id="createReply" onClick={() => {createReply()}} variant="primary" className="smallButton">등록</Button>
-							</div>
-						</Form.Label>
+						<div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", fontSize: "0.8rem", marginBottom: "12px" }}>
+							<strong>댓글 작성</strong>
+							<Button id="createReply" onClick={() => {createReply()}} variant="primary" className="smallButton">등록</Button>
+						</div>
 
 						<div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: "0.2rem", marginBottom: "1rem" }}>
 							<Form.Control id="writer" type="text" autoComplete="off" placeholder="작성자" defaultValue={"익명"} style={{fontSize: "0.8rem", maxWidth: "60px"}} readOnly plaintext />

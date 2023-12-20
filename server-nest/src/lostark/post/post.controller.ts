@@ -221,9 +221,25 @@ export class PostController {
 	}
 
 	//유저 게시글 댓글 삭제
+	@SkipThrottle({ default: false })
+	@Throttle({ default: { limit: 20, ttl: 60000 } }) //1분에 20개 이상 금지
 	@Delete("known/reply")
 	async deleteKnownReply(@Req() request: Request, @Res({ passthrough: true }) response: Response, @Body() deleteReplyDTO: DeleteLostArkKnownReplyDTO): Promise<boolean> {
 		return await this.lostArkKnownPostService.deleteReply(request, response, deleteReplyDTO);
+	}
+
+	//유저 댓글 추천
+	@SkipThrottle({ default: false })
+	@Throttle({ default: { limit: 20, ttl: 60000 } }) //1분에 20개 이상 금지
+	@Post("known/reply/upvote")
+	async upvoteKnownReply(@Req() request: Request, @Res({ passthrough: true }) response: Response, @Body() sendData: { replyCode: number }): Promise<{ upvote: number, downvote: number, isVotable: boolean }> {
+		return await this.lostArkKnownPostService.upvoteKnownReply(request, response, sendData.replyCode);
+	}
+
+	//유저 댓글 비추천
+	@Post("known/reply/downvote")
+	async downvoteKnownReply(@Req() request: Request, @Res({ passthrough: true }) response: Response, @Body() sendData: { replyCode: number }): Promise<{ upvote: number, downvote: number, isVotable: boolean }> {
+		return await this.lostArkKnownPostService.downvoteKnownReply(request, response, sendData.replyCode);
 	}
 
 	//유저 게시글 추천 트랜드 게시글 목록, page 값이 number가 아니면 호출되지 않음

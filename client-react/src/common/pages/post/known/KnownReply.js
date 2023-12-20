@@ -9,42 +9,9 @@ import NicknameMenu from './NicknameMenu';
 import Image from 'react-bootstrap/Image';
 
 const KnownReply = (props) => {
-	// const [upvoteCount, setUpvoteCount] = useState(0);
-	// const [downvoteCount, setDownvoteCount] = useState(0);
 	const [renderData, setRenderData] = useState(<></>);
 	const REPlY_MAX_LENG = 300; //댓글 글자 수 제한
 	const REPlY_MAX_ROW = 10; //댓글 줄 수 제한
-
-	/**
-	 * 게시글 upvote & downvote
-	 */
-	// const voteReply = useCallback(async (type) => {
-	// 	const upvoteReply = document.querySelector("#upvoteReply");
-	// 	const downvoteReply = document.querySelector("#downvoteReply");
-	// 	upvoteReply.disabled = true;
-	// 	downvoteReply.disabled = true;
-
-	// 	if(props.postCode !== null){
-	// 		const fecthOption = {
-	// 			method: "POST"
-	// 			, headers: {"Content-Type": "application/json",}
-	// 			, credentials: "include", // Don't forget to specify this if you need cookies
-	// 		};
-	// 		const jsonString = await fetch(`${process.env.REACT_APP_SERVER}/boards/reply/${type}/${props.postCode}`, fecthOption);
-	// 		const jsonData = await parseStringToJson(jsonString);
-
-	// 		if(jsonData === null){
-	// 			alert("오늘은 이미 해당 게시물에 추천, 비추천을 하였습니다");
-	// 		}
-	// 		else{
-	// 			// setUpvoteCount(jsonData.upvote);
-	// 			// setDownvoteCount(jsonData.downvote);
-	// 		}
-			
-	// 		upvoteReply.disabled = false;
-	// 		downvoteReply.disabled = false;
-	// 	}
-	// }, [props.postCode])
 
 	/**
 	 * 댓글 가져오기
@@ -165,6 +132,36 @@ const KnownReply = (props) => {
 			}
 		}
 
+		/**
+		 * 댓글 upvote & downvote
+		 */
+		const voteReply = async (type, replyCode) => {
+			const upvoteButton = document.querySelector(`#upvoteButton${replyCode}`);
+			const downvoteButton = document.querySelector(`#downvoteButton${replyCode}`);
+			const upvoteCount = document.querySelector(`#upvoteCount${replyCode}`);
+			const downvoteCount = document.querySelector(`#downvoteCount${replyCode}`);
+
+			upvoteButton.disabled = true;
+			downvoteButton.disabled = true;
+
+			const sendData = {
+				replyCode: replyCode,
+			};
+
+			const voteResult = await replyFetch.voteReply("known", type, sendData);
+
+			upvoteButton.disabled = false;
+			downvoteButton.disabled = false;
+
+			if(voteResult.isVotable === false){
+				alert("오늘은 이미 해당 게시물에 추천, 비추천을 하였습니다");
+			}
+			else{
+				upvoteCount.innerHTML = voteResult.upvote;
+				downvoteCount.innerHTML = voteResult.downvote;
+			}
+		}
+
 		if(props.postCode !== null){
 			const replyArray = await replyFetch.getReplies("known", props.postCode, currentPage);
 
@@ -198,6 +195,20 @@ const KnownReply = (props) => {
 							}
 						}
 
+						let isDeleted = false;
+						let deleteButton = <></>;
+						if(replyData.deletedAt === null && (replyData.writerNickname === props.accountData.nickname)){
+							isDeleted = true;
+							deleteButton = (
+								<div onClick={() => {deleteReply(replyData.code, currentPage)}} style={{ display: "flex", alignItems: "center",cursor: "pointer" }}>
+									<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="palevioletred" className="bi bi-x-circle" viewBox="0 0 16 16">
+										<path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+										<path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
+									</svg>
+								</div>
+							);
+						}
+
 						const replyBody = (
 							<div style={{display: "flex", flexDirection: "row"}}>
 								<div style={{ marginRight: "0.4rem" }}>
@@ -206,20 +217,7 @@ const KnownReply = (props) => {
 								<div style={{ width: "100%" }}>
 									<div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.5rem" }}>
 										<NicknameMenu targetNickname={replyData.writerNickname} accountData={props.accountData}/>
-
-										<div onClick={() => {deleteReply(replyData.code, currentPage)}} style={{ display: "flex", alignItems: "center",cursor: "pointer" }}>
-											{
-												replyData.deletedAt === null && (replyData.writerNickname === props.accountData.nickname) ?
-												<>
-													<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="palevioletred" className="bi bi-x-circle" viewBox="0 0 16 16">
-														<path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
-														<path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
-													</svg>
-												</>
-												:
-												<></>
-											}
-										</div>
+										{deleteButton}
 									</div>
 
 									<div style={{fontSize: "0.75rem", marginTop: "5px", whiteSpace: "break-spaces", overflowWrap: "anywhere", overflow: "auto", marginRight: "3%"}}>
@@ -233,52 +231,76 @@ const KnownReply = (props) => {
 							</div>
 						);
 
+						const replyVote = (
+							<div style={{ display: "flex", justifyContent: "flex-end" }}>
+								<Button id={`upvoteButton${replyData.code}`} onClick={() => {voteReply("upvote", replyData.code)}} variant="outline-success" className="smallButton" style={{ minWidth: "80px", maxWidth: "80px" }} disabled={!isDeleted}>
+									<div style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
+										<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-hand-thumbs-up-fill" viewBox="0 0 16 16">
+											<path d="M6.956 1.745C7.021.81 7.908.087 8.864.325l.261.066c.463.116.874.456 1.012.965.22.816.533 2.511.062 4.51a9.84 9.84 0 0 1 .443-.051c.713-.065 1.669-.072 2.516.21.518.173.994.681 1.2 1.273.184.532.16 1.162-.234 1.733.058.119.103.242.138.363.077.27.113.567.113.856 0 .289-.036.586-.113.856-.039.135-.09.273-.16.404.169.387.107.819-.003 1.148a3.163 3.163 0 0 1-.488.901c.054.152.076.312.076.465 0 .305-.089.625-.253.912C13.1 15.522 12.437 16 11.5 16H8c-.605 0-1.07-.081-1.466-.218a4.82 4.82 0 0 1-.97-.484l-.048-.03c-.504-.307-.999-.609-2.068-.722C2.682 14.464 2 13.846 2 13V9c0-.85.685-1.432 1.357-1.615.849-.232 1.574-.787 2.132-1.41.56-.627.914-1.28 1.039-1.639.199-.575.356-1.539.428-2.59z"/>
+										</svg>
+										<span id={`upvoteCount${replyData.code}`} style={{ marginLeft: "4px" }}>{replyData.upvote}</span>
+									</div>
+								</Button>
+								&nbsp;
+								<Button id={`downvoteButton${replyData.code}`} onClick={() => {voteReply("downvote", replyData.code)}} variant="outline-danger" className="smallButton" style={{ minWidth: "80px", maxWidth: "80px" }} disabled={!isDeleted}>
+									<div style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
+										<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-hand-thumbs-down-fill" viewBox="0 0 16 16">
+											<path d="M6.956 14.534c.065.936.952 1.659 1.908 1.42l.261-.065a1.378 1.378 0 0 0 1.012-.965c.22-.816.533-2.512.062-4.51.136.02.285.037.443.051.713.065 1.669.071 2.516-.211.518-.173.994-.68 1.2-1.272a1.896 1.896 0 0 0-.234-1.734c.058-.118.103-.242.138-.362.077-.27.113-.568.113-.856 0-.29-.036-.586-.113-.857a2.094 2.094 0 0 0-.16-.403c.169-.387.107-.82-.003-1.149a3.162 3.162 0 0 0-.488-.9c.054-.153.076-.313.076-.465a1.86 1.86 0 0 0-.253-.912C13.1.757 12.437.28 11.5.28H8c-.605 0-1.07.08-1.466.217a4.823 4.823 0 0 0-.97.485l-.048.029c-.504.308-.999.61-2.068.723C2.682 1.815 2 2.434 2 3.279v4c0 .851.685 1.433 1.357 1.616.849.232 1.574.787 2.132 1.41.56.626.914 1.28 1.039 1.638.199.575.356 1.54.428 2.591z"/>
+										</svg>
+										<span id={`downvoteCount${replyData.code}`} style={{ marginLeft: "4px" }}>{replyData.downvote}</span>
+									</div>
+								</Button>
+							</div>
+						);
+
+						let replyButtons = <></>;
 						let replyForm = <></>;
 
 						const replyStyleData = {
 							borderBottom: "1px solid lightgray",
 							marginTop: "8px",
-							paddingBottom: "8px",
+							padding: "8px",
 						};
 
 						if(replyData.level === 0){
 							//댓글, LEVEL = 0
+							replyButtons = (
+								<div style={{ display: "flex", justifyContent: "space-between", marginTop: "8px" }}>
+									<Button onClick={() => {appendReply(replyData.code)}} variant="outline-secondary" className="smallButton">답글</Button>
+									{replyVote}
+								</div>
+							);
+
 							if(props.accountData.nickname !== ""){
 								replyForm = (
-									<div>
-										<div style={{marginTop: "5px"}}>
-											<Button id={"appendReply"} onClick={() => {appendReply(replyData.code)}} variant="outline-secondary" className="smallButton">
-												답글
-											</Button>
+									<Form id={`replyOfReplyForm_${replyData.code}`} style={{display: "none", marginTop: "5px", borderRadius: "8px", backgroundColor: "#f1f4ff"}}>
+										<div style={{padding: "8px", width: "100%"}}>
+											<Form.Group className="mb-2">
+												<div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", fontSize: "0.8rem", marginBottom: "12px" }}>
+													<strong>답글 작성</strong>
+													<Button onClick={() => {createRecursiveReply(replyData.code, currentPage)}} variant="primary" className="smallButton">등록</Button>
+												</div>
+
+												<Form.Control name="content" as="textarea" rows={3} style={{fontSize: "0.8rem"}} onChange={(event) => {checkReplyLimit(event)}} />
+											</Form.Group>
 										</div>
-
-										<Form id={`replyOfReplyForm_${replyData.code}`} style={{display: "none", marginTop: "5px", borderRadius: "8px", backgroundColor: "#f1f4ff"}}>
-											<div style={{padding: "8px", width: "100%"}}>
-												<Form.Group className="mb-2">
-													<Form.Label style={{fontSize: "0.8rem", width: "100%"}}>
-														<div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-															<strong>답글 작성</strong>
-															<Button onClick={() => {createRecursiveReply(replyData.code, currentPage)}} variant="primary" className="smallButton">등록</Button>
-														</div>
-													</Form.Label>
-
-													<Form.Control name="content" as="textarea" rows={3} style={{fontSize: "0.8rem"}} onChange={(event) => {checkReplyLimit(event)}} />
-												</Form.Group>
-											</div>
-										</Form>
-									</div>
+									</Form>
 								);
 							}
 						}
 						else{
 							//답글, LEVEL = 1
 							replyStyleData["marginLeft"] = "1.3rem";
-							replyStyleData["backgroundColor"] = "#fff1de";
+							// replyStyleData["backgroundColor"] = "#fff1de";
+
+							replyButtons = replyVote;
 						}
 
 						renderElement.push(
 							<div id={`reply_${replyData.code}`} key={`reply_${replyData.code}`} style={replyStyleData}>
 								{replyBody}
+
+								{replyButtons}
 
 								{replyForm}
 							</div>
@@ -364,11 +386,9 @@ const KnownReply = (props) => {
 				<div>
 					<Form id="replyForm">
 						<Form.Group className="mb-3">
-							<Form.Label style={{fontSize: "0.8rem", width: "100%"}}>
-								<div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-									<strong>댓글 작성</strong>
-								</div>
-							</Form.Label>
+							<div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", fontSize: "0.8rem", marginBottom: "12px" }}>
+								<strong>댓글 작성</strong>
+							</div>
 
 							<Row className="g-2">
 								<Col>
@@ -392,12 +412,10 @@ const KnownReply = (props) => {
 				<div>
 					<Form id="replyForm">
 						<Form.Group className="mb-3">
-							<Form.Label style={{fontSize: "0.8rem", width: "100%"}}>
-								<div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-									<strong>댓글 작성</strong>
-									<Button id="createReply" onClick={() => {createReply()}} variant="primary" className="smallButton">등록</Button>
-								</div>
-							</Form.Label>
+							<div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", fontSize: "0.8rem", marginBottom: "12px" }}>
+								<strong>댓글 작성</strong>
+								<Button id="createReply" onClick={() => {createReply()}} variant="primary" className="smallButton">등록</Button>
+							</div>
 
 							<Form.Control id="replyData" as="textarea" rows={5} style={{fontSize: "0.8rem"}} onChange={(event) => {checkReplyLimit(event)}} />
 						</Form.Group>

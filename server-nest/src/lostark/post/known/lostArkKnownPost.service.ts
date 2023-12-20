@@ -905,6 +905,70 @@ export class LostArkKnownPostService {
 	}
 
 	/**
+	 * 유저 댓글 추천
+	 */
+	async upvoteKnownReply(request: Request, response: Response, replyCode: number): Promise<{ upvote: number, downvote: number, isVotable: boolean }> {
+		const loginCookie = await this.accountService.checkLoginStatus(request, response);
+		const loginUUID = await this.accountService.getMyUUID(request);
+
+		if (loginCookie.status !== "login") {
+			return { upvote: 0, downvote: 0, isVotable: false };
+		}
+
+		await this.lostArkKnownReplyRepository.increment({ code: Equal(replyCode) }, "upvote", 1);
+		
+		const updatedReply = await this.lostArkKnownReplyRepository.findOne({
+			select: {
+				upvote: true,
+				downvote: true,
+			},
+			where: {
+				code: Equal(replyCode),
+			},
+			withDeleted: true,
+		});
+
+		if (updatedReply === null) {
+			return { upvote: 0, downvote: 0, isVotable: false };
+		}
+		else {
+			return { upvote: updatedReply.upvote, downvote: updatedReply.downvote, isVotable: true };
+		}
+	}
+
+	/**
+	 * 유저 댓글 비추천
+	 */
+	async downvoteKnownReply(request: Request, response: Response, replyCode: number): Promise<{ upvote: number, downvote: number, isVotable: boolean }> {
+		const loginCookie = await this.accountService.checkLoginStatus(request, response);
+		const loginUUID = await this.accountService.getMyUUID(request);
+
+		if (loginCookie.status !== "login") {
+			return { upvote: 0, downvote: 0, isVotable: false };
+		}
+
+		await this.lostArkKnownReplyRepository.increment({ code: Equal(replyCode) }, "downvote", 1);
+
+		const updatedReply = await this.lostArkKnownReplyRepository.findOne({
+			select: {
+				upvote: true,
+				downvote: true,
+			},
+			where: {
+				code: Equal(replyCode),
+			},
+			withDeleted: true,
+		});
+
+		if (updatedReply === null){
+			return { upvote: 0, downvote: 0, isVotable: false };
+		}
+		else{
+			return { upvote: updatedReply.upvote, downvote: updatedReply.downvote, isVotable: true };
+		}
+	}
+
+	/**
 	 * 게시판 글 이미지 삽입
 	 */
 	async uploadImage(file: Express.Multer.File): Promise<{ url: string } | { error: { message: string } }> {
