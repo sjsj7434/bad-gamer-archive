@@ -1,13 +1,13 @@
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from 'react';
 import MyEditor from '../post/MyEditor'
-import MyEditorReload from '../post/MyEditorReload'
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import ProgressBar from 'react-bootstrap/ProgressBar';
 import LoadingModal from '../../../common/pages/common/LoadingModal';
 import * as accountFetch from '../../js/accountFetch';
 import '../../css/View.css';
+import ForceReRender from "../common/ForceReRender";
 
 const EditIntroduce = (props) => {
 	const [editorMode, setEditorMode] = useState("read");
@@ -134,13 +134,15 @@ const EditIntroduce = (props) => {
 					</div>
 		
 					<div style={{ maxHeight: "300px", overflow: "auto", border: "1px solid lightgray", borderRadius: "6px" }}>
-						<MyEditorReload
-							editorMode={"read"}
-							savedData={props.introduce}
-							editorMaxKB={100}
-							setEditor={ () => {} }
-							setEditorSizeByte={ () => {} }
-						/>
+						<ForceReRender reRenderData={
+							<MyEditor
+								editorMode={"read"}
+								savedData={props.introduce}
+								editorMaxKB={editorMaxKB}
+								setEditor={(editor) => {setEditorObject(editor)}}
+								setEditorSizeByte={(size) => {setEditorSizeByte(size)}}
+							/>
+						} />
 					</div>
 				</>
 			);
