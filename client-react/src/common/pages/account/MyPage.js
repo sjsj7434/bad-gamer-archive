@@ -131,6 +131,9 @@ const MyPage = () => {
 
 		//프로필 사진 저장
 		const uploadProfilePicture = async () => {
+			setIsLoading(true);
+			setLoadingMessage("사진을 등록하는 중입니다...");
+
 			const fileData = document.querySelector("#profilePictureInput").files[0];
 			if(fileData !== null && fileData !== undefined){
 				const sendData = new FormData();
@@ -144,12 +147,15 @@ const MyPage = () => {
 			}
 		}
 
-		//프로필 사진 저장
+		//프로필 사진 삭제
 		const deleteProfilePicture = async () => {
 			if(window.confirm("프로필 사진을 삭제하시겠습니까?") === true){
+				setIsLoading(true);
+				setLoadingMessage("프로필 사진을 삭제하는 중입니다...");
+
 				const deleteResult = await accountsFetch.deleteProfilePicture();
 				console.log(deleteResult);
-				
+
 				callMyInfo();
 			}
 		}
