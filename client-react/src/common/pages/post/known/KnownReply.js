@@ -154,7 +154,7 @@ const KnownReply = (props) => {
 			downvoteButton.disabled = false;
 
 			if(voteResult.isVotable === false){
-				alert("오늘은 이미 해당 게시물에 추천, 비추천을 하였습니다");
+				alert("이미 해당 게시물에 추천, 비추천을 하였습니다");
 			}
 			else{
 				upvoteCount.innerHTML = voteResult.upvote;

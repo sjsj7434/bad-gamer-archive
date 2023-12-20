@@ -5,7 +5,7 @@ import { LostArkKnownPost } from './lostArkKnownPost.entity';
 // If table is already exsists there could be error
 
 @Entity()
-export class LostArkKnownVoteHistory {
+export class LostArkKnownPostVoteHistory {
 	@ManyToOne(() => LostArkKnownPost, (post) => post.voteHistory)
 	@JoinColumn({ name: "postCode", referencedColumnName: "code" })
 	post: LostArkKnownPost;

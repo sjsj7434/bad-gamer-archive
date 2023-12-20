@@ -1,6 +1,6 @@
 import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, DeleteDateColumn, OneToMany, ManyToOne, JoinColumn } from 'typeorm';
 import { LostArkKnownReply } from './lostArkKnownReply.entity';
-import { LostArkKnownVoteHistory } from './lostArkKnownVoteHistory.entity';
+import { LostArkKnownPostVoteHistory } from './lostArkKnownPostVoteHistory.entity';
 import { Account } from 'src/account/account.entity';
 
 // This will create following database table
@@ -15,8 +15,8 @@ export class LostArkKnownPost {
 	@OneToMany(() => LostArkKnownReply, (reply) => reply.post)
 	reply: LostArkKnownReply[];
 
-	@OneToMany(() => LostArkKnownVoteHistory, (voteHistory) => voteHistory.post)
-	voteHistory: LostArkKnownVoteHistory[];
+	@OneToMany(() => LostArkKnownPostVoteHistory, (voteHistory) => voteHistory.post)
+	voteHistory: LostArkKnownPostVoteHistory[];
 
 	@ManyToOne(() => Account, (account) => account.post)
 	@JoinColumn({ name: "writerUUID", referencedColumnName: "uuid" })

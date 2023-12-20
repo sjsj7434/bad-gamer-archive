@@ -13,7 +13,7 @@ import { LostArkKnownReply } from './known/lostArkKnownReply.entity';
 import { CreateLostArkKnownPostDTO, DeleteLostArkKnownPostDTO, UpdateLostArkKnownPostDTO } from './known/lostArkKnownPost.dto';
 import { LostarkAnnouncePostService } from './announce/lostarkAnnouncePost.service';
 import { CreateLostArkKnownReplyDTO, DeleteLostArkKnownReplyDTO } from './known/lostArkKnownReply.dto';
-import { LostArkKnownVoteHistory } from './known/lostArkKnownVoteHistory.entity';
+import { LostArkKnownPostVoteHistory } from './known/lostArkKnownPostVoteHistory.entity';
 import { LostarkAnnouncePost } from './announce/lostarkAnnouncePost.entity';
 
 /**
@@ -194,7 +194,7 @@ export class PostController {
 	@SkipThrottle({ default: false })
 	@Throttle({ default: { limit: 20, ttl: 60000 } }) //1분에 20개 이상 금지
 	@Get("known/upvote/list/:postCode")
-	async getKnownPostUpvoteList(@Req() request: Request, @Res({ passthrough: true }) response: Response, @Param("postCode") postCode: number): Promise<LostArkKnownVoteHistory[]> {
+	async getKnownPostUpvoteList(@Req() request: Request, @Res({ passthrough: true }) response: Response, @Param("postCode") postCode: number): Promise<LostArkKnownPostVoteHistory[]> {
 		return await this.lostArkKnownPostService.getPostUpvoteList(request, response, postCode);
 	}
 
@@ -202,7 +202,7 @@ export class PostController {
 	@SkipThrottle({ default: false })
 	@Throttle({ default: { limit: 20, ttl: 60000 } }) //1분에 20개 이상 금지
 	@Get("known/downvote/list/:postCode")
-	async getKnownPostDownvoteList(@Req() request: Request, @Res({ passthrough: true }) response: Response, @Param("postCode") postCode: number): Promise<LostArkKnownVoteHistory[]> {
+	async getKnownPostDownvoteList(@Req() request: Request, @Res({ passthrough: true }) response: Response, @Param("postCode") postCode: number): Promise<LostArkKnownPostVoteHistory[]> {
 		return await this.lostArkKnownPostService.getPostDownvoteList(request, response, postCode);
 	}
 
@@ -232,14 +232,14 @@ export class PostController {
 	@SkipThrottle({ default: false })
 	@Throttle({ default: { limit: 20, ttl: 60000 } }) //1분에 20개 이상 금지
 	@Post("known/reply/upvote")
-	async upvoteKnownReply(@Req() request: Request, @Res({ passthrough: true }) response: Response, @Body() sendData: { replyCode: number }): Promise<{ upvote: number, downvote: number, isVotable: boolean }> {
-		return await this.lostArkKnownPostService.upvoteKnownReply(request, response, sendData.replyCode);
+	async upvoteKnownReply(@Req() request: Request, @Res({ passthrough: true }) response: Response, @Body() sendData: { replyCode: number }, @Ip() ipData: string): Promise<{ upvote: number, downvote: number, isVotable: boolean }> {
+		return await this.lostArkKnownPostService.upvoteKnownReply(request, response, sendData.replyCode, ipData);
 	}
 
 	//유저 댓글 비추천
 	@Post("known/reply/downvote")
-	async downvoteKnownReply(@Req() request: Request, @Res({ passthrough: true }) response: Response, @Body() sendData: { replyCode: number }): Promise<{ upvote: number, downvote: number, isVotable: boolean }> {
-		return await this.lostArkKnownPostService.downvoteKnownReply(request, response, sendData.replyCode);
+	async downvoteKnownReply(@Req() request: Request, @Res({ passthrough: true }) response: Response, @Body() sendData: { replyCode: number }, @Ip() ipData: string): Promise<{ upvote: number, downvote: number, isVotable: boolean }> {
+		return await this.lostArkKnownPostService.downvoteKnownReply(request, response, sendData.replyCode, ipData);
 	}
 
 	//유저 게시글 추천 트랜드 게시글 목록, page 값이 number가 아니면 호출되지 않음

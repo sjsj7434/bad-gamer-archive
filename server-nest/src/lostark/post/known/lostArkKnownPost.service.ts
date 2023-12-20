@@ -6,16 +6,18 @@ import { Request, Response } from 'express';
 import { ErrorLogService } from 'src/log/error.log.service';
 import { LostArkKnownPost } from './lostArkKnownPost.entity';
 import { LostArkKnownReply } from './lostArkKnownReply.entity';
-import { LostArkKnownVoteHistory } from './lostArkKnownVoteHistory.entity';
+import { LostArkKnownPostVoteHistory } from './lostArkKnownPostVoteHistory.entity';
 import { CreateLostArkKnownPostDTO, DeleteLostArkKnownPostDTO, UpdateLostArkKnownPostDTO } from './lostArkKnownPost.dto';
 import { CreateLostArkKnownReplyDTO, DeleteLostArkKnownReplyDTO } from './lostArkKnownReply.dto';
+import { LostArkKnownReplyVoteHistory } from './lostArkKnownReplyVoteHistory.entity';
 
 @Injectable()
 export class LostArkKnownPostService {
 	constructor(
 		@InjectRepository(LostArkKnownPost) private lostArkKnownPostRepository: Repository<LostArkKnownPost>,
 		@InjectRepository(LostArkKnownReply) private lostArkKnownReplyRepository: Repository<LostArkKnownReply>,
-		@InjectRepository(LostArkKnownVoteHistory) private lostArkKnownVoteHistoryRepository: Repository<LostArkKnownVoteHistory>,
+		@InjectRepository(LostArkKnownPostVoteHistory) private lostArkKnownPostVoteHistoryRepository: Repository<LostArkKnownPostVoteHistory>,
+		@InjectRepository(LostArkKnownReplyVoteHistory) private lostArkKnownReplyVoteHistoryRepository: Repository<LostArkKnownReplyVoteHistory>,
 		private accountService: AccountService,
 		private errorLogService: ErrorLogService,
 	) { }
@@ -28,19 +30,41 @@ export class LostArkKnownPostService {
 	private POINT_WRITE_REPLY: number = 15; //댓글 작성 시 획득하는 포인트
 	private POINT_VOTE: number = 5; //추천, 비추천 시 획득하는 포인트
 
-	async isVotablePost(postCode: number, userId: string): Promise<boolean> {
+	async isVotablePost(postCode: number, userUUID: string): Promise<boolean> {
 		try {
-			if(userId === ""){
+			if (userUUID === "") {
 				return false;
 			}
-			else{
-				return !await this.lostArkKnownVoteHistoryRepository.exist({
+			else {
+				return !await this.lostArkKnownPostVoteHistoryRepository.exist({
 					select: {
 						voterNickname: true
 					},
 					where: {
 						postCode: Equal(postCode),
-						voterID: Equal(userId),
+						voterUUID: Equal(userUUID),
+					},
+				});
+			}
+		}
+		catch (error) {
+			this.errorLogService.createErrorLog(error);
+		}
+	}
+
+	async isVotableReply(replyCode: number, userUUID: string): Promise<boolean> {
+		try {
+			if (userUUID === "") {
+				return false;
+			}
+			else {
+				return !await this.lostArkKnownReplyVoteHistoryRepository.exist({
+					select: {
+						voterNickname: true
+					},
+					where: {
+						replyCode: Equal(replyCode),
+						voterUUID: Equal(userUUID),
 					},
 				});
 			}
@@ -640,12 +664,12 @@ export class LostArkKnownPostService {
 	async upvotePost(request: Request, response: Response, postCode: number, ipData: string): Promise<{ upvote: number, downvote: number, isVotable: boolean }> {
 		const loginCookie = await this.accountService.checkLoginStatus(request, response);
 		const loginUUID = await this.accountService.getMyUUID(request);
-		const isVotable: boolean = await this.isVotablePost(postCode, loginCookie.id);
+		const isVotable: boolean = await this.isVotablePost(postCode, loginUUID);
 
 		if (isVotable === true && loginCookie !== null) {
 			await this.lostArkKnownPostRepository.increment({ code: Equal(postCode) }, "upvote", 1);
 			
-			const insertHistory = this.lostArkKnownVoteHistoryRepository.create({
+			const insertHistory = this.lostArkKnownPostVoteHistoryRepository.create({
 				postCode: postCode,
 				voteType: "up",
 				voterUUID: loginUUID,
@@ -653,7 +677,7 @@ export class LostArkKnownPostService {
 				voterNickname: loginCookie.nickname,
 				ip: ipData,
 			});
-			await this.lostArkKnownVoteHistoryRepository.insert(insertHistory);
+			await this.lostArkKnownPostVoteHistoryRepository.insert(insertHistory);
 			await this.accountService.updateAccountExp(request, response, "up", this.POINT_VOTE);
 		}
 
@@ -676,12 +700,12 @@ export class LostArkKnownPostService {
 	async downvotePost(request: Request, response: Response, postCode: number, ipData: string): Promise<{ upvote: number, downvote: number, isVotable: boolean }> {
 		const loginCookie = await this.accountService.checkLoginStatus(request, response);
 		const loginUUID = await this.accountService.getMyUUID(request);
-		const isVotable: boolean = await this.isVotablePost(postCode, loginCookie.id);
+		const isVotable: boolean = await this.isVotablePost(postCode, loginUUID);
 
 		if (isVotable === true) {
 			await this.lostArkKnownPostRepository.increment({ code: Equal(postCode) }, "downvote", 1);
 
-			const insertHistory = this.lostArkKnownVoteHistoryRepository.create({
+			const insertHistory = this.lostArkKnownPostVoteHistoryRepository.create({
 				postCode: postCode,
 				voteType: "down",
 				voterUUID: loginUUID,
@@ -689,7 +713,7 @@ export class LostArkKnownPostService {
 				voterNickname: loginCookie.nickname,
 				ip: ipData,
 			});
-			await this.lostArkKnownVoteHistoryRepository.insert(insertHistory);
+			await this.lostArkKnownPostVoteHistoryRepository.insert(insertHistory);
 			await this.accountService.updateAccountExp(request, response, "up", this.POINT_VOTE);
 		}
 
@@ -709,10 +733,10 @@ export class LostArkKnownPostService {
 	/**
 	 * 유저 게시판 추천자 목록
 	 */
-	async getPostUpvoteList(request: Request, response: Response, postCode: number): Promise<LostArkKnownVoteHistory[]> {
+	async getPostUpvoteList(request: Request, response: Response, postCode: number): Promise<LostArkKnownPostVoteHistory[]> {
 		// const loginCookie = await this.accountService.checkLoginStatus(request, response);
 
-		const contentData = await this.lostArkKnownVoteHistoryRepository.find({
+		const contentData = await this.lostArkKnownPostVoteHistoryRepository.find({
 			select: {
 				voterNickname: true,
 				createdAt: true,
@@ -729,10 +753,10 @@ export class LostArkKnownPostService {
 	/**
 	 * 유저 게시판 비추천자 목록
 	 */
-	async getPostDownvoteList(request: Request, response: Response, postCode: number): Promise<LostArkKnownVoteHistory[]> {
+	async getPostDownvoteList(request: Request, response: Response, postCode: number): Promise<LostArkKnownPostVoteHistory[]> {
 		// const loginCookie = await this.accountService.checkLoginStatus(request, response);
 
-		const contentData = await this.lostArkKnownVoteHistoryRepository.find({
+		const contentData = await this.lostArkKnownPostVoteHistoryRepository.find({
 			select: {
 				voterNickname: true,
 				createdAt: true,
@@ -907,7 +931,7 @@ export class LostArkKnownPostService {
 	/**
 	 * 유저 댓글 추천
 	 */
-	async upvoteKnownReply(request: Request, response: Response, replyCode: number): Promise<{ upvote: number, downvote: number, isVotable: boolean }> {
+	async upvoteKnownReply(request: Request, response: Response, replyCode: number, ipData: string): Promise<{ upvote: number, downvote: number, isVotable: boolean }> {
 		const loginCookie = await this.accountService.checkLoginStatus(request, response);
 		const loginUUID = await this.accountService.getMyUUID(request);
 
@@ -915,31 +939,48 @@ export class LostArkKnownPostService {
 			return { upvote: 0, downvote: 0, isVotable: false };
 		}
 
-		await this.lostArkKnownReplyRepository.increment({ code: Equal(replyCode) }, "upvote", 1);
-		
-		const updatedReply = await this.lostArkKnownReplyRepository.findOne({
-			select: {
-				upvote: true,
-				downvote: true,
-			},
-			where: {
-				code: Equal(replyCode),
-			},
-			withDeleted: true,
-		});
+		const isVotable: boolean = await this.isVotableReply(replyCode, loginUUID);
 
-		if (updatedReply === null) {
-			return { upvote: 0, downvote: 0, isVotable: false };
+		if (isVotable === true){
+			await this.lostArkKnownReplyRepository.increment({ code: Equal(replyCode) }, "upvote", 1);
+
+			const updatedReply = await this.lostArkKnownReplyRepository.findOne({
+				select: {
+					upvote: true,
+					downvote: true,
+				},
+				where: {
+					code: Equal(replyCode),
+				},
+				withDeleted: true,
+			});
+
+			if (updatedReply === null) {
+				return { upvote: 0, downvote: 0, isVotable: false };
+			}
+			else {
+				const insertHistory = this.lostArkKnownReplyVoteHistoryRepository.create({
+					replyCode: replyCode,
+					voteType: "up",
+					voterUUID: loginUUID,
+					voterID: loginCookie.id,
+					voterNickname: loginCookie.nickname,
+					ip: ipData,
+				});
+				await this.lostArkKnownReplyVoteHistoryRepository.insert(insertHistory);
+
+				return { upvote: updatedReply.upvote, downvote: updatedReply.downvote, isVotable: true };
+			}
 		}
 		else {
-			return { upvote: updatedReply.upvote, downvote: updatedReply.downvote, isVotable: true };
+			return { upvote: 0, downvote: 0, isVotable: false };
 		}
 	}
 
 	/**
 	 * 유저 댓글 비추천
 	 */
-	async downvoteKnownReply(request: Request, response: Response, replyCode: number): Promise<{ upvote: number, downvote: number, isVotable: boolean }> {
+	async downvoteKnownReply(request: Request, response: Response, replyCode: number, ipData: string): Promise<{ upvote: number, downvote: number, isVotable: boolean }> {
 		const loginCookie = await this.accountService.checkLoginStatus(request, response);
 		const loginUUID = await this.accountService.getMyUUID(request);
 
@@ -947,24 +988,41 @@ export class LostArkKnownPostService {
 			return { upvote: 0, downvote: 0, isVotable: false };
 		}
 
-		await this.lostArkKnownReplyRepository.increment({ code: Equal(replyCode) }, "downvote", 1);
+		const isVotable: boolean = await this.isVotableReply(replyCode, loginUUID);
 
-		const updatedReply = await this.lostArkKnownReplyRepository.findOne({
-			select: {
-				upvote: true,
-				downvote: true,
-			},
-			where: {
-				code: Equal(replyCode),
-			},
-			withDeleted: true,
-		});
+		if (isVotable === true) {
+			await this.lostArkKnownReplyRepository.increment({ code: Equal(replyCode) }, "downvote", 1);
 
-		if (updatedReply === null){
-			return { upvote: 0, downvote: 0, isVotable: false };
+			const updatedReply = await this.lostArkKnownReplyRepository.findOne({
+				select: {
+					upvote: true,
+					downvote: true,
+				},
+				where: {
+					code: Equal(replyCode),
+				},
+				withDeleted: true,
+			});
+
+			if (updatedReply === null) {
+				return { upvote: 0, downvote: 0, isVotable: false };
+			}
+			else {
+				const insertHistory = this.lostArkKnownReplyVoteHistoryRepository.create({
+					replyCode: replyCode,
+					voteType: "down",
+					voterUUID: loginUUID,
+					voterID: loginCookie.id,
+					voterNickname: loginCookie.nickname,
+					ip: ipData,
+				});
+				await this.lostArkKnownReplyVoteHistoryRepository.insert(insertHistory);
+				
+				return { upvote: updatedReply.upvote, downvote: updatedReply.downvote, isVotable: true };
+			}
 		}
-		else{
-			return { upvote: updatedReply.upvote, downvote: updatedReply.downvote, isVotable: true };
+		else {
+			return { upvote: 0, downvote: 0, isVotable: false };
 		}
 	}
 
