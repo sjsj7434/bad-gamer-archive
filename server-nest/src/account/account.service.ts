@@ -16,7 +16,6 @@ import { ErrorLogService } from 'src/log/error.log.service';
 import { LostarkCharacter } from './lostarkCharacter.entity';
 import { PersonalBlackList } from './personalBlackList.entity';
 import { CreatePersonalBlackListDTO, DeletePersonalBlackListDTO, UpdatePersonalBlackListDTO } from './personalBlackList.dto';
-import { LostArkKnownPostService } from 'src/lostark/post/known/lostArkKnownPost.service';
 
 @Injectable()
 export class AccountService {
@@ -169,23 +168,23 @@ export class AccountService {
 
 			const characterNameArray = await this.lostarkAPIService.getCharacterList(characterName); //api 호출
 
-			// for (let index = 0; index < characterNameArray.length; index++) {
-			// 	const element = characterNameArray[index];
+			for (let index = 0; index < characterNameArray.length; index++) {
+				const element = characterNameArray[index];
 
-			// 	await this.lostarkCharacterRepository.upsert(
-			// 		[{
-			// 			uuid: loginUUID,
-			// 			stoveCode: stoveCode,
-			// 			serverName: element.ServerName,
-			// 			characterName: element.CharacterName,
-			// 			characterClass: element.CharacterClassName,
-			// 			characterLevel: element.CharacterLevel,
-			// 			maxItemLevel: element.ItemMaxLevel,
-			// 			avgItemLevel: element.ItemAvgLevel,
-			// 		}],
-			// 		["uuid", "stoveCode"]
-			// 	);
-			// }
+				await this.lostarkCharacterRepository.upsert(
+					[{
+						uuid: loginUUID,
+						stoveCode: stoveCode,
+						serverName: element.ServerName,
+						characterName: element.CharacterName,
+						characterClass: element.CharacterClassName,
+						characterLevel: element.CharacterLevel,
+						maxItemLevel: element.ItemMaxLevel,
+						avgItemLevel: element.ItemAvgLevel,
+					}],
+					["uuid", "stoveCode"]
+				);
+			}
 
 			await this.setCacheData("LOSTARK_" + request.cookies["sessionCode"], characterNameArray, 5 * 60); //캐릭터 데이터 cache에 저장
 			await this.setCacheData("STOVE_CODE_" + request.cookies["sessionCode"], stoveCode, 5 * 60); //스토브 코드 cache에 저장
@@ -957,19 +956,19 @@ export class AccountService {
 		for (let index = 0; index < characterList.length; index++) {
 			const element = characterList[index];
 
-			// await this.lostarkCharacterRepository.upsert(
-			// 	[{
-			// 		uuid: loginUUID,
-			// 		stoveCode: stoveCode,
-			// 		serverName: element.ServerName,
-			// 		characterName: element.CharacterName,
-			// 		characterClass: element.CharacterClassName,
-			// 		characterLevel: element.CharacterLevel,
-			// 		maxItemLevel: element.ItemMaxLevel,
-			// 		avgItemLevel: element.ItemAvgLevel,
-			// 	}],
-			// 	["uuid", "stoveCode"]
-			// );
+			await this.lostarkCharacterRepository.upsert(
+				[{
+					uuid: loginUUID,
+					stoveCode: stoveCode,
+					serverName: element.ServerName,
+					characterName: element.CharacterName,
+					characterClass: element.CharacterClassName,
+					characterLevel: element.CharacterLevel,
+					maxItemLevel: element.ItemMaxLevel,
+					avgItemLevel: element.ItemAvgLevel,
+				}],
+				["uuid", "stoveCode"]
+			);
 
 			if (element.CharacterName === lostarkName){
 				isContain = true;
@@ -979,6 +978,8 @@ export class AccountService {
 		}
 
 		if (isContain === true) {
+			const test = await this.lostarkAPIService.getCharacterInfoProfile(characterList[infoIndex].CharacterName); //api 호출
+
 			//다시 인증을 진행하면 이전에 인증 해제한 데이터 완전 삭제 처리
 			await this.authenticationRepository.delete({
 				uuid: loginUUID,

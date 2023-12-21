@@ -26,7 +26,7 @@ export class LostarkAPIService {
 	 * @param destination API 주소
 	 * @returns 반환 값
 	 */
-	getLostArkAPI = async (destination: string) => {
+	getLostArkAPI = async (destination: string): Promise<any> => {
 		if (this.API_CALL_COUNT >= this.API_CALL_LIMIT){
 			console.log(`[Error] API Call Limit is ${this.API_CALL_LIMIT} per min`);
 			return null;
@@ -52,18 +52,33 @@ export class LostarkAPIService {
 		return data;
 	}
 
+	/**
+	 * 
+	 * @param serverName 조회할 길드 소속 서버
+	 * @returns 
+	 */
 	async getGuildList(serverName: string): Promise<object> {
 		const result = await this.getLostArkAPI(`https://developer-lostark.game.onstove.com/guilds/rankings?serverName=${serverName}`);
 
 		return result;
 	}
 
-	async getCharacterList(characterNickName: string): Promise<object> {
+	/**
+	 * 해당 캐릭터의 계정 캐릭터 전부 가져오기
+	 * @param characterNickName 조회할 캐릭터 닉네임
+	 * @returns 
+	 */
+	async getCharacterList(characterNickName: string): Promise<Array<any>> {
 		const result = await this.getLostArkAPI(`https://developer-lostark.game.onstove.com/characters/${characterNickName}/siblings`);
 
 		return result;
 	}
 
+	/**
+	 * 해당 캐릭터의 정보 가져오기
+	 * @param characterNickName 조회할 캐릭터 닉네임
+	 * @returns 
+	 */
 	async getCharacterInfoProfile(characterNickName: string): Promise<object> {
 		const result = await this.getLostArkAPI(`https://developer-lostark.game.onstove.com/armories/characters/${characterNickName}/profiles`);
 
