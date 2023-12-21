@@ -68,11 +68,11 @@ const NicknameMenu = (props) => {
 			<Popover.Body style={{ paddingTop: "10px", paddingBottom: "10px", paddingLeft: "10px", paddingRight: "30px" }}>
 				<div>
 					<div style={{ marginBottom: "10px" }}>
-						<span onClick={() => { navigate(`/account/profile/introduce/${props.targetNickname}`) }} style={{ cursor: "pointer", color: "lightgray" }}>프로필 보기</span>
+						<span onClick={() => { navigate(`/account/profile/introduce/${props.targetNickname}`) }} style={{ cursor: "pointer" }}>프로필 보기</span>
 					</div>
-					<div style={{ marginBottom: "10px" }}>
+					{/* <div style={{ marginBottom: "10px" }}>
 						<span onClick={() => { alert("아직 준비 중입니다") }} style={{ cursor: "pointer", color: "lightgray" }}>쪽지 보내기</span>
-					</div>
+					</div> */}
 					<div style={{ }}>
 						<span onClick={() => { openAddBlacklistForm() }} style={{ cursor: "pointer", color: "red" }}>차단하기</span>
 					</div>
