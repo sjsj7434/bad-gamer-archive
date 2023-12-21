@@ -109,3 +109,12 @@ p {
 	padding: 6px;
 	background-color: rgb(154, 154, 154);
 }
+
+/* Modal보다 메뉴 z-index 값이 큼, 로딩 창위에 메뉴가 떠서 클릭하지 못하게함 */
+.fade.modal.show{
+	z-index: 2001;
+}
+
+.fade.modal-backdrop.show{
+	z-index: 2001;
+}
