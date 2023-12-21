@@ -154,7 +154,8 @@ export class LostArkKnownPostService {
 					whereClause[0].content = Like(`%${searchText}%`);
 				}
 				else if (searchType === "nickname") {
-					whereClause[0].writerNickname = Like(`%${searchText}%`);
+					// whereClause[0].writerNickname = Like(`%${searchText}%`);
+					whereClause[0].account["nickname"] = Like(`%${searchText}%`);
 				}
 				else if (searchType === "titleAndContent") {
 					const deepCopiedWhere = Object.assign({}, whereClause[0]);
@@ -171,7 +172,6 @@ export class LostArkKnownPostService {
 					account: { nickname: true, authentication: { type: true, data: true } },
 					code: true,
 					category: true,
-					writerNickname: true,
 					title: true,
 					view: true,
 					upvote: true,
@@ -224,7 +224,8 @@ export class LostArkKnownPostService {
 					whereClause[0].content = Like(`%${searchText}%`);
 				}
 				else if (searchType === "nickname") {
-					whereClause[0].writerNickname = Like(`%${searchText}%`);
+					// whereClause[0].writerNickname = Like(`%${searchText}%`);
+					whereClause[0].account["nickname"] = Like(`%${searchText}%`);
 				}
 				else if (searchType === "titleAndContent") {
 					const deepCopiedWhere = Object.assign({}, whereClause[0]);
@@ -241,7 +242,6 @@ export class LostArkKnownPostService {
 					account: { nickname: true, authentication: { type: true, data: true } },
 					code: true,
 					category: true,
-					writerNickname: true,
 					title: true,
 					view: true,
 					upvote: true,
@@ -294,7 +294,7 @@ export class LostArkKnownPostService {
 					whereClause[0].content = Like(`%${searchText}%`);
 				}
 				else if (searchType === "nickname") {
-					whereClause[0].writerNickname = Like(`%${searchText}%`);
+					// whereClause[0].writerNickname = Like(`%${searchText}%`);
 				}
 				else if (searchType === "titleAndContent") {
 					const deepCopiedWhere = Object.assign({}, whereClause[0]);
@@ -311,7 +311,6 @@ export class LostArkKnownPostService {
 					account: { nickname: true, authentication: { type: true, data: true } },
 					code: true,
 					category: true,
-					writerNickname: true,
 					title: true,
 					view: true,
 					upvote: true,
@@ -365,7 +364,8 @@ export class LostArkKnownPostService {
 				whereClause[0].content = Like(`%${searchText}%`);
 			}
 			else if (searchType === "nickname") {
-				whereClause[0].writerNickname = Like(`%${searchText}%`);
+				// whereClause[0].writerNickname = Like(`%${searchText}%`);
+				whereClause[0].account["nickname"] = Like(`%${searchText}%`);
 			}
 			else if (searchType === "titleAndContent") {
 				const deepCopiedWhere = Object.assign({}, whereClause[0]);
@@ -382,7 +382,6 @@ export class LostArkKnownPostService {
 				account: { nickname: true, authentication: { type: true, data: true } },
 				code: true,
 				category: true,
-				writerNickname: true,
 				title: true,
 				view: true,
 				upvote: true,
@@ -471,7 +470,6 @@ export class LostArkKnownPostService {
 				upvote: true,
 				downvote: true,
 				writerID: true,
-				writerNickname: true,
 				createdAt: true,
 				updatedAt: true,
 				account: {
@@ -523,7 +521,6 @@ export class LostArkKnownPostService {
 				upvote: true,
 				downvote: true,
 				writerID: true,
-				writerNickname: true,
 				createdAt: true,
 				updatedAt: true,
 			},

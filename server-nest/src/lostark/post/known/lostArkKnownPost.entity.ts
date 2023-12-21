@@ -126,16 +126,6 @@ export class LostArkKnownPost {
 	writerID: string;
 
 	/**
-	 * 작성자 Nickname
-	 */
-	@Column({
-		type: "varchar",
-		length: 50,
-		nullable: false,
-	})
-	writerNickname: string;
-
-	/**
 	 * 작성자 ip
 	 */
 	@Column({

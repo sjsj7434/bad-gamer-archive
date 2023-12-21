@@ -87,9 +87,12 @@ const NicknameMenu = (props) => {
 				(props.accountData.nickname === props.targetNickname) === false ?
 				<>
 					<OverlayTrigger trigger="click" placement="right-start" overlay={userPopover} rootClose={true}>
-						<Button variant="link" style={{ fontSize: "0.8rem", padding: "2px" }}>
-							<strong>{props.targetNickname}</strong>
-						</Button>
+						<span id="testName" style={{ cursor: "pointer", color: "black", textDecoration: "underline", textUnderlineOffset: "2px", fontWeight: "600" }}
+							// onMouseEnter={() => { document.querySelector("#testName").style.color = "blue"} }
+							// onMouseOut={() => { document.querySelector("#testName").style.color = "black"} }
+						>
+							{props.targetNickname}
+						</span>
 					</OverlayTrigger>
 				</>
 				:

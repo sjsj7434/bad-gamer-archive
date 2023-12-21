@@ -51,7 +51,7 @@ const KnownPostRow = (props) => {
 						</div>
 						<div style={{fontSize: "0.75rem", color: "#5a5a5a", maxWidth: "95%", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap"}}>
 							<span>
-								{ props.postData.writerNickname }
+								{ props.postData.account.nickname }
 								{ props.postData.account.authentication[0] !== undefined ? `(${props.postData.account.authentication[0].data.replace(",", "")})` : "" }
 							</span>
 							&nbsp;|&nbsp;

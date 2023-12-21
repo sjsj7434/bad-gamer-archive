@@ -277,7 +277,21 @@ const RoutesWrapper = () => {
 							</Route>
 
 							<Route path="profile">
-								<Route path="introduce/:verificationCode" element={
+								<Route path="introduce/:nickname" element={
+									<>
+										<SetActiveMenu pageTitle="Agora(Your)" setCurrentMenu={setCurrentMenu} menuCode={"/account/profile"} />
+										<Profile />
+									</>
+								} />
+
+								<Route path="history/post/:nickname" element={
+									<>
+										<SetActiveMenu pageTitle="Agora(Your)" setCurrentMenu={setCurrentMenu} menuCode={"/account/profile"} />
+										<Profile />
+									</>
+								} />
+
+								<Route path="history/reply/:nickname" element={
 									<>
 										<SetActiveMenu pageTitle="Agora(Your)" setCurrentMenu={setCurrentMenu} menuCode={"/account/profile"} />
 										<Profile />
