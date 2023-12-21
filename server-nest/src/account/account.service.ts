@@ -1408,12 +1408,13 @@ export class AccountService {
 	/**
 	 * 차단 목록 가져오기
 	 */
-	async getMyBlacklist(request: Request, response: Response): Promise<PersonalBlackList[]> {
+	async getMyBlacklist(request: Request, response: Response, page: number): Promise<[PersonalBlackList[], number]> {
 		const loginUUID = this.LOGIN_SESSION.get(request.cookies["sessionCode"]); //로그인한 정보
 		const accountData = await this.getMyInfo(request, response);
+		const PER_PAGE: number = 20;
 
 		if (accountData !== null) {
-			const blacklist: PersonalBlackList[] = await this.personalBlackListRepository.find({
+			const blacklist: [PersonalBlackList[], number] = await this.personalBlackListRepository.findAndCount({
 				select: {
 					code: true,
 					blackNickname: true,
@@ -1425,13 +1426,15 @@ export class AccountService {
 				},
 				order: {
 					createdAt: "DESC",
-				}
+				},
+				skip: (page - 1) * PER_PAGE,
+				take: PER_PAGE,
 			});
 
 			return blacklist;
 		}
 		else {
-			return [];
+			return [[], 0];
 		}
 	}
 

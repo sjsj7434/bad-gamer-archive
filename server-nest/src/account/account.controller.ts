@@ -131,9 +131,9 @@ export class  AccountController {
 		return await this.accountService.addToBlacklist(request, response, createBlacklistDTO);
 	}
 
-	@Get("blacklist")
-	async getMyBlacklist(@Req() request: Request, @Res({ passthrough: true }) response: Response): Promise<PersonalBlackList[]> {
-		return await this.accountService.getMyBlacklist(request, response);
+	@Get("blacklist/:page")
+	async getMyBlacklist(@Req() request: Request, @Res({ passthrough: true }) response: Response, @Param("page") page: number): Promise<[PersonalBlackList[], number]> {
+		return await this.accountService.getMyBlacklist(request, response, page);
 	}
 
 	@Delete("blacklist/reset")

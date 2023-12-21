@@ -581,13 +581,13 @@ export const addToBlacklist = async (sendData) => {
 /**
  * 차단 목록 가져오기
  */
-export const getMyBlacklist = async () => {
+export const getMyBlacklist = async (page) => {
 	const fecthOption = {
 		method: "GET"
 		, headers: {"Content-Type": "application/json",}
 		, credentials: "include", // Don't forget to specify this if you need cookies
 	};
-	const fetchResponse = await fetch(`/account/blacklist`, fecthOption);
+	const fetchResponse = await fetch(`/account/blacklist/${page}`, fecthOption);
 	const [isStatusGood, checkMessage] = isFetchStatusGood(fetchResponse);
 
 	if(isStatusGood === true){

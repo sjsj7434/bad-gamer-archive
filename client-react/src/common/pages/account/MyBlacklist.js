@@ -7,6 +7,7 @@ import LoadingModal from '../common/LoadingModal.js';
 import '../../css/MyPage.css';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
+import CustomPagination from '../post/CustomPagination.js';
 
 const MyBlacklist = () => {
 	const BLACK_REASON_MAX_LEN = 200; //블랙 사유 최대 길이
@@ -17,6 +18,7 @@ const MyBlacklist = () => {
 	const [loadingMessage, setLoadingMessage] = useState("");
 	const [myBlackList, setMyBlackList] = useState(null);
 	const [blackCount, setBlackCount] = useState(0);
+	const [page, setPage] = useState(1);
 
 	const navigate = useNavigate();
 
@@ -77,7 +79,7 @@ const MyBlacklist = () => {
 		setIsLoading(true);
 
 		const myInfo = await accountsFetch.getMyInfo();
-		const blacklist = await accountsFetch.getMyBlacklist();
+		const blacklist = await accountsFetch.getMyBlacklist(page);
 
 		if(myInfo === null){
 			navigate("/");
@@ -89,10 +91,10 @@ const MyBlacklist = () => {
 			return;
 		}
 
-		setBlackCount(blacklist.length);
+		setBlackCount(blacklist[1]);
 
 		const blackRender = [];
-		blackRender.push(blacklist.map((element) => {
+		blackRender.push(blacklist[0].map((element) => {
 			return(
 				<Form key={`blackUser${element.code}`} style={{ fontSize: "0.9rem", marginTop: "2.5rem" }}>
 					<Form.Group className="mb-3" controlId={`blackReason${element.code}`}>
@@ -119,7 +121,7 @@ const MyBlacklist = () => {
 		setMyBlackList(blackRender);
 
 		setIsLoading(false);
-	}, [navigate])
+	}, [page, navigate])
 
 	useEffect(() => {
 		callMyInfo();
@@ -131,12 +133,12 @@ const MyBlacklist = () => {
 				return;
 			}
 
-			const answer = window.prompt("차단 목록을 초기화 하려면 \"초기화\"라고 입력해주세요");
+			const answer = window.prompt("차단 목록을 초기화 하려면 \"차단 초기화\"라고 입력해주세요");
 
 			if(answer === null){
 				return;
 			}
-			else if(answer === "초기화"){
+			else if(answer === "차단 초기화"){
 				setIsLoading(true);
 				setLoadingMessage("차단 목록을 초기화 중입니다");
 				await accountsFetch.resetMyBlacklist();
@@ -151,6 +153,10 @@ const MyBlacklist = () => {
 			}
 		}
 
+		const pageMoveFunc = async (pageIndex) => {
+			setPage(pageIndex);
+		}
+
 		if(accountData !== null){
 			setRenderData(
 				<Container style={{maxWidth: "600px"}}>
@@ -163,20 +169,24 @@ const MyBlacklist = () => {
 					</div>
 
 					<div style={{ display: "flex", alignItems: "center", marginTop: "2rem" }}>
-						<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="red" className="bi bi-ban" viewBox="0 0 16 16">
+						<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="red" className="bi bi-ban" viewBox="0 0 16 16" style={{ width: "1.5rem", height: "1.5rem" }}>
 							<path d="M15 8a6.973 6.973 0 0 0-1.71-4.584l-9.874 9.875A7 7 0 0 0 15 8M2.71 12.584l9.874-9.875a7 7 0 0 0-9.874 9.874ZM16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0"/>
 						</svg>
 						&nbsp;
-						<span style={{ fontSize: "0.9rem" }}><strong>{blackCount}</strong>명의 차단된 사용자가 있습니다</span>
+						<span style={{ fontSize: "0.8rem" }}><strong>{blackCount}</strong>명의 차단된 사용자가 있습니다</span>
 					</div>
 
 					<div>
 						{myBlackList}
 					</div>
+
+					<div style={{ display: "flex", justifyContent: "center", marginTop: "3rem" }}>
+						<CustomPagination currentPage={page} contentPerPage={20} howManyPages={5} contentCount={blackCount} pageMoveFunc={pageMoveFunc}/>
+					</div>
 				</Container>
 			);
 		}
-	}, [accountData, isLoading, loadingMessage, myBlackList, blackCount, callMyInfo, navigate])
+	}, [accountData, isLoading, loadingMessage, myBlackList, blackCount, page, callMyInfo, navigate])
 
 	return renderData;
 }
