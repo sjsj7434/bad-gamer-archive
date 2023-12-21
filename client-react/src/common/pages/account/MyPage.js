@@ -188,7 +188,6 @@ const MyPage = () => {
 			}
 		}
 
-
 		//내가 작성한 글 가져오기
 		const getMyPost = async () => {
 			const resultData = await accountsFetch.getMyPost();
