@@ -101,7 +101,7 @@ const MyBlacklist = () => {
 						<Form.Label style={{ width: "100%" }}>
 							<div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end" }}>
 								<div style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", justifyContent: "space-between" }}>
-									<Button variant="link" style={{ fontSize: "0.8rem", padding: "2px" }}>{element.blackNickname}</Button>
+									<Button variant="link" onClick={() => {navigate(`/account/profile/introduce/${element.blackNickname}`);}} style={{ fontSize: "0.8rem", padding: "2px" }}>{element.blackNickname}</Button>
 									<Button variant="link" style={{ fontSize: "0.8rem", textDecoration: "none", padding: "2px", color: "gray" }}>{element.createdAt.substring(0, 10)}</Button>
 								</div>
 								<div>

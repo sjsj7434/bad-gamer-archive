@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from "react-router-dom";
 import Button from 'react-bootstrap/Button';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Popover from 'react-bootstrap/Popover';
@@ -13,6 +14,8 @@ const NicknameMenu = (props) => {
 
 	const closeAddBlacklistModal = () => setShowAddBlacklist(false);
 	const showAddBlacklistModal = () => setShowAddBlacklist(true);
+
+	const navigate = useNavigate();
 			
 	const addToBlacklist = async (blackNickname) => {
 		const blackReasonElement = document.querySelector("#blackReason");
@@ -62,11 +65,10 @@ const NicknameMenu = (props) => {
 
 	const userPopover = (
 		<Popover id={"nicknamePopover"} style={{ minWidth: "170px", fontSize: "0.8rem" }}>
-			{/* <Popover.Header as="h3">메뉴</Popover.Header> */}
 			<Popover.Body style={{ paddingTop: "10px", paddingBottom: "10px", paddingLeft: "10px", paddingRight: "30px" }}>
 				<div>
 					<div style={{ marginBottom: "10px" }}>
-						<span onClick={() => { alert("아직 준비 중입니다") }} style={{ cursor: "pointer", color: "lightgray" }}>프로필 보기</span>
+						<span onClick={() => { navigate(`/account/profile/introduce/${props.targetNickname}`) }} style={{ cursor: "pointer", color: "lightgray" }}>프로필 보기</span>
 					</div>
 					<div style={{ marginBottom: "10px" }}>
 						<span onClick={() => { alert("아직 준비 중입니다") }} style={{ cursor: "pointer", color: "lightgray" }}>쪽지 보내기</span>

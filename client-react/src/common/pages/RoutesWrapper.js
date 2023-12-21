@@ -37,6 +37,7 @@ import KnownPostView from './post/known/KnownPostView.js';
 import KnownPostWrite from './post/known/KnownPostWrite.js';
 import Button from 'react-bootstrap/Button';
 import MyBlacklist from './account/MyBlacklist.js';
+import Profile from './account/Profile.js';
 
 // import CharacterInfo from '../../lostark/pages/character/CharacterInfo';
 
@@ -272,6 +273,15 @@ const RoutesWrapper = () => {
 											</>
 										}
 									/>
+								} />
+							</Route>
+
+							<Route path="profile">
+								<Route path="introduce/:verificationCode" element={
+									<>
+										<SetActiveMenu pageTitle="Agora(Your)" setCurrentMenu={setCurrentMenu} menuCode={"/account/profile"} />
+										<Profile />
+									</>
 								} />
 							</Route>
 						</Route>
