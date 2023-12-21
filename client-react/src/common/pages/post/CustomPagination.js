@@ -28,13 +28,10 @@ const CustomPagination = (props) => {
 			const isDisablePrev = (startPage - 1 <= 0 ? true : false);
 			const isDisableNext = (maxPageCount <= endPage ? true : false);
 
-			// console.log(`    startPage: ${startPage} / endPage: ${endPage} / maxPageCount: ${maxPageCount} / endDir: ${(startPage + howManyPages >= maxPageCount ? "left" : "right")}`);
-			// console.log(`    prevPageIndex: ${prevPageIndex} / isDisablePrev: ${isDisablePrev} / nextPageIndex: ${nextPageIndex} / isDisableNext: ${isDisableNext}`);
-
 			paginationData.push(<Pagination.Prev key={"pagenation_prev"} disabled={isDisablePrev} onClick={() => {props.pageMoveFunc(prevPageIndex)}} />);
 			for (let pageIndex = startPage; pageIndex <= endPage; pageIndex++) {
 				paginationData.push(
-					<Pagination.Item key={"pagenation_" + pageIndex} active={pageIndex === currentPage ? true : false} onClick={() => {if(pageIndex !== currentPage){props.pageMoveFunc(pageIndex)}}}>
+					<Pagination.Item disabled={(contentCount <= 0)} key={"pagenation_" + pageIndex} active={pageIndex === currentPage ? true : false} onClick={() => {if(pageIndex !== currentPage){props.pageMoveFunc(pageIndex)}}}>
 						{pageIndex}
 					</Pagination.Item>
 				);
