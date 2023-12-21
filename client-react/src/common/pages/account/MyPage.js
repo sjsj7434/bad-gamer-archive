@@ -2,7 +2,6 @@ import { useCallback, useEffect, useState } from 'react';
 import Button from 'react-bootstrap/Button';
 import Container from 'react-bootstrap/Container';
 import { useNavigate } from "react-router-dom";
-import Table from 'react-bootstrap/Table';
 
 import * as accountsFetch from '../../js/accountFetch.js'
 import Row from 'react-bootstrap/esm/Row.js';
@@ -13,6 +12,8 @@ import '../../css/MyPage.css';
 import EditIntroduce from './EditIntroduce.js';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Popover from 'react-bootstrap/Popover';
+import Card from 'react-bootstrap/Card';
+import ListGroup from 'react-bootstrap/ListGroup';
 
 import Resizer from "react-image-file-resizer";
 
@@ -255,7 +256,7 @@ const MyPage = () => {
 						</div>
 					</div>
 
-					<div style={{ display: "flex", alignItems: "center", justifyContent: "flex-start", fontSize: "0.8rem", marginTop: "0.5rem" }}>
+					<div style={{ display: "flex", alignItems: "center", justifyContent: "flex-start", fontSize: "0.8rem", marginTop: "1.2rem" }}>
 						<div onClick={() => { getMyPost() }} style={{ display: "flex", flexDirection: "column", alignItems: "center", border: "1px solid lightgray", width: "33.3%", paddingTop: "0.5rem", paddingBottom: "0.5rem", cursor: "pointer" }}>
 							<span>작성 글</span>
 							<span>{new Intl.NumberFormat().format(accountData.postWriteCount)}</span>
@@ -270,7 +271,7 @@ const MyPage = () => {
 						</div>
 					</div>
 
-					<div style={{ display: "flex", alignItems: "center", justifyContent: "flex-start", fontSize: "0.8rem", marginTop: "0.5rem" }}>
+					<div style={{ display: "flex", alignItems: "center", justifyContent: "flex-start", fontSize: "0.8rem", marginTop: "1.2rem" }}>
 						<div onClick={ () => { navigate("/account/mypage/blacklist") } } style={{ cursor: "pointer", display: "flex", flexDirection: "column", alignItems: "center", border: "1px solid lightgray", width: "100%", paddingTop: "0.5rem", paddingBottom: "0.5rem" }}>
 							<span>차단 목록 관리</span>
 						</div>
@@ -278,142 +279,106 @@ const MyPage = () => {
 
 					<div className="rowDivider"></div>
 
-					<div style={{paddingLeft: "10px", paddingRight: "10px", fontSize: "0.8rem", marginTop: "2rem", marginBottom: "2rem"}}>
-						{/* <Table hover>
-							<colgroup>
-								<col width="30%" />
-								<col width="5%" />
-								<col width="*" />
-							</colgroup>
-							<tbody>
-								<tr>
-									<th>이메일</th>
-									<td><div className="vr"></div></td>
-									<td>
-										<div style={{ display: "flex", alignItems: "center" }}>
-											{accountData.email}
-											&nbsp;&nbsp;
-											<Button onClick={() => { clickREQ() }} variant="outline-success" style={{ width: "30%", maxWidth: "130px", padding: "2px", fontSize: "0.8rem" }}>인증하기</Button>
+					<div style={{ display: "flex", justifyContent: "center" }}>
+						<Card style={{ width: "20rem", fontSize: "0.8rem" }}>
+							{
+								accountData.authentication.length === 0 ?
+								<>
+									<Card.Body>
+										<Card.Title>
+											LA
+										</Card.Title>
+
+										<div style={{ display: "flex", flexDirection: "column", alignItems: "center", marginTop: "2.5rem", marginBottom: "2.5rem" }}>
+											<p>
+												<strong>인증 정보가 존재하지 않습니다</strong>
+											</p>
+											<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="black" className="bi bi-x-circle" viewBox="0 0 16 16" style={{ width: "4rem", height: "4rem", margin: "1rem" }}>
+												<path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
+												<path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708"/>
+											</svg>
 										</div>
-									</td>
-								</tr>
-								<tr>
-									<th>비밀번호 변경일</th>
-									<td><div className="vr"></div></td>
-									<td>
-										{accountData.passwordChangeDate === null ? "-" : accountData.passwordChangeDate.substring(0, 10)}
-									</td>
-								</tr>
-							</tbody>
-						</Table> */}
-						
-						<Table>
-							<tbody>
-								{
-									accountData.authentication.map((element) => (
-										<tr key={element.type}>
-											<th>
-												{lostarkTextParser(element.type)}
-											</th>
-											<td>
-												{element.data}
-											</td>
-										</tr>
-									))
-								}
-								{
-									accountData.authentication.length === 0 ?
-									<tr>
-										<td colSpan="2" style={{ height: "5rem" }}>
-											<div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
-												<p>
-													<strong>인증 정보가 존재하지 않습니다</strong>
-												</p>
-												<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="black" className="bi bi-x-circle" viewBox="0 0 16 16" style={{ width: "4rem", height: "4rem", margin: "1rem" }}>
-													<path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
-													<path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708"/>
-												</svg>
+										
+										<div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+											<Button onClick={() => { navigate("activate/lostark") }} variant="outline-success" style={{ width: "100%", fontSize: "1.2rem" }}>인증하기</Button>
+										</div>
+									</Card.Body>
+								</>
+								:
+								<>
+									<Card.Body>
+										<Card.Title>
+											LA
+										</Card.Title>
+									</Card.Body>
+									<ListGroup className="list-group-flush">
+										{
+											accountData.authentication.map((element) => (
+												<ListGroup.Item key={element.type}>
+													<div style={{ display: "flex", alignItems: "center" }}>
+														<div style={{ width: "45%" }}><strong>{lostarkTextParser(element.type)}</strong></div>
+														<div style={{ width: "10%" }}>|</div>
+														<div style={{ width: "45%" }}>{element.data}</div>
+													</div>
+												</ListGroup.Item>
+											))
+										}
+										<ListGroup.Item>
+											<div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+												<Button onClick={() => { renewLostarkCharacter() }} variant="outline-success" className="smallButton">갱신</Button>
+												&nbsp;&nbsp;
+												<Button onClick={() => { navigate("activate/lostark") }} variant="outline-warning" className="smallButton">변경</Button>
+												&nbsp;&nbsp;
+												<Button onClick={() => { deactivateLostarkCharacter() }} variant="outline-danger" className="smallButton">해제</Button>
 											</div>
-										</td>
-									</tr>
-									:
-									<tr>
-										<th>인증일</th>
-										<td>{accountData.authentication.filter((element) => element.type === "lostark_item_level")[0].updatedAt.substring(0, 10)}</td>
-									</tr>
-								}
-							</tbody>
-						</Table>
+										</ListGroup.Item>
+									</ListGroup>
 
-						<div style={{ display: "flex", alignItems: "center" }}>
-							{
-								accountData.authentication.length === 0 ? 
-								<>
-									<Col>
-										<div className="d-grid gap-2" style={{ margin: "0.4rem" }}>
-											<Button onClick={() => { navigate("activate/lostark") }} variant="outline-success" style={{ padding: "2px", fontSize: "0.8rem" }}>인증하기</Button>
-										</div>
-									</Col>
-								</>
-								:
-								<>
-									<Col>
-										<div className="d-grid gap-2" style={{ margin: "0.4rem" }}>
-											<Button onClick={() => { renewLostarkCharacter() }} variant="outline-success" style={{ padding: "2px", fontSize: "0.8rem" }}>갱신</Button>
-										</div>
-									</Col>
-									<Col>
-										<div className="d-grid gap-2" style={{ margin: "0.4rem" }}>
-											<Button onClick={() => { navigate("activate/lostark") }} variant="outline-warning" style={{ padding: "2px", fontSize: "0.8rem" }}>변경</Button>
-										</div>
-									</Col>
-									<Col>
-										<div className="d-grid gap-2" style={{ margin: "0.4rem" }}>
-											<Button onClick={() => { deactivateLostarkCharacter() }} variant="outline-danger" style={{ padding: "2px", fontSize: "0.8rem" }}>해제</Button>
-										</div>
-									</Col>
+									<Card.Footer className="text-muted">
+										{accountData.authentication.filter((element) => element.type === "lostark_item_level")[0].updatedAt.substring(0, 10)} 인증 되었습니다
+									</Card.Footer>
 								</>
 							}
-						</div>
-						
-						<div className="rowDivider"></div>
+						</Card>
+					</div>
+					
+					<div className="rowDivider"></div>
 
-						<div>
-							{
-								accountData.introduce !== null ?
-								<>
-									<EditIntroduce status={"read"} accountData={accountData} introduce={accountData.introduce} afterUpdate={callMyInfo}></EditIntroduce>
-								</>
-								:
-								<>
-									<EditIntroduce status={"empty"} accountData={accountData} introduce={"자기소개를 작성해보세요!"} afterUpdate={callMyInfo}></EditIntroduce>
-								</>
-							}
-						</div>
-						
-						<div className="rowDivider"></div>
+					<div>
+						{
+							accountData.introduce !== null ?
+							<>
+								<EditIntroduce status={"read"} accountData={accountData} introduce={accountData.introduce} afterUpdate={callMyInfo}></EditIntroduce>
+							</>
+							:
+							<>
+								<EditIntroduce status={"empty"} accountData={accountData} introduce={"자기소개를 작성해보세요!"} afterUpdate={callMyInfo}></EditIntroduce>
+							</>
+						}
+					</div>
+					
+					<div className="rowDivider"></div>
 
-						<Row>
-							<Col>
-								<div className="d-grid gap-2">
-									<Button variant="outline-primary" size="lg" onClick={() => {navigate("renew/email")}} style={{ padding: "2px", fontSize: "0.8rem" }}>이메일 변경</Button>
-								</div>
-							</Col>
-							<Col>
-								<div className="d-grid gap-2">
-									<Button variant="outline-primary" size="lg" onClick={() => {navigate("renew/password")}} style={{ padding: "2px", fontSize: "0.8rem" }}>비밀번호 변경</Button>
-								</div>
-							</Col>
-							<Col>
-								<div className="d-grid gap-2">
-									<Button variant="outline-primary" size="lg" onClick={() => {navigate("renew/nickname")}} style={{ padding: "2px", fontSize: "0.8rem" }}>닉네임 변경</Button>
-								</div>
-							</Col>
-						</Row>
+					<Row>
+						<Col>
+							<div className="d-grid gap-2">
+								<Button variant="outline-primary" size="lg" onClick={() => {navigate("renew/email")}} style={{ padding: "2px", fontSize: "0.8rem" }}>이메일 변경</Button>
+							</div>
+						</Col>
+						<Col>
+							<div className="d-grid gap-2">
+								<Button variant="outline-primary" size="lg" onClick={() => {navigate("renew/password")}} style={{ padding: "2px", fontSize: "0.8rem" }}>비밀번호 변경</Button>
+							</div>
+						</Col>
+						<Col>
+							<div className="d-grid gap-2">
+								<Button variant="outline-primary" size="lg" onClick={() => {navigate("renew/nickname")}} style={{ padding: "2px", fontSize: "0.8rem" }}>닉네임 변경</Button>
+							</div>
+						</Col>
+					</Row>
 
-						<div className="d-grid gap-2" style={{ marginTop: "1.5rem" }}>
-							<Button variant="danger" size="lg" onClick={() => { deleteAccount() }} style={{ fontSize: "0.8rem" }}>회원탈퇴</Button>
-						</div>
+					<div className="d-grid gap-2" style={{ marginTop: "1.5rem" }}>
+						<Button variant="danger" size="lg" onClick={() => { deleteAccount() }} style={{ fontSize: "0.8rem" }}>회원탈퇴</Button>
 					</div>
 				</Container>
 			);
