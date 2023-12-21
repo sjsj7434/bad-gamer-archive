@@ -124,7 +124,7 @@ const EditIntroduce = (props) => {
 			setRenderData(
 				<>
 					<div style={{display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "10px", marginTop: "30px"}}>
-						자기소개
+						<span style={{ fontSize: "0.9rem" }}>자기소개</span>
 						&nbsp;
 						<div>
 							<Button onClick={() => {deleteIntroduce()}} variant="danger" className="smallButton" disabled={props.status === "empty" ? true : false}>삭제</Button>
