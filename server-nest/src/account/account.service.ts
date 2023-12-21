@@ -1606,11 +1606,11 @@ export class AccountService {
 				uuid: loginUUID
 			},
 			{
-				profilePictureURL: "https://img-s-msn-com.akamaized.net/tenant/amp/entityid/AAZrqDW?w=300&h=157&q=60&m=6&f=jpg&u=t",
+				profilePictureURL: "https://img-s-msn-com.akamaized.net/tenant/amp/entityid/AAZrqDW?w=100&h=80&q=80&m=6&f=jpg&u=t",
 			}
 		)
 
-		return { url: "https://img-s-msn-com.akamaized.net/tenant/amp/entityid/AAZrqDW?w=300&h=157&q=60&m=6&f=jpg&u=t" };
+		return { url: "https://img-s-msn-com.akamaized.net/tenant/amp/entityid/AAZrqDW?w=100&h=80&q=80&m=6&f=jpg&u=t" };
 	}
 
 	/**
