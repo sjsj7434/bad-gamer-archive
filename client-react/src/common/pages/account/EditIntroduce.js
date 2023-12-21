@@ -132,7 +132,7 @@ const EditIntroduce = (props) => {
 							<Button onClick={() => {setEditorMode("write")}} variant="primary" className="smallButton">{props.status === "empty" ? "작성" : "수정"}</Button>
 						</div>
 					</div>
-		
+
 					<div style={{ maxHeight: "300px", overflow: "auto", border: "1px solid lightgray", borderRadius: "6px" }}>
 						<ForceReRender reRenderData={
 							<MyEditor
