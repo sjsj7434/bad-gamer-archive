@@ -1636,4 +1636,31 @@ export class AccountService {
 			return false;
 		}
 	}
+
+	/**
+	 * 내가 작성한 글 가져오기
+	 */
+	async getMyPost(request: Request, response: Response): Promise<any> {
+		const loginUUID = this.LOGIN_SESSION.get(request.cookies["sessionCode"]); //로그인한 정보
+
+		if (loginUUID !== null) {
+			const result = await this.accountRepository.find({
+				relations: ["post", "post.reply"],
+				select: {
+					nickname: true,
+					post: { code: true, title: true, view: true, upvote: true, downvote: true, createdAt: true, reply: { postCode: true, }, },
+				},
+				where: {
+					uuid: Equal(loginUUID),
+				}
+			});
+
+			console.log(result)
+
+			return result;
+		}
+		else {
+			return false;
+		}
+	}
 }

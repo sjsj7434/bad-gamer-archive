@@ -174,6 +174,12 @@ export class  AccountController {
 		return await this.accountService.deleteProfilePicture(request, response);
 	}
 
+	//내가 작성한 글 가져오기
+	@Get("post")
+	async getMyPost(@Req() request: Request, @Res({ passthrough: true }) response: Response): Promise<any> {
+		return await this.accountService.getMyPost(request, response);
+	}
+
 	/*
 	@Post("verify/send/email")
 	async setVerifyEmailTokenLater(@Req() request: Request, @Res({ passthrough: true }) response: Response): Promise<string> {

@@ -188,6 +188,13 @@ const MyPage = () => {
 			}
 		}
 
+
+		//내가 작성한 글 가져오기
+		const getMyPost = async () => {
+			const resultData = await accountsFetch.getMyPost();
+			console.log(resultData)
+		}
+
 		const userPopover = (
 			<Popover id={"nicknamePopover"} style={{ minWidth: "80px", fontSize: "0.8rem" }}>
 				<Popover.Body style={{ paddingTop: "10px", paddingBottom: "10px", paddingLeft: "10px", paddingRight: "30px" }}>
@@ -250,15 +257,15 @@ const MyPage = () => {
 					</div>
 
 					<div style={{ display: "flex", alignItems: "center", justifyContent: "flex-start", fontSize: "0.8rem", marginTop: "0.5rem" }}>
-						<div style={{ display: "flex", flexDirection: "column", alignItems: "center", border: "1px solid lightgray", width: "33.3%", paddingTop: "0.5rem", paddingBottom: "0.5rem" }}>
+						<div onClick={() => { getMyPost() }} style={{ display: "flex", flexDirection: "column", alignItems: "center", border: "1px solid lightgray", width: "33.3%", paddingTop: "0.5rem", paddingBottom: "0.5rem", cursor: "pointer" }}>
 							<span>작성 글</span>
 							<span>{new Intl.NumberFormat().format(accountData.postWriteCount)}</span>
 						</div>
-						<div style={{ display: "flex", flexDirection: "column", alignItems: "center", border: "1px solid lightgray", width: "33.3%", paddingTop: "0.5rem", paddingBottom: "0.5rem" }}>
+						<div style={{ display: "flex", flexDirection: "column", alignItems: "center", border: "1px solid lightgray", width: "33.3%", paddingTop: "0.5rem", paddingBottom: "0.5rem", cursor: "pointer" }}>
 							<span>작성 댓글</span>
 							<span>{new Intl.NumberFormat().format(accountData.replyWriteCount)}</span>
 						</div>
-						<div style={{ display: "flex", flexDirection: "column", alignItems: "center", border: "1px solid lightgray", width: "33.3%", paddingTop: "0.5rem", paddingBottom: "0.5rem" }}>
+						<div style={{ display: "flex", flexDirection: "column", alignItems: "center", border: "1px solid lightgray", width: "33.3%", paddingTop: "0.5rem", paddingBottom: "0.5rem", cursor: "pointer" }}>
 							<span>커뮤력</span>
 							<span>{new Intl.NumberFormat().format(accountData.exp)}</span>
 						</div>
