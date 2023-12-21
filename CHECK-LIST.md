@@ -84,6 +84,7 @@ npm run start
 - <input type='checkbox'> 로스피 쌀먹 그래프 추가해볼까?
 - <input type='checkbox'> 소셜 로그인?
 - <input type='checkbox'> 컨텐츠 별점 메기기(레벨 및 서버)
+- <input type='checkbox'> 깐부 매칭 시스템(듀오 처럼?)
 
 ## 본캐 인증 절차(유저)
 ```bash
