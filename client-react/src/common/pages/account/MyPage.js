@@ -155,13 +155,11 @@ const MyPage = () => {
 		}
 
 		const uploadProfilePicture = async (fileData) => {
-			console.log(fileData)
 			const sendData = new FormData();
 			sendData.append("upload", fileData);
 			
 			const uploadResult = await accountsFetch.uploadProfilePicture(sendData);
 			document.querySelector("#profilePictureInput").value = ""; //사진 데이터 초기화
-			console.log(uploadResult);
 
 			if(uploadResult.error !== undefined){
 				if(uploadResult.error.message === "big"){
@@ -181,8 +179,7 @@ const MyPage = () => {
 				setIsLoading(true);
 				setLoadingMessage("프로필 사진을 삭제하는 중입니다...");
 
-				const deleteResult = await accountsFetch.deleteProfilePicture();
-				console.log(deleteResult);
+				await accountsFetch.deleteProfilePicture();
 
 				callMyInfo();
 			}
