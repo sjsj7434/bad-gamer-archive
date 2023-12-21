@@ -168,6 +168,9 @@ const MyPage = () => {
 				else{
 					alert("이미지 업로드 중 오류가 발생하였습니다");
 				}
+
+				setIsLoading(false);
+				return;
 			}
 			
 			callMyInfo();
