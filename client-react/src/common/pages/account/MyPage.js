@@ -14,6 +14,8 @@ import EditIntroduce from './EditIntroduce.js';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Popover from 'react-bootstrap/Popover';
 
+import Resizer from "react-image-file-resizer";
+
 const MyPage = () => {
 	const [accountData, setAccountData] = useState(null);
 	const [renderData, setRenderData] = useState(null);
@@ -130,21 +132,47 @@ const MyPage = () => {
 		}
 
 		//프로필 사진 저장
-		const uploadProfilePicture = async () => {
+		const resizeProfilePicture = async () => {
 			setIsLoading(true);
 			setLoadingMessage("사진을 등록하는 중입니다...");
-
+			
 			const fileData = document.querySelector("#profilePictureInput").files[0];
+
 			if(fileData !== null && fileData !== undefined){
-				const sendData = new FormData();
-				sendData.append("upload", fileData);
-				
-				const uploadResult = await accountsFetch.uploadProfilePicture(sendData);
-				document.querySelector("#profilePictureInput").value = ""; //사진 데이터 초기화
-				console.log(uploadResult);
-				
-				callMyInfo();
+				Resizer.imageFileResizer(
+					document.querySelector("#profilePictureInput").files[0], // Is the file of the image which will resized.
+					200, // Is the maxWidth of the resized new image.
+					200, // Is the maxHeight of the resized new image.
+					"JPEG", // Is the compressFormat of the resized new image.
+					70, // Is the quality of the resized new image.
+					0, // Is the degree of clockwise rotation to apply to uploaded image.
+					(fileData) => { uploadProfilePicture(fileData) }, // Is the callBack function of the resized new image OUTPUT.
+					"file", // Is the OUTPUT type of the resized new image.
+					100, // Is the minWidth of the resized new image.
+					100 // Is the minHeight of the resized new image.
+				);
 			}
+		}
+
+		const uploadProfilePicture = async (fileData) => {
+			console.log(fileData)
+			const sendData = new FormData();
+			sendData.append("upload", fileData);
+			
+			const uploadResult = await accountsFetch.uploadProfilePicture(sendData);
+			document.querySelector("#profilePictureInput").value = ""; //사진 데이터 초기화
+			console.log(uploadResult);
+
+			if(uploadResult.error !== undefined){
+				if(uploadResult.error.message === "big"){
+					alert("이미지가 너무 커 업로드할 수 없습니다\n더 작고 용량이 작은 이미지를 선택해주세요");
+				}
+				else{
+					alert("이미지 업로드 중 오류가 발생하였습니다");
+				}
+			}
+			
+			callMyInfo();
 		}
 
 		//프로필 사진 삭제
@@ -204,7 +232,7 @@ const MyPage = () => {
 								</>
 							}
 
-							<input type="file" id="profilePictureInput" onChange={ () => { uploadProfilePicture() } } accept=".png, .jpg, .webp, .gif, .jpeg" style={{ display: "none" }} />
+							<input type="file" id="profilePictureInput" onChange={ () => { resizeProfilePicture() } } accept=".png, .jpg, .webp, .gif, .jpeg" style={{ display: "none" }} />
 						</div>
 						<div>
 							<span style={{ fontSize: "1.2rem", fontWeight: 800 }}>

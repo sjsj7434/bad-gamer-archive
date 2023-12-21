@@ -1590,6 +1590,10 @@ export class AccountService {
 	 * 프로필 사진 정보 저장
 	 */
 	async uploadProfilePicture(request: Request, response: Response, file: Express.Multer.File): Promise<{ url: string } | { error: { message: string } }> {
+		if (file.size > (50 * 1000)){ //50KB
+			return { error: { message: "big" } };
+		}
+
 		const loginUUID = this.LOGIN_SESSION.get(request.cookies["sessionCode"]); //로그인한 정보
 		// const timeOfNow = new Date();
 		// const timeString = timeOfNow.toLocaleDateString("sv-SE").replace(/-/g, "") + timeOfNow.toLocaleTimeString("sv-SE").replace(/:/g, "");
@@ -1607,7 +1611,6 @@ export class AccountService {
 		)
 
 		return { url: "https://img-s-msn-com.akamaized.net/tenant/amp/entityid/AAZrqDW?w=300&h=157&q=60&m=6&f=jpg&u=t" };
-		// return { error: { message: "test error" } };
 	}
 
 	/**
