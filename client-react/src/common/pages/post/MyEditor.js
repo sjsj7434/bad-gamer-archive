@@ -187,14 +187,16 @@ const MyEditor = (props) => {
 	
 		const editorKB = getKiloByteSize(data);
 		props.setEditorSizeByte(editorKB);
-	
-		htmlSizeWrapper.textContent = `작성된 글 용량 : ${editorKB} KB / ${props.editorMaxKB} KB`;
-	
-		if(editorKB >= props.editorMaxKB){
-			htmlSizeWrapper.style.color = "red";
-		}
-		else{
-			htmlSizeWrapper.style.color = "";
+
+		if(htmlSizeWrapper !== null){
+			htmlSizeWrapper.textContent = `작성된 글 용량 : ${editorKB} KB / ${props.editorMaxKB} KB`;
+		
+			if(editorKB >= props.editorMaxKB){
+				htmlSizeWrapper.style.color = "red";
+			}
+			else{
+				htmlSizeWrapper.style.color = "";
+			}
 		}
 	}
 
@@ -220,14 +222,17 @@ const MyEditor = (props) => {
 					
 					const toolbarElement = editor.ui.view.toolbar.element;
 					const htmlSizeWrapper = document.querySelector("#html-size");
-					if (props.editorMode === "read") {
-						//읽기 모드
-						toolbarElement.style.display = "none";
-						htmlSizeWrapper.style.display = "none";
-					}
-					else {
-						//작성 모드
-						toolbarElement.style.display = "flex";
+
+					if(toolbarElement !== null && htmlSizeWrapper !== null){
+						if (props.editorMode === "read") {
+							//읽기 모드
+							toolbarElement.style.display = "none";
+							htmlSizeWrapper.style.display = "none";
+						}
+						else {
+							//작성 모드
+							toolbarElement.style.display = "flex";
+						}
 					}
 				}}
 				onChange={(event, editor) => {
