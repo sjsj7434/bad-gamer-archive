@@ -68,6 +68,7 @@ npm run start
 - <input type='checkbox' checked> 차단 목록 페이지네이션(회원 전용)
 - <input type='checkbox'> 사용자 자기소개 및 기본정보 조회 페이지
 - <input type='checkbox'> 닉네임 바꾸면 예전에 작성한 글에서는 차단 불가능한 오류(회원 전용)
+- <input type='checkbox'> 서버에서 회원가입할 때 입력 값 검증 추가
 - <input type='checkbox'> 아이디 차단 목록 관리 기능(회원 전용)
 - <input type='checkbox'> 자기소개 및 인장 시스템
 - <input type='checkbox'> 직업 게시판 > 소유한 캐릭터(1500 이상) 없으면 글 작성 불가능
