@@ -1666,4 +1666,39 @@ export class AccountService {
 			return false;
 		}
 	}
+
+	/**
+	 * 다른 사용자 정보 가져오기
+	 */
+	async getYourInfo(request: Request, response: Response, nickname: string): Promise<Account> {
+		const acctountData = await this.accountRepository.findOne({
+			relations: ["authentication"], //사용자 인증 정보 join
+			select: {
+				authentication: { type: true, data: true, createdAt: true, updatedAt: true },
+				code: true,
+				nickname: true,
+				exp: true,
+				evolution: true,
+				postWriteCount: true,
+				replyWriteCount: true,
+				postDeleteCount: true,
+				replyDeleteCount: true,
+				profilePictureURL: true,
+				introduce: true,
+				createdAt: true,
+			},
+			where: [
+				{
+					nickname: Equal(nickname),
+					authentication: { type: In(["lostark_character_level", "lostark_item_level"]) },
+				},
+				{
+					nickname: Equal(nickname),
+					authentication: { type: IsNull() }
+				},
+			],
+		});
+
+		return acctountData;
+	}
 }

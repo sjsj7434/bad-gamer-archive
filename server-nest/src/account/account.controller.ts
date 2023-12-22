@@ -161,6 +161,13 @@ export class  AccountController {
 		return await this.accountService.deleteMyIntroduce(request, response);
 	}
 
+	//다른 사용자 정보 가져오기
+	@Get("information/:nickname")
+	async getYourInfo(@Req() request: Request, @Res({ passthrough: true }) response: Response, @Param("nickname") nickname: string): Promise<Account | NotFoundException> {
+		console.log("getYourInfo")
+		return await this.accountService.getYourInfo(request, response, nickname);
+	}
+
 	//프로필 사진 정보 저장
 	@Post("image")
 	@UseInterceptors(FileInterceptor("upload"))

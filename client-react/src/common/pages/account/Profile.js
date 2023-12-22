@@ -2,15 +2,14 @@ import { useCallback, useEffect, useState } from 'react';
 import Button from 'react-bootstrap/Button';
 import Container from 'react-bootstrap/Container';
 import { useNavigate, useParams } from "react-router-dom";
-import Table from 'react-bootstrap/Table';
 
 import * as accountsFetch from '../../js/accountFetch.js'
 import LoadingModal from '../common/LoadingModal.js';
 import Image from 'react-bootstrap/Image';
 import '../../css/MyPage.css';
-import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
-import Popover from 'react-bootstrap/Popover';
 import MyEditor from '../post/MyEditor.js';
+import Card from 'react-bootstrap/Card';
+import ListGroup from 'react-bootstrap/ListGroup';
 
 const Profile = () => {
 	const [accountData, setAccountData] = useState(null);
@@ -22,17 +21,18 @@ const Profile = () => {
 	const navigate = useNavigate();
 
 	const callMyInfo = useCallback(async () => {
-		const myInfo = await accountsFetch.getMyInfo();
+		const yourInfo = await accountsFetch.getYourInfo(params.nickname);
+		console.log(yourInfo)
 
-		if(myInfo === null){
-			navigate("/");
+		if(yourInfo === null){
+			// navigate("/");
 			return;
 		}
 
-		setAccountData(myInfo);
+		setAccountData(yourInfo);
 
 		setIsLoading(false);
-	}, [navigate])
+	}, [params.nickname, navigate])
 
 	useEffect(() => {
 		console.log(params)
@@ -79,20 +79,6 @@ const Profile = () => {
 			console.log(resultData)
 		}
 
-		const userPopover = (
-			<Popover id={"nicknamePopover"} style={{ minWidth: "80px", fontSize: "0.8rem" }}>
-				<Popover.Body style={{ paddingTop: "10px", paddingBottom: "10px", paddingLeft: "10px", paddingRight: "30px" }}>
-					<div>
-						<div style={{ marginBottom: "10px" }}>
-							<label htmlFor="profilePictureInput" style={{ cursor: "pointer" }}>
-								<span style={{ cursor: "pointer", color: "black" }}>변경</span>
-							</label>
-						</div>
-					</div>
-				</Popover.Body>
-			</Popover>
-		);
-
 		if(accountData !== null){
 			setRenderData(
 				<Container style={{maxWidth: "600px"}}>
@@ -103,9 +89,7 @@ const Profile = () => {
 							{
 								accountData.profilePictureURL !== null ? 
 								<>
-									<OverlayTrigger trigger="click" placement="right-start" overlay={userPopover} rootClose={true}>
-										<Image src={accountData.profilePictureURL} roundedCircle className="profilePicture" />
-									</OverlayTrigger>
+									<Image src={accountData.profilePictureURL} roundedCircle className="profilePicture" />
 								</>
 								:
 								<>
@@ -125,9 +109,7 @@ const Profile = () => {
 								{accountData.nickname}
 							</span>
 							<br />
-							<span style={{ fontSize: "0.8rem" }}>
-								{accountData.email === null ? "-" : accountData.email}
-							</span>
+							&nbsp;
 							<br />
 							<span style={{ fontSize: "0.8rem" }}>
 								{accountData.createdAt.substring(0, 10)} 가입
@@ -152,47 +134,59 @@ const Profile = () => {
 
 					<div className="rowDivider"></div>
 
-					<div style={{paddingLeft: "10px", paddingRight: "10px", fontSize: "0.8rem", marginTop: "2rem", marginBottom: "2rem"}}>
-						<Table>
-							<tbody>
-								{
-									accountData.authentication.map((element) => (
-										<tr key={element.type}>
-											<th>
-												{lostarkTextParser(element.type)}
-											</th>
-											<td>
-												{element.data}
-											</td>
-										</tr>
-									))
-								}
-								{
-									accountData.authentication.length === 0 ?
-									<tr>
-										<td colSpan="2" style={{ height: "5rem" }}>
-											<div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
-												<p>
-													<strong>인증 정보가 존재하지 않습니다</strong>
-												</p>
-												<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="black" className="bi bi-x-circle" viewBox="0 0 16 16" style={{ width: "4rem", height: "4rem", margin: "1rem" }}>
-													<path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
-													<path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708"/>
-												</svg>
-											</div>
-										</td>
-									</tr>
-									:
-									<tr>
-										<th>인증일</th>
-										<td>{accountData.authentication.filter((element) => element.type === "lostark_item_level")[0].updatedAt.substring(0, 10)}</td>
-									</tr>
-								}
-							</tbody>
-						</Table>
-						
-						<div className="rowDivider"></div>
+					<div style={{ display: "flex", justifyContent: "center" }}>
+						<Card style={{ width: "20rem", fontSize: "0.8rem" }}>
+							{
+								accountData.authentication.length === 0 ?
+								<>
+									<Card.Body>
+										<Card.Title>
+											LA
+										</Card.Title>
 
+										<div style={{ display: "flex", flexDirection: "column", alignItems: "center", marginTop: "2.5rem", marginBottom: "2.5rem" }}>
+											<p>
+												<strong>인증 정보가 존재하지 않습니다</strong>
+											</p>
+											<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="black" className="bi bi-x-circle" viewBox="0 0 16 16" style={{ width: "4rem", height: "4rem", margin: "1rem" }}>
+												<path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
+												<path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708"/>
+											</svg>
+										</div>
+									</Card.Body>
+								</>
+								:
+								<>
+									<Card.Body>
+										<Card.Title>
+											LA
+										</Card.Title>
+									</Card.Body>
+									<ListGroup className="list-group-flush">
+										{
+											accountData.authentication.map((element) => (
+												<ListGroup.Item key={element.type}>
+													<div style={{ display: "flex", alignItems: "center" }}>
+														<div style={{ width: "45%" }}><strong>{lostarkTextParser(element.type)}</strong></div>
+														<div style={{ width: "10%" }}>|</div>
+														<div style={{ width: "45%" }}>{element.data}</div>
+													</div>
+												</ListGroup.Item>
+											))
+										}
+									</ListGroup>
+
+									<Card.Footer className="text-muted">
+										{accountData.authentication.filter((element) => element.type === "lostark_item_level")[0].updatedAt.substring(0, 10)} 인증 되었습니다
+									</Card.Footer>
+								</>
+							}
+						</Card>
+					</div>
+
+					<div className="rowDivider"></div>
+
+					<div style={{paddingLeft: "10px", paddingRight: "10px", fontSize: "0.8rem", marginTop: "2rem", marginBottom: "2rem"}}>
 						<div style={{ maxHeight: "300px", overflow: "auto", border: "1px solid lightgray", borderRadius: "6px" }}>
 							<MyEditor
 								editorMode={"read"}

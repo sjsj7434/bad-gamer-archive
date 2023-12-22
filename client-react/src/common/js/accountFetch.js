@@ -797,3 +797,27 @@ export const getMyPost = async () => {
 		return null;
 	}
 }
+
+/**
+ * 다른 사용자 정보 페이지에서 사용할 정보 가져오기
+ */
+export const getYourInfo = async (nickname) => {
+	const fecthOption = {
+		method: "GET"
+		, headers: {"Content-Type": "application/json",}
+		, credentials: "include", // Don't forget to specify this if you need cookies
+	};
+	const fetchResponse = await fetch(`/account/information/${nickname}`, fecthOption);
+	const [isStatusGood, checkMessage] = isFetchStatusGood(fetchResponse);
+
+	if(isStatusGood === true){
+		const fetchData = await getFetchJson(fetchResponse);
+
+		return fetchData;
+	}
+	else{
+		alert(checkMessage);
+
+		return null;
+	}
+}
