@@ -40,6 +40,7 @@ import MyBlacklist from './account/MyBlacklist.js';
 import Profile from './account/Profile.js';
 import Intro from './Intro.js';
 import PrivacyPolicy from './PrivacyPolicy.js';
+import PostHistory from './account/PostHistory.js';
 
 // import CharacterInfo from '../../lostark/pages/character/CharacterInfo';
 
@@ -297,6 +298,15 @@ const RoutesWrapper = () => {
 									<>
 										<SetActiveMenu pageTitle="Agora(Your)" setCurrentMenu={setCurrentMenu} menuCode={"/account/profile"} />
 										<Profile />
+									</>
+								} />
+							</Route>
+
+							<Route path="history">
+								<Route path="post/:nickname" element={
+									<>
+										<SetActiveMenu pageTitle="Agora(Your)" setCurrentMenu={setCurrentMenu} menuCode={"/account/profile"} />
+										<PostHistory />
 									</>
 								} />
 							</Route>

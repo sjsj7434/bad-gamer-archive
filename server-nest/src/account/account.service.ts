@@ -1648,10 +1648,20 @@ export class AccountService {
 
 		if (loginUUID !== null) {
 			const result = await this.accountRepository.find({
-				relations: ["post", "post.reply"],
+				relations: ["post", "post.reply", "post.account", "post.account.authentication"], //정보 join
 				select: {
-					nickname: true,
-					post: { code: true, title: true, view: true, upvote: true, downvote: true, createdAt: true, reply: { postCode: true, }, },
+					post: {
+						code: true,
+						category: true,
+						title: true,
+						view: true,
+						upvote: true,
+						downvote: true,
+						hasImage: true,
+						createdAt: true,
+						reply: { postCode: true },
+						account: { nickname: true, authentication: { type: true, data: true } },
+					},
 				},
 				where: {
 					uuid: Equal(loginUUID),
