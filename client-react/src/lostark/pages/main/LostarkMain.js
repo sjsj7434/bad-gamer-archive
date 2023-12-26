@@ -17,17 +17,17 @@ const LostarkMain = () => {
 							<Col>
 								<Carousel pause="hover" style={{ backgroundColor: "#d1d1d1", borderRadius: "8px", padding: "4px" }}>
 									<Carousel.Item>
-										<div className="carouselImageBox" style={{ display: "flex", justifyContent: "center", overflow: "hidden" }}>
+										<div className="carouselImageBox" style={{ display: "flex", justifyContent: "center", overflow: "hidden", borderRadius: "8px" }}>
 											<Image src="https://img.megastudy.net/campus/library/v2015/library/campus_common/2025/2025_jaejung_gate/service_04_img.png" />
 										</div>
 									</Carousel.Item>
 									<Carousel.Item>
-										<div className="carouselImageBox" style={{ display: "flex", justifyContent: "center", overflow: "hidden" }}>
+										<div className="carouselImageBox" style={{ display: "flex", justifyContent: "center", overflow: "hidden", borderRadius: "8px" }}>
 											<Image src="https://img.megastudy.net/campus/library/v2015/library/campus_common/2025/2025_jaejung_gate/graph_img1.png" />
 										</div>
 									</Carousel.Item>
 									<Carousel.Item>
-										<div className="carouselImageBox" style={{ display: "flex", justifyContent: "center", overflow: "hidden" }}>
+										<div className="carouselImageBox" style={{ display: "flex", justifyContent: "center", overflow: "hidden", borderRadius: "8px" }}>
 											<Image src="https://img.megastudy.net/campus/library/v2015/library/yangji/nsu/2024/2024_jaejung/tab01_con01_img03.png" />
 										</div>
 									</Carousel.Item>
