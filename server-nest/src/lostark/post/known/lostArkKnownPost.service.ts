@@ -128,6 +128,72 @@ export class LostArkKnownPostService {
 	}
 
 	/**
+	 * 최근 게시글 목록 가져오기
+	 */
+	async getRecent(page: number, searchType: string, searchText: string): Promise<[LostArkKnownPost[], number]> {
+		try {
+			const perPage: number = 5;
+
+			const whereClause: FindOptionsWhere<LostArkKnownPost> | FindOptionsWhere<LostArkKnownPost>[] = [{
+				deletedAt: IsNull(),
+				account: {
+					authentication: [
+						{ type: Equal("lostark_item_level") },
+						{ type: IsNull() },
+					]
+				},
+			}];
+
+			if (searchText !== "") {
+				if (searchType === "title") {
+					whereClause[0].title = Like(`%${searchText}%`);
+				}
+				else if (searchType === "content") {
+					whereClause[0].content = Like(`%${searchText}%`);
+				}
+				else if (searchType === "nickname") {
+					// whereClause[0].writerNickname = Like(`%${searchText}%`);
+					whereClause[0].account["nickname"] = Like(`%${searchText}%`);
+				}
+				else if (searchType === "titleAndContent") {
+					const deepCopiedWhere = Object.assign({}, whereClause[0]);
+					deepCopiedWhere.content = Like(`%${searchText}%`);
+					whereClause.push(deepCopiedWhere);
+					whereClause[0].title = Like(`%${searchText}%`);
+				}
+			}
+
+			const result = await this.lostArkKnownPostRepository.findAndCount({
+				relations: ["reply", "account", "account.authentication"], //정보 join
+				select: {
+					reply: { code: true },
+					account: { nickname: true, authentication: { type: true, data: true } },
+					code: true,
+					category: true,
+					title: true,
+					view: true,
+					upvote: true,
+					downvote: true,
+					hasImage: true,
+					createdAt: true,
+				},
+				where: whereClause,
+				order: {
+					createdAt: "DESC",
+				},
+				withDeleted: true,
+				skip: (page - 1) * perPage,
+				take: perPage,
+			});
+
+			return result;
+		}
+		catch (error) {
+			this.errorLogService.createErrorLog(error);
+		}
+	}
+
+	/**
 	 * 추천 트랜드 게시글 목록 가져오기
 	 */
 	async getUpvoteTrend(page: number, searchType: string, searchText: string): Promise<[LostArkKnownPost[], number]> {

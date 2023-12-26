@@ -109,6 +109,12 @@ export class PostController {
 		return await this.lostArkUnknownPostService.deleteReply(deleteReplyDTO);
 	}
 
+	//익명 게시글 최근 게시글 목록, page 값이 number가 아니면 호출되지 않음
+	@Get("unknown/trend/recent/list/:page")
+	async getUnknownRecentTrend(@Param("page") page: number, @Query("searchType") searchType: string, @Query("searchText") searchText: string): Promise<[LostArkUnknownPost[], number]> {
+		return await this.lostArkUnknownPostService.getRecent(page, searchType, searchText);
+	}
+
 	//익명 게시글 추천 트랜드 게시글 목록, page 값이 number가 아니면 호출되지 않음
 	@Get("unknown/trend/upvote/list/:page")
 	async getUnknownUpvoteTrend(@Param("page") page: number, @Query("searchType") searchType: string, @Query("searchText") searchText: string): Promise<[LostArkUnknownPost[], number]> {
@@ -240,6 +246,12 @@ export class PostController {
 	@Post("known/reply/downvote")
 	async downvoteKnownReply(@Req() request: Request, @Res({ passthrough: true }) response: Response, @Body() sendData: { replyCode: number }, @Ip() ipData: string): Promise<{ upvote: number, downvote: number, isVotable: boolean }> {
 		return await this.lostArkKnownPostService.downvoteKnownReply(request, response, sendData.replyCode, ipData);
+	}
+
+	//유저 게시글 최근 게시글 목록, page 값이 number가 아니면 호출되지 않음
+	@Get("known/trend/recent/list/:page")
+	async getKnownRecentTrend(@Param("page") page: number, @Query("searchType") searchType: string, @Query("searchText") searchText: string): Promise<[LostArkKnownPost[], number]> {
+		return await this.lostArkKnownPostService.getRecent(page, searchType, searchText);
 	}
 
 	//유저 게시글 추천 트랜드 게시글 목록, page 값이 number가 아니면 호출되지 않음

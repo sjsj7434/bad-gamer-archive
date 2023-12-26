@@ -5,25 +5,31 @@ import Tab from 'react-bootstrap/Tab';
 import Tabs from 'react-bootstrap/Tabs';
 import KnownPostRow from "../../../../common/pages/post/known/KnownPostRow";
 import Spinner from 'react-bootstrap/Spinner';
+import Button from 'react-bootstrap/Button';
 
 const TrendKnownPost = () => {
-	const [upvoteRender, setUpvoteRender] = useState(<><div style={{ display: "flex", justifyContent: "center", alignItems: "center", marginTop: "50px" }}><Spinner animation="border" /></div></>);
+	const [recentRender, setRecentRender] = useState(<><div style={{ display: "flex", justifyContent: "center", alignItems: "center", paddingTop: "50px" }}><Spinner animation="border" /></div></>);
+	const [recentList, setRecentList] = useState(null);
+
+	const [upvoteRender, setUpvoteRender] = useState(<><div style={{ display: "flex", justifyContent: "center", alignItems: "center", paddingTop: "50px" }}><Spinner animation="border" /></div></>);
 	const [upvoteList, setUpvoteList] = useState(null);
 
-	const [downvoteRender, setDownvoteRender] = useState(<><div style={{ display: "flex", justifyContent: "center", alignItems: "center", marginTop: "50px" }}><Spinner animation="border" /></div></>);
+	const [downvoteRender, setDownvoteRender] = useState(<><div style={{ display: "flex", justifyContent: "center", alignItems: "center", paddingTop: "50px" }}><Spinner animation="border" /></div></>);
 	const [downvoteList, setDownvoteList] = useState(null);
 
-	const [viewRender, setViewRender] = useState(<><div style={{ display: "flex", justifyContent: "center", alignItems: "center", marginTop: "50px" }}><Spinner animation="border" /></div></>);
+	const [viewRender, setViewRender] = useState(<><div style={{ display: "flex", justifyContent: "center", alignItems: "center", paddingTop: "50px" }}><Spinner animation="border" /></div></>);
 	const [viewList, setViewList] = useState(null);
 
 	const navigate = useNavigate();
 	
 	useEffect(() => {
 		const readContentList = async () => {
+			const recentData = await postFetch.getTrendPostList("known", "recent", "", "", 1);
 			const upvoteData = await postFetch.getTrendPostList("known", "upvote", "", "", 1);
 			const downvoteData = await postFetch.getTrendPostList("known", "downvote", "", "", 1);
 			const viewData = await postFetch.getTrendPostList("known", "view", "", "", 1);
 
+			setRecentList(recentData[0]);
 			setUpvoteList(upvoteData[0]);
 			setDownvoteList(downvoteData[0]);
 			setViewList(viewData[0]);
@@ -33,12 +39,37 @@ const TrendKnownPost = () => {
 	}, [])
 	
 	useEffect(() => {
+		if(recentList !== null){
+			const ren = [];
+
+			if(recentList.length === 0){
+				ren.push(
+					<div key={"noContent"}>
+						<span style={{color: "gray", fontSize: "0.85rem"}}>작성된 게시글이 없습니다</span>
+					</div>
+				);
+			}
+			else{
+				ren.push(
+					recentList.map((postData) => {
+						return (
+							<KnownPostRow key={"post" + postData.code} postData={postData} />
+						);
+					})
+				)
+			}
+
+			setRecentRender(ren);
+		}
+	}, [recentList, navigate])
+	
+	useEffect(() => {
 		if(upvoteList !== null){
 			const ren = [];
 
 			if(upvoteList.length === 0){
 				ren.push(
-					<div key={"noContent"} style={{ height: 300 }}>
+					<div key={"noContent"}>
 						<span style={{color: "gray", fontSize: "0.85rem"}}>작성된 게시글이 없습니다</span>
 					</div>
 				);
@@ -63,7 +94,7 @@ const TrendKnownPost = () => {
 
 			if(downvoteList.length === 0){
 				ren.push(
-					<div key={"noContent"} style={{ height: 300 }}>
+					<div key={"noContent"}>
 						<span style={{color: "gray", fontSize: "0.85rem"}}>작성된 게시글이 없습니다</span>
 					</div>
 				);
@@ -88,7 +119,7 @@ const TrendKnownPost = () => {
 
 			if(viewList.length === 0){
 				ren.push(
-					<div key={"noContent"} style={{ height: 300 }}>
+					<div key={"noContent"}>
 						<span style={{color: "gray", fontSize: "0.85rem"}}>작성된 게시글이 없습니다</span>
 					</div>
 				);
@@ -117,22 +148,28 @@ const TrendKnownPost = () => {
 				<h6 style={{ fontStyle: "italic", fontWeight: 800 }}>자유 게시판 Trend</h6>
 			</div>
 			<Tabs
-				// onSelect={(key) => {console.log(key)}}
-				defaultActiveKey="upvote"
+				defaultActiveKey="recent"
 				id="uncontrolled-tab-example"
 				className="mb-2"
 				style={{ fontSize: "0.8rem" }}
 			>
-				<Tab eventKey="upvote" title="추천" mountOnEnter={true} unmountOnExit={false}>
+				<Tab eventKey="recent" title="최근" mountOnEnter={true} unmountOnExit={false} style={{ minHeight: "280px" }}>
+					{recentRender}
+				</Tab>
+				<Tab eventKey="upvote" title="추천" mountOnEnter={true} unmountOnExit={false} style={{ minHeight: "280px" }}>
 					{upvoteRender}
 				</Tab>
-				<Tab eventKey="downvote" title="비추천" mountOnEnter={true} unmountOnExit={false}>
+				<Tab eventKey="downvote" title="비추천" mountOnEnter={true} unmountOnExit={false} style={{ minHeight: "280px" }}>
 					{downvoteRender}
 				</Tab>
-				<Tab eventKey="view" title="조회" mountOnEnter={true} unmountOnExit={false}>
+				<Tab eventKey="view" title="조회" mountOnEnter={true} unmountOnExit={false} style={{ minHeight: "280px" }}>
 					{viewRender}
 				</Tab>
 			</Tabs>
+
+			<div style={{ display: "flex", justifyContent: "flex-end", alignItems: "center" }}>
+				<Button onClick={() => { navigate("/lostark/post/known/1"); }} variant="link" style={{ fontSize: "0.75rem", textDecoration: "none", color: "gray" }}>게시판으로</Button>
+			</div>
 		</>
 	);
 }
