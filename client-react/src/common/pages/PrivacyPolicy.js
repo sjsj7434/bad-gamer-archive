@@ -3,16 +3,12 @@ import '../css/Common.css';
 import Container from 'react-bootstrap/Container';
 import Card from 'react-bootstrap/Card';
 import Accordion from 'react-bootstrap/Accordion';
-import Image from 'react-bootstrap/Image';
 
 const PrivacyPolicy = () => {
 	return (
 		<Container style={{maxWidth: "750px"}}>
 			<div style={{ marginBottom: "3rem" }}>
 				<div style={{ display: "flex" }}>
-					<div style={{ marginRight: "2rem" }}>
-						<Image src="https://img.megastudy.net/campus/library/v2015/library/intro_renew/triple_img03_201222.jpg" rounded style={{ width: "8rem", height: "8rem" }} />
-					</div>
 					<div>
 						Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
 						eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad
