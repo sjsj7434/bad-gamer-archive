@@ -13,6 +13,8 @@ import { LostarkAnnouncePostService } from './announce/lostarkAnnouncePost.servi
 import { LostarkAnnouncePost } from './announce/lostarkAnnouncePost.entity';
 import { LostarkAnnounceVoteHistory } from './announce/lostarkAnnounceVoteHistory.entity';
 import { LostArkKnownReplyVoteHistory } from './known/lostArkKnownReplyVoteHistory.entity';
+import { LostarkHelp } from './help/lostarkHelp.entity';
+import { LostarkHelpService } from './help/lostarkHelp.service';
 
 /**
  * 게시판 관련 기능 모듈
@@ -27,9 +29,10 @@ import { LostArkKnownReplyVoteHistory } from './known/lostArkKnownReplyVoteHisto
 			LostarkAnnouncePost, LostarkAnnounceVoteHistory
 			, LostArkKnownPost, LostArkKnownReply, LostArkKnownPostVoteHistory, LostArkKnownReplyVoteHistory
 			, LostArkUnknownPost, LostArkUnknownReply
+			, LostarkHelp
 		]),
 	],
 	controllers: [ PostController ],
-	providers: [ LostarkAnnouncePostService, LostArkKnownPostService, LostArkUnknownPostService ],
+	providers: [ LostarkAnnouncePostService, LostArkKnownPostService, LostArkUnknownPostService, LostarkHelpService ],
 })
 export class PostModule {}

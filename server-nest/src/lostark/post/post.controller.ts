@@ -15,6 +15,8 @@ import { LostarkAnnouncePostService } from './announce/lostarkAnnouncePost.servi
 import { CreateLostArkKnownReplyDTO, DeleteLostArkKnownReplyDTO } from './known/lostArkKnownReply.dto';
 import { LostArkKnownPostVoteHistory } from './known/lostArkKnownPostVoteHistory.entity';
 import { LostarkAnnouncePost } from './announce/lostarkAnnouncePost.entity';
+import { LostarkHelpService } from './help/lostarkHelp.service';
+import { CreateLostarkHelpDTO } from './help/lostarkHelp.dto';
 
 /**
  * 게시판 컨트롤러
@@ -26,6 +28,7 @@ export class PostController {
 		private lostarkAnnouncePostService: LostarkAnnouncePostService,
 		private lostArkUnknownPostService: LostArkUnknownPostService,
 		private lostArkKnownPostService: LostArkKnownPostService,
+		private lostarkHelpService: LostarkHelpService,
 	) { }
 	//================================================================================================================================================= unknown
 
@@ -308,5 +311,11 @@ export class PostController {
 	@UseInterceptors(FileInterceptor("upload"))
 	async uploadImage(@UploadedFile() file: Express.Multer.File): Promise<{ url: string } | { error: { message: string } }> {
 		return await this.lostarkAnnouncePostService.uploadImage(file);
+	}
+
+	//게시글 이미지 삽입
+	@Post("help")
+	async writeHelp(@Req() request: Request, @Res({ passthrough: true }) response: Response, @Body() sendData: CreateLostarkHelpDTO, @Ip() ipData: string): Promise<string> {
+		return await this.lostarkHelpService.writeHelp(request, response, sendData, ipData);
 	}
 }

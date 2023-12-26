@@ -4,16 +4,30 @@ import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import { useNavigate } from 'react-router-dom';
 
+import * as postFetch from '../../js/postFetch.js'
+
 const HelpCenter = () => {
 	const navigate = useNavigate();
 
-	const submitHelp = () => {
-		alert("죄송합니다. 아직 고객센터는 구현이 완료되지 않았습니다");
-		navigate("/");
-		// if(window.confirm("문의 사항을 제출하시겠습니까?") === true){
-		// 	// alert("문의 사항이 접수되었습니다");
-		// 	navigate("/");
-		// }
+	const submitHelp = async () => {
+		if(window.confirm("문의 사항을 제출하시겠습니까?") === true){
+			const sendData = {
+				category: document.querySelector("#helpType").value,
+				title: document.querySelector("#helpTitle").value,
+				content: document.querySelector("#helpContent").value,
+			};
+
+			const result = await postFetch.writeHelpCenter(sendData);
+
+			if(result === "success"){
+				alert("문의 사항이 접수되었습니다");
+				navigate("/");
+			}
+			else{
+				alert("문의를 저장할 수 없습니다");
+			}
+
+		}
 	}
 
 	return (

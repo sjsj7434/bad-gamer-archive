@@ -1,4 +1,4 @@
-import { isFetchStatusGood, getFetchJson } from './fetchCommonImport';
+import { isFetchStatusGood, getFetchJson, getFetchText } from './fetchCommonImport';
 
 /**
  * postType의 게시글 목록을 가져온다
@@ -62,7 +62,6 @@ export const readContent = async (postType, postCode) => {
 
 	if(isStatusGood === true){
 		const fetchData = await getFetchJson(fetchResponse);
-		console.log('readContent =>', fetchData)
 
 		return fetchData;
 	}
@@ -87,7 +86,6 @@ export const getContentData = async (postType, postCode) => {
 
 	if(isStatusGood === true){
 		const fetchData = await getFetchJson(fetchResponse);
-		console.log('getContentData =>', fetchData)
 
 		return fetchData;
 	}
@@ -113,7 +111,6 @@ export const upvoteContent = async (postType, sendData) => {
 
 	if(isStatusGood === true){
 		const fetchData = await getFetchJson(fetchResponse);
-		console.log('upvoteContent =>', fetchData)
 
 		return fetchData;
 	}
@@ -139,7 +136,6 @@ export const downvoteContent = async (postType, sendData) => {
 
 	if(isStatusGood === true){
 		const fetchData = await getFetchJson(fetchResponse);
-		console.log('downvoteContent =>', fetchData)
 
 		return fetchData;
 	}
@@ -165,7 +161,6 @@ export const createContent = async (postType, sendData) => {
 
 	if(isStatusGood === true){
 		const fetchData = await getFetchJson(fetchResponse);
-		console.log('createContent =>', fetchData)
 
 		return fetchData;
 	}
@@ -191,7 +186,6 @@ export const updateContent = async (postType, sendData) => {
 
 	if(isStatusGood === true){
 		const fetchData = await getFetchJson(fetchResponse);
-		console.log('updateContent =>', fetchData)
 
 		return fetchData;
 	}
@@ -217,7 +211,6 @@ export const deleteContent = async (postType, sendData) => {
 
 	if(isStatusGood === true){
 		const fetchData = await getFetchJson(fetchResponse);
-		console.log('deleteContent =>', fetchData)
 
 		return fetchData;
 	}
@@ -243,7 +236,6 @@ export const checkBeforeEdit = async (postType, sendData) => {
 
 	if(isStatusGood === true){
 		const fetchData = await getFetchJson(fetchResponse);
-		console.log('checkBeforeEdit =>', fetchData)
 
 		return fetchData;
 	}
@@ -272,7 +264,6 @@ export const showUpvoteUserList = async (postCode) => {
 
 	if(isStatusGood === true){
 		const fetchData = await getFetchJson(fetchResponse);
-		console.log('showUpvoteUserList =>', fetchData)
 
 		return fetchData;
 	}
@@ -297,7 +288,32 @@ export const showDownvoteUserList = async (postCode) => {
 
 	if(isStatusGood === true){
 		const fetchData = await getFetchJson(fetchResponse);
-		console.log('showDownvoteUserList =>', fetchData)
+
+		return fetchData;
+	}
+	else{
+		alert(checkMessage);
+
+		return null;
+	}
+}
+
+/**
+ * 고객센터 문의 작성
+ */
+export const writeHelpCenter = async (sendData) => {
+	const fecthOption = {
+		method: "POST"
+		, body: JSON.stringify(sendData)
+		, headers: {"Content-Type": "application/json",}
+		, credentials: "include", // Don't forget to specify this if you need cookies
+	};
+	const fetchResponse = await fetch(`/post/help`, fecthOption);
+	const [isStatusGood, checkMessage] = isFetchStatusGood(fetchResponse);
+
+	if(isStatusGood === true){
+		const fetchData = await getFetchText(fetchResponse);
+		console.log('writeHelpCenter =>', fetchData);
 
 		return fetchData;
 	}
