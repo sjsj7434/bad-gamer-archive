@@ -1,14 +1,27 @@
 .profilePicture {
 	width: 5.8rem;
 	height: 5.8rem;
-	object-fit: none;
 	border: 1px solid lightgray;
 	cursor: pointer;
+	object-fit: cover;
 }
 
 .profilePictureNone {
 	width: 5.8rem;
 	height: 5.8rem;
-	object-fit: none;
 	cursor: pointer;
+	object-fit: none;
+}
+
+.profilePictureNoClick {
+	width: 5.8rem;
+	height: 5.8rem;
+	border: 1px solid lightgray;
+	object-fit: cover;
+}
+
+.profilePictureNoneNoClick {
+	width: 5.8rem;
+	height: 5.8rem;
+	object-fit: none;
 }

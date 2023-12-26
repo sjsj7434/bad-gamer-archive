@@ -56,7 +56,7 @@ const Profile = () => {
 				name = "아이템 레벨";
 				break;
 			case "lostark_name":
-				name = "캐릭터";
+				name = "닉네임";
 				break;
 			case "lostark_server":
 				name = "서버";
@@ -89,11 +89,11 @@ const Profile = () => {
 							{
 								accountData.profilePictureURL !== null ? 
 								<>
-									<Image src={accountData.profilePictureURL} roundedCircle className="profilePicture" />
+									<Image src={accountData.profilePictureURL} roundedCircle className="profilePictureNoClick" />
 								</>
 								:
 								<>
-									<Button variant="light" style={{ padding: "0px", margin: "0px", border: "0px" }}>
+									<Button variant="light" style={{ padding: "0px", margin: "0px", border: "0px" }} disabled>
 										<label htmlFor="profilePictureInput">
 											<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="gray" className="bi bi-person-bounding-box profilePictureNone" viewBox="0 0 16 16">
 												<path d="M1.5 1a.5.5 0 0 0-.5.5v3a.5.5 0 0 1-1 0v-3A1.5 1.5 0 0 1 1.5 0h3a.5.5 0 0 1 0 1zM11 .5a.5.5 0 0 1 .5-.5h3A1.5 1.5 0 0 1 16 1.5v3a.5.5 0 0 1-1 0v-3a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 1-.5-.5M.5 11a.5.5 0 0 1 .5.5v3a.5.5 0 0 0 .5.5h3a.5.5 0 0 1 0 1h-3A1.5 1.5 0 0 1 0 14.5v-3a.5.5 0 0 1 .5-.5m15 0a.5.5 0 0 1 .5.5v3a1.5 1.5 0 0 1-1.5 1.5h-3a.5.5 0 0 1 0-1h3a.5.5 0 0 0 .5-.5v-3a.5.5 0 0 1 .5-.5"/>
@@ -135,7 +135,7 @@ const Profile = () => {
 					<div className="rowDivider"></div>
 
 					<div style={{ display: "flex", justifyContent: "center" }}>
-						<Card style={{ width: "20rem", fontSize: "0.8rem" }}>
+						<Card style={{ width: "100%", fontSize: "0.8rem" }}>
 							{
 								accountData.authentication.length === 0 ?
 								<>

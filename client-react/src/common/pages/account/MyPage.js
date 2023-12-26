@@ -77,7 +77,7 @@ const MyPage = () => {
 				name = "아이템 레벨";
 				break;
 			case "lostark_name":
-				name = "캐릭터";
+				name = "닉네임";
 				break;
 			case "lostark_server":
 				name = "서버";
@@ -280,7 +280,7 @@ const MyPage = () => {
 					<div className="rowDivider"></div>
 
 					<div style={{ display: "flex", justifyContent: "center" }}>
-						<Card style={{ width: "20rem", fontSize: "0.8rem" }}>
+						<Card style={{ width: "100%", fontSize: "0.8rem" }}>
 							{
 								accountData.authentication.length === 0 ?
 								<>
