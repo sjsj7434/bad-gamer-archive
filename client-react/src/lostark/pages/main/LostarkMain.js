@@ -15,20 +15,20 @@ const LostarkMain = () => {
 					<>
 						<Row>
 							<Col>
-								<Carousel pause="hover" style={{ backgroundColor: "#b7b7b7" }}>
+								<Carousel pause="hover" style={{ backgroundColor: "#d1d1d1", borderRadius: "8px", padding: "4px" }}>
 									<Carousel.Item>
-										<div className="carouselImageBox" style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
-											<Image src="https://img.megastudy.net/campus/library/v2015/library/yangji/banner/yj_2024_final_230821.jpg" fluid />
+										<div className="carouselImageBox" style={{ display: "flex", justifyContent: "center", overflow: "hidden" }}>
+											<Image src="https://img.megastudy.net/campus/library/v2015/library/campus_common/2025/2025_jaejung_gate/service_04_img.png" />
 										</div>
 									</Carousel.Item>
 									<Carousel.Item>
-										<div className="carouselImageBox" style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
-											<Image src="https://img.megastudy.net/campus/library/v2015/library/yangji/nsu/2024/2024_jaejung/tab01_img03_03.png" fluid />
+										<div className="carouselImageBox" style={{ display: "flex", justifyContent: "center", overflow: "hidden" }}>
+											<Image src="https://img.megastudy.net/campus/library/v2015/library/campus_common/2025/2025_jaejung_gate/graph_img1.png" />
 										</div>
 									</Carousel.Item>
 									<Carousel.Item>
-										<div className="carouselImageBox" style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
-											<Image src="https://img.megastudy.net/campus/library/v2015/library/yangji/nsu/2024/2024_jaejung/tab01_con01_img03.png" fluid />
+										<div className="carouselImageBox" style={{ display: "flex", justifyContent: "center", overflow: "hidden" }}>
+											<Image src="https://img.megastudy.net/campus/library/v2015/library/yangji/nsu/2024/2024_jaejung/tab01_con01_img03.png" />
 										</div>
 									</Carousel.Item>
 								</Carousel>
