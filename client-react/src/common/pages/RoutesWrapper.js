@@ -39,6 +39,7 @@ import Button from 'react-bootstrap/Button';
 import MyBlacklist from './account/MyBlacklist.js';
 import Profile from './account/Profile.js';
 import Intro from './Intro.js';
+import PrivacyPolicy from './PrivacyPolicy.js';
 
 // import CharacterInfo from '../../lostark/pages/character/CharacterInfo';
 
@@ -339,6 +340,13 @@ const RoutesWrapper = () => {
 							<>
 								<SetActiveMenu pageTitle="Agora(LA)" setCurrentMenu={setCurrentMenu} menuCode={""} />
 								<Intro />
+							</>
+						} />
+
+						<Route path="privacy" element={
+							<>
+								<SetActiveMenu pageTitle="Agora(LA)" setCurrentMenu={setCurrentMenu} menuCode={""} />
+								<PrivacyPolicy />
 							</>
 						} />
 
