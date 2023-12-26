@@ -38,6 +38,7 @@ import KnownPostWrite from './post/known/KnownPostWrite.js';
 import Button from 'react-bootstrap/Button';
 import MyBlacklist from './account/MyBlacklist.js';
 import Profile from './account/Profile.js';
+import Intro from './Intro.js';
 
 // import CharacterInfo from '../../lostark/pages/character/CharacterInfo';
 
@@ -332,6 +333,13 @@ const RoutesWrapper = () => {
 									</>
 								}
 							/>
+						} />
+
+						<Route path="intro" element={
+							<>
+								<SetActiveMenu pageTitle="Agora(LA)" setCurrentMenu={setCurrentMenu} menuCode={""} />
+								<Intro />
+							</>
 						} />
 
 						{/* 상단에 위치하는 라우트들의 규칙을 모두 확인, 일치하는 라우트가 없는경우 처리 */}
