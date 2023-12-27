@@ -141,7 +141,7 @@ const Profile = () => {
 								<>
 									<Card.Body>
 										<Card.Title>
-											LA
+											로스트아크
 										</Card.Title>
 
 										<div style={{ display: "flex", flexDirection: "column", alignItems: "center", marginTop: "2.5rem", marginBottom: "2.5rem" }}>
@@ -159,7 +159,7 @@ const Profile = () => {
 								<>
 									<Card.Body>
 										<Card.Title>
-											LA
+											로스트아크
 										</Card.Title>
 									</Card.Body>
 									<ListGroup className="list-group-flush">
@@ -186,7 +186,7 @@ const Profile = () => {
 
 					<div className="rowDivider"></div>
 
-					<div style={{paddingLeft: "10px", paddingRight: "10px", fontSize: "0.8rem", marginTop: "2rem", marginBottom: "2rem"}}>
+					<div style={{fontSize: "0.8rem", marginTop: "2rem", marginBottom: "2rem"}}>
 						<div style={{ maxHeight: "400px", overflow: "auto", border: "1px solid lightgray", borderRadius: "6px" }}>
 							<MyEditor
 								editorMode={"read"}
