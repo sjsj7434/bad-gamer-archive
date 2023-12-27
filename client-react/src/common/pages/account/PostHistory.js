@@ -30,7 +30,7 @@ const PostHistory = () => {
 	
 	return (
 		<Container>
-			PostHistory / {param.nickname}
+			<strong>{param.nickname}</strong> 의 작성글 목록
 
 			<br></br><br></br><br></br>
 
