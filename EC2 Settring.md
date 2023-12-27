@@ -98,17 +98,17 @@ ssh-keygen -t rsa -C sjsj7434@naver.com
 cat id_rsa.pub
 이 내용 복사해서 github애 ssh 키 생성
 ------------------------------------------------------------------------------
-mkdir my_project
+mkdir my-project
 디렉토리 하나 새로 생성해서 거기에 clone
-cd my_project
+cd my-project
 git clone git@github.com:sjsj7434/game-agora.git
 yes 라고 치고 엔터
 ------------------------------------------------------------------------------
-cd ~/my_project/game-agora/client-react
+cd ~/my-project/game-agora/client-react
 npm install
 npm run build
 ------------------------------------------------------------------------------
-cd ~/my_project/game-agora/server-nest
+cd ~/my-project/game-agora/server-nest
 npm install
 npm run start</pre>
 </div>
@@ -123,5 +123,7 @@ server-nest의 package-lock.json, package.json, .env 파일 업로드
 server-nest에서 npm install
 server-nest에서 npm run start:prod
 ------------------------------------------------------------------------------
-혹시 프론트 경로가 바뀌면 수정 필요(server-nest\src\common.module.ts)</pre>
+혹시 프론트 경로가 바뀌면 수정 필요(server-nest\src\common.module.ts)
+npm install pm2@latest -g
+pm2 start dist/main.js --name gameAgora</pre>
 </div>
