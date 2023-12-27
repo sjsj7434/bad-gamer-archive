@@ -118,3 +118,7 @@ p {
 .fade.modal-backdrop.show{
 	z-index: 2001;
 }
+
+.rowToggle:hover{
+	background-color: #e9f7ff;
+}

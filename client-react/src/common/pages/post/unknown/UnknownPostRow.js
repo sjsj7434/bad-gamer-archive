@@ -4,14 +4,12 @@ import * as postCommon from "../../../js/postCommon";
 const UnknownPostRow = (props) => {
 	return(
 		<Link
-			key={"post" + props.postData.code}
 			to={`/lostark/post/unknown/view/${props.postData.code}`}
 			style={{
 				textDecoration: "none",
 			}}
 		>
 			<div
-				id={"postRow" + props.postData.code}
 				style={{
 					cursor: "pointer",
 					color: "black",
@@ -20,8 +18,7 @@ const UnknownPostRow = (props) => {
 					paddingTop: "5px",
 					paddingBottom: "5px",
 				}}
-				onMouseOver={() => {document.querySelector("#postRow" + props.postData.code).style.backgroundColor = "#e9f7ff"}}
-				onMouseOut={() => {document.querySelector("#postRow" + props.postData.code).style.backgroundColor = ""}}
+				className="rowToggle"
 			>
 				<div style={{display: "flex", alignItems: "center", justifyContent: "space-between"}}>
 					<div style={{width: "90%"}}>
