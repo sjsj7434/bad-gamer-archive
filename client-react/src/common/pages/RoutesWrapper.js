@@ -376,8 +376,8 @@ const RoutesWrapper = () => {
 							<Button onClick={() => { navigate("/intro"); }} variant="link" style={{ fontSize: "0.75rem", textDecoration: "none", color: "gray" }}>소개</Button>
 							<span style={{ fontSize: "0.65rem", color: "gray" }}>|</span>
 							<Button onClick={() => { navigate("/help"); }} variant="link" style={{ fontSize: "0.75rem", textDecoration: "none", color: "gray" }}>고객센터</Button>
-							<span style={{ fontSize: "0.65rem", color: "gray" }}>|</span>
-							<Button onClick={() => { navigate("/privacy"); }} variant="link" style={{ fontSize: "0.75rem", textDecoration: "none", color: "gray" }}>개인정보처리방침</Button>
+							{/* <span style={{ fontSize: "0.65rem", color: "gray" }}>|</span>
+							<Button onClick={() => { navigate("/privacy"); }} variant="link" style={{ fontSize: "0.75rem", textDecoration: "none", color: "gray" }}>개인정보처리방침</Button> */}
 						</div>
 					</div>
 				</footer>
