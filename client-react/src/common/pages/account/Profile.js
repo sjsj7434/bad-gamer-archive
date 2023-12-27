@@ -187,7 +187,7 @@ const Profile = () => {
 					<div className="rowDivider"></div>
 
 					<div style={{paddingLeft: "10px", paddingRight: "10px", fontSize: "0.8rem", marginTop: "2rem", marginBottom: "2rem"}}>
-						<div style={{ maxHeight: "300px", overflow: "auto", border: "1px solid lightgray", borderRadius: "6px" }}>
+						<div style={{ maxHeight: "400px", overflow: "auto", border: "1px solid lightgray", borderRadius: "6px" }}>
 							<MyEditor
 								editorMode={"read"}
 								savedData={accountData.introduce}

@@ -133,7 +133,7 @@ const EditIntroduce = (props) => {
 						</div>
 					</div>
 
-					<div style={{ maxHeight: "300px", overflow: "auto", border: "1px solid lightgray", borderRadius: "6px" }}>
+					<div style={{ maxHeight: "400px", overflow: "auto", border: "1px solid lightgray", borderRadius: "6px" }}>
 						<ForceReRender reRenderData={
 							<MyEditor
 								editorMode={"read"}
