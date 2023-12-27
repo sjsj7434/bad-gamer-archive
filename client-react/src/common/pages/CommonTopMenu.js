@@ -151,7 +151,7 @@ const CommonTopMenu = (props) => {
 									게시판 ▼
 								</div>
 								
-								<div
+								{/* <div
 									onClick={() => { menuClick("/lostark/guild") }}
 									onMouseOver={ () => { controlSubmenu("hide"); } }
 									style={{
@@ -167,7 +167,7 @@ const CommonTopMenu = (props) => {
 									}}
 								>
 									길드
-								</div>
+								</div> */}
 								
 								<div
 									onClick={() => { menuClick("/lostark/useful") }}
@@ -357,10 +357,10 @@ const CommonTopMenu = (props) => {
 								<Nav.Link active={props.currentMenu === "/lostark/post/known" ? true : false} onClick={() => menuClick("/lostark/post/known/1")}>자유 게시판</Nav.Link>
 								<Nav.Link active={props.currentMenu === "/lostark/useful" ? true : false} onClick={() => menuClick("/lostark/useful")}>유용한 사이트</Nav.Link>
 								
-								<Nav.Link active={props.currentMenu === "/lostark/bus" ? true : false} onClick={() => menuClick("/lostark/bus")}>버스 정류장</Nav.Link>
+								{/* <Nav.Link active={props.currentMenu === "/lostark/bus" ? true : false} onClick={() => menuClick("/lostark/bus")}>버스 정류장</Nav.Link>
 								<Nav.Link active={props.currentMenu === "/lostark/academy" ? true : false} onClick={() => menuClick("/lostark/academy")}>학원</Nav.Link>
 								<Nav.Link active={props.currentMenu === "/lostark/incruit" ? true : false} onClick={() => menuClick("/lostark/incruit")}>구인구직</Nav.Link>
-								<Nav.Link active={props.currentMenu === "/lostark/sasage" ? true : false} onClick={() => menuClick("/lostark/sasage")}>사건사고</Nav.Link>
+								<Nav.Link active={props.currentMenu === "/lostark/sasage" ? true : false} onClick={() => menuClick("/lostark/sasage")}>사건사고</Nav.Link> */}
 								
 								<hr style={{ width: "100%" }}></hr>
 
