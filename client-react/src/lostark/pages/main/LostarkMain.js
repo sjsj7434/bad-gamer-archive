@@ -18,17 +18,17 @@ const LostarkMain = () => {
 								<Carousel pause="hover" style={{ backgroundColor: "#d1d1d1", borderRadius: "8px", padding: "4px" }}>
 									<Carousel.Item>
 										<div className="carouselImageBox" style={{ display: "flex", justifyContent: "center", overflow: "hidden", borderRadius: "8px" }}>
-											<Image src="https://img.megastudy.net/campus/library/v2015/library/campus_common/2025/2025_jaejung_gate/service_04_img.png" />
+											<Image src="https://cdn-lostark.game.onstove.com/2023/event/231220_event_i1LffNbk/images/pc/@bg_index.jpg?228a0c97850b58e6f6e428f42a63a898" style={{ borderRadius: "4px" }} />
 										</div>
 									</Carousel.Item>
 									<Carousel.Item>
 										<div className="carouselImageBox" style={{ display: "flex", justifyContent: "center", overflow: "hidden", borderRadius: "8px" }}>
-											<Image src="https://img.megastudy.net/campus/library/v2015/library/campus_common/2025/2025_jaejung_gate/graph_img1.png" />
+											<Image src="https://cdn-lostark.game.onstove.com/2023/event/231220_express_bXr4SyAk/images/pc/@bg_index.jpg?2769e5926b3fdc7740b252877f94670b" style={{ borderRadius: "4px" }} />
 										</div>
 									</Carousel.Item>
 									<Carousel.Item>
 										<div className="carouselImageBox" style={{ display: "flex", justifyContent: "center", overflow: "hidden", borderRadius: "8px" }}>
-											<Image src="https://img.megastudy.net/campus/library/v2015/library/yangji/nsu/2024/2024_jaejung/tab01_con01_img03.png" />
+											<Image src="https://cdn-lostark.game.onstove.com/2023/event/231220_pcbang_eG5UhyvO/images/pc/@bg_index.jpg?2199f41e727680e092368eab51570b4b" style={{ borderRadius: "4px" }} />
 										</div>
 									</Carousel.Item>
 								</Carousel>
