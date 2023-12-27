@@ -285,7 +285,7 @@ const MyPage = () => {
 								<>
 									<Card.Body>
 										<Card.Title>
-											LA
+											로스트아크
 										</Card.Title>
 
 										<div style={{ display: "flex", flexDirection: "column", alignItems: "center", marginTop: "2.5rem", marginBottom: "2.5rem" }}>
@@ -307,7 +307,7 @@ const MyPage = () => {
 								<>
 									<Card.Body>
 										<Card.Title>
-											LA
+											로스트아크
 										</Card.Title>
 									</Card.Body>
 									<ListGroup className="list-group-flush">
