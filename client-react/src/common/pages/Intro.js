@@ -2,8 +2,13 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import '../css/Common.css';
 import Container from 'react-bootstrap/Container';
 import Accordion from 'react-bootstrap/Accordion';
+import { useEffect } from 'react';
 
 const Intro = () => {
+	useEffect(() => {
+		window.scrollTo(0, 0);
+	}, [])
+
 	return (
 		<Container style={{maxWidth: "750px", fontSize: "0.8rem"}}>
 			<div style={{ marginBottom: "3rem" }}>
