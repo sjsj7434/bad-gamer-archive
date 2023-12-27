@@ -359,11 +359,11 @@ const MyPage = () => {
 					<div className="rowDivider"></div>
 
 					<Row>
-						<Col>
+						{/* <Col>
 							<div className="d-grid gap-2">
 								<Button variant="outline-primary" size="lg" onClick={() => {navigate("renew/email")}} style={{ padding: "2px", fontSize: "0.8rem" }}>이메일 변경</Button>
 							</div>
-						</Col>
+						</Col> */}
 						<Col>
 							<div className="d-grid gap-2">
 								<Button variant="outline-primary" size="lg" onClick={() => {navigate("renew/password")}} style={{ padding: "2px", fontSize: "0.8rem" }}>비밀번호 변경</Button>
