@@ -38,13 +38,13 @@ sudo vi /etc/nginx/sites-available/nest-server
 	[입력할 내용]
 	server{
 		listen 80;
-		server_name localhost;
+		server_name 3.35.233.132;
 		location / {
 			proxy_pass http://127.0.0.1:3000;
 		}
 	}
 ------------------------------------------------------------------------------
-sudo ln -s /etc/nginx/sites-available/node-server /etc/nginx/sites-enabled/
+sudo ln -s /etc/nginx/sites-available/nest-server /etc/nginx/sites-enabled/
 sudo systemctl restart nginx</pre>
 </div>
 
