@@ -6,11 +6,11 @@ import Accordion from 'react-bootstrap/Accordion';
 
 const PrivacyPolicy = () => {
 	return (
-		<Container style={{maxWidth: "750px"}}>
+		<Container style={{maxWidth: "750px", fontSize: "0.8rem"}}>
 			<div style={{ marginBottom: "3rem" }}>
 				<div style={{ display: "flex" }}>
 					<div>
-						Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+						아직 정책이 준비되지 않았습니다<br />
 						eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad
 						minim veniam, quis nostrud exercitation ullamco laboris nisi ut
 						aliquip ex ea commodo consequat. Duis aute irure dolor in
@@ -39,25 +39,25 @@ const PrivacyPolicy = () => {
 					<Accordion.Item eventKey="0">
 						<Accordion.Header>Accordion Item #1</Accordion.Header>
 						<Accordion.Body>
-						Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-						eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad
-						minim veniam, quis nostrud exercitation ullamco laboris nisi ut
-						aliquip ex ea commodo consequat. Duis aute irure dolor in
-						reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
-						pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
-						culpa qui officia deserunt mollit anim id est laborum.
+							Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+							eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad
+							minim veniam, quis nostrud exercitation ullamco laboris nisi ut
+							aliquip ex ea commodo consequat. Duis aute irure dolor in
+							reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
+							pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
+							culpa qui officia deserunt mollit anim id est laborum.
 						</Accordion.Body>
 					</Accordion.Item>
 					<Accordion.Item eventKey="1">
 						<Accordion.Header>Accordion Item #2</Accordion.Header>
 						<Accordion.Body>
-						Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-						eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad
-						minim veniam, quis nostrud exercitation ullamco laboris nisi ut
-						aliquip ex ea commodo consequat. Duis aute irure dolor in
-						reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
-						pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
-						culpa qui officia deserunt mollit anim id est laborum.
+							Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+							eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad
+							minim veniam, quis nostrud exercitation ullamco laboris nisi ut
+							aliquip ex ea commodo consequat. Duis aute irure dolor in
+							reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
+							pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
+							culpa qui officia deserunt mollit anim id est laborum.
 						</Accordion.Body>
 					</Accordion.Item>
 				</Accordion>
