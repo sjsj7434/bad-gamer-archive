@@ -69,7 +69,7 @@ npm run start
 - <input type='checkbox' checked> 사용자 자기소개 및 기본정보 조회 페이지
 - <input type='checkbox' checked> 닉네임 바꾸면 예전에 작성한 글에서는 차단 불가능한 오류(회원 전용)
 - <input type='checkbox' checked> 아이디 차단 목록 관리 기능(회원 전용)
-- <input type='checkbox'> 로아 이미 인증된 스토브코드 해제하고 내가 차지할 지 물어보기
+- <input type='checkbox' checked> 로아 이미 인증된 스토브코드 해제하고 내가 차지할 지 물어보기
 - <input type='checkbox'> 로아 인증 정보 다양화
 - <input type='checkbox'> 서버에서 회원가입할 때 입력 값 검증 추가
 - <input type='checkbox'> 자기소개 및 인장 시스템
