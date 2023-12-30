@@ -237,11 +237,9 @@ const ActivateLostarkAPI = () => {
 			alert("인증을 진행할 수 없습니다");
 			setCharacterModalShow(false);
 		}
-		else if(resultData.result === "already"){
-			alert("이미 인증이 진행된 계정입니다\n한 계정으로 여러번 인증은 불가능합니다");
-			navigate("/account/mypage");
-			setCharacterModalShow(false);
-		}
+		// else if(resultData.result === "already"){
+		// 	alert("이미 인증이 진행된 계정입니다\n한 계정으로 여러번 인증은 불가능합니다");
+		// }
 		else if(resultData.result === "codeError"){
 			alert("스토브 코드를 다시 확인해주세요");
 			setCharacterModalShow(false);
@@ -270,9 +268,15 @@ const ActivateLostarkAPI = () => {
 			setCharacterModalShow(false);
 		}
 		else{
-			clearInterval(intervalRef.current);
+			if(window.confirm("다른 계정이 이 스토브코드를 사용 중이라면 해당 계정은 인증 정보가 삭제됩니다\n인증을 진행하시겠습니까?") === true){
+				clearInterval(intervalRef.current);
 
-			setCharacterCardList(resultData.characterList);
+				setCharacterCardList(resultData.characterList);
+			}
+			else{
+				navigate("/account/mypage");
+				setCharacterModalShow(false);
+			}
 		}
 		
 		setIsLoading(false);

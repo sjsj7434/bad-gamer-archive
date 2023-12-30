@@ -144,17 +144,17 @@ export class AccountService {
 			return { result: "codeError", characterList: null };
 		}
 
-		const isExist = await this.authenticationRepository.exist({ //이미 인증된 계정으로는 다시 인증 불가능
-			where: {
-				gameName: "lostark",
-				type: Equal("stove_code"),
-				data: Equal(stoveCodeWithOutProtocol),
-			}
-		});
+		// const isExist = await this.authenticationRepository.exist({ //이미 인증된 계정으로는 다시 인증 불가능
+		// 	where: {
+		// 		gameName: "lostark",
+		// 		type: Equal("stove_code"),
+		// 		data: Equal(stoveCodeWithOutProtocol),
+		// 	}
+		// });
 
-		if (isExist === true){
-			return { result: "already", characterList: null };
-		}
+		// if (isExist === true){
+		// 	return { result: "already", characterList: null };
+		// }
 
 		// const isMatched: boolean = await this.compareStoveVerificationCode(request, stoveCodeWithOutProtocol); //테스트 용으로 임시 비활성화
 		const isMatched = true;
@@ -978,7 +978,22 @@ export class AccountService {
 		}
 
 		if (isContain === true) {
-			const test = await this.lostarkAPIService.getCharacterInfoProfile(characterList[infoIndex].CharacterName); //api 호출
+			const alreadyAccount = await this.authenticationRepository.findOne({ //이미 인증된 계정으로는 다시 인증 불가능
+				select: {
+					uuid: true,
+				},
+				where: {
+					gameName: "lostark",
+					type: Equal("stove_code"),
+					data: Equal(stoveCode),
+				}
+			});
+
+			//다른 계정이 동일한 스토브코드를 인증에 사용했다면 다른 계정의 인정 정보를 삭제
+			await this.authenticationRepository.softDelete({
+				uuid: alreadyAccount.uuid,
+				gameName: "lostark",
+			});
 
 			//다시 인증을 진행하면 이전에 인증 해제한 데이터 완전 삭제 처리
 			await this.authenticationRepository.delete({
