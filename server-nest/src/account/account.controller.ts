@@ -1,4 +1,4 @@
-import { Param, Controller, Get, Post, Put, Delete, Body, Res, Req, Patch, NotFoundException, UseInterceptors, UploadedFile } from '@nestjs/common';
+import { Param, Controller, Get, Post, Put, Delete, Body, Res, Req, Patch, NotFoundException, UseInterceptors, UploadedFile, Ip } from '@nestjs/common';
 import { AccountService } from './account.service';
 import { CreateAccountDTO, UpdateAccountDTO } from './account.dto';
 import { Request, Response } from 'express';
@@ -8,11 +8,12 @@ import { SkipThrottle, Throttle } from '@nestjs/throttler';
 import { CreatePersonalBlackListDTO, DeletePersonalBlackListDTO, UpdatePersonalBlackListDTO } from './personalBlackList.dto';
 import { PersonalBlackList } from './personalBlackList.entity';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { AccessLogService } from 'src/log/access.log.service';
 
 @SkipThrottle()
 @Controller("account")
 export class  AccountController {
-	constructor(private accountService: AccountService) { }
+	constructor(private accountService: AccountService, private accessLogService: AccessLogService) { }
 
 	//마이페이지 > stove 계정 인증 코드 발급
 	@Get("stove/verification/code")
@@ -197,4 +198,10 @@ export class  AccountController {
 		return await this.accountService.verifyEmail(verificationCode);
 	}
 	*/
+
+	//내가 작성한 글 가져오기
+	@Post("log/access")
+	async insertAccessLog(@Req() request: Request, @Res({ passthrough: true }) response: Response, @Ip() ipData: string, @Body() sendData: {sizeData: string}): Promise<any> {
+		return await this.accessLogService.createAccessLog(sendData, ipData);
+	}
 }

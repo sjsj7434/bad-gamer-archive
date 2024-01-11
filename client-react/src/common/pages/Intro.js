@@ -7,6 +7,21 @@ import { useEffect } from 'react';
 const Intro = () => {
 	useEffect(() => {
 		window.scrollTo(0, 0);
+
+		const setAccessLog = async () => {
+			const fecthOption = {
+				method: "POST"
+				, body: JSON.stringify({
+					sizeData: `H=${window.innerHeight}|W=${window.innerWidth}`
+				})
+				, headers: {"Content-Type": "application/json",}
+				, credentials: "include", // Don't forget to specify this if you need cookies
+			};
+
+			fetch(`/account/log/access`, fecthOption);
+		}
+
+		setAccessLog();
 	}, [])
 
 	return (
