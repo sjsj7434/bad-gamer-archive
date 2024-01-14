@@ -1,6 +1,6 @@
 import { Routes, Route, useLocation } from 'react-router-dom';
 import { useState, useEffect } from 'react';
-import { Navigate, useNavigate } from "react-router-dom";
+import { Navigate } from "react-router-dom";
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '../css/Common.css';
@@ -35,12 +35,12 @@ import UnknownPostWrite from './post/unknown/UnknownPostWrite.js';
 import KnownPostList from './post/known/KnownPostList.js';
 import KnownPostView from './post/known/KnownPostView.js';
 import KnownPostWrite from './post/known/KnownPostWrite.js';
-import Button from 'react-bootstrap/Button';
 import MyBlacklist from './account/MyBlacklist.js';
 import Profile from './account/Profile.js';
 import Intro from './Intro.js';
 import PrivacyPolicy from './PrivacyPolicy.js';
 import PostHistory from './account/PostHistory.js';
+import Footer from './footer.js';
 
 // import CharacterInfo from '../../lostark/pages/character/CharacterInfo';
 
@@ -49,7 +49,6 @@ const RoutesWrapper = () => {
 	const [accountData, setAccountData] = useState(null);
 	const [currentMenu, setCurrentMenu] = useState(null);
 	let location = useLocation();
-	const navigate = useNavigate();
 	
 	const checkLoginStatus = async () => {
 		const statusJSON = await accountFetch.checkLoginStatus();
@@ -57,6 +56,11 @@ const RoutesWrapper = () => {
 	}
 
 	useEffect(() => {
+		window.scrollTo({
+			top: 0,
+			behavior: "smooth"
+		})
+		
 		checkLoginStatus();
 	}, [location.pathname]); //URL이 바뀔 때 마다 로그인 정보 갱신
 
@@ -370,17 +374,7 @@ const RoutesWrapper = () => {
 					</Routes>
 				</div>
 
-				<footer>
-					<div style={{ display: "flex", justifyContent: "center", alignItems: "flex-end", height: "300px", marginTop: "15px", marginBottom: "15px", padding: "5px" }}>
-						<div style={{ display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
-							<Button onClick={() => { navigate("/intro"); }} variant="link" style={{ fontSize: "0.75rem", textDecoration: "none", color: "gray" }}>소개</Button>
-							<span style={{ fontSize: "0.65rem", color: "gray" }}>|</span>
-							<Button onClick={() => { navigate("/help"); }} variant="link" style={{ fontSize: "0.75rem", textDecoration: "none", color: "gray" }}>고객센터</Button>
-							{/* <span style={{ fontSize: "0.65rem", color: "gray" }}>|</span>
-							<Button onClick={() => { navigate("/privacy"); }} variant="link" style={{ fontSize: "0.75rem", textDecoration: "none", color: "gray" }}>개인정보처리방침</Button> */}
-						</div>
-					</div>
-				</footer>
+				<Footer/>
 			</>
 		);
 	}

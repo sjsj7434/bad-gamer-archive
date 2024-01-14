@@ -60,11 +60,6 @@ const CommonTopMenu = (props) => {
 	const menuClick = useCallback((url) => {
 		setShowOffcanvas(false);
 		navigate(url);
-
-		window.scrollTo({
-			top: 0,
-			behavior: "smooth"
-		})
 	}, [navigate])
 	
 	const logoutAccount = async () => {

@@ -6,8 +6,6 @@ import { useEffect } from 'react';
 
 const Intro = () => {
 	useEffect(() => {
-		window.scrollTo(0, 0);
-
 		const setAccessLog = async () => {
 			const fecthOption = {
 				method: "POST"
