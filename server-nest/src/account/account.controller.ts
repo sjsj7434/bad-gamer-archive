@@ -1,4 +1,4 @@
-import { Param, Controller, Get, Post, Put, Delete, Body, Res, Req, Patch, NotFoundException, UseInterceptors, UploadedFile, Ip } from '@nestjs/common';
+import { Param, Controller, Get, Post, Put, Delete, Body, Res, Req, Patch, NotFoundException, UseInterceptors, UploadedFile } from '@nestjs/common';
 import { AccountService } from './account.service';
 import { CreateAccountDTO, UpdateAccountDTO } from './account.dto';
 import { Request, Response } from 'express';
@@ -201,7 +201,7 @@ export class  AccountController {
 
 	//내가 작성한 글 가져오기
 	@Post("log/access")
-	async insertAccessLog(@Req() request: Request, @Res({ passthrough: true }) response: Response, @Ip() ipData: string, @Body() sendData: {sizeData: string}): Promise<any> {
-		return await this.accessLogService.createAccessLog(sendData, ipData);
+	async insertAccessLog(@Req() request: Request, @Res({ passthrough: true }) response: Response, @Body() sendData: {sizeData: string}): Promise<any> {
+		return await this.accessLogService.createAccessLog(request, sendData);
 	}
 }
