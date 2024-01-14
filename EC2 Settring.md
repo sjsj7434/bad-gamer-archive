@@ -32,6 +32,7 @@ sudo systemctl restart nginx</pre>
 <div style="margin-top: 50px;">
 	<h1>NginX 프록시 설정</h1>
 	<p>이것을 설정하면 80포트로 접근해도 3000포트로 이동시켜줌</p>
+	<p>프록시 설정으로 서버가 Client IP 정보를 읽을 수 없어 proxy_set_header 설정(전부 localhost ip로 나오는 문제 해결)</p>
 	<pre>
 sudo vi /etc/nginx/sites-available/nest-server
 ------------------------------------------------------------------------------
@@ -40,6 +41,7 @@ sudo vi /etc/nginx/sites-available/nest-server
 		listen 80;
 		server_name 3.35.233.132;
 		location / {
+			proxy_set_header X-Forwarded-For $remote_addr;
 			proxy_pass http://127.0.0.1:3000;
 		}
 	}
