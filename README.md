@@ -1,4 +1,4 @@
-# bad-gamer-archive
+# 웹 커뮤니티
 Nest.js + React(v 18)
 <br>
 참조한 Repo : <a href="https://github.com/sjsj7434/nestjs-react-boilerplate">nestjs-react-boilerplate</a>
